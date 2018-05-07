@@ -1,0 +1,25 @@
+{
+  "name": "projectpages",
+  "version": "1.0.0",
+  "description": "App for creating and editing custom informational pages",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://kristiansigston@bitbucket.org/CoderList/coderlistgp1.git"
+  },
+  "author": "Coderlist.io",
+  "license": "ISC",
+  "homepage": "https://bitbucket.org/CoderList/coderlistgp1#readme",
+  "dependencies": {
+    "body-parser": "^1.18.2",
+    "ejs": "^2.6.1",
+    "express": "^4.16.3"
+  },
+  "devDependencies": {
+    "nodemon": "^1.17.4"
+  }
+}
