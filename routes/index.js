@@ -1,5 +1,7 @@
 const routes = require('express').Router();
 
+// basic //
+
 routes.get('/', (req, res) => {
   res.status(200).render('pages/index.ejs');
   return;
@@ -43,6 +45,8 @@ routes.get('/content/manage-all-pages', (req, res) => {
   res.status(200).render('pages/content/manageAllPages.ejs');
   return;
 });
+
+// unknown //
 
 routes.all('*', (req, res) => {
   res.status(200).render('pages/unknown.ejs', { url: req.url });
