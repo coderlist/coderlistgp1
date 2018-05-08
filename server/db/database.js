@@ -31,7 +31,7 @@ pool.connect()
                .then(result => {
                    client.release();
                    res.status(200).send({
-                      message : "todos successfully listed",
+                      message : "users successfully listed",
                       response: result.rows
                    })
                
