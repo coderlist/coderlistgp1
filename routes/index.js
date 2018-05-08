@@ -6,7 +6,7 @@ routes.get('/', (req, res) => {
 });
 
 routes.get('/about', (req, res) => {
-    res.render('pages/about.ejs', { url: req.url });
+    res.render('pages/about.ejs');
     return;
 });
 
