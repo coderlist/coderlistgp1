@@ -6,7 +6,7 @@ routes.get('/', (req, res) => {
 });
 
 routes.get('/about', (req, res) => {
-    res.render('pages/about.ejs');
+    res.status(200).render('pages/about.ejs');
     return;
 });
 
@@ -28,24 +28,24 @@ routes.get('/users/manage-users', (req, res) => {
 });
 
 routes.get('/users/forgot-password', (req, res) => {
-  res.render('pages/users/forgotPassword.ejs');
+  res.status(200).render('pages/users/forgotPassword.ejs');
   return;
 });
 
 // pages //
 
 routes.get('/content/manage-page', (req, res) => {
-  res.render('pages/content/createEditPage.ejs');
+  res.status(200).render('pages/content/createEditPage.ejs');
   return;
 });
 
 routes.get('/content/manage-all-pages', (req, res) => {
-  res.render('pages/content/manageAllPages.ejs');
+  res.status(200).render('pages/content/manageAllPages.ejs');
   return;
 });
 
 routes.all('*', (req, res) => {
-  res.render('pages/unknown.ejs', { url: req.url });
+  res.status(200).render('pages/unknown.ejs', { url: req.url });
   return;
 });
 
