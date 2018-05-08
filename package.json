@@ -4,7 +4,7 @@
   "description": "App for creating and editing custom informational pages",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "mocha --reporter list",
     "start": "nodemon server.js"
   },
   "repository": {
@@ -20,6 +20,8 @@
     "express": "^4.16.3"
   },
   "devDependencies": {
-    "nodemon": "^1.17.4"
+    "chai": "^4.1.2",
+    "nodemon": "^1.17.4",
+    "supertest": "^3.0.0"
   }
 }
