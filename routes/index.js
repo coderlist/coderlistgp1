@@ -5,20 +5,10 @@ routes.get('/', (req, res) => {
   return;
 });
 
-routes.all('/', (req, res) => {
-  res.status(400).send({ message: 'invalid verb' }); //should we do this? I have put a note in a Trello list called "Questions and clarifications".
-  return;
-});
-
 routes.get('/about', (req, res) => {
     res.render('pages/about.ejs', { url: req.url });
     return;
 });
-
-routes.all('/about', (req, res) => {
-  res.status(400).send({ message: 'invalid verb' });
-  return;
-});   //should we do this? I have put a note in a Trello list. The name of the Trello list is "Questions and clarifications".
 
 // users //
 
@@ -54,7 +44,7 @@ routes.get('/content/manage-all-pages', (req, res) => {
   return;
 });
 
-routes.get('*', (req, res) => {
+routes.all('*', (req, res) => {
   res.render('pages/unknown.ejs', { url: req.url });
   return;
 });
