@@ -9,7 +9,6 @@ CREATE TABLE "Pages" (
 
 CREATE INDEX "FK" ON  "Pages" ("created_by");
 
-CREATE INDEX "Key" ON  "Pages" ("page_created");
 
 CREATE TABLE "Users" (
   "username" varchar(50),
