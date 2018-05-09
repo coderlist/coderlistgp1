@@ -3,11 +3,11 @@ const env = process.env.NODE_ENV === 'production';
 
 const config = {
     "development":{
-        user: 'PGUSER',      //PGUSER
-        database: 'PGDATABASE', //PGDATABASE
-        password: 'PASSWORD',      //PGPASSWORD
-        host: 'localhost',     //Server
-        port: PGPORT,            //PGPORT
+        user: 'PGUSER',      
+        database: 'PGDATABASE', 
+        password: 'PASSWORD',      
+        host: 'localhost',     
+        port: 'PGPORT',            
         max: 10, 
         idleTimeoutMillis: 30000, 
     },
