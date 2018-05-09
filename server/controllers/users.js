@@ -9,7 +9,7 @@ pool.on('error', (err, client) => {
 const userControllers = {
     createUser (req,res){
         const createQuery = `INSERT INTO "User" VALUES ('myname','email' \
-                             ,null,null,null,null,null,null,7)`;
+                             ,null,null,null,null,null,null,10)`;
         pool.connect()
             .then(client => {
                return  client.query(createQuery)
@@ -24,8 +24,26 @@ const userControllers = {
             .catch(e => {
                 console.log(e)
             })
+    },
+
+    getAllUsers(req,res){
+        const getUsersQuery = `SELECT * FROM "User"`;
+        pool.connect()
+            .then(client => {
+               return  client.query(getUsersQuery)
+                      .then(result => {
+                          client.release();
+                          console.log({
+                              users: result.rows
+                          })
+                      })
+            })
+            .catch(e => {
+                console.log(e)
+            })
     }
 }
 
-userControllers.createUser();
+//userControllers.createUser();
+//userControllers.getAllUsers();
 
