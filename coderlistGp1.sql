@@ -15,7 +15,7 @@ CREATE TABLE "Users" (
   "username" varchar(50),
   "email" varchar(50),
   "password" varchar(50),
-  "last_succesful_login" datetime,
+  "last_succesful_login" timestamp,
   "last_failed_login" timestamp,
   "failed_login_attemps" int,
   "firstName" varchar(50),
