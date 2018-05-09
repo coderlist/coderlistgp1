@@ -3,11 +3,11 @@ const env = process.env.NODE_ENV === 'production';
 
 const config = {
     "development":{
-        user: 'postgres',      //PGUSER
-        database: 'coderlist', //PGDATABASE
-        password: 'root',      //PGPASSWORD
+        user: 'PGUSER',      //PGUSER
+        database: 'PGDATABASE', //PGDATABASE
+        password: 'PASSWORD',      //PGPASSWORD
         host: 'localhost',     //Server
-        port: 5433,            //PGPORT
+        port: PGPORT,            //PGPORT
         max: 10, 
         idleTimeoutMillis: 30000, 
     },
@@ -24,21 +24,18 @@ pool.on('error', (err, client) => {
     process.exit(-1)
   })
 
-const listQuery = `SELECT * FROM "Users"`;
+const listQuery = `SELECT * FROM "User"`;
 pool.connect()
     .then(client => {
         return client.query(listQuery)
-               .then(result => {
+               .then(res => {
                    client.release();
-                   res.status(200).send({
-                      message : "users successfully listed",
-                      response: result.rows
-                   })
-               
+                   console.log(JSON.stringify(res.rows[0],undefined,2));
                })
     })
     .catch(e => {
-        res.status(400).send(e.stack)
+       // client.release();
+        console.log(e.stack);
     })
 
 

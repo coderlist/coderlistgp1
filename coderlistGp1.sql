@@ -2,8 +2,8 @@ CREATE TABLE "User" (
   "username" varchar(50),
   "Email" varchar(50),
   "password" varchar(50),
-  "LastSuccesfulLogin" datetime,
-  "LastFailedLogin" datetime,
+  "LastSuccesfulLogin" timestamp,
+  "LastFailedLogin" timestamp,
   "FailedLoginAttemps" int,
   "firstName" varchar(50),
   "lastName" varchar(50),
@@ -12,11 +12,11 @@ CREATE TABLE "User" (
 );
 
 CREATE TABLE "Page" (
-  "pagePublished" datetime,
+  "pagePublished" timestamp,
   "pageId" int,
-  "url" Type,
+  "url" text,
   "userId" int,
-  "pageCreated" datetime,
+  "pageCreated" timestamp,
   PRIMARY KEY ("pageId")
 );
 
@@ -26,7 +26,7 @@ CREATE INDEX "Key" ON  "Page" ("pageCreated");
 
 CREATE TABLE "content" (
   "contentId" int,
-  "htmlBody" Type,
+  "htmlBody" text,
   "pageId" int,
   PRIMARY KEY ("contentId")
 );
