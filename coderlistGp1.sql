@@ -2,12 +2,12 @@ CREATE TABLE "Pages" (
   "page_published" timestamp,
   "page_id" int,
   "url" text,
-  "created_by" int,
+  "user_id" int,
   "page_created" timestamp,
   PRIMARY KEY ("page_id")
 );
 
-CREATE INDEX "FK" ON  "Pages" ("created_by");
+
 
 
 CREATE TABLE "Users" (
@@ -30,5 +30,6 @@ CREATE TABLE "Content" (
   PRIMARY KEY ("content_Id")
 );
 
+CREATE INDEX "FK" ON  "Pages" ("user_id");
 CREATE INDEX "FK" ON  "Content" ("page_id");
 

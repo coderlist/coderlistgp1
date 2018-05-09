@@ -6,44 +6,40 @@ pool.on('error', (err, client) => {
   })
 
 
-const userControllers = {
+module.exports =  {
     createUser (req,res){
-        const createQuery = `INSERT INTO "User" VALUES ('myname','email' \
+        const createQuery = `INSERT INTO "Users" VALUES ('myname','email' \
                              ,null,null,null,null,null,null,10)`;
         pool.connect()
             .then(client => {
                return  client.query(createQuery)
                       .then(result => {
                           client.release();
-                          console.log({
-                              message: 'User created',
-                              result
-                          })
+                          res.status(200).send({message: 'User created'})
                       })
             })
             .catch(e => {
-                console.log(e)
+                res.status(400).send(e)
             })
     },
 
     getAllUsers(req,res){
-        const getUsersQuery = `SELECT * FROM "User"`;
+        const getUsersQuery = `SELECT * FROM "Users"`;
         pool.connect()
             .then(client => {
                return  client.query(getUsersQuery)
                       .then(result => {
                           client.release();
-                          console.log({
-                              users: result.rows
+                          res.status(200).send({
+                              response: result.rows
                           })
                       })
             })
             .catch(e => {
-                console.log(e)
+                res.status(400).send(e);
             })
     }
 }
 
-//userControllers.createUser();
-//userControllers.getAllUsers();
+
 
