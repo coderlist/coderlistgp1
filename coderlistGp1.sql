@@ -1,16 +1,16 @@
-CREATE TABLE Users (
+CREATE TABLE users (
   username varchar(50),
   email varchar(50),
   password varchar(50),
   last_Succesful_Login timestamp,
   last_Failed_Login timestamp,
-  failed_Login_Attemps int,
-  firstname varchar(50),
-  lastname varchar(50),
+  failed_Login_Attempts int,
+  first_name varchar(50),
+  last_name varchar(50),
   PRIMARY KEY (username)
 );
 
-CREATE TABLE Pages (
+CREATE TABLE pages (
   date_Published timestamp,
   page_Id serial,
   url  text,
