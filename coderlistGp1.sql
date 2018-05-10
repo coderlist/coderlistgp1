@@ -14,7 +14,7 @@ CREATE TABLE Pages (
   date_published timestamp,
   page_id serial UNIQUE,
   url  text,
-  username varchar(50) REFERENCES Users(username) ON DELETE CASCADE,
+  created_by varchar(50) REFERENCES Users(username) ON DELETE CASCADE,
   page_created timestamp,
   PRIMARY KEY (page_id)
 );
