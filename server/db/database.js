@@ -1,13 +1,15 @@
+require('dotenv').config();
 const {Pool} = require('pg');
 const env = process.env.NODE_ENV === 'production';
 
+
 const config = {
     "development":{
-        user: 'PGUSER',      
-        database: 'PGDATABASE', 
-        password: '',      
-        host: 'localhost',     
-        port: 5432,            
+        user: process.env.PG_USER,      
+        database: process.env.PG_DBASE, 
+        password: process.env.PG_KEY,      
+        host: process.env.PG_HOST,     
+        port: process.env.PG_PORT,            
         max: 10, 
         idleTimeoutMillis: 30000, 
     },
