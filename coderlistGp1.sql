@@ -2,29 +2,29 @@ CREATE TABLE Users (
   username varchar(50),
   email varchar(50),
   password varchar(50),
-  last_succesful_login timestamp,
-  last_failed_login timestamp,
-  failed_login_attemps int,
-  firstName varchar(50),
-  lastName varchar(50),
+  last_Succesful_Login timestamp,
+  last_Failed_Login timestamp,
+  failed_Login_Attemps int,
+  firstname varchar(50),
+  lastname varchar(50),
   PRIMARY KEY (username)
 );
 
 CREATE TABLE Pages (
-  date_published timestamp,
-  page_id serial UNIQUE,
+  date_Published timestamp,
+  page_Id serial,
   url  text,
-  created_by varchar(50) REFERENCES Users(username) ON DELETE CASCADE,
-  page_created timestamp,
-  PRIMARY KEY (page_id)
+  created_By varchar(50) REFERENCES Users(username) ON DELETE CASCADE,
+  page_Created timestamp,
+  PRIMARY KEY (page_Id)
 );
 
 
 CREATE TABLE Content (
-  content_description text,
-  html_body text,
-  page_id int REFERENCES Pages(page_id) ON DELETE CASCADE,
-  PRIMARY KEY (content_description)
+  content_Description text,
+  html_Body text,
+  page_Id int REFERENCES Pages(page_Id) ON DELETE CASCADE,
+  PRIMARY KEY (content_Description)
 );
 
 
