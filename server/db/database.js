@@ -1,8 +1,12 @@
 require('dotenv').config();
-const {Pool} = require('pg');
+const url = require('url');
 const env = process.env.NODE_ENV === 'production';
+const {Pool} = require('pg');
 
 
+
+const params = url.parse(process.env.DATABASE_URL)
+const auth = params.auth.split(':');
 const config = {
     "development":{
         user: process.env.PG_USER,      
@@ -15,7 +19,12 @@ const config = {
     },
 
     "production":{
-        "use_env_variable": process.env.DATABASE_URL
+        user: auth[0],
+        password:auth[1],
+        host: params.hostname,
+        port: params.port,
+        database: params.pathname.split('/')[1],
+        ssl: true
     }
 }
 

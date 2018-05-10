@@ -8,8 +8,7 @@ pool.on('error', (err, client) => {
 
 module.exports =  {
     createUser (req,res){
-        const createQuery = `INSERT INTO "Users" VALUES ('myname','email' \
-                             ,null,null,null,null,null,null,10)`;
+        const createQuery = `INSERT INTO Users (username) VALUES ('${req.body.username}')`;
         pool.connect()
             .then(client => {
                return  client.query(createQuery)
