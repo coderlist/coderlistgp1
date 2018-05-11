@@ -3,7 +3,7 @@ const routes = require('express').Router();
 // basic //
 
 routes.get('/', (req, res) => {
-  res.status(200).render('pages/index.ejs');
+  res.status(200).render('pages/index.ejs', { dataFromDB: "Simple string/varibale/DB entry higlighting EJS use. View in routes/index.js Free text" });
   return;
 });
 
