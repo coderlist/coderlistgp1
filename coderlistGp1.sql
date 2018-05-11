@@ -1,14 +1,14 @@
-CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+CREATE EXTENSION  "uuid-ossp";
 CREATE TABLE  users (
-  user_id uuid DEFAULT uuid_generate_v1mc(),
+  user_Id uuid DEFAULT uuid_generate_v1mc(),
   username varchar(50),
   email text NOT NULL UNIQUE,
   password text NOT NULL,
   last_Succesful_Login timestamp,
   last_Failed_Login timestamp,
   failed_Login_Attempts int ,
-  first_name text NOT NULL,
-  last_name text NOT NULL,
+  first_Name text NOT NULL,
+  last_Name text NOT NULL,
   PRIMARY KEY (user_Id)
 );
 
