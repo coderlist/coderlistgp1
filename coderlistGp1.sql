@@ -1,8 +1,9 @@
 CREATE EXTENSION  "uuid-ossp";
+CREATE EXTENSION citext;
 CREATE TABLE  users (
   user_Id uuid DEFAULT uuid_generate_v1mc(),
   username varchar(50),
-  email text NOT NULL UNIQUE,
+  email citext NOT NULL UNIQUE,
   password text NOT NULL,
   last_Succesful_Login timestamp,
   last_Failed_Login timestamp,
@@ -16,7 +17,7 @@ CREATE TABLE pages (
   date_Published timestamp,
   page_Id serial,
   url  text,
-  created_By varchar(50) REFERENCES users(user_Id) ON DELETE CASCADE,
+  created_By uuid REFERENCES users(user_Id) ON DELETE CASCADE,
   page_Created timestamp,
   PRIMARY KEY (page_Id)
 );
