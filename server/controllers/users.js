@@ -1,14 +1,9 @@
+
 const {pool} = require('./../db/database');
-
-pool.on('error', (err, client) => {
-    console.error('Unexpected error on idle client', err)
-    process.exit(-1)
-  })
-
 
 module.exports =  {
     createUser (req,res){
-        const createQuery = `INSERT INTO Users (username) VALUES ('${req.body.username}')`;
+        const createQuery = format(`INSERT INTO Users (username) VALUES ('${req.body.username}')`);
         pool.connect()
             .then(client => {
                return  client.query(createQuery)

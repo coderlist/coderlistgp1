@@ -1,20 +1,22 @@
-CREATE TABLE users (
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+CREATE TABLE  users (
+  user_id uuid DEFAULT uuid_generate_v1mc(),
   username varchar(50),
-  email varchar(50),
-  password varchar(50),
+  email text NOT NULL UNIQUE,
+  password text NOT NULL,
   last_Succesful_Login timestamp,
   last_Failed_Login timestamp,
-  failed_Login_Attempts int,
-  first_name varchar(50),
-  last_name varchar(50),
-  PRIMARY KEY (username)
+  failed_Login_Attempts int ,
+  first_name text NOT NULL,
+  last_name text NOT NULL,
+  PRIMARY KEY (user_Id)
 );
 
 CREATE TABLE pages (
   date_Published timestamp,
   page_Id serial,
   url  text,
-  created_By varchar(50) REFERENCES users(username) ON DELETE CASCADE,
+  created_By varchar(50) REFERENCES users(user_Id) ON DELETE CASCADE,
   page_Created timestamp,
   PRIMARY KEY (page_Id)
 );

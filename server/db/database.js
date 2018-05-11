@@ -33,6 +33,11 @@ const config = {
 const pool =   env ? new Pool(config.production): new Pool(config.development) ;
 
 
+pool.on('error', (err, client) => {
+    console.error('Unexpected error on idle client', err)
+    process.exit(-1)
+  })
+
 module.exports = {
     pool
 }
