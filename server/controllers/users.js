@@ -3,22 +3,23 @@ const {pool} = require('./../db/database');
 
 module.exports =  {
     createUser (req,res){
-        const createQuery = format(`INSERT INTO Users (username) VALUES ('${req.body.username}')`);
+        const createQuery = `INSERT INTO Users (username,email) VALUES \
+                             ('${req.body.username}','${req.body.email}')`;
         pool.connect()
             .then(client => {
                return  client.query(createQuery)
-                      .then(result => {
-                          client.release();
-                          res.status(200).send({message: 'User created'})
-                      })
+                             .then(result => {
+                                client.release();
+                                res.status(200).send({message: 'User created'})
+                        })
             })
             .catch(e => {
-                res.status(400).send(e)
+                res.status(400).send(e.stack)
             })
     },
 
     getAllUsers(req,res){
-        const getUsersQuery = `SELECT * FROM "Users"`;
+        const getUsersQuery = `SELECT * FROM "users"`;
         pool.connect()
             .then(client => {
                return  client.query(getUsersQuery)

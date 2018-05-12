@@ -2,7 +2,7 @@ CREATE EXTENSION  "uuid-ossp";
 CREATE EXTENSION citext;
 CREATE TABLE  users (
   user_Id uuid DEFAULT uuid_generate_v1mc(),
-  username varchar(50),
+  username text UNIQUE,
   email citext NOT NULL UNIQUE,
   password text NOT NULL,
   last_Succesful_Login timestamp,
