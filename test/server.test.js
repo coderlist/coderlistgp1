@@ -1,6 +1,6 @@
 const request = require('supertest');
-const app = require('../../server');
-const {pool} = require('./../db/database');
+const app = require('../server');
+const {pool} = require('./../server/db/database');
 
 
 
@@ -14,6 +14,10 @@ beforeEach((done) =>{
     
 })
 
+/**
+ * This assumes that only username and email have 
+ * NULL constraints
+ */
 describe('POST /users' , ()=>{
     test('should create a new user and return single row', (done) => {
           const username = 'testUserName';
