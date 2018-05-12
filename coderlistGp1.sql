@@ -1,5 +1,8 @@
 CREATE EXTENSION  "uuid-ossp";
 CREATE EXTENSION citext;
+
+
+
 CREATE TABLE  users (
   user_Id uuid DEFAULT uuid_generate_v1mc(),
   username text UNIQUE,
@@ -14,21 +17,29 @@ CREATE TABLE  users (
 );
 
 CREATE TABLE pages (
-  date_Published timestamp,
   page_Id serial,
-  url  text,
-  created_By uuid REFERENCES users(user_Id) ON DELETE CASCADE,
-  page_Created timestamp,
+  updated_At timestamp DEFAULT NOW(),
+  page_Title text,
+  url  text ,
+  created_By text REFERENCES users(username) ON DELETE CASCADE,
+  page_Created timestamp DEFAULT NOW(),
+  html_Body text,
   PRIMARY KEY (page_Id)
 );
 
 
-CREATE TABLE Content (
-  content_Description text,
-  html_Body text,
-  page_Id int REFERENCES pages(page_Id) ON DELETE CASCADE,
-  PRIMARY KEY (content_Description)
-);
 
 
+CREATE OR REPLACE FUNCTION trigger_set_timestamp()
+RETURNS TRIGGER AS $$
+BEGIN
+    NEW.updated_At = NOW();
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER  set_timestamp
+BEFORE UPDATE ON pages
+FOR EACH ROW
+EXECUTE PROCEDURE trigger_set_timestamp();
 
