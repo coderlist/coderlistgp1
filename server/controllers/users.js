@@ -3,14 +3,14 @@ const {pool} = require('./../db/database');
 
 module.exports =  {
     createUser (req,res){
-        const createQuery = `INSERT INTO Users (username,email) VALUES \
+        const createQuery = `INSERT INTO users (username,email) VALUES \
                              ('${req.body.username}','${req.body.email}')`;
         pool.connect()
             .then(client => {
                return  client.query(createQuery)
                              .then(result => {
                                 client.release();
-                                res.status(200).send({message: 'User created'})
+                                res.status(200).send({message: 'User created',response:result.rows})
                         })
             })
             .catch(e => {
