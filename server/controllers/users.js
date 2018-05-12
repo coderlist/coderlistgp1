@@ -1,6 +1,10 @@
 
 const {pool} = require('./../db/database');
 
+/**
+ * exports all users database CRUD functions
+ */
+
 module.exports =  {
     createUser (req,res){
         const createQuery = `INSERT INTO users (username,email) VALUES \

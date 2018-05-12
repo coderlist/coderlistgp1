@@ -30,6 +30,9 @@ const config = {
     }
 }
 
+/**
+ * checks for database environment
+ */
 const pool =   env ? new Pool(config.production): new Pool(config.development) ;
 
 
