@@ -1,7 +1,9 @@
 require('dotenv').config()
-var passport = require('passport');
-var Strategy = require('passport-local').Strategy;
-
+if(!process.env.NODE_ENV) {
+  process.env.NODE_ENV = "development";
+}
+const passport = require('passport');
+const Strategy = require('passport-local').Strategy;
 const express = require('express');
 const bodyParser = require('body-parser');
 const routes = require('./routes/index')
@@ -10,8 +12,6 @@ const validator = require('express-validator');
 // const flash = require('connect-flash');
 const session = require('express-session');
 const uuidv1 = require('uuid/v1');
-
-
 
 passport.use(new Strategy(
   function(username, password, cb) {
@@ -43,7 +43,6 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.use('/', routes);
-
 
 app.listen(process.env.PORT || 3000);
 
