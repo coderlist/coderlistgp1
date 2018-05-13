@@ -1,5 +1,5 @@
 const routes = require('express').Router();
-
+const validateLogin = require('../helperFunctions/login/validateLogin');
 // basic //
 
 routes.get('/', (req, res) => {
@@ -23,6 +23,11 @@ routes.get('/login', (req, res) => {
   res.status(200).render('pages/login.ejs');
   return;
 });
+
+routes.post('/login', validateLogin, function (req, res){
+  res.status(200).json({message: "success"})
+})
+
 
 routes.get('/users/manage-users', (req, res) => {
   res.status(200).render('pages/users/createEditUser.ejs');

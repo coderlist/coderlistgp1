@@ -16,8 +16,15 @@
   "homepage": "https://bitbucket.org/CoderList/coderlistgp1#readme",
   "dependencies": {
     "body-parser": "^1.18.2",
+    "connect-flash": "^0.1.1",
+    "dotenv": "^5.0.1",
     "ejs": "^2.6.1",
-    "express": "^4.16.3"
+    "express": "^4.16.3",
+    "express-session": "^1.15.6",
+    "express-validator": "^5.2.0",
+    "passport": "^0.4.0",
+    "passport-local": "^1.0.0",
+    "uuid": "^3.2.1"
   },
   "devDependencies": {
     "chai": "^4.1.2",
