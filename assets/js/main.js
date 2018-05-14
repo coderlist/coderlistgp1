@@ -3,7 +3,7 @@ window.onload = function () {
     const squareButtons = document.querySelectorAll(".square");
     // toggleSquares
     // toggles all the open squares when opening a new one
-    const toggleSquares = function () {
+    const toggleAllSquares = function () {
         const hide = "hide",
             display = "display",
             active = "active";
@@ -23,7 +23,7 @@ window.onload = function () {
         });
     };
     // toggleSquare
-    const showSquare = function (currentSquare) {
+    const showThisSquare = function (currentSquare) {
         const squareTarget = currentSquare.querySelectorAll(".active > div");
         const hide = "hide",
             display = "display";
@@ -37,7 +37,7 @@ window.onload = function () {
             }
         });
     };
-    const hideSquare = function (currentTarget, currentTargetChildren) {
+    const hideThisSquare = function (currentTarget, currentTargetChildren) {
         const active = "active",
             display = "display",
             hide = "hide";
@@ -63,11 +63,11 @@ window.onload = function () {
                 display = "display",
                 hide = "hide";
             if (currentTarget.classList.contains(active)) {
-                hideSquare(currentTarget, currentTargetChildren);
+                hideThisSquare(currentTarget, currentTargetChildren);
             } else {
-                toggleSquares(); // resets open squares
+                toggleAllSquares(); // resets open squares
                 currentTarget.classList.add(active);
-                showSquare(currentTarget);
+                showThisSquare(currentTarget);
             }
         }, false);
     });
