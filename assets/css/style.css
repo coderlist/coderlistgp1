@@ -231,6 +231,7 @@ header {
     /* 300px / 16px = 18.75rem */
     margin: 0 0.25rem 0.5rem 0.25rem;
     position: relative;
+    cursor: pointer;
 }
 
 .grid .square .image {
@@ -239,59 +240,67 @@ header {
     width: 100%;
 }
 
-.grid .square .content {
+.grid .square .square-title {
+    width: 100%;
+    padding: 1.2rem;
+    background-color: rgba(255, 255, 255, 0.5);
     position: absolute;
     left: 0;
     bottom: 0;
-    background-color: rgba(255, 255, 255, 0.5);
-    padding: 1.2rem;
+}
+.grid .square .square-title {
     width: 100%;
+    padding: 1.2rem;
+    background-color: rgba(255, 255, 255, 0.5);
+    position: absolute;
+    left: 0;
+    bottom: 0;
 }
 
-.grid .square .modal {
+.grid .active .square-modal {
     background-color: rgba(255, 255, 255, 0.5);
     position: absolute;
     height: 100%;
     width: 100%;
-    opacity: 0;
 }
 
-.grid .square .content .title {
+.grid .active .square-content {
+    position: absolute;
+    top: 35%;
+    padding: 1.2rem;
+    width: 100%;
+}
+
+.grid .square .square-title, .active .square-content .title {
     font-size: 1.2rem;
     font-weight: 700;
     text-transform: uppercase;
 }
 
-.grid .square .content .description {
+.grid .active .square-content .description {
     text-align: justify;
     margin: 0.5rem 0;
-    display: none;
 }
 
-.grid .square .content .url {
-    display: none;
+.grid .active .square-content .url {
     text-decoration: underline;
 }
 
-.grid .square:hover .content {
-    top: 35%;
-    background: none;
-}
-
-.grid .square:hover .modal {
-    background-color: rgba(255, 255, 255, 0.5);
-    height: 100%;
-    width: 100%;
-    opacity: 1;
-}
-
-.grid .square:hover .description {
+.grid .active .description {
     display: block;
 }
 
-.grid .square:hover .url {
+.grid .active .url {
     display: inline;
 }
+.display {
+    display: block;
+}
+.hide {
+    display: none;
+}
+
+
 
 /* Footer */
 
@@ -311,11 +320,12 @@ footer .container {
     margin: 0 1rem;
 }
 
-.developed-by > a {
+.developed-by>a {
     color: rgb(114, 190, 215);
 }
 
 /* Media queries */
+
 @media screen and (min-width: 500px) {
     .navbar .navbar-brand .navbar-brand-description {
         display: block;
