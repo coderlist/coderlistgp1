@@ -1,34 +1,36 @@
 const request = require('supertest');
 const app = require('../server');
-const {pool} = require('./../server/db/database');
+const {pool} = require('../server/db/database');
 
 
 
 beforeEach((done) =>{
-    pool.connect()
-    .then(client => {
-    return  client.query(`DELETE FROM users`)
-                  .then(() => done())
-                  client.release();
-    }).catch(e => done(e))
-    
-})
+     pool.connect()
+     .then(client => {
+     return  client.query(`DELETE FROM users`)
+                   .then(() => {
+                    client.release();
+                    done();
+                   })              
+     }).catch(e => done(e))
+ })
+ 
 
-/**
- * This assumes that only username and email have 
- * NULL constraints
- */
-describe('POST /users' , ()=>{
-    test('should create a new user and return single row', (done) => {
-          const username = 'testUserName';
-          const email = 'text@email.run';
+
+
+describe('test all /users POST request' , ()=>{
+  
+    it('should create a new user and return single row', (done) => {
+          const entry = {
+              email: 'me@me1.com',
+              password: 'pass',
+              first_Name : 'first',
+              last_Name : 'last'
+          }
 
           request(app)
              .post('/users')
-             .send({
-                 username,
-                 email
-             })
+             .send(entry)
              .expect(200)
              .expect(res => {
                  console.log(res.body)
@@ -45,7 +47,10 @@ describe('POST /users' , ()=>{
                             client.release();
                             done();
                         })
-                      }).catch(e => done(e))
+                      }).catch(e => {
+                         console.log(e.message,e.stack);
+                         done(e)
+                      })
                  
                  
              })

@@ -4,10 +4,10 @@
   "description": "App for creating and editing custom informational pages",
   "main": "app.js",
   "scripts": {
-    "test": "jest",
-    "watch": "nodemon --exec test",
+    "test":"jest",
+    "watch": "nodemon --exec jest",
     "dev": "export NODE_ENV=development || SET \"NODE_ENV=development\" && nodemon ./bin/www",
-    "prod": "export NODE_ENV=production || SET \"NODE_ENV=production\" && nodemon ./bin/www"
+    "prod": "export NODE_ENV=production || SET \"NODE_ENV=production\" && nodemon ./bin/www"  
   },
   "repository": {
     "type": "git",
