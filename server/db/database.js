@@ -55,7 +55,6 @@ const getEnvConfig = () => {
 
 const pool = getEnvConfig();
 
-
 /**
  * create database tables with the sql init script
  * if it does not exist.
