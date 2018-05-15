@@ -2,6 +2,7 @@ require('dotenv').config();
 const env = process.env.NODE_ENV;
 const fs = require('fs');
 const {Pool} = require('pg');
+const {queryHelper} = require('../../helperFunctions/queryHelper')
 
 
 const config = {
@@ -67,19 +68,9 @@ fs.readFile('init.sql', 'utf-8', (err, data) => {
         console.log('error reading sql file', err)
     }
 
-    pool.connect()
-        .then(client => {
-            client.query(data)
-                .then(res => {
-                    client.release()
-                    console.log('Database created or already exist')
-                })
-                .catch(e => {
-                    client.release()
-                    console.error(e.stack)
-                })
-
-        })
+    queryHelper(data).then((res)=>{
+        console.log('Database created or already exist');
+    }).catch(e => console.error(e))
 
 })
 
