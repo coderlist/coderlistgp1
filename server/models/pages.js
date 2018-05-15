@@ -1,28 +1,24 @@
 const {pool} = require('./../db/database');
+const {queryHelper} = require('../../helperFunctions/queryHelper')
 
 /**
  * exports all pages database query functions
- * createPage, updatePage
+ * using queryHelper function 
  */
 
 module.exports = {
-    createPage(req, res) {
-        const createQuery = `INSERT INTO pages \
-                            (created_By,page_Title) \
-                             VALUES ('${req.body.created_By}','${req.body.page_Title}')`;
-        pool.connect()
-            .then(client => {
-                return client.query(createQuery)
-                    .then(result => {
-                        client.release();
-                        res.status(200).send({
-                            message: 'Page created',
-                            response: result.rows
-                        })
-                    })
+    createPage(req, res){
+        console.log('creating')
+        const query = `INSERT INTO pages \
+                      (created_By,page_Title) \
+                     VALUES ('${req.body.created_by}',\
+                     '${req.body.page_title}')`;
+        
+        queryHelper(query).then((data)=>{
+            res.status(200).send({
+                message: 'Page Created',
+                response: data.rows
             })
-            .catch(e => {
-                res.status(400).send(e.stack)
-            })
+        }).catch(e => res.status(400).send(e))
     }
 }

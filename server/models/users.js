@@ -1,46 +1,35 @@
-const {
-    pool
-} = require('./../db/database');
+const {pool} = require('./../db/database');
+const {queryHelper} = require('../../helperFunctions/queryHelper')
 
 /**
- * exports all users database CRUD functions
+ * exports all pages database query functions
+ * using queryHelper function
  */
 
 module.exports = {
+    /** create a new user */
     createUser(req, res) {
+        console.log('making user')
+        const query = `INSERT INTO users (email,password,first_name, \
+                       last_name) VALUES ('${req.body.email}', \
+                       '${req.body.password}','${req.body.first_name}',\
+                       '${req.body.last_name}')`;
 
-        const createQuery = `INSERT INTO users (email,password,first_Name, \
-                         last_Name) VALUES ('${req.body.email}', \
-                         '${req.body.password}','${req.body.first_Name}',\
-                         '${req.body.last_Name}')`;
-        pool.connect()
-            .then(client => {
-                return client.query(createQuery)
-                    .then(result => {
-                        client.release();
-                        res.status(200).send({
-                            message: 'User created',
-                            response: result.rows
-                        })
-                    })
-            }).catch(e => {
-                res.status(400).send(e.stack)
+        queryHelper(query).then((data) => {
+            res.status(200).send({
+                message: 'User Created',
+                response: data.rows
             })
+        }).catch(e => res.status(400).send(e))
     },
-
+    
+    /** send a list of all users */
     getAllUsers(req, res) {
-        const getUsersQuery = `SELECT * FROM "users"`;
-        pool.connect()
-            .then(client => {
-                return client.query(getUsersQuery)
-                    .then(result => {
-                        client.release();
-                        res.status(200).send({
-                            response: result.rows
-                        })
-                    })
-            }).catch(e => {
-                res.status(400).send('query error', e.message, e.stack);
+        const query = `SELECT * FROM "users"`;
+        queryHelper(query).then((data) => {
+            res.status(200).send({
+                response: data.rows
             })
+        }).catch(e => res.status(400).send(e))
     }
 }

@@ -15,7 +15,7 @@ CREATE TABLE IF NOT EXISTS users (
 CREATE TABLE IF NOT EXISTS pages (
   page_id serial,
   created_by citext REFERENCES users(email) ON DELETE CASCADE, 
-  page_created_At timestamp DEFAULT NOW(),
+  page_created_at timestamp DEFAULT NOW(),
   updated_at timestamp DEFAULT NOW(),
   page_title text,
   url  text ,

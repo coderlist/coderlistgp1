@@ -1,9 +1,7 @@
 require('dotenv').config();
-const url = require('url');
 const env = process.env.NODE_ENV;
 const fs = require('fs');
 const {Pool} = require('pg');
-
 
 
 const config = {
