@@ -17,8 +17,8 @@ module.exports = function emailVerificationLink(userDetails){
         from: process.env.EMAIL_NODEMAILER_USERNAME, // sender address
         to: userDetails.email, 
         subject: 'Password change confirmation for Ginny Bradley Website', 
-        text: 'Confirmation that email password changed for the Ginny Bradley website',
-        html: `` 
+        text: 'You have requested a password reset. Please click the link and reset your password. This link will expire soon',
+        html: `<a href="${config.url}?email=${userDetails.email}&token=${userDetails.verificationToken}>Click to be taken to the verification page</a><p> or copy and paste this link or browser. ${config.url}?email=${userDetails.email}&token=${userDetails.verificationToken}` 
     };
 
     // send mail with defined transport object
