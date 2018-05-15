@@ -2,9 +2,14 @@ const routes = require('express').Router();
 
 // basic //
 
+menuItems = [
+  {href:"test me one", name:"item 1"},
+  {href:"test me two", name:"item 2"}
+]
+
 routes.get('/', (req, res) => {
-  res.status(200).render('pages/index.ejs');
-  return;
+  res.status(200).render('pages/index.ejs', {menuItems: menuItems});
+    return;
 });
 
 routes.get('/about', (req, res) => {
