@@ -4,7 +4,6 @@ const bodyParser = require('body-parser');
 const {routes} = require('./routes/index')
 const { createUser } = require('./server/controllers/users');
 const {pool} = require('./server/db/database');
-const session = require('express-session');
 const pgSession = require('connect-pg-simple')(session);
 
 
@@ -19,7 +18,7 @@ app.use(session({
         pool,
         tableName: 'session'
     }),
-    secret: process.env.FOO_COOKIE_SECRET,
+    secret: process.env.SESSION_COOKIE_SECRET,
     resave: false,
     cookie: { maxAge: 30 * 24 * 60 * 60 * 1000 }
 }))
