@@ -4,10 +4,10 @@
   "description": "App for creating and editing custom informational pages",
   "main": "app.js",
   "scripts": {
-    "test":"jest",
+    "test": "jest",
     "watch": "nodemon --exec jest",
     "dev": "export NODE_ENV=development || SET \"NODE_ENV=development\" && nodemon ./bin/www",
-    "prod": "export NODE_ENV=production || SET \"NODE_ENV=production\" && nodemon ./bin/www"  
+    "prod": "export NODE_ENV=production || SET \"NODE_ENV=production\" && nodemon ./bin/www"
   },
   "repository": {
     "type": "git",
@@ -17,8 +17,10 @@
   "license": "ISC",
   "homepage": "https://bitbucket.org/CoderList/coderlistgp1#readme",
   "dependencies": {
+    "connect-pg-simple": "^4.2.1",
     "dotenv": "^5.0.1",
     "express": "^4.16.3",
+    "express-session": "^1.15.6",
     "pg": "^7.4.3",
     "url": "^0.11.0"
   },

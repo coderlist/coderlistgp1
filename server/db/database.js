@@ -58,7 +58,7 @@ const pool = getEnvConfig();
 
 /**
  * create database tables with the sql init script
- * if it does not exist
+ * if it does not exist.
  */
 
 pool.on('error', (err, client) => {
@@ -77,7 +77,7 @@ fs.readFile('init.sql', 'utf-8', (err, data) => {
             client.query(data)
                 .then(res => {
                     client.release()
-                    console.log('Database created or alreasy exist')
+                    console.log('Database created or already exist')
                 })
                 .catch(e => {
                     client.release()

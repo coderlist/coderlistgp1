@@ -1,9 +1,8 @@
-const {
-    pool
-} = require('./../db/database');
+const {pool} = require('./../db/database');
 
 /**
- * exports all pages database CRUD functions
+ * exports all pages database query functions
+ * createPage, updatePage
  */
 
 module.exports = {
