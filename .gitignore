@@ -1,7 +1,3 @@
 node_modules/
 package-lock.json
 .env
-views/
-public/
-assets/
-index.html
