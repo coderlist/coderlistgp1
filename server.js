@@ -31,7 +31,7 @@ app.use(session({
     genid: function(req) {
     return uuidv1() // use UUIDs for session IDs
       },
-    secret: "big fat doggy",
+    secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: true,
     cookie: { secure: false }
