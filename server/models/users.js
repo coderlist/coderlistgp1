@@ -1,4 +1,3 @@
-const {pool} = require('./../db/database');
 const {queryHelper} = require('../../helperFunctions/queryHelper')
 
 /**
@@ -30,6 +29,6 @@ module.exports = {
             res.status(200).send({
                 response: data.rows
             })
-        }).catch(e => res.status(400).send(e))
+        }).catch(e => res.status(400).send(e.message))
     }
 }

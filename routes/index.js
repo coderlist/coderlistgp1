@@ -13,8 +13,6 @@ routes.get('/about', (req, res) => {
 });
 
 // users //
-
-
 routes.get('/admin', (req, res) => {
   res.status(200).render('pages/admin.ejs');
   return;

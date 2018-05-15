@@ -1,4 +1,3 @@
-const {pool} = require('./../db/database');
 const {queryHelper} = require('../../helperFunctions/queryHelper')
 
 /**
@@ -10,7 +9,7 @@ module.exports = {
     createPage(req, res){
         console.log('creating')
         const query = `INSERT INTO pages \
-                      (created_By,page_Title) \
+                      (created_by,page_title) \
                      VALUES ('${req.body.created_by}',\
                      '${req.body.page_title}')`;
         
@@ -19,6 +18,7 @@ module.exports = {
                 message: 'Page Created',
                 response: data.rows
             })
-        }).catch(e => res.status(400).send(e))
+        }).catch(e => res.status(400).send(e.stack))
     }
 }
+
