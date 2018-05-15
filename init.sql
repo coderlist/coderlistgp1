@@ -4,20 +4,20 @@ CREATE EXTENSION IF NOT EXISTS citext;
 CREATE TABLE IF NOT EXISTS users (
   email text NOT NULL UNIQUE,
   password text NOT NULL,
-  last_Succesful_Login timestamp,
-  last_Failed_Login timestamp,
-  failed_Login_Attempts int ,
-  first_Name text NOT NULL,
-  last_Name text NOT NULL,
+  last_succesful_login timestamp,
+  last_failed_login timestamp,
+  failed_login_attempts int ,
+  first_name text NOT NULL,
+  last_name text NOT NULL,
   PRIMARY KEY (email)
 );
 
 CREATE TABLE IF NOT EXISTS pages (
-  page_Id serial,
-  created_By citext REFERENCES users(email) ON DELETE CASCADE, 
-  page_Created_At timestamp DEFAULT NOW(),
-  updated_At timestamp DEFAULT NOW(),
-  page_Title text,
+  page_id serial,
+  created_by citext REFERENCES users(email) ON DELETE CASCADE, 
+  page_created_At timestamp DEFAULT NOW(),
+  updated_at timestamp DEFAULT NOW(),
+  page_title text,
   url  text ,
   content text,
   PRIMARY KEY (page_Id)
