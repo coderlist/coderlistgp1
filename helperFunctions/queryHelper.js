@@ -4,19 +4,21 @@ const {pool} = require('../server/db/database');
 
 
 const queryHelper = (query) => {
-    return new Promise((resolve, reject) => {
-        pool.connect()
-            .then(client => {
-                return client.query(query)
-                    .then(response => {
-                        resolve(response);
-                        client.release();
-                    })
-            })
-            .catch(e => {
-                reject(e);
-            })
-    })
+	return new Promise((resolve, reject) => {
+		pool.connect()
+			.then(client => {
+				return client.query(query)
+					.then(response => {
+						resolve(response);
+						client.release();
+					})
+			})
+			.catch(e => {
+				reject(e);
+			})
+	})
 }
 
-module.exports = {queryHelper};
+module.exports = {
+	queryHelper
+};

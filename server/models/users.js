@@ -21,7 +21,7 @@ module.exports = {
             })
         }).catch(e => res.status(400).send(e))
     },
-    
+
     /** send a list of all users */
     getAllUsers(req, res) {
         const query = `SELECT * FROM "users"`;
