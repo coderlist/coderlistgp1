@@ -1,24 +1,35 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <% include ../partials/head.ejs %>
 </head>
 
 <body>
-  <header>
-    <% include ../partials/header.ejs %>
-  </header>
-  <h2>Welcome to the example login page</h2>
-    <form method="post">       
-      <h2>Please login</h2>
-      <input type="email" class="form-control" name="username" placeholder="Email Address" required="" autofocus="" />
-      <input type="password" class="form-control" name="password" placeholder="Password" required=""/>      
-      <label class="checkbox">
-      <button class="btn btn-lg btn-primary btn-block" type="submit">Login</button>   
-    </form>
-  </div>
-  <footer>
-    <% include ../partials/footer.ejs %>
-  </footer>
+  <form class="login-form" action="/login" method="post">
+    <fieldset>
+      <legend class="title">Log In</legend>
+      <div class="error">
+        <div class="error-msg">
+          You have entered an invalid username or password. Please, try again.
+        </div>
+        <div class="close-msg">
+          x
+        </div>
+      </div>
+      <div class="login-box">
+        <input class="input" id="email" type="email" minlength="3" maxlength="64" size="32" required>
+        <label for="email">Enter your email </label>
+      </div>
+      <div class="login-box">
+        <input class="input" id="password" type="password" minlength="8" maxlength="15" size="15" required>
+        <label for="password"> Enter your password </label>
+      </div>
+    </fieldset>
+    <button class="login-btn" value="Login">Login</button>
+    <a class="forgot-password" href="">Forgot Password?</a>
+  </form>
+  <script src="./js/login.js"></script>
 </body>
+
 </html>
