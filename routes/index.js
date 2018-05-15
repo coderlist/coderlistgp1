@@ -1,7 +1,7 @@
 const routes = require('express').Router();
 const validateLogin = require('../helperFunctions/login/validateLogin');
 const sendVerificationLink = require('../helperFunctions/verification/sendVerificationLink');
-// basic //
+// site //
 
 routes.get('/', (req, res) => {
   res.status(200).render('pages/index.ejs');
@@ -15,7 +15,7 @@ routes.get('/about', (req, res) => {
 
 // users //
 
-routes.get('/admin', (req, res) => {
+routes.get('/admin', (req, res) => { //accessible by authed admin
   res.status(200).render('pages/admin.ejs');
   return;
 });
@@ -25,47 +25,47 @@ routes.get('/login', (req, res) => {
   return;
 });
 
-routes.post('/login', validateLogin, function (req, res){
+routes.post('/login', validateLogin, function (req, res){ //// if validatelogin fails. Failure is sent from within this middleware. If this succeeds then this passes to next function.
   res.status(200).json({message: "success"})
   return;
 })
 
 
-routes.get('/users/manage-users', (req, res) => {
-  res.status(200).render('pages/users/createEditUser.ejs');
+routes.get('/users/create-user', (req, res) => { //accessible by authed admin
+  res.status(200).render('pages/users/createUser.ejs');
   return;
 });
 
-routes.get('/users/delete-user', (req, res) => {
-  res.status(200).render('pages/users/createEditUser.ejs', {user:req.body.userToDelete});
-  // confirm page for deleting user. only accessible by authenticated admin.
-});
-
-routes.get('/users/email-verification', (req, res) => {
+routes.post('/users/email-verification', (req, res) => {
   console.log('req.query :', req.query);
-  sendVerificationLink(req.query);
+  //pass token and email to db for confirmation of verification auth and then enter password. Destroy session then redirect to login.
   res.status(200).json({message: "email sent"});
   return;
 });
 
+routes.get('/users/edit-user', (req, res) => { //accessible by authed admin
+  res.status(200).render('pages/users/editUser.ejs', {user:req.body.userToDelete});
+  // confirm page for deleting user. only accessible by authenticated admin.
+});
+
 routes.post('/users/delete-user', (req, res) => {
-  // delete user.  only accessible by authenticated admin via delete user route. something in the post body perhaps. Discuss with colleagues if there is a better way to perform this confimration
+  // delete user.  only accessible by authenticated admin via delete user route. something in the post body perhaps. Discuss with colleagues if there is a better way to perform this confirmation
   return;
 });
 
-routes.get('/users/forgot-password', (req, res) => {
+routes.get('/users/forgot-password', (req, res) => { 
   res.status(200).render('pages/users/forgotPassword.ejs');
   return;
 });
 
 // pages //
 
-routes.get('/content/manage-page', (req, res) => {
+routes.get('/content/manage-page', (req, res) => { //accessible by authed admin
   res.status(200).render('pages/content/createEditPage.ejs');
   return;
 });
 
-routes.get('/content/manage-all-pages', (req, res) => {
+routes.get('/content/manage-all-pages', (req, res) => { //accessible by authed admin
   res.status(200).render('pages/content/manageAllPages.ejs');
   return;
 });

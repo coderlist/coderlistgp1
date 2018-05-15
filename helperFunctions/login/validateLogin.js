@@ -7,7 +7,7 @@ function validateLogin (req, res, next) {
   }
   else {
     // req.flash('error', 'Invalid Username or Password');
-    res.status(201).json({message: "Invalid Username Or Password"});
+    res.status(201).json({message: "Invalid Username or Password"});
   }
 }
 
