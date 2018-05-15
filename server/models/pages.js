@@ -1,4 +1,4 @@
-const {queryHelper} = require('../../helperFunctions/queryHelper')
+const {queryHelper} = require('../../helperFunctions/queryHelper');
 
 /**
  * exports all pages database query functions

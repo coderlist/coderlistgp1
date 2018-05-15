@@ -1,12 +1,8 @@
 require('dotenv').config();
 const env = process.env.NODE_ENV;
 const fs = require('fs');
-const {
-    Pool
-} = require('pg');
-const {
-    queryHelper
-} = require('../../helperFunctions/queryHelper')
+const {Pool} = require('pg');
+const {queryHelper} = require('../../helperFunctions/queryHelper')
 
 
 const config = {
