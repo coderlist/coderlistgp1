@@ -1,15 +1,19 @@
 window.onload = function () {
-    // Grid
+    // Grid - Get all Grid Squares in the DOM
     const squareButtons = document.querySelectorAll(".square");
     // toggleSquares
-    // toggles all the open squares when opening a new one
+    // Resets all the active squares
+    // Before being able to show the current one
     const toggleAllSquares = function () {
+        // Variables
         const hide = "hide",
             display = "display",
             active = "active";
+        // Checks for any active Square
+        // Resets this Square
         squareButtons.forEach(function (square) {
             const squareTarget = square.querySelectorAll(".active > div");
-            // Reset active square
+            // Reset each active square children elements
             squareTarget.forEach(function (content) {
                 if (content.classList.contains(display)) {
                     content.classList.remove(display);
@@ -22,27 +26,38 @@ window.onload = function () {
             });
         });
     };
-    // toggleSquare
+    // Shows selected / current square
     const showThisSquare = function (currentSquare) {
+        // Get Square direct child elements
         const squareTarget = currentSquare.querySelectorAll(".active > div");
         const hide = "hide",
             display = "display";
+        // For each child element
+        // Show the hidden ones
+        // Hide the displayed ones
         squareTarget.forEach(function (content) {
+            // If content is hidden then display it
             if (content.classList.contains(hide)) {
                 content.classList.remove(hide);
                 content.classList.add(display);
             } else {
+            // Otherwise, the content is displayed, hide it
                 content.classList.remove(display);
                 content.classList.add(hide);
             }
         });
     };
+    // Hides selected / current square
     const hideThisSquare = function (currentTarget, currentTargetChildren) {
         const active = "active",
             display = "display",
             hide = "hide";
         const currentTargetTitle = currentTarget.querySelector(".square-title");
+        // For each child element
+        // Hide the ones being shown
+        // Show the hidden ones
         currentTargetChildren.forEach(function (content) {
+        // If content is displayed, hide it
             if (content.classList.contains(display)) {
                 content.classList.remove(display);
                 content.classList.add(hide);
@@ -50,6 +65,7 @@ window.onload = function () {
             currentTargetTitle.classList.remove(hide);
             currentTargetTitle.classList.add(display);
         });
+        // Removes active class from this Square
         currentTarget.classList.remove(active);
     };
     // Event Listeners
@@ -62,12 +78,15 @@ window.onload = function () {
             const active = "active",
                 display = "display",
                 hide = "hide";
+            // If a square is active
+            // Hide the elements of this / current / selected square
             if (currentTarget.classList.contains(active)) {
                 hideThisSquare(currentTarget, currentTargetChildren);
             } else {
-                toggleAllSquares(); // resets open squares
-                currentTarget.classList.add(active);
-                showThisSquare(currentTarget);
+            // Otherwise, toggleAllSquares children from display to hidden
+                toggleAllSquares(); // Resets open squares
+                currentTarget.classList.add(active); // Current square is active
+                showThisSquare(currentTarget); // Display current square
             }
         }, false);
     });
