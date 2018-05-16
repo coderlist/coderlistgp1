@@ -4,22 +4,27 @@
   "description": "App for creating and editing custom informational pages",
   "main": "index.js",
   "scripts": {
-    "test": "mocha --reporter list",
-    "start": "nodemon server.js"
+    "test-mocha": "mocha --reporter list",
+    "start": "export NODE_ENV=development || SET \"NODE_ENV=development\" && nodemon server.js"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://kristiansigston@bitbucket.org/CoderList/coderlistgp1.git"
+    "url": "git+https://mobell32@bitbucket.org/CoderList/coderlistgp1.git"
   },
-  "author": "Coderlist.io",
+  "author": "jide olaniyan",
   "license": "ISC",
   "homepage": "https://bitbucket.org/CoderList/coderlistgp1#readme",
   "dependencies": {
-    "body-parser": "^1.18.2",
+    "body-parser": "^1.18.3",
+    "connect-pg-simple": "^4.2.1",
+    "dotenv": "^5.0.1",
     "ejs": "^2.6.1",
-    "express": "^4.16.3"
+    "express": "^4.16.3",
+    "morgan": "^1.9.0",
+    "pg": "^7.4.3"
   },
   "devDependencies": {
+    "jest": "^22.4.3",
     "chai": "^4.1.2",
     "nodemon": "^1.17.4",
     "supertest": "^3.0.0"
