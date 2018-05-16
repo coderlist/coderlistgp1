@@ -1,4 +1,8 @@
-const {queryHelper} = require('../../helperFunctions/queryHelper');
+const {
+  queryHelper
+} = require('../../helperFunctions/queryHelper');
+const bcrypt = require('bcrypt');
+const saltRounds = 10;
 
 /**
  * exports all pages database query functions
@@ -6,29 +10,28 @@ const {queryHelper} = require('../../helperFunctions/queryHelper');
  */
 
 module.exports = {
-  /** create a new user */
-  createUser(req, res) {
-    console.log('making user')
-    const query = `INSERT INTO users (email,password,first_name, \
-                       last_name) VALUES ('${req.body.email}', \
-                       '${req.body.password}','${req.body.first_name}',\
-                       '${req.body.last_name}')`;
+  /** creates a new user */
+  createUser(email, password, first_name, last_name) {
 
-    queryHelper(query).then((data) => {
-      res.status(200).send({
-        message: 'User Created',
-        response: data.rows
+    return bcrypt.hash(password, saltRounds)
+      .then(hash => {
+        const query = `INSERT INTO users (email,password, \
+                      first_name,last_name) VALUES ('${email}', \
+                      '${hash}','${first_name}','${last_name}')`
+        return queryHelper(query)
+      }).catch(e => {
+        throw e
       })
-    }).catch(e => res.status(400).send(e))
+
   },
 
   /** send a list of all users */
   getAllUsers(req, res) {
-    const query = `SELECT * FROM "users"`;
-    queryHelper(query).then((data) => {
-      res.status(200).send({
-        response: data.rows
+    const query = `SELECT * FROM "user"`;
+    return queryHelper(query)
+      .then((data) => data)
+      .catch(e => {
+        throw e
       })
-    }).catch(e => res.status(400).send(e.message))
   }
 }
