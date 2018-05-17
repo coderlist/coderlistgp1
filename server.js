@@ -2,6 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const routes = require('./routes/index')
 const logger = require('morgan')
+const flash = require('connect-flash');
 const app = express();
 app.set('view engine', 'ejs');
 
