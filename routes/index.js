@@ -6,13 +6,15 @@ const logUserOut = require('../helperFunctions/logUserOut');
 const checkEmailAndToken = require('../helperFunctions/checkEmailAndToken');
 // basic //
 
-menuItems = [
+
+const menuItems = [ 
   {href:"test me one", name:"item 1"},
   {href:"test me two", name:"item 2"}
 ]
 
 routes.get('/', (req, res) => {
-  res.status(200).render('pages/index.ejs', {menuItems: menuItems});
+
+  res.status(200).render('pages/index.ejs', {menuItems: menuItems}); //ejs example
     return;
 });
 
@@ -29,6 +31,16 @@ routes.get('/admin', (req, res) => {
 
 routes.get('/login', (req, res) => {
   res.status(200).render('pages/login.ejs');
+  return;
+});
+
+routes.get('/test-flash-start', (req, res) => {
+  req.flash('info','This is a flash message');
+  res.status(200).redirect('/test-flash-finish');
+  return;
+});
+routes.get('/test-flash-finish', (req, res) => {
+  res.status(200).render('pages/test-flash-finish', { messages: req.flash('info') });
   return;
 });
 

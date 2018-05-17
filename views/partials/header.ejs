@@ -69,7 +69,7 @@
            <li class="dropdown-item"><a href="">Small Groups</a></li>
            <li class="dropdown-item"><a href="">Nursery Level</a></li>
            <li class="dropdown-item"><a href="">Weekly Classes</a></li>
-           <%if (menuItems) { %>
+           <%if (typeof menuItems !== "undefined") { %>
              <% menuItems.forEach(function(menuItem, index) { %>
               <li class="dropdown-item">
                 <a href="<%=menuItem.href %>"><%=menuItem.name%></a>
