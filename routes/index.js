@@ -22,7 +22,6 @@ routes.get('/about', (req, res) => {
 });
 
 // users //
-
 routes.get('/admin', (req, res) => {
   res.status(200).render('pages/admin.ejs');
   return;
@@ -62,6 +61,7 @@ routes.get('/users/forgot-password', (req, res) => {
 });
 
 // pages //
+
 
 routes.get('/content/manage-page', (req, res) => {
   res.status(200).render('pages/content/createEditPage.ejs');
