@@ -1,6 +1,6 @@
 const routes = require('express').Router();
 const validateLogin = require('../helperFunctions/login/validateLogin');
-const sendVerificationLink = require('../helperFunctions/verification/sendVerificationLink');
+const Mail = require('../helperFunctions/verification/MailSender');
 // site //
 
 routes.get('/', (req, res) => {
@@ -32,13 +32,17 @@ routes.post('/login', validateLogin, function (req, res){ //// if validatelogin 
 
 
 routes.get('/users/create-user', (req, res) => { //accessible by authed admin
+  let mail = new mail();
+  
   res.status(200).render('pages/users/createUser.ejs');
   return;
 });
 
 routes.post('/users/email-verification', (req, res) => {
   console.log('req.query :', req.query);
-  //pass token and email to db for confirmation of verification auth and then enter password. Destroy session then redirect to login.
+  //send verification email after sanitising and normalising email with express-session
+  mail = new Mail();
+  mail.sendVerificationLink(req.body);
   res.status(200).json({message: "email sent"});
   return;
 });
