@@ -29,6 +29,11 @@
     <button class="login-btn" value="Login">Login</button>
     <a class="forgot-password" href="">Forgot Password?</a>
   </form>
+  <% if (typeof messages !== "undefined") { %>
+    <p style="color: green; background-color: blue; height: 10em; width: 30em">
+      <strong><%=messages %></strong>
+    </p>
+  <% } %>
   <script src="./js/login.js"></script>
 </body>
 
