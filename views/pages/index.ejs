@@ -117,11 +117,7 @@
                 </div>
             </div>
         </div>
-        <% if (typeof messages !== "undefined") { %>
-          <p style="color: green; background-color: blue; height: 10em; width: 30em">
-            <strong><%=messages %></strong>
-          </p>
-        <% } %>
+        <% include ../partials/flashMessage.ejs %>
     </main>
     <% include ../partials/footer.ejs %>
 </body>
