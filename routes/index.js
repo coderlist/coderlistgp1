@@ -1,6 +1,7 @@
 const routes = require('express').Router();
+const passport = require('../server/auth/local');
 
-// basic //
+
 
 routes.get('/', (req, res) => {
   res.status(200).render('pages/index.ejs');

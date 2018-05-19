@@ -54,3 +54,14 @@ BEGIN
 END
 $$;
 
+
+
+-- Create Or Replace Function funcName( data json ) Returns json As $$
+--   Declare
+--     -- declare variables
+--     -- for example: id int := Cast( data->>'id' as int ); 
+-- Begin
+--      --do something useful
+--   Return '{}';
+-- End;
+-- $$ language plpgsql;

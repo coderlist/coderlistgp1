@@ -1,7 +1,8 @@
 require('dotenv').config();
 const env = process.env.NODE_ENV;
 const fs = require('fs');
-const { Pool} = require('pg');
+const {Pool} = require('pg');
+const {find,queryHelper} = require('../../helperFunctions/queryHelper');
 
 
 const config = {
@@ -81,6 +82,7 @@ fs.readFile('init.sql', 'utf-8', (err, data) => {
     })
 
 })
+
 
 module.exports = {
   pool
