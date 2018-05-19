@@ -74,14 +74,14 @@ routes.get('/users/enter-password', verificationValidation , (req, res) => {
 });
 
 routes.get('/users/manage-users', (req, res) => {
-  res.status(200).render('pages/users/createEditUser');
+  res.status(200).render('pages/users/create-edit-user');
   return;
 });
 
 routes.get('/forgot-password', (req, res) => {
   // **create a page with two fields to enter email addresses
   // **ensure that emails both match before being able to post
-  res.status(200).render('pages/users/forgotPassword');
+  res.status(200).render('pages/users/forgot-password');
   return;
 
 });
