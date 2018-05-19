@@ -1,4 +1,4 @@
-var request = require('supertest'),
+let request = require('supertest'),
    app     = require('../server',)
    expect = require('chai');
 
@@ -7,7 +7,7 @@ describe('Page requests' , function (){
         request(app)
         .get('/')
         .expect(200)
-        .expect(/home/, done)
+        .expect(/Free text edit space here/, done)
     })
     it('should load about page', function (done){
         request(app)
@@ -27,11 +27,17 @@ describe('Page requests' , function (){
         .expect(200)
         .expect(/login/, done)
     })
-    it('should load manage-users page', function (done){
+    it('should load create-user page', function (done){
         request(app)
-        .get('/users/manage-users')
+        .get('/users/create-user')
         .expect(200)
-        .expect(/create and edit/, done)
+        .expect(/create user/, done)
+    })
+    it('should load edit-user page', function (done){
+        request(app)
+        .get('/users/edit-user')
+        .expect(200)
+        .expect(/edit user/, done)
     })
     it('should load forgot-password page', function (done){
         request(app)
