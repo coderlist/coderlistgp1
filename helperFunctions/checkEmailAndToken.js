@@ -7,7 +7,7 @@ function checkEmailAndToken(req, res, next) {
      next();
   
     // if they aren't then redirect them to the home page with error
-    // res.flash('info', 'There is a problem with the link. Maybe expired. Please contact your admninistrator');
+    // res.flash('info', 'There is a problem with the link. Maybe expired. Please contact your administrator');
     res.redirect('/');
     return;
   }
