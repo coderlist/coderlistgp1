@@ -5,6 +5,9 @@ const logUserOut = require('../helperFunctions/logUserOut');
 // const validateVerification = require('../helperFunctions/validateVerification');
 const checkEmailAndToken = require('../helperFunctions/checkEmailAndToken');
 // basic //
+const validateLogin = require('../helperFunctions/login/validateLogin');
+const Mail = require('../helperFunctions/verification/MailSender');
+// site //
 
 
 const menuItems = [ 
@@ -78,11 +81,40 @@ routes.get('/users/manage-users', (req, res) => {
   return;
 });
 
+routes.get('/users/create-user', (req, res) => { //accessible by authed admin
+  let mail = new mail();
+  
+  res.status(200).render('pages/users/create-user.ejs');
+  return;
+});
+
+routes.post('/users/email-verification', (req, res) => {
+  console.log('req.query :', req.query);
+  //send verification email after sanitising and normalising email with express-session
+  mail = new Mail();
+  mail.sendVerificationLink(req.body);
+  res.status(200).json({message: "email sent"});
+  return;
+});
+
+routes.get('/users/edit-user', (req, res) => { //accessible by authed admin
+  res.status(200).render('pages/users/edit-user.ejs', {user:req.body.userToDelete});
+  // confirm page for deleting user. only accessible by authenticated admin.
+});
+
+routes.post('/users/delete-user', (req, res) => {
+  // delete user.  only accessible by authenticated admin via delete user route. something in the post body perhaps. Discuss with colleagues if there is a better way to perform this confirmation
+  return;
+});
+
 routes.get('/forgot-password', (req, res) => {
   // **create a page with two fields to enter email addresses
   // **ensure that emails both match before being able to post
   res.status(200).render('pages/users/forgot-password');
+routes.post('/login', validateLogin, function (req, res){ //// if validatelogin fails. Failure is sent from within this middleware. If this succeeds then this passes to next function.
+  res.status(200).json({message: "success"})
   return;
+})
 
 });
 routes.post('/forgot-password', (req, res) => {
@@ -99,12 +131,12 @@ routes.post('/forgot-password', (req, res) => {
 
 
 routes.get('/content/manage-page', (req, res) => {
-  res.status(200).render('pages/content/createEditPage');
+  res.status(200).render('pages/content/create-edit-page');
   return;
 });
 
-routes.get('/content/manage-all-pages', (req, res) => {
-  res.status(200).render('pages/content/manageAllPages');
+routes.get('/content/manage-all-pages', (req, res) => { //accessible by authed admin
+  res.status(200).render('pages/content/manage-all-pages.ejs');
   return;
 });
 
