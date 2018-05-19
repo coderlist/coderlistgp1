@@ -1,8 +1,8 @@
 const routes = require('express').Router();
 const { query, check, validationResult } = require('express-validator/check');
+const { matchedData, sanitize } = require('express-validator/filter');
 const isLoggedIn = require('../helperFunctions/isLoggedIn');
 const logUserOut = require('../helperFunctions/logUserOut');
-// const validateVerification = require('../helperFunctions/validateVerification');
 const checkEmailAndToken = require('../helperFunctions/checkEmailAndToken');
 // basic //
 const validateLogin = require('../helperFunctions/login/validateLogin');
@@ -10,12 +10,14 @@ const Mail = require('../helperFunctions/verification/MailSender');
 // site //
 
 
-const menuItems = [ 
-  {href:"test me one", name:"item 1"},
-  {href:"test me two", name:"item 2"}
-]
+
 
 routes.get('/', (req, res) => {
+  //get menu items from db maybe set this as some middleware
+  const menuItems = [ 
+    {href:"test me one", name:"item 1"},
+    {href:"test me two", name:"item 2"}
+  ]
   res.status(200).render('pages/index', {menuItems: menuItems, messages: req.flash('info')}); //ejs example
   return;
 });
@@ -57,27 +59,58 @@ routes.get('/users/logout', (req, res) => { //testing isLogged in function. To b
   return;
 });
 
-const verificationValidation = [
-  query('email', "Invalid Email.").isEmail().normalizeEmail(),
-  query('token', "invalid token.").isLength({min: 35, max: 35})  // maybe remove all validations to one separate file and import
+const verificationCheck = [
+  query('email', 'invalid email').isEmail().normalizeEmail(),
+  query('token', 'invalid token').isUUID()
 ]
 
-routes.get('/users/enter-password', verificationValidation , (req, res) => {
+const validationCheck = [
+  check('email').isEmail().normalizeEmail(),
+  // password must be at least 5 chars long
+  check('password').isLength({ min: 8 })
+];
+
+const passwordCheck = [
+  check('password').isLength({min: 8}),
+  // password must be at least 5 chars long
+  check('confirm_password').equals(check('password'))
+];
+
+
+
+routes.get('/users/verify-email', verificationCheck , (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      req.flash("info","Invalid token or email", req.query.email, req.query.token)
+      req.flash("info","Invalid token or email", req.query.email, req.query.token, errors.array())
       res.redirect('/')
       return;
     }
     //**check date(now) minus token date is less than 1 week. If greater than a week send flash message saying "token has expired please contact administrator" and redirect to login or setup an administrator email which sends email of person trying to sign up but failing due to token expiry.
-    //**if token date not expired then add the hashed password to the database with the correct user and token. Set user to validated and set creation date if required
-    req.flash("info","Successfully verified email. Please now login")
-  res.status(200).redirect('/login');
+    //**if token date not expired then redirect to enter password
+    req.session.token = req.query.token;
+    req.session.email = req.query.email; 
+    req.flash("info","Successfully verified email. Please enter a password")
+  res.status(200).redirect('/enter-new-password');
   return;
 });
 
-routes.get('/users/manage-users', (req, res) => {
-  res.status(200).render('pages/users/create-edit-user');
+
+routes.get('/enter-new-password',  (req, res) => {
+  res.status(200).render('pages/users/enter-new-password', {email: req.session.email, token: req.session.token});
+  return;
+});
+
+routes.post('/enter-new-password', passwordCheck, (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    req.flash("info","Invalid password or passwords do not match", errors.array());
+    res.redirect('/enter-new-password')
+    return;
+  } 
+  // use req.session.email and token to ensure correct user
+  // accept the new passwords if they are the same and look up the user name. Set user to validated and modified date to now() and store hashed password.
+  // destroy session and force user to login again
+  res.status(200).redirect('/login');
   return;
 });
 
