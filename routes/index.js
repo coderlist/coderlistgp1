@@ -4,6 +4,7 @@ const { matchedData, sanitize } = require('express-validator/filter');
 const isLoggedIn = require('../helperFunctions/isLoggedIn');
 const logUserOut = require('../helperFunctions/logUserOut');
 const checkEmailAndToken = require('../helperFunctions/checkEmailAndToken');
+const users = require('../server/models/users');
 // basic //
 const validateLogin = require('../helperFunctions/login/validateLogin');
 const Mail = require('../helperFunctions/verification/MailSender');
@@ -103,7 +104,7 @@ routes.get('/enter-new-password',  (req, res) => {
 routes.post('/enter-new-password', passwordCheck, (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    req.flash("info","Invalid password or passwords do not match", errors.array());
+    req.flash("info","Invalid password or passwords do not match", process.env.NODE_ENV === 'development' ? errors.array() : ""); //error.array() for development only
     res.redirect('/enter-new-password')
     return;
   } 
@@ -114,16 +115,15 @@ routes.post('/enter-new-password', passwordCheck, (req, res) => {
   return;
 });
 
-routes.get('/users/create-user', (req, res) => { //accessible by authed admin
-  let mail = new mail();
-  
+routes.post('/users/create-user', users.createUser, (req, res) => { //accessible by authed admin
+  // send user to db
+  res.flash('info', 'user created and email sent');  
   res.status(200).render('pages/users/create-user.ejs');
   return;
 });
 
-routes.post('/users/email-verification', (req, res) => {
+routes.post('/users/email-verification', verificationCheck, (req, res) => {
   console.log('req.query :', req.query);
-  //send verification email after sanitising and normalising email with express-session
   mail = new Mail();
   mail.sendVerificationLink(req.body);
   res.status(200).json({message: "email sent"});
