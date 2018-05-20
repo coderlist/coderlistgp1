@@ -16,10 +16,9 @@ passport.use(new Strategy(options,
   (email,password,done) => {
     findByUsername('users',email)
     .then(user => {
-     if(false) {return done(null,false)}
+     if(!user) {return done(null,false)}
      if(!verifyPassword(password, user)){return done(null,false)}
      return done(null,user)
-     console.log(user)
     })
   }
   ));
