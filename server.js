@@ -1,6 +1,10 @@
 require('dotenv').config();
-const passport = require('passport');
 const flash = require('connect-flash');
+if(!process.env.NODE_ENV) {
+  process.env.NODE_ENV = "development";
+}
+const passport = require('passport');
+const Strategy = require('passport-local').Strategy;
 const express = require('express');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser')
@@ -9,7 +13,13 @@ const logger = require('morgan');
 const {pool} = require('./server/db/database');
 const session = require('express-session');
 const pgSession = require('connect-pg-simple')(session);
+const validator = require('express-validator');
+const uuidv1 = require('uuid/v1');
+
 const app = express();
+
+
+
 app.set('view engine', 'ejs');
 
 
@@ -38,7 +48,6 @@ app.use(flash());
 
 
 app.use('/', routes);
-
 
 app.listen(process.env.PORT || 3000);
 

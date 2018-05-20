@@ -1,4 +1,4 @@
-const {insertOne, queryHelper} = require('../../helperFunctions/queryHelper');
+const {insertOne, queryHelper} = require('../../helperFunctions/query/queryHelper');
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
 
@@ -18,13 +18,4 @@ module.exports = {
     })
 },
 
-
-  getAllUsers( ) {
-    const query = `SELECT * FROM "user"`;
-    return queryHelper(query)
-      .then((data) => data)
-      .catch(e => {
-        throw e
-      })
-  }
 }

@@ -1,5 +1,5 @@
 const passport = require('passport');
-const {findOne} = require('../../helperFunctions/queryHelper');
+const {findOne} = require('../helperFunctions/query/queryHelper');
 
 module.exports = (user) => {
   passport.serializeUser((user, done) => {
