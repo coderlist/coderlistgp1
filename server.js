@@ -1,10 +1,8 @@
-require('dotenv').config();
 const flash = require('connect-flash');
 if(!process.env.NODE_ENV) {
   process.env.NODE_ENV = "development";
 }
 const passport = require('passport');
-const Strategy = require('passport-local').Strategy;
 const express = require('express');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser')
@@ -23,12 +21,12 @@ const app = express();
 app.set('view engine', 'ejs');
 
 
-
-
 app.use(cookieParser());
 app.use(logger('dev'));
 app.use(express.static('assets', {}));
 app.use(bodyParser.urlencoded({ extended :true }));
+
+
 
 
 app.use(session({

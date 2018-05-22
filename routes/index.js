@@ -1,6 +1,6 @@
 const routes = require('express').Router();
 const passport = require('../auth/local');
-const {findByUsername} = require('../helperFunctions/query/queryHelper')
+
 
 
 const validateLogin = require('../helperFunctions/login/validateLogin');
@@ -19,11 +19,6 @@ routes.get('/about', (req, res) => {
 });
 
 // users //
-routes.post('/getin', passport.authenticate('local',{
-  successRedirect : '/', 
-  failureRedirect : '/login', 
-  failureFlash : true 
-}));
 
 routes.get('/admin', (req, res) => {
   res.status(200).render('pages/admin.ejs');

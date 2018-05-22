@@ -1,5 +1,12 @@
 const passport = require('passport');
-const {findOne} = require('../helperFunctions/query/queryHelper');
+const {findByUsername} = require('../helperFunctions/query/queryHelper');
+
+
+/**
+ * @param  {} user
+ * user serializer and deserializer
+ * to and from session
+ */
 
 module.exports = (user) => {
   passport.serializeUser((user, done) => {
@@ -7,8 +14,7 @@ module.exports = (user) => {
   });
 
   passport.deserializeUser((email, done) => {
-    const condition = `email = '${email}'`
-    findOne('users',condition)
+    findByUsername('users',email)
     .then(user => done(null, user))
     .catch(err => done(err, null))
   });

@@ -1,29 +1,32 @@
 const passport = require('passport');
-const Strategy = require('passport-local').Strategy;
+const LocalStrategy = require('passport-local').Strategy;
 const {verifyPassword} = require('./verify');
 const {findByUsername} = require('../helperFunctions/query/queryHelper')
 const options = {
   usernameField: 'email',
   passwordField: 'password'
 };
-let condition;
 const init = require('./passport');
 
-init();
 
 
-passport.use(new Strategy(options,
+/**
+ * Passport local Strategy configuration 
+ * with custom option <usernameField>
+ */
+
+
+passport.use(new LocalStrategy(options,
   (email,password,done) => {
-    findByUsername('users',email)
+    findByUsername('users',email) 
     .then(user => {
      if(!user) {return done(null,false)}
-     if(!verifyPassword(password, user)){return done(null,false)}
+     if(verifyPassword(password,user.password)===false){ return done(null,false)}
      return done(null,user)
-    })
+    }).catch(e => {return done(null,false)})
   }
   ));
 
-
-
+  init();
 
 module.exports = passport;

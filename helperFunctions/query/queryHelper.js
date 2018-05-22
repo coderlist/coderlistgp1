@@ -3,7 +3,18 @@ const squel = require('squel').useFlavour('postgres')
 
 
 
-
+/**
+ * @param  {} query
+ * @param  {} values
+ * @param  {} table
+ * @param  {} condition
+ * 
+ * functions to perform various DB operations
+ * 
+ * please test function for appropriate response 
+ * before use
+ * 
+ */
 const queryHelper = (query, values) => {
   return new Promise((resolve, reject) => {
     return pool.query(query, values)
@@ -14,8 +25,8 @@ const queryHelper = (query, values) => {
 
 
 
-const queryUnique = (text, values) => {
-  return queryHelper(text, values)
+const queryUnique = (query, values) => {
+  return queryHelper(query, values)
     .then(rows => {
       if (rows.length === 0) {
         return Promise.reject(new Error('not found'));
@@ -27,7 +38,7 @@ const queryUnique = (text, values) => {
 
 
 const findByUsername = (table, email) => {
-  return queryUnique(`select exists(select 1 from users where email=('${email}'))`, ).then(res => {
+  return queryUnique(`select exists(select 1 from users where email=('${email}'))`).then(res => {
     if (!res.exists) return false
     return queryUnique(`select * from users where email = '${email}'`)
       .then(user => user)
@@ -44,6 +55,7 @@ const insertOne = (table, values) => {
   return queryUnique(query.text, query.values)
 }
 
+
 const insertMany = (table, values) => {
   query = squel.insert()
     .into(table)
@@ -58,6 +70,7 @@ const insertMany = (table, values) => {
     )
   }
 }
+
 
 const update = (table, condition, values) => {
   const query = squel.update()
@@ -78,7 +91,7 @@ const updateOne = (table, condition, values) => {
     })
 }
 
-//refactor findby to recieve config
+
 const findBy = (table, condition) => {
   const query = squel.select()
     .from(table)

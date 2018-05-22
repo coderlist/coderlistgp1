@@ -34,6 +34,8 @@ const config = {
   },
 }
 
+
+
 /** get env to set Pool configuration */
 
 const getEnvConfig = () => {
@@ -48,6 +50,8 @@ const getEnvConfig = () => {
   }
 }
 
+
+
 const pool = getEnvConfig();
 
 /**
@@ -57,13 +61,13 @@ const pool = getEnvConfig();
 
 pool.on('error', (err, client) => {
   console.error('Unexpected error on idle client', err)
-  process.exit(-1)
+  process.exit(0)
 })
 
 
 fs.readFile('init.sql', 'utf-8', (err, data) => {
   if (err) {
-    console.log('error reading sql file', err)
+    console.error('error reading sql file', err)
   }
 
   pool.connect()
@@ -73,10 +77,9 @@ fs.readFile('init.sql', 'utf-8', (err, data) => {
           client.release()
           console.log('Database created or already exist')
         })
-        .catch(e => {
-          client.release()
-          console.log(err.stack)
-        })
+    }).catch(e => {
+      console.error('ERROR: ', e.stack)
+      process.exit(0);
     })
 
 })
