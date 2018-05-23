@@ -1,58 +1,11 @@
-require('dotenv').config();
-const env = process.env.NODE_ENV;
+const {getEnvConfig}  = require('./config')
 const fs = require('fs');
-const {Pool} = require('pg');
-
-const config = {
-  "test": {
-    user: process.env.PG_USER,
-    database: process.env.PG_TEST_DBASE,
-    password: process.env.PG_KEY,
-    host: process.env.PG_HOST,
-    port: process.env.PG_PORT,
-    max: 10,
-    idleTimeoutMillis: 30000,
-  },
-  "development": {
-    user: process.env.PG_USER,
-    database: process.env.PG_DBASE,
-    password: process.env.PG_KEY,
-    host: process.env.PG_HOST,
-    port: process.env.PG_PORT,
-    max: 10,
-    idleTimeoutMillis: 30000,
-  },
-
-  "production": {
-    user: process.env.PG_USER,
-    database: process.env.PG_DBASE,
-    password: process.env.PG_KEY,
-    host: process.env.PG_HOST,
-    port: process.env.PG_PORT,
-    max: 10,
-    idleTimeoutMillis: 30000,
-  },
-}
-
-
-
-/** get env to set Pool configuration */
-
-const getEnvConfig = () => {
-  switch (env) {
-    case 'test':
-      return new Pool(config.test);
-    case 'development':
-      return new Pool(config.development);
-    case 'production':
-      return new Pool(config.production);
-
-  }
-}
 
 
 
 const pool = getEnvConfig();
+
+
 
 /**
  * create database tables with the sql init script
@@ -79,7 +32,7 @@ fs.readFile('init.sql', 'utf-8', (err, data) => {
         })
     }).catch(e => {
       console.error('ERROR: ', e.stack)
-      process.exit(0);
+      process.exit();
     })
 
 })

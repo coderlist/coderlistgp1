@@ -24,7 +24,7 @@ CREATE TABLE IF NOT EXISTS pages (
 );
 
 
-CREATE TABLE IF NOT EXISTS session (
+CREATE TABLE IF NOT EXISTS user_sessions (
   sid varchar NOT NULL COLLATE "default",
 	sess json NOT NULL,
 	expire timestamp(6) NOT NULL,
