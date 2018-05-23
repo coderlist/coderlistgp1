@@ -43,7 +43,7 @@ const getEnvConfig = () => {
       process.exit();
     }
 
-  if(!config[env].COOKIE_SECRET){
+  if(!process.env.COOKIE_SECRET){
     console.error(new Error
       ('check that session secret is set').message);
   }

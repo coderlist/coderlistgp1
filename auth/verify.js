@@ -1,5 +1,4 @@
 const bcrypt = require('bcrypt');
-const {findByUsername} = require('../helperFunctions/query/queryHelper')
 const saltRounds = 10;
 
 
