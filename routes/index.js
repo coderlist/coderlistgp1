@@ -55,7 +55,7 @@ routes.get('/login', (req, res) => {
 //   return;
 // });
 
-routes.get('/users/logout', (req, res) => { //testing isLogged in function. To be implemented on all admin routes. Might be worth extracting as it's mini express app route on /users/.
+routes.get('/users/logout', isLoggedIn, (req, res) => { //testing isLogged in function. To be implemented on all admin routes. Might be worth extracting as it's mini express app route on /users/.
   res.status(200).redirect('/');
   return;
 });
@@ -76,6 +76,8 @@ const passwordCheck = [
   // password must be at least 5 chars long
   check('confirm_password').equals(check('password'))
 ];
+
+
 
 
 
@@ -115,10 +117,23 @@ routes.post('/enter-new-password', passwordCheck, (req, res) => {
   return;
 });
 
-routes.post('/users/create-user', users.createUser, (req, res) => { //accessible by authed admin
-  // send user to db
-  res.flash('info', 'user created and email sent');  
-  res.status(200).render('pages/users/create-user.ejs');
+
+const createUserCheck = [
+  check('email').isEmail().normalizeEmail(),
+  check('firstName').trim().matches(/[\w\d]?/i),
+  check('lastName').trim().matches(/[\w\d]?/i)
+]
+
+routes.post('/users/create-user', createUserCheck, (req, res) => { //accessible by authed admin
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    const userTemp = {email : req.body.email || "", firstName : req.body.firstName || "", lastName: req.body.lastName || ""}
+    req.flash("info","Invalid user data", process.env.NODE_ENV === 'development' ? errors.array() : ""); //error.array() for development only
+    res.status(200).render('pages/users/create-user.ejs', {messages : req.flash('info'), userTemp});
+    return;
+  }
+  req.flash('info', 'user created and email sent');  
+  res.redirect('/users/admin'); 
   return;
 });
 
@@ -129,6 +144,11 @@ routes.post('/users/email-verification', verificationCheck, (req, res) => {
   res.status(200).json({message: "email sent"});
   return;
 });
+
+
+routes.get('/users/admin', (req,res) => {
+  res.status(200).render('pages/users/admin.ejs', {messages : req.flash("info")});
+})
 
 routes.get('/users/edit-user', (req, res) => { //accessible by authed admin
   res.status(200).render('pages/users/edit-user.ejs', {user:req.body.userToDelete});

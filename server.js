@@ -9,8 +9,10 @@ const bodyParser = require('body-parser');
 const routes = require('./routes/index')
 const logger = require('morgan')
 const app = express();
+const {pool} = require('./server/db/database');
 const flash = require('connect-flash');
 const session = require('express-session');
+const pgSession = require('connect-pg-simple')(session);
 const uuidv1 = require('uuid/v1');
 
 passport.use(new Strategy(
@@ -29,15 +31,15 @@ app.use(logger('dev'));
 app.use(express.static('assets', {}));
 app.use(bodyParser.urlencoded({ extended :true }));
 app.use(session({
-    genid: function(req) {
-    return uuidv1() // use UUIDs for session IDs
-      },
-    secret: process.env.SESSION_SECRET,
-    resave: false,
-    saveUninitialized: true,
-    cookie: { secure: false }
-  }
-));
+  store: new pgSession({
+    pool,                
+    tableName : 'session'   
+  }),
+  secret: process.env.COOKIE_SECRET,
+  resave: false,
+  saveUninitialized: true,
+  cookie: { maxAge: 30 * 24 * 60 * 60 * 1000 } 
+}));
 
 app.use(passport.initialize());
 app.use(passport.session());

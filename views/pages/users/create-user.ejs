@@ -10,6 +10,25 @@
       <% include ../../partials/header.ejs %>
   </header>
   <h2>Welcome to the create user page</h2>
+  <div class="container">  
+    <form id="contact" action="" method="post">
+      <h4>Create User Form</h4>
+      <fieldset>
+        <input placeholder="First name" type="text" tabindex="1" value="<%=userTemp.firstName || ''%>" required autofocus>
+      </fieldset>
+      <fieldset>
+        <input placeholder="First name" type="text" tabindex="2" value="<%=userTemp.lastName || ''%>" required>
+      </fieldset>
+      <fieldset>
+        <input placeholder="Your Email Address" type="email" tabindex="3" value="<%=userTemp.email || ''%>" required>
+      </fieldset>
+      <fieldset>
+        <button name="submit" type="submit" id="contact-submit" data-submit="...Sending">Submit</button>
+      </fieldset>
+    </form>
+   
+    <% include ../../partials/flash-message.ejs %>
+  </div>
   <footer>
       <% include ../../partials/footer.ejs %>
   </footer>
