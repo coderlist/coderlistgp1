@@ -9,7 +9,7 @@ const {Pool} = require('pg');
 const config = {
   "test": {
     user: process.env.PG_USER,
-    database: `GINNY_BRADLEY_<<DB>>`,
+    database: `GINNY_BRADLEY_TEST`,
     password: process.env.PG_KEY,
     host: process.env.PG_HOST||"localhost",
     port: process.env.PG_PORT||5432,
@@ -18,7 +18,7 @@ const config = {
   },
   "development": {
     user: process.env.PG_USER,
-    database: `GINNY_BRADLEY_<<DB>>`,
+    database: `GINNY_BRADLEY_DEVELOPMENT`,
     password: process.env.PG_KEY,
     host: process.env.PG_HOST||"localhost",
     port: process.env.PG_PORT||5432,
@@ -28,7 +28,7 @@ const config = {
 
   "production": {
     user: process.env.PG_USER,
-    database: `GINNY_BRADLEY_<<DB>>`,
+    database: `GINNY_BRADLEY_PRODUCTION`,
     password: process.env.PG_KEY,
     host: process.env.PG_HOST,
     port: process.env.PG_PORT||5432,
