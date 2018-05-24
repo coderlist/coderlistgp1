@@ -2,11 +2,14 @@ require('dotenv').config();
 const env = process.env.NODE_ENV;
 const {Pool} = require('pg');
 
-/** get env to set Pool configuration */
+/**
+ * dotenv gets necessary variable names
+ * define a db name for local environment
+ */
 const config = {
   "test": {
     user: process.env.PG_USER,
-    database: "GINNY_BRADLEY_TEST",
+    database: `GINNY_BRADLEY_<<DB>>`,
     password: process.env.PG_KEY,
     host: process.env.PG_HOST||"localhost",
     port: process.env.PG_PORT||5432,
@@ -15,7 +18,7 @@ const config = {
   },
   "development": {
     user: process.env.PG_USER,
-    database: "GINNY_BRADLEY_TEST",
+    database: `GINNY_BRADLEY_<<DB>>`,
     password: process.env.PG_KEY,
     host: process.env.PG_HOST||"localhost",
     port: process.env.PG_PORT||5432,
@@ -25,7 +28,7 @@ const config = {
 
   "production": {
     user: process.env.PG_USER,
-    database: "GINNY_BRADLEY_TEST",
+    database: `GINNY_BRADLEY_<<DB>>`,
     password: process.env.PG_KEY,
     host: process.env.PG_HOST,
     port: process.env.PG_PORT||5432,
