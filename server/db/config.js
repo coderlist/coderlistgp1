@@ -4,7 +4,7 @@ const {Pool} = require('pg');
 
 /**
  * dotenv gets necessary variable names
- * define a db name for local environment
+ * 
  */
 const config = {
   "test": {
