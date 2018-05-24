@@ -1,4 +1,8 @@
 const routes = require('express').Router();
+const passport = require('../auth/local');
+
+
+
 const validateLogin = require('../helperFunctions/login/validateLogin');
 const Mail = require('../helperFunctions/verification/MailSender');
 // site //
@@ -8,12 +12,14 @@ routes.get('/', (req, res) => {
   return;
 });
 
+
 routes.get('/about', (req, res) => {
     res.status(200).render('pages/about.ejs');
     return;
 });
 
 // users //
+
 routes.get('/admin', (req, res) => {
   res.status(200).render('pages/admin.ejs');
   return;
