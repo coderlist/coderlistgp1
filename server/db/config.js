@@ -6,29 +6,29 @@ const {Pool} = require('pg');
 const config = {
   "test": {
     user: process.env.PG_USER,
-    database: process.env.PG_TEST_DBASE,
+    database: "GINNY_BRADLEY_TEST",
     password: process.env.PG_KEY,
-    host: process.env.PG_HOST,
-    port: process.env.PG_PORT,
+    host: process.env.PG_HOST||"localhost",
+    port: process.env.PG_PORT||5432,
     max: 10,
     idleTimeoutMillis: 30000,
   },
   "development": {
     user: process.env.PG_USER,
-    database: process.env.PG_DBASE,
+    database: "GINNY_BRADLEY_TEST",
     password: process.env.PG_KEY,
-    host: process.env.PG_HOST,
-    port: process.env.PG_PORT,
+    host: process.env.PG_HOST||"localhost",
+    port: process.env.PG_PORT||5432,
     max: 10,
     idleTimeoutMillis: 30000,
   },
 
   "production": {
     user: process.env.PG_USER,
-    database: process.env.PG_DBASE,
+    database: "GINNY_BRADLEY_TEST",
     password: process.env.PG_KEY,
     host: process.env.PG_HOST,
-    port: process.env.PG_PORT,
+    port: process.env.PG_PORT||5432,
     max: 10,
     idleTimeoutMillis: 30000,
   },
@@ -36,10 +36,9 @@ const config = {
 
 
 const getEnvConfig = () => {
-  if (!config[env].user
-    || !config[env].database){
+  if (!config[env].user){
       console.error(new Error
-        ('check that postgres user or name is set').message);
+        ('check that postgres user set').message);
       process.exit();
     }
 
