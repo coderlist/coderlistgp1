@@ -1,49 +1,43 @@
-require('dotenv').config()
+require('dotenv').config();
 if(!process.env.NODE_ENV) {
   process.env.NODE_ENV = "development";
 }
 const passport = require('passport');
-const Strategy = require('passport-local').Strategy;
 const express = require('express');
 const bodyParser = require('body-parser');
-const routes = require('./routes/index')
-const logger = require('morgan')
-const app = express();
+const routes = require('./routes/index');
+const logger = require('morgan');
 const {pool} = require('./server/db/database');
 const flash = require('connect-flash');
 const session = require('express-session');
 const pgSession = require('connect-pg-simple')(session);
+const cookieParser = require('cookie-parser');
+const validator = require('express-validator');
 const uuidv1 = require('uuid/v1');
 
-passport.use(new Strategy(
-  function(username, password, cb) {
-    db.users.findByUsername(username, function(err, user) {
-      if (err) { return cb(err); }
-      if (!user) { return cb(null, false); }
-      if (user.password != password) { return cb(null, false); }
-      return cb(null, user);
-    });
-  }));
+const app = express();
 
 app.set('view engine', 'ejs');
 
+
+app.use(cookieParser());
 app.use(logger('dev'));
 app.use(express.static('assets', {}));
 app.use(bodyParser.urlencoded({ extended :true }));
 app.use(session({
   store: new pgSession({
     pool,                
-    tableName : 'session'   
+    tableName : 'user_sessions'   
   }),
   secret: process.env.COOKIE_SECRET,
   resave: false,
   saveUninitialized: true,
   cookie: { maxAge: 30 * 24 * 60 * 60 * 1000 } 
 }));
-
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(flash());
+
 
 app.use('/', routes);
 

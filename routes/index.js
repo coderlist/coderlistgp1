@@ -6,6 +6,10 @@ const logUserOut = require('../helperFunctions/logUserOut');
 const checkEmailAndToken = require('../helperFunctions/checkEmailAndToken');
 const users = require('../server/models/users');
 // basic //
+const passport = require('../auth/local');
+
+
+
 const validateLogin = require('../helperFunctions/login/validateLogin');
 const Mail = require('../helperFunctions/verification/MailSender');
 // site //
@@ -23,12 +27,14 @@ routes.get('/', (req, res) => {
   return;
 });
 
+
 routes.get('/about', (req, res) => {
   res.status(200).render('pages/about');
   return;
 });
 
 // users //
+
 routes.get('/admin', (req, res) => {
   res.status(200).render('pages/admin');
   return;

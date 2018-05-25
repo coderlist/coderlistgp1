@@ -24,7 +24,7 @@ CREATE TABLE IF NOT EXISTS pages (
 );
 
 
-CREATE TABLE IF NOT EXISTS session (
+CREATE TABLE IF NOT EXISTS user_sessions (
   sid varchar NOT NULL COLLATE "default",
 	sess json NOT NULL,
 	expire timestamp(6) NOT NULL,
@@ -54,3 +54,14 @@ BEGIN
 END
 $$;
 
+
+
+-- Create Or Replace Function funcName( data json ) Returns json As $$
+--   Declare
+--     -- declare variables
+--     -- for example: id int := Cast( data->>'id' as int ); 
+-- Begin
+--      --do something useful
+--   Return '{}';
+-- End;
+-- $$ language plpgsql;

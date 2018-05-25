@@ -3,21 +3,19 @@ const {queryHelper} = require('../../helperFunctions/queryHelper');
 /**
  * exports all pages database query functions
  * using queryHelper function 
+ * 
+ * functions take argument of type Object
  */
 
 module.exports = {
-  createPage(req, res) {
-    console.log('creating')
+  createPage(page) {
     const query = `INSERT INTO pages \
                       (created_by,page_title) \
-                     VALUES ('${req.body.created_by}',\
-                     '${req.body.page_title}')`;
+                     VALUES ('${page.created_by}',\
+                     '${page.page_title}')`;
 
-    queryHelper(query).then((data) => {
-      res.status(200).send({
-        message: 'Page Created',
-        response: data.rows
-      })
-    }).catch(e => res.status(400).send(e.stack))
+    queryHelper(query)
+    .then((data) => data)
+    .catch(e => {throw e})
   }
 }
