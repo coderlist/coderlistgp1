@@ -17,6 +17,7 @@ const uuidv1 = require('uuid/v1');
 
 const app = express();
 
+const SECRET_COOKIE = "coderlist";
 
 
 app.set('view engine', 'ejs');
@@ -35,7 +36,7 @@ app.use(session({
     pool,                
     tableName : 'user_sessions'   
   }),
-  secret: process.env.COOKIE_SECRET,
+  secret: process.env.COOKIE_SECRET || SECRET_COOKIE,
   resave: false,
   saveUninitialized: true,
   cookie: { maxAge: 30 * 24 * 60 * 60 * 1000 } 
