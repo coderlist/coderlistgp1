@@ -31,7 +31,7 @@ routes.get('/login', (req, res) => {
 });
 
 routes.get('/password', (req, res) => { 
-  res.status(200).render('pages/password.ejs');
+  res.status(200).render('pages/resetpassword.ejs');
   return;
 });
 // Test routes for Email and Password Templates to check Design
@@ -48,6 +48,11 @@ routes.get('/forgot-password', (req, res) => {
 // New Password Page
 routes.get('/new-password', (req, res) => {
   res.status(200).render('pages/newpassword.ejs');
+  return;
+});
+// New Sign Up Page 
+routes.get('/signup', (req, res) => {
+  res.status(200).render('pages/signup.ejs');
   return;
 });
 
