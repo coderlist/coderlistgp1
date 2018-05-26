@@ -2,7 +2,7 @@
 function logUserOut(req, res, next) {
   
   // uncomment the below line when passport is installed and configured. ****8
-  // req.logout() 
+  req.logout() 
   return next();
 }
 

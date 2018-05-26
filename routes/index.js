@@ -7,12 +7,9 @@ const checkEmailAndToken = require('../helperFunctions/checkEmailAndToken');
 const users = require('../server/models/users');
 // basic //
 const passport = require('../auth/local');
-
-
-
-const validateLogin = require('../helperFunctions/login/validateLogin');
 const Mail = require('../helperFunctions/verification/MailSender');
 // site //
+const createUser = require('../server/models/users').createUser;
 
 
 
@@ -126,9 +123,11 @@ routes.post('/enter-new-password', passwordCheck, (req, res) => {
 
 const createUserCheck = [
   check('email').isEmail().normalizeEmail(),
-  check('firstName').trim().matches(/[\w\d]?/i),
-  check('lastName').trim().matches(/[\w\d]?/i)
+  check('firstName').trim().isAlphanumeric(),
+  check('lastName').trim().isAlphanumeric()
 ]
+
+
 
 routes.post('/users/create-user', createUserCheck, (req, res) => { //accessible by authed admin
   const errors = validationResult(req);
@@ -138,6 +137,16 @@ routes.post('/users/create-user', createUserCheck, (req, res) => { //accessible 
     res.status(200).render('pages/users/create-user.ejs', {messages : req.flash('info'), userTemp});
     return;
   }
+  const user = {
+    email : req.body.email,
+    password: req.body.password, //this is for testing. Passwords will be entered at token verification.
+    last_failed_login: "",
+    last_failed_login: "",
+    first_name : req.body.firstName,
+    last_name : req.body.lastName,
+    failed_login_attempts : 0
+  }
+  createUser(user)
   req.flash('info', 'user created and email sent');  
   res.redirect('/users/admin'); 
   return;
@@ -170,13 +179,18 @@ routes.get('/forgot-password', (req, res) => {
   // **create a page with two fields to enter email addresses
   // **ensure that emails both match before being able to post
   res.status(200).render('pages/users/forgot-password');
-routes.post('/login', validateLogin, function (req, res){ //// if validatelogin fails. Failure is sent from within this middleware. If this succeeds then this passes to next function.
+});  
+
+routes.post('/login', passport.authenticate('local'), function (req, res){ //// if validatelogin fails. Failure is sent from within this middleware. If this succeeds then this passes to next function.
   res.status(200).json({message: "success"})
   return;
 })
 
-});
-routes.post('/forgot-password', (req, res) => {
+const validateForgotPassword = [
+  check('email').isEmail().normalizeEmail(),
+]
+
+routes.post('/forgot-password', validateForgotPassword, (req, res) => {
   // **validate and normalise email addresses
   // **enter email on this page and send to database and regardless of whether user exists or not send email stating "an email has been sent to your account with further instructions" 
   // **if the user email exists in db then send an email to the users account. Generate a passwordReset token and time created and then insert into the db and send to email for further verification in the same manner as initial sign-up. (except password reset tokens only last an hour)

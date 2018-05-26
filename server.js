@@ -2,7 +2,7 @@ require('dotenv').config();
 if(!process.env.NODE_ENV) {
   process.env.NODE_ENV = "development";
 }
-const passport = require('passport');
+const passport = require('./auth/local');
 const express = require('express');
 const bodyParser = require('body-parser');
 const routes = require('./routes/index');
@@ -34,6 +34,7 @@ app.use(session({
   saveUninitialized: true,
   cookie: { maxAge: 30 * 24 * 60 * 60 * 1000 } 
 }));
+
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(flash());
