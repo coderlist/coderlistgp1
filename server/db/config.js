@@ -2,9 +2,7 @@ require('dotenv').config();
 const env = process.env.NODE_ENV;
 const {Pool} = require('pg');
 
-PG_USER = "renkinjutsushi";
-PG_KEY = "mrparker";
-COOKIE_SECRET = "SECRET";
+
 /**
  * dotenv gets necessary variable names
  * 
@@ -12,7 +10,7 @@ COOKIE_SECRET = "SECRET";
 const config = {
   "test": {
     user: process.env.PG_USER,
-    database: `ginny_bradley_test`,
+    database: `GINNY_BRADLEY_TEST`,
     password: process.env.PG_KEY,
     host: process.env.PG_HOST||"localhost",
     port: process.env.PG_PORT||5432,
@@ -20,9 +18,9 @@ const config = {
     idleTimeoutMillis: 30000,
   },
   "development": {
-    user: process.env.PG_USER || PG_USER,
-    database: `ginny_bradley_development`,
-    password: process.env.PG_KEY || PG_KEY,
+    user: process.env.PG_USER
+    database: `GINNY_BRADLEY_DEVELOPMENT`,
+    password: process.env.PG_KEY,
     host: process.env.PG_HOST||"localhost",
     port: process.env.PG_PORT||5432,
     max: 10,
@@ -31,7 +29,7 @@ const config = {
 
   "production": {
     user: process.env.PG_USER,
-    database: `ginny_bradley_production`,
+    database: `GINNY_BRADLEY_PRODUCTION`,
     password: process.env.PG_KEY,
     host: process.env.PG_HOST,
     port: process.env.PG_PORT||5432,

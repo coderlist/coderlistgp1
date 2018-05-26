@@ -30,15 +30,35 @@ routes.get('/login', (req, res) => {
   return;
 });
 
-routes.post('/login', validateLogin, function (req, res){ //// if validatelogin fails. Failure is sent from within this middleware. If this succeeds then this passes to next function.
-  res.status(200).json({message: "success"})
+routes.get('/password', (req, res) => { 
+  res.status(200).render('pages/password.ejs');
   return;
-})
+});
+// Test routes for Email and Password Templates to check Design
+// Can delete this after all the templates are done
+// Change Password Template missing -> done at the end of this week
+routes.get('/sign-up', (req, res) => { 
+  res.status(200).render('pages/email/sign-up.ejs');
+  return;
+});
+routes.get('/forgot-password', (req, res) => { 
+  res.status(200).render('pages/email/forgot-password.ejs');
+  return;
+});
+// New Password Page
+routes.get('/new-password', (req, res) => {
+  res.status(200).render('pages/newpassword.ejs');
+  return;
+});
+
+routes.post('/login', validateLogin, function (req, res){ //// if validatelogin fails. Failure is sent from within this middleware. If this succeeds then this passes to next function.
+  res.status(200).json({message: "success"});
+  return;
+});
 
 
 routes.get('/users/create-user', (req, res) => { //accessible by authed admin
   let mail = new mail();
-  
   res.status(200).render('pages/users/createUser.ejs');
   return;
 });
@@ -62,10 +82,12 @@ routes.post('/users/delete-user', (req, res) => {
   return;
 });
 
-routes.get('/users/forgot-password', (req, res) => { 
-  res.status(200).render('pages/users/forgotPassword.ejs');
+routes.get('/users/change-password', (req, res) => { 
+  res.status(200).render('pages/users/changePassword.ejs');
   return;
 });
+
+
 
 // pages //
 
