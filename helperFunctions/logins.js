@@ -1,9 +1,9 @@
 // route middleware to make sure a user is logged in
-class logins {
+class Logins {
   constructor () {
   }
 
-  isloggedIn(req, res, next) {
+  isLoggedIn(req, res, next) {
     // if user is authenticated in the session, carry on
     //  Uncomment the below if statement when Passportjs is installed *************
     if (req.isAuthenticated()) {
@@ -23,3 +23,5 @@ class logins {
     return next();
   }
 }
+
+module.exports = Logins;
