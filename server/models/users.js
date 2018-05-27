@@ -7,7 +7,7 @@ module.exports = {
   
   createUser(user){
   console.log('first check')
-  console.log(user.password)
+  process.env.NODE_ENV === "production" ? console.log("") : console.log(user.password) // remove in production
   return bcrypt.hash(user.password, saltRounds)
     .then(hash => {
            user = {

@@ -1,27 +1,21 @@
 require('dotenv').config();
-const flash = require('connect-flash');
 if(!process.env.NODE_ENV) {
   process.env.NODE_ENV = "development";
 }
-const passport = require('passport');
+const passport = require('./auth/local');
 const express = require('express');
 const bodyParser = require('body-parser');
-const cookieParser = require('cookie-parser')
 const routes = require('./routes/index');
 const logger = require('morgan');
 const {pool} = require('./server/db/database');
+const flash = require('connect-flash');
 const session = require('express-session');
 const pgSession = require('connect-pg-simple')(session);
+const cookieParser = require('cookie-parser');
 const validator = require('express-validator');
 const uuidv1 = require('uuid/v1');
 
 const app = express();
-
-/**
- * For Development uses only:
- * const COOKIE_SECRET = "coderlist";
- */
-
 
 app.set('view engine', 'ejs');
 
@@ -30,10 +24,6 @@ app.use(cookieParser());
 app.use(logger('dev'));
 app.use(express.static('assets', {}));
 app.use(bodyParser.urlencoded({ extended :true }));
-
-
-
-
 app.use(session({
   store: new pgSession({
     pool,                
