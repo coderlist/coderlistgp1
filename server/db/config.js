@@ -9,10 +9,6 @@ const {Pool} = require('pg');
  * PG_DATABASE = Your database name. // lowercase only
  */
 
-PG_USER = "renkinjutsushi";
-PG_KEY = "mrparker";
-PG_DATABASE = "ginny_bradley_development";
-
 /**
  * dotenv gets necessary variable names
  * 
