@@ -22,6 +22,8 @@ const app = express();
  * const COOKIE_SECRET = "coderlist";
  */
 
+const SECRET = "coderlist";
+
 
 app.set('view engine', 'ejs');
 
