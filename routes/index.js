@@ -1,8 +1,7 @@
 const routes = require('express').Router();
 const { query, check, validationResult } = require('express-validator/check');
 const { matchedData, sanitize } = require('express-validator/filter');
-const isLoggedIn = require('../helperFunctions/isLoggedIn');
-const logUserOut = require('../helperFunctions/logUserOut');
+const logins = require('../helperFunctions/logins');
 const checkEmailAndToken = require('../helperFunctions/checkEmailAndToken');
 const users = require('../server/models/users');
 // basic //
@@ -58,7 +57,7 @@ routes.get('/login', (req, res) => {
 //   return;
 // });
 
-routes.get('/users/logout', isLoggedIn, (req, res) => { //testing isLogged in function. To be implemented on all admin routes. Might be worth extracting as it's mini express app route on /users/.
+routes.get('/users/logout', logins.isLoggedIn, logins.logUserOut, (req, res) => { //testing isLogged in function. To be implemented on all admin routes. Might be worth extracting as it's own mini express app route on /users/.
   res.status(200).redirect('/');
   return;
 });
@@ -147,7 +146,7 @@ routes.post('/users/create-user', createUserCheck, (req, res) => { //accessible 
     failed_login_attempts : 0
   }
   createUser(user)
-  req.flash('info', 'user created and email sent');  
+  req.flash('info', 'user created and email sent');  // email not currently being sent
   res.redirect('/users/admin'); 
   return;
 });
@@ -161,7 +160,7 @@ routes.post('/users/email-verification', verificationCheck, (req, res) => {
 });
 
 
-routes.get('/users/admin', (req,res) => {
+routes.get('/users/admin', logins.isLoggedIn, (req,res) => {
   res.status(200).render('pages/users/admin.ejs', {messages : req.flash("info")});
 })
 
