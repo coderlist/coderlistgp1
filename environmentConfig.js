@@ -8,6 +8,6 @@ const environmentConfig =  {
   production : {
     url: "nope"
   }
-}
+};
 
 module.exports =  environmentConfig[process.env.NODE_ENV]

@@ -1,5 +1,5 @@
 // Close error message if it is open
-const buttonToCloseWarningMessage = document.querySelector(".close-msg");
+const buttonToCloseWarningMessage = document.querySelector(".close-msg") || document.querySelector(".close-msg-pw");
 // Close warning message
 const closeWarningMessage = function () {
     const warningMessage = document.querySelector(".error");
