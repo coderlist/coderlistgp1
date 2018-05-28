@@ -13,31 +13,31 @@ const pool = getEnvConfig();
  */
 
 pool.on('error', (err, client) => {
-  console.error('Unexpected error on idle client', err)
-  process.exit(0)
-})
+  console.error('Unexpected error on idle client', err);
+  process.exit(0);
+});
 
 
 fs.readFile('init.sql', 'utf-8', (err, data) => {
   if (err) {
-    console.error('error reading sql file', err)
+    console.error('error reading sql file', err);
   }
 
   pool.connect()
     .then(client => {
       return client.query(data)
         .then(res => {
-          client.release()
-          console.log('Database created or already exist')
-        })
+          client.release();
+          console.log('Database created or already exist');
+        });
     }).catch(e => {
       console.error('ERROR: ', e.stack)
       process.exit();
-    })
+    });
 
-})
+});
 
 
 module.exports = {
   pool
-}
+};

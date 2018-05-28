@@ -20,7 +20,6 @@
     "connect-flash": "^0.1.1",
     "connect-pg-simple": "^4.2.1",
     "cookie-parser": "^1.4.3",
-    "dotenv": "^5.0.1",
     "ejs": "^2.6.1",
     "express": "^4.16.3",
     "express-session": "^1.15.6",
@@ -35,8 +34,9 @@
     "waterline-sql-builder": "^1.0.0"
   },
   "devDependencies": {
-    "jest": "^22.4.3",
     "chai": "^4.1.2",
+    "dotenv": "^5.0.1",
+    "jest": "^22.4.3",
     "ejs-lint": "^0.3.0",
     "nodemon": "^1.17.4",
     "supertest": "^3.0.0"

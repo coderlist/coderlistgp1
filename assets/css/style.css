@@ -336,7 +336,7 @@ button {
 
 /* Login Form */
 
-.login-form {
+.form {
     padding: 0.8rem;
     max-width: 400px;
     width: 100%;
@@ -345,7 +345,7 @@ button {
     flex-direction: column;
 }
 
-.login-form legend.title {
+.form legend.title {
     width: 100%;
     font-size: 2rem;
     font-weight: 700;
@@ -353,7 +353,7 @@ button {
     border-bottom: 2px solid rgba(0, 0, 0, 0.5);
 }
 
-.login-form .error {
+.form .error {
     /* error box */
     display: inline-block;
     color: rgb(255, 255, 255);
@@ -362,12 +362,16 @@ button {
     padding: 1rem;
     margin: 1rem 0;
     min-height: auto;
-    width: auto;
+    width: 100%;
     transition: 0.2s linear;
     position: relative;
 }
 
-.login-form .close-msg {
+.form .error-pw {
+    display:none;
+}
+
+.form .close-msg, .form .close-msg-pw {
     position: absolute;
     top: 0.5rem;
     right: 0.8rem;
@@ -375,12 +379,12 @@ button {
     padding: 0.2rem;
 }
 
-.login-form .login-box {
+.form .form-box {
     margin: 2rem 0;
     position: relative;
 }
 
-.login-form .login-box label {
+.form .form-box label {
     position: absolute;
     display: block;
     font-size: 1rem;
@@ -390,12 +394,12 @@ button {
     cursor: text;
 }
 
-.login-form .login-box .input:-moz-ui-invalid {
+.form .form-box .input:-moz-ui-invalid {
     /* Firefox fix for red shadow invalid property */
     box-shadow: none;
 }
 
-.login-form .login-box .input {
+.form .form-box .input {
     width: 100%;
     padding: 0.5rem;
     border: 2px solid rgba(51, 51, 51, 0.5);
@@ -404,14 +408,14 @@ button {
     cursor: text;
 }
 
-.login-form .login-box .input:focus,
-.login-form .login-box .input::-moz-focusring {
+.form .form-box .input:focus,
+.form .form-box .input::-moz-focusring {
     outline: none;
     border: 2px solid rgba(51, 51, 51, 0.5);
     box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.5);
 }
 
-.login-form .login-box .input:focus+label {
+.form .form-box .input:focus+label {
     font-size: 1rem;
     top: -1.4rem;
     left: 0;
@@ -423,19 +427,18 @@ button {
     left: 0;
 }
 
-.login-form .login-btn {
+.form .form-btn {
     color: rgb(255, 255, 255);
-    width: 100px;
+    width: 100%;
     padding: 0.5rem;
     margin-bottom: 0.5rem;
     background: rgb(146, 233, 255);
 }
 
-.login-form .forgot-password {
+.form .form-url {
     padding: 0.5rem 0;
     text-decoration: underline;
 }
-
 .close-error-msg {
     display: none;
 }
@@ -443,18 +446,18 @@ button {
 /* media queries */
 
 @media screen and (min-width: 400px) {
-    .login-form {
+    .form {
         margin: 0 auto;
     }
-    .login-form .error {
+    .form .error {
         font-size: 1.1rem;
     }
-    .login-form .login-box label {
+    .form .form-box label {
         font-size: 1.2rem;
         top: 0.8rem;
         left: 0.5rem;
     }
-    .login-form .login-box .input:focus+label {
+    .form .form-box .input:focus+label {
         font-size: 0.8rem;
         top: -1.2rem;
     }
@@ -462,12 +465,16 @@ button {
         font-size: 0.8rem;
         top: -1.2rem;
     }
-    .login-form .login-box .input {
+    .form .form-box .input {
         font-size: 1.2rem;
     }
-    .login-form .close-msg {
+    .form .close-msg {
         top: 0.5rem;
         right: 0.8rem;
+    }
+    .form .close-msg-pw {
+        top: 0.2rem;
+        right: 0.2rem;
     }
 }
 
@@ -481,7 +488,7 @@ button {
         flex-direction: row;
         justify-content: space-between;
     }
-    .login-form {
+    .form {
         margin: 84px auto 0 auto;
         background: white;
         border-top: 10px inset rgba(0, 0, 0, 0.5);

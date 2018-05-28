@@ -3,6 +3,13 @@ const env = process.env.NODE_ENV;
 const {Pool} = require('pg');
 
 /**
+ * For Development uses only: 
+ * PG_USER = Your database username;
+ * PG_KEY = Your database key;
+ * PG_DATABASE = Your database name. // lowercase only
+ */
+
+/**
  * dotenv gets necessary variable names
  * 
  */
@@ -17,9 +24,9 @@ const config = {
     idleTimeoutMillis: 30000,
   },
   "development": {
-    user: process.env.PG_USER,
-    database: `GINNY_BRADLEY_DEVELOPMENT`,
-    password: process.env.PG_KEY,
+    user: process.env.PG_USER || PG_USER,
+    database: PG_DATABASE,
+    password: process.env.PG_KEY || PG_KEY,
     host: process.env.PG_HOST||"localhost",
     port: process.env.PG_PORT||5432,
     max: 10,
