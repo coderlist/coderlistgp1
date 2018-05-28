@@ -1,9 +1,6 @@
 
-<<<<<<< HEAD
-=======
 /* CREATE EXTENSION IF NOT EXISTS citext; */
 
->>>>>>> develop
 CREATE TABLE IF NOT EXISTS users (
   email text NOT NULL UNIQUE,
   password text NOT NULL,

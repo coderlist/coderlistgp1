@@ -74,7 +74,8 @@ routes.get('/signup', (req, res) => {
   return;
 });
 
-routes.post('/login', validateLogin, function (req, res){ //// if validatelogin fails. Failure is sent from within this middleware. If this succeeds then this passes to next function.
+//FIND THIS//
+routes.post('/login',passport.authenticate('local'), function (req, res){ //// if validatelogin fails. Failure is sent from within this middleware. If this succeeds then this passes to next function.
   res.status(200).json({message: "success"});
   return;
 });
@@ -113,7 +114,7 @@ const passwordCheck = [
 routes.get('/users/create-user', (req, res) => { //accessible by authed admin
   let mail = new mail();
   res.status(200).render('pages/users/createUser.ejs');
-
+});
 
 
 
@@ -163,9 +164,11 @@ const createUserCheck = [
 
 
 routes.post('/users/create-user', createUserCheck, (req, res) => { //accessible by authed admin
+  
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     const userTemp = {email : req.body.email || "", firstName : req.body.firstName || "", lastName: req.body.lastName || ""}
+    console.log('USER TEMP', userTemp)
     req.flash("info","Invalid user data", process.env.NODE_ENV === 'development' ? errors.array() : ""); //error.array() for development only
     res.status(200).render('pages/users/create-user.ejs', {messages : req.flash('info'), userTemp});
     return;
@@ -179,9 +182,13 @@ routes.post('/users/create-user', createUserCheck, (req, res) => { //accessible 
     last_name : req.body.lastName,
     failed_login_attempts : 0
   }
-  createUser(user)
-  req.flash('info', 'user created and email sent');  // email not currently being sent
-  res.redirect('/users/admin'); 
+
+  
+  createUser(user).then(user => {
+    req.flash('info', 'user created and email sent');  // email not currently being sent
+    res.redirect('/users/admin'); 
+  }).catch(e => res.status(500).send(e.stack))
+  
   return;
 });
 
@@ -210,6 +217,7 @@ routes.post('/users/delete-user', (req, res) => {
 
 routes.get('/users/change-password', (req, res) => { 
   res.status(200).render('pages/users/changePassword.ejs');
+});
 routes.get('/forgot-password', (req, res) => {
   // **create a page with two fields to enter email addresses
   // **ensure that emails both match before being able to post
@@ -254,5 +262,7 @@ routes.all('*', (req, res) => {
   res.status(200).render('pages/unknown.ejs', { url: req.url });
   return;
 });
+
+
 
 module.exports = routes;
