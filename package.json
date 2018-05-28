@@ -11,7 +11,7 @@
     "type": "git",
     "url": "git+https://mobell32@bitbucket.org/CoderList/coderlistgp1.git"
   },
-  "author": "jide olaniyan",
+  "author": "Jide Olaniyan, Kristian Sigston, Filipe Costa, Coderlist.io",
   "license": "ISC",
   "homepage": "https://bitbucket.org/CoderList/coderlistgp1#readme",
   "dependencies": {
@@ -24,17 +24,20 @@
     "ejs": "^2.6.1",
     "express": "^4.16.3",
     "express-session": "^1.15.6",
+    "express-validator": "^5.2.0",
     "flash": "^1.1.0",
     "morgan": "^1.9.0",
     "nodemailer": "^4.6.4",
     "passport": "^0.4.0",
     "passport-local": "^1.0.0",
     "pg": "^7.4.3",
+    "uuid": "^3.2.1",
     "waterline-sql-builder": "^1.0.0"
   },
   "devDependencies": {
     "jest": "^22.4.3",
     "chai": "^4.1.2",
+    "ejs-lint": "^0.3.0",
     "nodemon": "^1.17.4",
     "supertest": "^3.0.0"
   }
