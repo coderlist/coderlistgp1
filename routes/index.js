@@ -48,6 +48,36 @@ routes.get('/login', (req, res) => {
   return;
 });
 
+routes.get('/password', (req, res) => { 
+  res.status(200).render('pages/resetpassword.ejs');
+  return;
+});
+// Test routes for Email and Password Templates to check Design
+// Can delete this after all the templates are done
+// Change Password Template missing -> done at the end of this week
+routes.get('/sign-up', (req, res) => { 
+  res.status(200).render('pages/email/sign-up.ejs');
+  return;
+});
+routes.get('/forgot-password', (req, res) => { 
+  res.status(200).render('pages/email/forgot-password.ejs');
+  return;
+});
+// New Password Page
+routes.get('/new-password', (req, res) => {
+  res.status(200).render('pages/newpassword.ejs');
+  return;
+});
+// New Sign Up Page 
+routes.get('/signup', (req, res) => {
+  res.status(200).render('pages/signup.ejs');
+  return;
+});
+
+routes.post('/login', validateLogin, function (req, res){ //// if validatelogin fails. Failure is sent from within this middleware. If this succeeds then this passes to next function.
+  res.status(200).json({message: "success"});
+  return;
+});
 // routes.get('/test-flash-start', (req, res) => {
 //   req.flash('info','This is a flash message');
 //   res.status(200).redirect('/test-flash-finish');
@@ -80,6 +110,9 @@ const passwordCheck = [
   check('confirm_password').equals(check('password'))
 ];
 
+routes.get('/users/create-user', (req, res) => { //accessible by authed admin
+  let mail = new mail();
+  res.status(200).render('pages/users/createUser.ejs');
 
 
 
@@ -184,6 +217,8 @@ routes.post('/users/delete-user', (req, res) => {
   return;
 });
 
+routes.get('/users/change-password', (req, res) => { 
+  res.status(200).render('pages/users/changePassword.ejs');
 routes.get('/forgot-password', (req, res) => {
   // **create a page with two fields to enter email addresses
   // **ensure that emails both match before being able to post

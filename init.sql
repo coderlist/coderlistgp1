@@ -1,5 +1,5 @@
 
-CREATE EXTENSION IF NOT EXISTS citext;
+/* CREATE EXTENSION IF NOT EXISTS citext; */
 
 CREATE TABLE IF NOT EXISTS users (
   email text NOT NULL UNIQUE,
@@ -14,7 +14,7 @@ CREATE TABLE IF NOT EXISTS users (
 
 CREATE TABLE IF NOT EXISTS pages (
   page_id serial,
-  created_by citext REFERENCES users(email) ON DELETE CASCADE, 
+  created_by text REFERENCES users(email) ON DELETE CASCADE, 
   page_created_at timestamp DEFAULT NOW(),
   updated_at timestamp DEFAULT NOW(),
   page_title text,
