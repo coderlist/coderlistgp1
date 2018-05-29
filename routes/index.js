@@ -161,8 +161,17 @@ routes.post('/users/email-verification', verificationCheck, (req, res) => {
 });
 
 
-routes.get('/users/admin', logins.isLoggedIn, (req,res) => {
+routes.get('/users/admin', (req,res) => {
   res.status(200).render('pages/users/admin.ejs', {messages : req.flash("info")});
+})
+
+const ckeditorHTMLValidation = [
+  sanitize('ckeditorHTML').escape().trim()
+]
+
+routes.post('/users/admin', logins.isLoggedIn,  (req,res) => {
+  console.log('req.body.ckeditorHTML:', req.body.ckeditorHTML);
+  res.status(200).render('pages/users/admin.ejs', {messages : req.flash("info"), ckeditorData : req.body.ckeditorHTML || ""});
 })
 
 routes.get('/users/edit-user', (req, res) => { //accessible by authed admin
@@ -181,10 +190,14 @@ routes.get('/forgot-password', (req, res) => {
   res.status(200).render('pages/users/forgot-password');
 });  
 
-routes.post('/login', passport.authenticate('local'), function (req, res){ //// if validatelogin fails. Failure is sent from within this middleware. If this succeeds then this passes to next function.
-  res.status(200).json({message: "success"})
-  return;
-})
+routes.post('/login', passport.authenticate('local', {successRedirect: '/users/admin',
+                                                      failureRedirect: '/login',
+                                                      failureFlash: true}), 
+);
+                                                      // function (req, res){ //// if validatelogin fails. Failure is sent from within this middleware. If this succeeds then this passes to next function.
+  // res.status(200).json({message: "success"})
+//   return;
+// })
 
 const validateForgotPassword = [
   check('email').isEmail().normalizeEmail(),

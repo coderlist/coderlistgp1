@@ -12,7 +12,9 @@ module.exports = {
     .then(hash => {
            user = {
              email: user.email,
-             password: hash
+             password: hash,
+             first_name: user.first_name,
+             last_name: user.last_name
            }
      return insertOne(user)
     }).catch(e => {
