@@ -1,24 +1,21 @@
 const {insertOne} = require('../../helperFunctions/query/queryHelper');
-const bcrypt = require('bcrypt');
-const saltRounds = 10;
+
 
 
 module.exports = {
   
-  createUser(user){
- // process.env.NODE_ENV === "production" ? console.log("") : console.log(user.password) // remove in production
-  return bcrypt.hash(user.password, saltRounds)
-    .then(hash => {
-           user = {
-             email: user.email,
-             password: hash,
-             first_name: user.first_name,
-             last_name: user.last_name
-           }
-     return insertOne(user)
-    }).catch(e => {
-      throw e
-    })
+  /**
+   * @param  {Object} user
+   * object contains first_name,last_name,
+   * email & activation token
+   */
+  createUser(user){        
+  return insertOne(user).then(result => {
+     return true
+   }).catch(e => {
+     throw e
+   })
+  
 },
 
 }

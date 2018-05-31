@@ -13,7 +13,6 @@ const createUser = require('../server/models/users').createUser;
 
 
 
-
 routes.get('/', (req, res) => {
   //get menu items from db maybe set this as some middleware
   const menuItems = [ 
@@ -74,7 +73,7 @@ routes.get('/signup', (req, res) => {
   return;
 });
 
-//FIND THIS//
+
 routes.post('/login',passport.authenticate('local'), function (req, res){ //// if validatelogin fails. Failure is sent from within this middleware. If this succeeds then this passes to next function.
   res.status(200).json({message: "success"});
   return;
@@ -223,6 +222,8 @@ routes.get('/forgot-password', (req, res) => {
   // **ensure that emails both match before being able to post
   res.status(200).render('pages/users/forgot-password');
 });  
+
+
 
 routes.post('/login', passport.authenticate('local'), function (req, res){ //// if validatelogin fails. Failure is sent from within this middleware. If this succeeds then this passes to next function.
   res.status(200).json({message: "success"})

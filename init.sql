@@ -2,7 +2,7 @@
 /* CREATE EXTENSION IF NOT EXISTS citext; */
 
 CREATE TABLE IF NOT EXISTS users (
-  email text NOT NULL UNIQUE,
+  email text NOT NULL UNIQUE, 
   password text NOT NULL,
   last_succesful_login timestamp,
   last_failed_login timestamp,
@@ -55,13 +55,26 @@ END
 $$;
 
 
+ALTER TABLE users ADD COLUMN IF NOT EXISTS active boolean DEFAULT FALSE,
+  ADD COLUMN IF NOT EXISTS activation_token text,
+  ADD COLUMN IF NOT EXISTS user_id serial;
 
--- Create Or Replace Function funcName( data json ) Returns json As $$
---   Declare
---     -- declare variables
---     -- for example: id int := Cast( data->>'id' as int ); 
--- Begin
---      --do something useful
---   Return '{}';
--- End;
--- $$ language plpgsql;
+DO $$
+BEGIN
+    IF NOT EXISTS ( SELECT  conname
+                FROM    pg_constraint 
+                WHERE   conname = 'not_empty_string')
+    THEN
+        ALTER TABLE users ADD CONSTRAINT not_empty_string CHECK (email <> '');
+    END IF;
+END$$;
+
+DO $$
+BEGIN
+    IF NOT EXISTS ( SELECT  conname
+                FROM    pg_constraint 
+                WHERE   conname = 'not_undefined')
+    THEN
+        ALTER TABLE users ADD CONSTRAINT not_undefined CHECK (email <>'undefined');
+    END IF;
+END$$;
