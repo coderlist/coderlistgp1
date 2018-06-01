@@ -20,10 +20,10 @@ passport.use(new LocalStrategy(options,
   (email,password,done) => {
     findByUsername('users',email) 
     .then(user => {
-     if(!user) {return done(null,false)}
+     if(!user) {return done(null,false, {message: "Invalid Username or password"})}
      if(verifyPassword(password,user.password)===false){ return done(null,false)}
      return done(null,user)
-    }).catch(e => {return done(null,false)})
+    }).catch(e => {return done(null,false, {messages: "Invalid Username or password"})})
   }
   ));
 

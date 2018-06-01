@@ -9,7 +9,9 @@ CREATE TABLE IF NOT EXISTS users (
   failed_login_attempts int ,
   first_name text NOT NULL,
   last_name text NOT NULL,
-  PRIMARY KEY (email)
+  PRIMARY KEY (email),
+  activation_token text,
+  user_id serial
 );
 
 CREATE TABLE IF NOT EXISTS pages (
@@ -54,7 +56,25 @@ BEGIN
 END
 $$;
 
+DO $$
+BEGIN
+    IF NOT EXISTS ( SELECT  conname
+                FROM    pg_constraint 
+                WHERE   conname = 'not_empty_string')
+    THEN
+        ALTER TABLE users ADD CONSTRAINT not_empty_string CHECK (email <> '');
+    END IF;
+END$$;
 
+DO $$
+BEGIN
+    IF NOT EXISTS ( SELECT  conname
+                FROM    pg_constraint 
+                WHERE   conname = 'not_undefined')
+    THEN
+        ALTER TABLE users ADD CONSTRAINT not_undefined CHECK (email <>'undefined');
+    END IF;
+END$$;
 
 -- Create Or Replace Function funcName( data json ) Returns json As $$
 --   Declare

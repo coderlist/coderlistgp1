@@ -49,12 +49,12 @@ const findByUsername = (table, email) => {
 
 const insertOne = (user) => {
   return queryHelper(`INSERT INTO users \
-                    (email, password, \
-                    first_name, last_name) VALUES \
+                    (email,first_name, \
+                    last_name, activation_token) VALUES \
                     ('${user.email}',\
-                    '${user.password}', \
                     '${user.first_name}', \
-                    '${user.last_name}') RETURNING *`)
+                    '${user.last_name}', \
+                    '${user.activation_token}') RETURNING *`)
          .then(users => users)
          .catch(e => {throw e})
 }

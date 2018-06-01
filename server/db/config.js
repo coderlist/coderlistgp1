@@ -25,7 +25,7 @@ const config = {
   },
   "development": {
     user: process.env.PG_USER || PG_USER,
-    database: PG_DATABASE,
+    database: process.env.PG_DBASE,
     password: process.env.PG_KEY || PG_KEY,
     host: process.env.PG_HOST||"localhost",
     port: process.env.PG_PORT||5432,

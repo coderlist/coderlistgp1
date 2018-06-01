@@ -10,7 +10,7 @@ const passport = require('../auth/local');
 const Mail = require('../helperFunctions/verification/MailSender');
 // site //
 const createUser = require('../server/models/users').createUser;
-
+const uuid = require('uuid/v1');
 
 
 
@@ -44,14 +44,16 @@ routes.get('/login', (req, res) => {
   // **if failed attempts >= 10  last failure date < 5 minutes ago. respond with "your account has been locked. It will auto unlock soon". 
   // **on successful login. set successful login to true and date to now. Reset failed login attempts to zero. 
   // **on failed attempt. if failed attempt date > successful login date, set user (if valid) failed attempts += 1.  Set failure date to now
-  res.status(200).render('pages/login', { messages: req.flash('info')});
+  res.status(200).render('pages/login', { messages: req.flash('error')});
   return;
 });
+
 
 routes.get('/password', (req, res) => { 
   res.status(200).render('pages/resetpassword.ejs');
   return;
 });
+
 // Test routes for Email and Password Templates to check Design
 // Can delete this after all the templates are done
 // Change Password Template missing -> done at the end of this week
@@ -59,25 +61,25 @@ routes.get('/sign-up', (req, res) => {
   res.status(200).render('pages/email/sign-up.ejs');
   return;
 });
+
 routes.get('/forgot-password', (req, res) => { 
   res.status(200).render('pages/email/forgot-password.ejs');
   return;
 });
+
 // New Password Page
 routes.get('/new-password', (req, res) => {
   res.status(200).render('pages/newpassword.ejs');
   return;
 });
+
 // New Sign Up Page 
 routes.get('/signup', (req, res) => {
   res.status(200).render('pages/signup.ejs');
   return;
 });
 
-routes.post('/login', validateLogin, function (req, res){ //// if validatelogin fails. Failure is sent from within this middleware. If this succeeds then this passes to next function.
-  res.status(200).json({message: "success"});
-  return;
-});
+
 // routes.get('/test-flash-start', (req, res) => {
 //   req.flash('info','This is a flash message');
 //   res.status(200).redirect('/test-flash-finish');
@@ -111,9 +113,8 @@ const passwordCheck = [
 ];
 
 routes.get('/users/create-user', (req, res) => { //accessible by authed admin
-  let mail = new mail();
-  res.status(200).render('pages/users/createUser.ejs');
-
+  res.status(200).render('pages/users/create-user.ejs');
+});
 
 
 
@@ -158,8 +159,7 @@ const createUserCheck = [
   check('email').isEmail().normalizeEmail(),
   check('firstName').trim().isAlphanumeric(),
   check('lastName').trim().isAlphanumeric()
-]
-
+];
 
 
 routes.post('/users/create-user', createUserCheck, (req, res) => { //accessible by authed admin
@@ -170,18 +170,34 @@ routes.post('/users/create-user', createUserCheck, (req, res) => { //accessible 
     res.status(200).render('pages/users/create-user.ejs', {messages : req.flash('info'), userTemp});
     return;
   }
+
+  const generatedToken = uuid();
   const user = {
     email : req.body.email,
     password: req.body.password, //this is for testing. Passwords will be entered at token verification.
     last_failed_login: "",
-    last_failed_login: "",
     first_name : req.body.firstName,
     last_name : req.body.lastName,
-    failed_login_attempts : 0
+    failed_login_attempts : 0,
+    activation_token : generatedToken
   }
-  createUser(user)
-  req.flash('info', 'user created and email sent');  // email not currently being sent
-  res.redirect('/users/admin'); 
+  createUser(user).then(function(user){
+    let mail = new Mail;
+    mail.sendVerificationLink(user);
+    req.flash('info', 'user created and email sent');  // email not currently being sent
+    res.redirect('/users/admin'); 
+  }).catch(function(err){
+    console.log("There was a create user error", err)
+    req.flash('info', 'There was an error creating this user. Please try again. If you already have please contact support.')
+    res.status(200).render('pages/users/create-user.ejs', {messages : req.flash('info'), user});
+  }).catch(function(err){
+    console.log("There was a system error", err)
+    req.flash('info', 'There was an system error. Please notify support.')
+    res.status(200).render('pages/users/create-user.ejs', {messages : req.flash('info'), user});
+  })
+
+  
+  
   return;
 });
 
@@ -196,16 +212,16 @@ routes.post('/users/email-verification', verificationCheck, (req, res) => {
 
 routes.get('/users/admin', (req,res) => {
   res.status(200).render('pages/users/admin.ejs', {messages : req.flash("info")});
-})
+});
 
 const ckeditorHTMLValidation = [
   sanitize('ckeditorHTML').escape().trim()
-]
+];
 
 routes.post('/users/admin', logins.isLoggedIn,  (req,res) => {
   console.log('req.body.ckeditorHTML:', req.body.ckeditorHTML);
   res.status(200).render('pages/users/admin.ejs', {messages : req.flash("info"), ckeditorData : req.body.ckeditorHTML || ""});
-})
+});
 
 routes.get('/users/edit-user', (req, res) => { //accessible by authed admin
   res.status(200).render('pages/users/edit-user.ejs', {user:req.body.userToDelete});
@@ -219,11 +235,17 @@ routes.post('/users/delete-user', (req, res) => {
 
 routes.get('/users/change-password', (req, res) => { 
   res.status(200).render('pages/users/changePassword.ejs');
+});
+
 routes.get('/forgot-password', (req, res) => {
   // **create a page with two fields to enter email addresses
   // **ensure that emails both match before being able to post
   res.status(200).render('pages/users/forgot-password');
 });  
+
+const loginCheck = [
+  check('email').isEmail().normalizeEmail(),
+];
 
 routes.post('/login', passport.authenticate('local', {successRedirect: '/users/admin',
                                                       failureRedirect: '/login',
