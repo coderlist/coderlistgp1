@@ -14,6 +14,10 @@ const {pool} = require('../../server/db/database');
  * before use
  * 
  */
+/**
+ * @param  {String} query
+ * returns a result from query input
+ */
 const queryHelper = (query) => {
   return new Promise((resolve, reject) => {
     return pool.query(query)
@@ -23,7 +27,10 @@ const queryHelper = (query) => {
 }
 
 
-
+/**
+ * @param  {} query
+ * returns a single row from query input
+ */
 const queryUnique = (query) => {
   return queryHelper(query)
     .then(rows => {
@@ -35,7 +42,12 @@ const queryUnique = (query) => {
     .catch(e => e.message);
 }
 
-
+/**
+ * @param  {String} table
+ * @param  {String} email
+ * returns a user that matches 
+ * the email
+ */
 const findByUsername = (table, email) => {
   return queryUnique(`select exists(select\
      1 from users where email=('${email}'))`).then(res => {
@@ -46,7 +58,11 @@ const findByUsername = (table, email) => {
 }
 
 
-
+/**
+ * @param  {Object} user
+ * insert object value into users
+ * returns a row
+ */
 const insertOne = (user) => {
   return queryHelper(`INSERT INTO users \
                     (email,first_name, \
@@ -67,20 +83,18 @@ const insertOne = (user) => {
  */
 
 const insertInTable = (anyObj,table) => {
- const concatEntries = [];
- const concatValues = [];
+ const concatKeys = [];
  const keysArray = Object.keys(anyObj);
  const valsArray = Object.values(anyObj);
  let i=0;
  
  while(i < Object.keys(anyObj).length){
     i++;
-    concatEntries.push(keysArray.shift())
+    concatKeys.push(keysArray.shift())
  }
- const query = `INSERT INTO ${table} (${concatEntries})` +
+ const query = `INSERT INTO ${table} (${concatKeys})` +
                 ` VALUES (${valsArray.map(val => `'${val}'`)}) RETURNING *`;
- 
-                return queryUnique(query)
+    return queryHelper(query)
      .then(users => users)
      .catch(e => {throw e})
  

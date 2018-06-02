@@ -167,8 +167,8 @@ routes.post('/users/create-user', createUserCheck, (req, res) => { //accessible 
   
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
+    console.log('ERROR',error)
     const userTemp = {email : req.body.email || "", firstName : req.body.firstName || "", lastName: req.body.lastName || ""}
-    console.log('USER TEMP', userTemp)
     req.flash("info","Invalid user data", process.env.NODE_ENV === 'development' ? errors.array() : ""); //error.array() for development only
     res.status(200).render('pages/users/create-user.ejs', {messages : req.flash('info'), userTemp});
     return;
@@ -176,14 +176,15 @@ routes.post('/users/create-user', createUserCheck, (req, res) => { //accessible 
   const user = {
     email : req.body.email,
     password: req.body.password, //this is for testing. Passwords will be entered at token verification.
-    last_failed_login: "",
+  //  last_failed_login: "",
     first_name : req.body.firstName,
     last_name : req.body.lastName,
-    failed_login_attempts : 0
+    failed_login_attempts : 0,
+    temporary_token: req.body.temporary_token
   }
 
   
-  createUser(user).then(user => {
+  createUser(user,'users').then(user => {
     req.flash('info', 'user created and email sent');  // email not currently being sent
     res.redirect('/users/admin'); 
   }).catch(e => res.status(500).send(e.stack))
