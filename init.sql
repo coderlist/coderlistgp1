@@ -2,7 +2,7 @@
 CREATE TABLE IF NOT EXISTS users (
   user_id serial UNIQUE,
   email TEXT NOT NULL UNIQUE, 
-  password TEXT NOT NULL,
+  password TEXT,
   last_succesful_login TIMESTAMP,
   last_failed_login TIMESTAMP,
   failed_login INT ,
