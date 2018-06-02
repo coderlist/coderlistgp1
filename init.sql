@@ -1,19 +1,19 @@
 -- create table users
 CREATE TABLE IF NOT EXISTS users (
-  email text NOT NULL UNIQUE, 
-  password text NOT NULL,
-  last_succesful_login timestamp,
-  last_failed_login timestamp,
-  failed_login int ,
-  first_name text NOT NULL,
-  last_name text NOT NULL,
+  email TEXT NOT NULL UNIQUE, 
+  password TEXT NOT NULL,
+  last_succesful_login TIMESTAMP,
+  last_failed_login TIMESTAMP,
+  failed_login INT ,
+  first_name TEXT NOT NULL,
+  last_name TEXT NOT NULL,
   activated BOOLEAN DEFAULT FALSE,
   temporary_token TEXT,
   temporary_token_date TIMESTAMP,
-  old_email,
+  old_email TEXT[],
   creation_date TIMESTAMP,
   verified BOOLEAN DEFAULT FALSE,
-  forgot_password_token text,
+  forgot_password_token TEXT,
   forgot_password_token_date TIMESTAMP,
   PRIMARY KEY (email)
 );
@@ -21,24 +21,24 @@ CREATE TABLE IF NOT EXISTS users (
 
 -- create table pages 
 CREATE TABLE IF NOT EXISTS pages (
-  page_id serial,
-  created_by text REFERENCES users(email) ON DELETE CASCADE, 
+  page_id SERIAL,
+  created_by TEXT REFERENCES users(email) ON DELETE CASCADE, 
   creation_date TIMESTAMP DEFAULT NOW(),
-  owner_id serial REFERENCES users(user_id) ON DELETE CASCADE,
-  title text,
+  owner_id SERIAL REFERENCES users(user_id) ON DELETE CASCADE,
+  title TEXT,
   is_published BOOLEAN DEFAULT FALSE,
   is_homepage_grid BOOLEAN,
   is_nav_menu BOOLEAN,
-  last_edited_date JSON
+  last_edited_date jSON
   PRIMARY KEY (page_Id)
 );
 
 
 -- creates tables user_sessions 
 CREATE TABLE IF NOT EXISTS user_sessions (
-  sid varchar NOT NULL COLLATE "default",
+  sid VARCHAR NOT NULL COLLATE "default",
 	sess json NOT NULL,
-	expire timestamp(6) NOT NULL,
+	expire TIMESTAMP(6) NOT NULL,
   PRIMARY KEY (sid) NOT DEFERRABLE INITIALLY IMMEDIATE
 )
 WITH (OIDS=FALSE);
