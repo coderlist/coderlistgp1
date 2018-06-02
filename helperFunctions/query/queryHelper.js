@@ -59,18 +59,42 @@ const findByUsername = (table, email) => {
 
 
 /**
+ * @param  {String} table
+ * @param  {Object} queryObject
+ * @param  {Array} queryArray
+ * 
+ * select a row or columns by 
+ * a single key:value pair. it return an object
+ */
+const findByOne = (table,queryObject, colArray) => {
+    const queryObjKeys = Object.keys(queryObject)
+    const queryObjVals = Object.values(queryObject)
+    let query
+    if(colArray === undefined){
+     query = `SELECT * FROM ${table} WHERE ${queryObjKeys[0]} ='${queryObjVals[0]}'`
+    }else{
+     query = `SELECT (${colArray}) FROM ${table} WHERE ${queryObjKeys[0]} ='${queryObjVals[0]}'`
+    }
+    
+     return queryHelper(query)
+     .then(users => users)
+     .catch(e => {throw e})
+}
+
+
+/**
  * @param  {Object} user
  * insert object value into users
  * returns a row
  */
 const insertOne = (user) => {
-  return queryHelper(`INSERT INTO users \
-                    (email,first_name, \
-                    last_name, activation_token) VALUES \
-                    ('${user.email}',\
-                    '${user.first_name}', \
-                    '${user.last_name}', \
-                    '${user.activation_token}') RETURNING *`)
+  return queryHelper(`INSERT INTO users `+
+                    `(email,first_name,`+ 
+                    `last_name,activation_token) VALUES `+
+                    `('${user.email}',`+
+                    `'${user.first_name}',`+
+                    `'${user.last_name}',`+
+                    `'${user.activation_token}') RETURNING *`)
          .then(users => users)
          .catch(e => {throw e})
 }
@@ -106,5 +130,6 @@ module.exports = {
   queryUnique,
   insertOne,
   findByUsername,
+  findByOne,
   insertInTable
 };
