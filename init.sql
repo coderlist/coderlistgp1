@@ -1,5 +1,6 @@
 -- create table users
 CREATE TABLE IF NOT EXISTS users (
+  user_id serial UNIQUE,
   email TEXT NOT NULL UNIQUE, 
   password TEXT NOT NULL,
   last_succesful_login TIMESTAMP,
@@ -29,7 +30,7 @@ CREATE TABLE IF NOT EXISTS pages (
   is_published BOOLEAN DEFAULT FALSE,
   is_homepage_grid BOOLEAN,
   is_nav_menu BOOLEAN,
-  last_edited_date jSON
+  last_edited_date jSON,
   PRIMARY KEY (page_Id)
 );
 
