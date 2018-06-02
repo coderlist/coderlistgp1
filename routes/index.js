@@ -104,13 +104,9 @@ const validationCheck = [
 
 const passwordCheck = [
   check('password').isLength({min: 8}),
-  // password must be at least 5 chars long
+  // password must be at least 8 chars long
   check('confirm_password').equals(check('password'))
 ];
-
-
-
-
 
 routes.get('/users/verify-email', verificationCheck , (req, res) => {
     const errors = validationResult(req);
@@ -181,7 +177,7 @@ routes.post('/users/create-user', createUserCheck, (req, res) => { //accessible 
     failed_login_attempts : 0,
     activation_token : generatedToken
   }
-  createUser(user).then(function(userCreated){ // is this returning an error or u
+  createUser(user).then(function(userCreated){ // returns user created true or false
     if (userCreated) {
       let mail = new Mail;
       mail.sendVerificationLink(user);
@@ -196,7 +192,7 @@ routes.post('/users/create-user', createUserCheck, (req, res) => { //accessible 
       return;
     }
   }).catch(function(err){
-    const userExistsCode = "23505"
+    const userExistsCode = "23505";
     if (err.code === userExistsCode) {
       req.flash("info", "User already exists");
     }
@@ -206,9 +202,6 @@ routes.post('/users/create-user', createUserCheck, (req, res) => { //accessible 
     }
     res.status(200).render('pages/users/create-user.ejs', {messages : req.flash('info'), user});
   })
-
-  
-  
   return;
 });
 
@@ -248,11 +241,65 @@ routes.get('/users/change-password', (req, res) => {
   res.status(200).render('pages/users/changePassword.ejs');
 });
 
+
+
+ /////////////////  Forgot Password //////////////
+
+
 routes.get('/forgot-password', (req, res) => {
   // **create a page with two fields to enter email addresses
   // **ensure that emails both match before being able to post
   res.status(200).render('pages/users/forgot-password');
 });  
+
+forgotPasswordCheck = [
+  check('email').isLength({min: 8}),
+  check('confirm_email').equals(check('email'))
+]
+
+routes.post('/forgot-password', forgotPasswordCheck, (req, res) => {
+  errors = validationResult(req)
+  if (!errors.isEmpty()) {
+    req.flash("info","Invalid email");
+    res.status(200).render('pages/users/forgot-password', {messages : req.flash('info')});
+    return;
+  }
+  const user = {
+    activation_token : uuid(),
+    email : req.body.email.trim().normalizeEmail()
+  }
+  if (checkIfUserExists(user.email) === false) {
+    req.flash("info","Further instructions have now been sent to the email address provided");
+    res.status(200).render('pages/users/forgot-password', {messages : req.flash('info')});
+    return;
+  } // database request
+     
+      // **validate and normalise email addresses
+    // **enter email on this page and send to database and regardless of whether user exists or not send email stating "an email has been sent to your account with further instructions" 
+    // **if the user email exists in db then send an email to the users account. Generate a passwordReset token and time created and then insert into the db and send to email for further verification in the same manner as initial sign-up. (except password reset tokens only last an hour)
+    // **if the user doesn't exist don't do anything
+  else {
+    sendActivationTokenToDb(user);
+    let mail = new Mail()
+    mail.sendPasswordReset(user);
+    req.flash("info","Further instructions have now been sent to your email");
+    res.status(200).render('pages/users/forgot-password', {messages : req.flash('info')});
+    return;
+  }
+});
+  
+ 
+  
+
+
+///////////////   Login    //////////////////
+
+
+
+routes.get('/login', function (req, res){
+  res.render('./pages/login');
+  return;
+})
 
 const loginCheck = [
   check('email').isEmail().normalizeEmail(),
@@ -267,18 +314,7 @@ routes.post('/login', passport.authenticate('local', {successRedirect: '/users/a
 //   return;
 // })
 
-const validateForgotPassword = [
-  check('email').isEmail().normalizeEmail(),
-]
 
-routes.post('/forgot-password', validateForgotPassword, (req, res) => {
-  // **validate and normalise email addresses
-  // **enter email on this page and send to database and regardless of whether user exists or not send email stating "an email has been sent to your account with further instructions" 
-  // **if the user email exists in db then send an email to the users account. Generate a passwordReset token and time created and then insert into the db and send to email for further verification in the same manner as initial sign-up. (except password reset tokens only last an hour)
-  // **if the user doesn't exist don't do anything
-  res.status(200).redirect('login');
-  return;
-});
 
 
 // pages //
