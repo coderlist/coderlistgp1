@@ -59,11 +59,38 @@ const insertOne = (user) => {
          .catch(e => {throw e})
 }
 
+/**
+ * @param  {Object} anyObj
+ * @param  {} table SQL table
+ * insert object values into table 
+ * returning the row
+ */
+
+const insertInTable = (anyObj,table) => {
+ const concatEntries = [];
+ const concatValues = [];
+ const keysArray = Object.keys(anyObj);
+ const valsArray = Object.values(anyObj);
+ let i=0;
+ 
+ while(i < Object.keys(anyObj).length){
+    i++;
+    concatEntries.push(keysArray.shift())
+ }
+ const query = `INSERT INTO ${table} (${concatEntries})` +
+                ` VALUES (${valsArray.map(val => `'${val}'`)}) RETURNING *`;
+ 
+                return queryUnique(query)
+     .then(users => users)
+     .catch(e => {throw e})
+ 
+}
 
 
 module.exports = {
   queryHelper,
   queryUnique,
   insertOne,
-  findByUsername
+  findByUsername,
+  insertInTable
 };

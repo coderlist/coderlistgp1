@@ -13,18 +13,6 @@ const createUser = require('../server/models/users').createUser;
 const _ = require('lodash')
 
 
-routes.post('/signme', (req, res) => {
- const user = _.pick(req.body,['email','first_name','last_name','activation_token'])
-
-  createUser(user).then(val => {
-    res.status(200).send({message: 'USER CREATED BUT NOT ACTIVATED'})
-  }).catch(e => {
-    res.status(400).send(e.message)
-  })
-  
-});
-
-
 
 routes.get('/', (req, res) => {
   //get menu items from db maybe set this as some middleware
@@ -188,7 +176,6 @@ routes.post('/users/create-user', createUserCheck, (req, res) => { //accessible 
   const user = {
     email : req.body.email,
     password: req.body.password, //this is for testing. Passwords will be entered at token verification.
-    last_failed_login: "",
     last_failed_login: "",
     first_name : req.body.firstName,
     last_name : req.body.lastName,
