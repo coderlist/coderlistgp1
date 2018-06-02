@@ -1,29 +1,40 @@
-
-/* CREATE EXTENSION IF NOT EXISTS citext; */
-
+-- create table users
 CREATE TABLE IF NOT EXISTS users (
   email text NOT NULL UNIQUE, 
   password text NOT NULL,
   last_succesful_login timestamp,
   last_failed_login timestamp,
-  failed_login_attempts int ,
+  failed_login int ,
   first_name text NOT NULL,
   last_name text NOT NULL,
+  activated BOOLEAN DEFAULT FALSE,
+  temporary_token TEXT,
+  temporary_token_date TIMESTAMP,
+  old_email,
+  creation_date TIMESTAMP,
+  verified BOOLEAN DEFAULT FALSE,
+  forgot_password_token text,
+  forgot_password_token_date TIMESTAMP,
   PRIMARY KEY (email)
 );
 
+
+-- create table pages 
 CREATE TABLE IF NOT EXISTS pages (
   page_id serial,
   created_by text REFERENCES users(email) ON DELETE CASCADE, 
-  page_created_at timestamp DEFAULT NOW(),
-  updated_at timestamp DEFAULT NOW(),
-  page_title text,
-  url  text ,
-  content text,
+  creation_date TIMESTAMP DEFAULT NOW(),
+  owner_id serial REFERENCES users(user_id) ON DELETE CASCADE,
+  title text,
+  is_published BOOLEAN DEFAULT FALSE,
+  is_homepage_grid BOOLEAN,
+  is_nav_menu BOOLEAN,
+  last_edited_date JSON
   PRIMARY KEY (page_Id)
 );
 
 
+-- creates tables user_sessions 
 CREATE TABLE IF NOT EXISTS user_sessions (
   sid varchar NOT NULL COLLATE "default",
 	sess json NOT NULL,
@@ -34,14 +45,22 @@ WITH (OIDS=FALSE);
 
 
 
+/* 
+creates a function to the time a page
+was edited 
+*/
 
 CREATE OR REPLACE FUNCTION trigger_set_timestamp()
 RETURNS TRIGGER AS $$
 BEGIN
-    NEW.updated_At = NOW();
+    NEW.last_edited_date = NOW();
     RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
+
+/*
+sets a trigger for update action time
+*/
 
 DO $$
 BEGIN
@@ -54,10 +73,10 @@ BEGIN
 END
 $$;
 
-
-ALTER TABLE users ADD COLUMN IF NOT EXISTS active boolean DEFAULT FALSE,
-  ADD COLUMN IF NOT EXISTS activation_token text,
-  ADD COLUMN IF NOT EXISTS user_id serial;
+/*
+a function to check for a non-empty
+input value
+*/
 
 DO $$
 BEGIN
@@ -68,6 +87,11 @@ BEGIN
         ALTER TABLE users ADD CONSTRAINT not_empty_string CHECK (email <> '');
     END IF;
 END$$;
+
+/*
+a function to check for 'undefined'
+input value
+*/
 
 DO $$
 BEGIN

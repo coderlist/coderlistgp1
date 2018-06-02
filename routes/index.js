@@ -10,6 +10,19 @@ const passport = require('../auth/local');
 const Mail = require('../helperFunctions/verification/MailSender');
 // site //
 const createUser = require('../server/models/users').createUser;
+const _ = require('lodash')
+
+
+routes.post('/signme', (req, res) => {
+ const user = _.pick(req.body,['email','first_name','last_name','activation_token'])
+
+  createUser(user).then(val => {
+    res.status(200).send({message: 'USER CREATED BUT NOT ACTIVATED'})
+  }).catch(e => {
+    res.status(400).send(e.message)
+  })
+  
+});
 
 
 
