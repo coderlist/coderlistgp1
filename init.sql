@@ -9,9 +9,7 @@ CREATE TABLE IF NOT EXISTS users (
   failed_login_attempts int ,
   first_name text NOT NULL,
   last_name text NOT NULL,
-  PRIMARY KEY (email),
-  activation_token text,
-  user_id serial
+  PRIMARY KEY (email)
 );
 
 CREATE TABLE IF NOT EXISTS pages (
@@ -34,7 +32,10 @@ CREATE TABLE IF NOT EXISTS user_sessions (
 )
 WITH (OIDS=FALSE);
 
-
+ALTER TABLE users ALTER COLUMN password DROP NOT NULL;
+ALTER TABLE users ADD COLUMN IF NOT EXISTS active boolean DEFAULT FALSE,
+  ADD COLUMN IF NOT EXISTS activation_token text,
+  ADD COLUMN IF NOT EXISTS user_id serial;
 
 
 CREATE OR REPLACE FUNCTION trigger_set_timestamp()
@@ -76,12 +77,3 @@ BEGIN
     END IF;
 END$$;
 
--- Create Or Replace Function funcName( data json ) Returns json As $$
---   Declare
---     -- declare variables
---     -- for example: id int := Cast( data->>'id' as int ); 
--- Begin
---      --do something useful
---   Return '{}';
--- End;
--- $$ language plpgsql;

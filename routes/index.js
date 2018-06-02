@@ -32,10 +32,6 @@ routes.get('/about', (req, res) => {
 
 // users //
 
-routes.get('/admin', (req, res) => {
-  res.status(200).render('pages/admin');
-  return;
-});
 
 routes.get('/login', (req, res) => {
   // **Supply credentials to database
@@ -112,9 +108,7 @@ const passwordCheck = [
   check('confirm_password').equals(check('password'))
 ];
 
-routes.get('/users/create-user', (req, res) => { //accessible by authed admin
-  res.status(200).render('pages/users/create-user.ejs');
-});
+
 
 
 
@@ -155,6 +149,13 @@ routes.post('/enter-new-password', passwordCheck, (req, res) => {
 });
 
 
+/////////////       Create users           /////////////////////////
+
+
+routes.get('/users/create-user', (req, res) => { //accessible by authed admin
+  res.status(200).render('pages/users/create-user.ejs');
+});
+
 const createUserCheck = [
   check('email').isEmail().normalizeEmail(),
   check('firstName').trim().isAlphanumeric(),
@@ -174,22 +175,26 @@ routes.post('/users/create-user', createUserCheck, (req, res) => { //accessible 
   const generatedToken = uuid();
   const user = {
     email : req.body.email,
-    password: req.body.password, //this is for testing. Passwords will be entered at token verification.
     last_failed_login: "",
     first_name : req.body.firstName,
     last_name : req.body.lastName,
     failed_login_attempts : 0,
     activation_token : generatedToken
   }
-  createUser(user).then(function(user){
-    let mail = new Mail;
-    mail.sendVerificationLink(user);
-    req.flash('info', 'user created and email sent');  // email not currently being sent
-    res.redirect('/users/admin'); 
-  }).catch(function(err){
-    console.log("There was a create user error", err)
-    req.flash('info', 'There was an error creating this user. Please try again. If you already have please contact support.')
-    res.status(200).render('pages/users/create-user.ejs', {messages : req.flash('info'), user});
+  createUser(user).then(function(userCreated){ // is this returning an error or u
+    if (userCreated) {
+      let mail = new Mail;
+      mail.sendVerificationLink(user);
+      req.flash('info', 'user created and email sent');  // email not currently being sent
+      res.redirect('/users/admin'); 
+      return;
+    }
+    else {
+      console.log("There was a create user error", err)
+      req.flash('info', 'There was an error creating this user. Please try again. If you already have please contact support.')
+      res.status(200).render('pages/users/create-user.ejs', {messages : req.flash('info'), user});
+      return;
+    }
   }).catch(function(err){
     console.log("There was a system error", err)
     req.flash('info', 'There was an system error. Please notify support.')
@@ -211,7 +216,7 @@ routes.post('/users/email-verification', verificationCheck, (req, res) => {
 
 
 routes.get('/users/admin', (req,res) => {
-  res.status(200).render('pages/users/admin.ejs', {messages : req.flash("info")});
+  res.status(200).render('pages/users/admin.ejs', {messages : req.flash("info"), ckeditorData : req.body.ckeditorHTML || ""});
 });
 
 const ckeditorHTMLValidation = [
@@ -289,5 +294,21 @@ routes.all('*', (req, res) => {
   res.status(200).render('pages/unknown.ejs', { url: req.url });
   return;
 });
+
+// Jide's test route //
+
+routes.post('/signme', (req, res) => {
+ //const user = _.pick(req.body,['email','first_name','last_name','activation_token'])
+ 
+  createUser(user).then(val => {
+    console.log('CREATED')
+    res.status(200).send({message: 'USER CREATED BUT NOT ACTIVATED'})
+  }).catch(e => {
+    console.log(e.message)
+    res.status(400).send(e.message)
+  })
+  
+});
+
 
 module.exports = routes;

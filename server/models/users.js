@@ -1,6 +1,6 @@
 const {insertOne} = require('../../helperFunctions/query/queryHelper');
-const bcrypt = require('bcrypt');
-const saltRounds = 10;
+// const bcrypt = require('bcrypt');
+// const saltRounds = 10;
 
 
 module.exports = {

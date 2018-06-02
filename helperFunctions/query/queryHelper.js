@@ -59,8 +59,6 @@ const insertOne = (user) => {
          .catch(e => {throw e})
 }
 
-
-
 module.exports = {
   queryHelper,
   queryUnique,
