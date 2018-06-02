@@ -196,8 +196,14 @@ routes.post('/users/create-user', createUserCheck, (req, res) => { //accessible 
       return;
     }
   }).catch(function(err){
-    console.log("There was a system error", err)
-    req.flash('info', 'There was an system error. Please notify support.')
+    const userExistsCode = "23505"
+    if (err.code === userExistsCode) {
+      req.flash("info", "User already exists");
+    }
+    else {
+      console.log("There was a system error", err)
+      req.flash('info', 'There was an system error. Please notify support.')
+    }
     res.status(200).render('pages/users/create-user.ejs', {messages : req.flash('info'), user});
   })
 
