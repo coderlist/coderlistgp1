@@ -14,7 +14,15 @@
   <br />
   <br />
   <br />
-  <h2>Welcome to the about page</h2>
+  <br />
+  <br />
+  <br />
+  <% if (typeof messages !== "undefined") { %>
+    <p>
+      <strong><%=messages %></strong>
+    </p>
+  <% } %>
+  <h2>Welcome to the finish page with, hopefully, a flash message.</h2>
   <footer>
       <% include ../partials/footer.ejs %>
   </footer>
