@@ -1,6 +1,7 @@
-const {insertOne} = require('../../helperFunctions/query/queryHelper');
-// const bcrypt = require('bcrypt');
-// const saltRounds = 10;
+const {insertOne,
+      findByUsername,
+      queryHelper, insertInTable} = require('../../helperFunctions/query/queryHelper');
+
 
 
 module.exports = {
@@ -11,6 +12,20 @@ module.exports = {
      }).catch(e => {
        throw e
      })  
+  }
+
+//get token from route in a user object
+  //compare with token on db where email === email
+  //on success change activated to true
+  verifyUser(user){
+     findByUsername('users',email).then(dbUser => {
+       if(user.activation_token === dbUser.activation_token){
+        queryHelper(`
+         UPDATE users SET active = true WHERE email = '${dbUser.email}';
+         UPDATE users SET actuivation_token = NULL WHERE email = '${dbUser.email}';
+         `)
+       }
+     })
   }
 
 }

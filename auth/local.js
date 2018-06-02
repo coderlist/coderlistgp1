@@ -1,6 +1,5 @@
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
-const {verifyPassword} = require('./verify');
 const {findByUsername} = require('../helperFunctions/query/queryHelper')
 const options = {
   usernameField: 'email',
@@ -14,6 +13,7 @@ const init = require('./passport');
  * Passport local Strategy configuration 
  * with custom option <usernameField>
  */
+
 
 
 passport.use(new LocalStrategy(options,

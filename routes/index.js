@@ -11,6 +11,7 @@ const Mail = require('../helperFunctions/verification/MailSender');
 // site //
 const createUser = require('../server/models/users').createUser;
 const uuid = require('uuid/v1');
+const _ = require('lodash')
 
 
 
@@ -108,6 +109,9 @@ const passwordCheck = [
   check('confirm_password').equals(check('password'))
 ];
 
+
+
+
 routes.get('/users/verify-email', verificationCheck , (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -147,7 +151,6 @@ routes.post('/enter-new-password', passwordCheck, (req, res) => {
 
 /////////////       Create users           /////////////////////////
 
-
 routes.get('/users/create-user', (req, res) => { //accessible by authed admin
   res.status(200).render('pages/users/create-user.ejs');
 });
@@ -160,8 +163,10 @@ const createUserCheck = [
 
 
 routes.post('/users/create-user', createUserCheck, (req, res) => { //accessible by authed admin
+  
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
+    console.log('ERROR',error)
     const userTemp = {email : req.body.email || "", firstName : req.body.firstName || "", lastName: req.body.lastName || ""}
     req.flash("info","Invalid user data", process.env.NODE_ENV === 'development' ? errors.array() : ""); //error.array() for development only
     res.status(200).render('pages/users/create-user.ejs', {messages : req.flash('info'), userTemp});
@@ -298,6 +303,10 @@ routes.post('/forgot-password', forgotPasswordCheck, (req, res) => {
 
 routes.get('/login', function (req, res){
   res.render('./pages/login');
+
+
+routes.post('/login', passport.authenticate('local'), function (req, res){ //// if validatelogin fails. Failure is sent from within this middleware. If this succeeds then this passes to next function.
+  res.status(200).json({message: "success"})
   return;
 })
 
