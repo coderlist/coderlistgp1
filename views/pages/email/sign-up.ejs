@@ -24,16 +24,16 @@
    <tr>
     <td>
      <table class="email-header" style="margin-bottom: 1rem; max-width: 500px;">
-      Hi Kristian, you've been sent this email so you can register on our website:
+      Hi <%=userDetails.first_name%>, you've been sent this email so you can register on our website:
      </table>
     </td>
    </tr>
    <tr>
     <td align="center">
      <table class="email-body">
-      <a href="">
-       <button style="font-size: 20px; border: none; color: rgb(255, 255, 255); padding: 1rem 2rem; margin-bottom: 0.5rem; background: rgb(146, 233, 255);">
-        Sign up </button>
+      <a href="<%=`${config.url}/enter-password?email=${userDetails.email}&token=${userDetails.activation_token}`%>">
+       <div style="font-size: 20px; border: none; color: rgb(255, 255, 255); padding: 1rem 2rem; margin-bottom: 0.5rem; background: rgb(146, 233, 255);">
+        Sign up </div>
       </a>
      </table>
     </td>

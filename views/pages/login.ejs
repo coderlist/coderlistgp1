@@ -18,11 +18,11 @@
         </div>
       </div>
       <div class="form-box">
-        <input class="input" id="email" type="email" minlength="3" maxlength="64" size="32"  value="" required>
+        <input class="input" name="email" id="email" type="email" minlength="3" maxlength="64" size="32"  value="" required>
         <label for="email">Enter your email </label>
       </div>
       <div class="form-box">
-        <input class="input" id="password" type="password" minlength="8" maxlength="15" size="15" value="" required>
+        <input class="input" name="password" id="password" type="password" minlength="8" maxlength="100" size="15" value="" required>
         <label for="password"> Enter your password </label>
       </div>
     </fieldset>
@@ -30,6 +30,7 @@
     <a class="form-url" href="/password">Forgot Password?</a>
   </form>
   <% include ../partials/flash-message.ejs %>
+
   <script src="./js/form.js"></script>
 </body>
 

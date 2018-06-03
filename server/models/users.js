@@ -1,24 +1,31 @@
-const {insertOne} = require('../../helperFunctions/query/queryHelper');
-const bcrypt = require('bcrypt');
-const saltRounds = 10;
+const {insertOne,
+      findByUsername,
+      queryHelper, insertInTable} = require('../../helperFunctions/query/queryHelper');
+
 
 
 module.exports = {
   
-  createUser(user){
-  console.log('first check')
-  process.env.NODE_ENV === "production" ? console.log("") : console.log(user.password) // remove in production
-  return bcrypt.hash(user.password, saltRounds)
-    .then(hash => {
-           user = {
-             email: user.email,
-             password: hash
-           }
-     return insertOne(user)
-    }).catch(e => {
-      console.log(e)
-      throw e
-    })
-},
+  createUser(user){        
+    return insertOne(user).then(result => {
+       return true
+     }).catch(e => {
+       throw e
+     })  
+  },
+
+//get token from route in a user object
+  //compare with token on db where email === email
+  //on success change activated to true
+  verifyUser(user){
+     findByUsername('users',email).then(dbUser => {
+       if(user.activation_token === dbUser.activation_token){
+        queryHelper(`
+         UPDATE users SET active = true WHERE email = '${dbUser.email}';
+         UPDATE users SET activation_token = NULL WHERE email = '${dbUser.email}';
+         `)
+       }
+     })
+  }
 
 }

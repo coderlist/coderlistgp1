@@ -28,7 +28,7 @@ fs.readFile('init.sql', 'utf-8', (err, data) => {
       return client.query(data)
         .then(res => {
           client.release();
-          console.log('Database created or already exist');
+          console.log('DATABASE CONNECTED');
         });
     }).catch(e => {
       console.error('ERROR: ', e.stack)
