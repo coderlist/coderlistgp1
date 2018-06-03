@@ -9,7 +9,7 @@ const users = require('../server/models/users');
 const passport = require('../auth/local');
 const Mail = require('../helperFunctions/verification/MailSender');
 // site //
-const createUser = require('../server/models/users').createUser;
+const { createUser, verifyUser } = require('../server/models/users');
 const uuid = require('uuid/v1');
 const _ = require('lodash')
 
@@ -307,13 +307,16 @@ routes.post('/enter-password', postEnterPasswordCheck, (req, res) => {
     activation_token : req.body.activation_token,
     password : req.body.password
   }
-  if (users.verifyUser(user)) {
+  console.log("gets here");
+  console.log(verifyUser(user));
+  if (verifyUser(user)) {
     req.flash("info", "There was an error creating user. Please try again or contact your administrator");
     res.status(200).render('pages/enter-password.ejs', {user : {activation_token : req.query.token, email : req.query.email}});
     return;
   } else {
     req.flash("info", "User created");
     res.status(200).redirect('pages/users/admin');
+    return
   }
   
 });

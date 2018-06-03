@@ -24,7 +24,7 @@ module.exports = {
    * on success change activated to true
    */
   verifyUser(user){
-     findByUsername('users',email).then(dbUser => {
+     findByUsername('users',user.email).then(dbUser => {
        if(user.temporary_token === dbUser.temporary_token){
         return bcrypt.hash(user.password, saltrounds)
         .then(hash => {
@@ -46,7 +46,7 @@ module.exports = {
 
   resetFailedLogins(email){
     return queryHelper(`UPDATE users`+ 
-                       `SET failed_login_attemps = 0`+
+                       `SET failed_login_attempts = 0`+
                       `WHERE email ='${email}';`)
       .then(result => true)
       .catch(e => {throw e})   
