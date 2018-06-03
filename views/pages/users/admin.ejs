@@ -19,21 +19,24 @@
   <br />
   <br />
   <form action="#" method="post" name="submitHTML">
+    <label for="pageTitle">Page Title</label><br />
+    <input type="text" name="pageTitle" id="pageTitle" placeholder="Page Title">
     <textarea name="ckeditorHTML" id="editor1" rows="10" cols="80">
         <%=ckeditorData || "Please design your page here"%>
     </textarea>
     <button class="btn btn-info" onclick="submitHTML">Submit</button>
-    <script>
-        // Replace the <textarea id="editor1"> with a CKEditor
-        // instance, using default configuration.
-        CKEDITOR.replace( 'editor1' );
-    </script>
+    
 </form>
     <% include ../../partials/flash-message.ejs %>
   <footer>
     <% include ../../partials/footer.ejs %>
     <script>
-      function submitHTML() { document.getElementsByName('submitHTML').submit;}
+        // Replace the <textarea id="editor1"> with a CKEditor
+        // instance, using default configuration.
+      CKEDITOR.replace( 'editor1' );
+      function submitHTML() { 
+        document.getElementsByName('submitHTML').submit;
+      }
     </script>
   </footer>
 </body>
