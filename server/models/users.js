@@ -42,6 +42,14 @@ module.exports = {
 
   getUserLoginTimes(user){
    
+  },
+
+  resetFailedLogins(email){
+    return queryHelper(`UPDATE users`+ 
+                       `SET failed_login_attemps = 0`+
+                      `WHERE email ='${email}';`)
+      .then(result => true)
+      .catch(e => {throw e})   
   }
 
 }
