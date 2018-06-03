@@ -14,12 +14,16 @@ module.exports = {
      })  
   },
 
-//get token from route in a user object
-  //compare with token on db where email === email
-  //on success change activated to true
+  /**
+   * 
+   * @param {Object} user 
+   * gets token from route in a temporary user object
+   * and compare with token on db where email === email 
+   * on success change activated to true
+   */
   verifyUser(user){
      findByUsername('users',email).then(dbUser => {
-       if(user.activation_token === dbUser.activation_token){
+       if(user.temporary_token === dbUser.temporary_token){
         queryHelper(`
          UPDATE users SET active = true WHERE email = '${dbUser.email}';
          UPDATE users SET activation_token = NULL WHERE email = '${dbUser.email}';
