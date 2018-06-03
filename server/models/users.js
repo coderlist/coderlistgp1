@@ -29,9 +29,9 @@ module.exports = {
         return bcrypt.hash(user.password, saltrounds)
         .then(hash => {
          return  queryHelper(
-           `update users set password = ${hash},`+
+           `UPDATE users SET password = ${hash},`+
            `temporary_token = null, activated = true`+
-            `where email ='${dbUser.email}';
+            `WHERE email ='${dbUser.email}';
            `)
         })
        }else{
