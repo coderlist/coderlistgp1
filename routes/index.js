@@ -32,7 +32,7 @@ routes.get('/about', (req, res) => {
 });
 
 // users //
-
+///////////////   Login    //////////////////
 
 routes.get('/login', (req, res) => {
   // **Supply credentials to database
@@ -46,8 +46,17 @@ routes.get('/login', (req, res) => {
 });
 
 
-routes.get('/password', (req, res) => { 
-  res.status(200).render('pages/resetpassword.ejs');
+const loginCheck = [
+  check('email').isEmail().normalizeEmail(),
+];
+
+routes.post('/login', loginCheck, logins.getNumberOfFailedLogins, passport.authenticate('local'), function (req, res){ //// if validatelogin fails. Failure is sent from within this middleware. If this succeeds then this passes to next function.
+  res.status(200).json({message: "success"})
+  return;
+})
+
+routes.get('/reset-password', (req, res) => { 
+  res.status(200).render('pages/reset-password.ejs');
   return;
 });
 
@@ -76,7 +85,6 @@ routes.get('/signup', (req, res) => {
   return;
 });
 
-
 // routes.get('/test-flash-start', (req, res) => {
 //   req.flash('info','This is a flash message');
 //   res.status(200).redirect('/test-flash-finish');
@@ -103,11 +111,6 @@ const validationCheck = [
   check('password').isLength({ min: 8 })
 ];
 
-
-
-
-
-
 routes.get('/users/verify-email', verificationCheck , (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -124,12 +127,7 @@ routes.get('/users/verify-email', verificationCheck , (req, res) => {
   return;
 });
 
-
-
-
 ////////////////////    Enter new Password           ////////////////////
-
-
 
 routes.get('/enter-new-password',  (req, res) => {
   res.status(200).render('pages/users/enter-new-password', {email: req.session.email, token: req.session.token});
@@ -271,8 +269,8 @@ enterPasswordCheck = [
 
 routes.get('/enter-password', enterPasswordCheck, (req, res) => {
   let errors = validationResult(req);
-  console.log('req.query :', req.query);
-  console.log('errors :', errors.array());
+  //console.log('req.query :', req.query);
+  //console.log('errors :', errors.array());
   if (!errors.isEmpty()){
     req.flash('info', 'Invalid credentials. Please try again or contact your administrator');
     res.status(200).render('pages/enter-password.ejs', {messages : req.flash('info'), user : {activation_token : req.body.token, email : req.body.email}});
@@ -304,7 +302,19 @@ routes.post('/enter-password', postEnterPasswordCheck, (req, res) => {
     res.status(200).render(`pages/enter-password.ejs`, {messages : req.flash('info'), user : {activation_token : req.body.token, email : req.body.email}});
     return;
   }
-  verifyUser(req.body);
+  const user = {
+    email : req.body.email,
+    activation_token : req.body.activation_token,
+    password : req.body.password
+  }
+  if (users.verifyUser(user)) {
+    req.flash("info", "There was an error creating user. Please try again or contact your administrator");
+    res.status(200).render('pages/enter-password.ejs', {user : {activation_token : req.query.token, email : req.query.email}});
+    return;
+  } else {
+    req.flash("info", "User created");
+    res.status(200).redirect('pages/users/admin');
+  }
   
 });
 
@@ -358,27 +368,6 @@ routes.post('/forgot-password', forgotPasswordCheck, (req, res) => {
   
  
   
-
-
-///////////////   Login    //////////////////
-
-routes.post('/login', passport.authenticate('local'), function (req, res){ //// if validatelogin fails. Failure is sent from within this middleware. If this succeeds then this passes to next function.
-  res.status(200).json({message: "success"})
-  return;
-})
-
-const loginCheck = [
-  check('email').isEmail().normalizeEmail(),
-];
-
-routes.post('/login', passport.authenticate('local', {successRedirect: '/users/admin',
-                                                      failureRedirect: '/login',
-                                                      failureFlash: true}), 
-);
-                                                      // function (req, res){ //// if validatelogin fails. Failure is sent from within this middleware. If this succeeds then this passes to next function.
-  // res.status(200).json({message: "success"})
-//   return;
-// })
 
 
 
