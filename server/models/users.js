@@ -1,3 +1,5 @@
+const bcrypt = require('bcrypt');
+const saltrounds = 10;
 const {insertOne,
       findByUsername,
       queryHelper, insertInTable} = require('../../helperFunctions/query/queryHelper');
@@ -22,21 +24,24 @@ module.exports = {
    * on success change activated to true
    */
   verifyUser(user){
-<<<<<<< HEAD
      findByUsername('users',email).then(dbUser => {
        if(user.temporary_token === dbUser.temporary_token){
-=======
-     findByUsername('users',user.email).then(dbUser => {
-       if(user.activation_token === dbUser.activation_token){
->>>>>>> e3f4858482b0f06f92eb38ded2c1a91a79ff5d02
-        queryHelper(`
-         UPDATE users SET active = true WHERE email = '${dbUser.email}';
-         UPDATE users SET activation_token = NULL WHERE email = '${dbUser.email}';
-         `)
-         return true;
+        return bcrypt.hash(user.password, saltrounds)
+        .then(hash => {
+         return  queryHelper(
+           `update users set password = ${hash},`+
+           `temporary_token = null, activated = active`+
+            `where email ='${dbUser.email}';
+           `)
+        })
+       }else{
+         Promise.reject();
        }
-       return false;
-     })
+     }).catch(e => {throw e})
+  },
+
+  getUserLoginTimes(user){
+   
   }
 
 }
