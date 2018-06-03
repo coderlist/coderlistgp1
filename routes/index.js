@@ -21,7 +21,7 @@ routes.get('/', (req, res) => {
     {href:"test me one", name:"item 1"},
     {href:"test me two", name:"item 2"}
   ]
-  res.status(200).render('pages/index', {menuItems: menuItems, messages: req.flash('info')}); //ejs example
+  res.status(200).render('pages/index', {contentHomePages: "", menuItems: menuItems, messages: req.flash('info')}); //ejs example
   return;
 });
 
