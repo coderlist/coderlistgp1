@@ -30,7 +30,7 @@ module.exports = {
         .then(hash => {
          return  queryHelper(
            `update users set password = ${hash},`+
-           `temporary_token = null, activated = active`+
+           `temporary_token = null, activated = true`+
             `where email ='${dbUser.email}';
            `)
         })
