@@ -12,7 +12,7 @@ module.exports = {
      }).catch(e => {
        throw e
      })  
-  }
+  },
 
 //get token from route in a user object
   //compare with token on db where email === email
@@ -22,7 +22,7 @@ module.exports = {
        if(user.activation_token === dbUser.activation_token){
         queryHelper(`
          UPDATE users SET active = true WHERE email = '${dbUser.email}';
-         UPDATE users SET actuivation_token = NULL WHERE email = '${dbUser.email}';
+         UPDATE users SET activation_token = NULL WHERE email = '${dbUser.email}';
          `)
        }
      })

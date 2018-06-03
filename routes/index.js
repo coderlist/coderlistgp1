@@ -1,5 +1,5 @@
 const routes = require('express').Router();
-const { query, check, validationResult } = require('express-validator/check');
+const { query, check, body, validationResult } = require('express-validator/check');
 const { matchedData, sanitize } = require('express-validator/filter');
 const Logins = require('../helperFunctions/Logins');
 const logins = new Logins();
@@ -103,11 +103,7 @@ const validationCheck = [
   check('password').isLength({ min: 8 })
 ];
 
-const passwordCheck = [
-  check('password').isLength({min: 8}),
-  // password must be at least 8 chars long
-  check('confirm_password').equals(check('password'))
-];
+
 
 
 
@@ -129,10 +125,22 @@ routes.get('/users/verify-email', verificationCheck , (req, res) => {
 });
 
 
+
+
+////////////////////    Enter new Password           ////////////////////
+
+
+
 routes.get('/enter-new-password',  (req, res) => {
   res.status(200).render('pages/users/enter-new-password', {email: req.session.email, token: req.session.token});
   return;
 });
+
+const passwordCheck = [
+  check('password').isLength({min: 8}),
+  // password must be at least 8 chars long
+  check('confirm_password').equals(check('password'))
+];
 
 routes.post('/enter-new-password', passwordCheck, (req, res) => {
   const errors = validationResult(req);
@@ -156,9 +164,9 @@ routes.get('/users/create-user', (req, res) => { //accessible by authed admin
 });
 
 const createUserCheck = [
-  check('email').isEmail().normalizeEmail(),
-  check('firstName').trim().isAlphanumeric(),
-  check('lastName').trim().isAlphanumeric()
+  body('email').isEmail().normalizeEmail(),
+  body('firstName').trim().isAlphanumeric(),
+  body('lastName').trim().isAlphanumeric()
 ];
 
 
@@ -232,6 +240,11 @@ routes.post('/users/admin', logins.isLoggedIn,  (req,res) => {
   res.status(200).render('pages/users/admin.ejs', {messages : req.flash("info"), ckeditorData : req.body.ckeditorHTML || ""});
 });
 
+
+////////////           Change user ///////////////////////
+
+
+
 routes.get('/users/edit-user', (req, res) => { //accessible by authed admin
   res.status(200).render('pages/users/edit-user.ejs', {user:req.body.userToDelete});
   // confirm page for deleting user. only accessible by authenticated admin.
@@ -245,6 +258,56 @@ routes.post('/users/delete-user', (req, res) => {
 routes.get('/users/change-password', (req, res) => { 
   res.status(200).render('pages/users/changePassword.ejs');
 });
+
+
+
+
+///////////////       Register User      //////////////////
+
+enterPasswordCheck = [
+  query('token').exists().isUUID(),
+  query('email').exists().isEmail().normalizeEmail()
+];
+
+routes.get('/enter-password', enterPasswordCheck, (req, res) => {
+  let errors = validationResult(req);
+  console.log('req.query :', req.query);
+  console.log('errors :', errors.array());
+  if (!errors.isEmpty()){
+    req.flash('info', 'Invalid credentials. Please try again or contact your administrator');
+    res.status(200).render('pages/enter-password.ejs', {messages : req.flash('info'), user : {activation_token : req.body.token, email : req.body.email}});
+    return;
+  }
+  res.status(200).render('pages/enter-password.ejs', {user : {activation_token : req.query.token, email : req.query.email}});
+});
+
+postEnterPasswordCheck = [
+  body('activation_token').exists().isUUID(),
+  body('email').exists().isEmail().normalizeEmail(),
+  body("password", "invalid password")
+  .isLength({ min: 8 })
+  .custom((value,{req, loc, path}) => {
+    if (value !== req.body.confirm_password) {
+      throw new Error("Passwords don't match");
+    } else {
+      return value;
+    }
+  })
+];
+
+routes.post('/enter-password', postEnterPasswordCheck, (req, res) => {
+  let errors = validationResult(req);
+  console.log('req.body :', req.body);
+  console.log('errors :', errors.array());
+  if (!errors.isEmpty()){
+    req.flash('info', 'Invalid credentials. Please try again or contact your administrator');
+    res.status(200).render(`pages/enter-password.ejs`, {messages : req.flash('info'), user : {activation_token : req.body.token, email : req.body.email}});
+    return;
+  }
+  verifyUser(req.body);
+  
+});
+
 
 
 
@@ -298,12 +361,6 @@ routes.post('/forgot-password', forgotPasswordCheck, (req, res) => {
 
 
 ///////////////   Login    //////////////////
-
-
-
-routes.get('/login', function (req, res){
-  res.render('./pages/login');
-
 
 routes.post('/login', passport.authenticate('local'), function (req, res){ //// if validatelogin fails. Failure is sent from within this middleware. If this succeeds then this passes to next function.
   res.status(200).json({message: "success"})

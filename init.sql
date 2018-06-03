@@ -97,6 +97,11 @@ BEGIN
     END IF;
 END$$;
 
+
+DO $$
+BEGIN
+    IF NOT EXISTS ( SELECT  conname
+                FROM    pg_constraint 
                 WHERE   conname = 'not_empty_string')
     THEN
         ALTER TABLE users ADD CONSTRAINT not_empty_string CHECK (email <> '');
