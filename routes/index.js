@@ -269,8 +269,8 @@ enterPasswordCheck = [
 
 routes.get('/enter-password', enterPasswordCheck, (req, res) => {
   let errors = validationResult(req);
-  console.log('req.query :', req.query);
-  console.log('errors :', errors.array());
+  //console.log('req.query :', req.query);
+  //console.log('errors :', errors.array());
   if (!errors.isEmpty()){
     req.flash('info', 'Invalid credentials. Please try again or contact your administrator');
     res.status(200).render('pages/enter-password.ejs', {messages : req.flash('info'), user : {activation_token : req.body.token, email : req.body.email}});
@@ -302,7 +302,19 @@ routes.post('/enter-password', postEnterPasswordCheck, (req, res) => {
     res.status(200).render(`pages/enter-password.ejs`, {messages : req.flash('info'), user : {activation_token : req.body.token, email : req.body.email}});
     return;
   }
-  verifyUser(req.body);
+  const user = {
+    email : req.body.email,
+    activation_token : req.body.activation_token,
+    password : req.body.password
+  }
+  if (users.verifyUser(user)) {
+    req.flash("info", "There was an error creating user. Please try again or contact your administrator");
+    res.status(200).render('pages/enter-password.ejs', {user : {activation_token : req.query.token, email : req.query.email}});
+    return;
+  } else {
+    req.flash("info", "User created");
+    res.status(200).redirect('pages/users/admin');
+  }
   
 });
 
