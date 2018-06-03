@@ -32,7 +32,7 @@ routes.get('/about', (req, res) => {
 });
 
 // users //
-
+///////////////   Login    //////////////////
 
 routes.get('/login', (req, res) => {
   // **Supply credentials to database
@@ -46,8 +46,17 @@ routes.get('/login', (req, res) => {
 });
 
 
-routes.get('/password', (req, res) => { 
-  res.status(200).render('pages/resetpassword.ejs');
+const loginCheck = [
+  check('email').isEmail().normalizeEmail(),
+];
+
+routes.post('/login', loginCheck, logins.getNumberOfFailedLogins, passport.authenticate('local'), function (req, res){ //// if validatelogin fails. Failure is sent from within this middleware. If this succeeds then this passes to next function.
+  res.status(200).json({message: "success"})
+  return;
+})
+
+routes.get('/reset-password', (req, res) => { 
+  res.status(200).render('pages/reset-password.ejs');
   return;
 });
 
@@ -76,7 +85,6 @@ routes.get('/signup', (req, res) => {
   return;
 });
 
-
 // routes.get('/test-flash-start', (req, res) => {
 //   req.flash('info','This is a flash message');
 //   res.status(200).redirect('/test-flash-finish');
@@ -103,11 +111,6 @@ const validationCheck = [
   check('password').isLength({ min: 8 })
 ];
 
-
-
-
-
-
 routes.get('/users/verify-email', verificationCheck , (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -124,12 +127,7 @@ routes.get('/users/verify-email', verificationCheck , (req, res) => {
   return;
 });
 
-
-
-
 ////////////////////    Enter new Password           ////////////////////
-
-
 
 routes.get('/enter-new-password',  (req, res) => {
   res.status(200).render('pages/users/enter-new-password', {email: req.session.email, token: req.session.token});
@@ -358,27 +356,6 @@ routes.post('/forgot-password', forgotPasswordCheck, (req, res) => {
   
  
   
-
-
-///////////////   Login    //////////////////
-
-routes.post('/login', passport.authenticate('local'), function (req, res){ //// if validatelogin fails. Failure is sent from within this middleware. If this succeeds then this passes to next function.
-  res.status(200).json({message: "success"})
-  return;
-})
-
-const loginCheck = [
-  check('email').isEmail().normalizeEmail(),
-];
-
-routes.post('/login', passport.authenticate('local', {successRedirect: '/users/admin',
-                                                      failureRedirect: '/login',
-                                                      failureFlash: true}), 
-);
-                                                      // function (req, res){ //// if validatelogin fails. Failure is sent from within this middleware. If this succeeds then this passes to next function.
-  // res.status(200).json({message: "success"})
-//   return;
-// })
 
 
 

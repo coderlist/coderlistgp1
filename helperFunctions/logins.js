@@ -22,6 +22,23 @@ class Logins {
     }
     return next();
   }
+
+  getNumberOfFailedLogins(req, res, next) {
+    //database request for failed times
+    // if last login failure date > 5 minutes ago update db with failed logins set to 0  this.resetFailedLogins(req.body.email); next()
+    // if date < 5 minutes ago and logins < 10 next();
+    // if date < 5 minutes ago and logins > 10 then send req.flash('info', 'Too many unsuccesful logins. Your account has been locked. Please try again later'); res.status(200),redirect('./login');
+    next(); // remove when algorithm implemented;
+  }
+
+  resetFailedLogins(email) {
+    // reset failed logins to 0
+  }
+
+  addOneToFailedLogins(email) {
+    //after login failure add one to failed logins for user (if exists)
+  }
+
 }
 
 module.exports = Logins;

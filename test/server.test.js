@@ -7,31 +7,26 @@ describe('Page requests' , function (){
         request(app)
         .get('/')
         .expect(200)
-        .expect(/Free text edit space here/, done)
     })
     it('should load about page', function (done){
         request(app)
         .get('/about')
         .expect(200)
-        .expect(/about/, done)
     })
     it('should load admin page', function (done){
         request(app)
         .get('/admin')
         .expect(200)
-        .expect(/admin/, done)
     })
     it('should load login page', function (done){
         request(app)
         .get('/login')
         .expect(200)
-        .expect(/login/, done)
     })
     it('should load create-user page', function (done){
         request(app)
         .get('/users/create-user')
         .expect(200)
-        .expect(/create user/, done)
     })
     it('should load edit-user page', function (done){
         request(app)
