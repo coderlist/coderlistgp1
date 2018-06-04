@@ -73,8 +73,21 @@ module.exports = {
       .catch(e => {throw e})   
   },
 
-  addOneToFailedLogins(email){
-    
+  
+  /**
+   * @param  {Object} user
+   * accepts a user object and increment 
+   * user failed_login_attempts by 1.
+   * returns true on success and a db error
+   * on failure
+   * return a Promise 
+   */
+  addOneToFailedLogins(user){
+    return queryHelper(`UPDATE users SET failed_login_attempts =`+ 
+                      ` failed_login_attempts + 1 WHERE email =`+ 
+                      ` '${user.email}';`)
+      .then(response => true)
+      .catch(e => {throw e})
   }
 
 }
