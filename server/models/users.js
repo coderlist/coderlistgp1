@@ -1,5 +1,6 @@
 const bcrypt = require('bcrypt');
 const saltrounds = 10;
+const {verifyPassword} = require('../../auth/verify');
 const {insertOne,
       findByUsername,
       queryHelper, insertInTable} = require('../../helperFunctions/query/queryHelper');
@@ -25,19 +26,22 @@ module.exports = {
    * It return a Promise
    */
   verifyUser(user){
-     return findByUsername('users',user.email).then(dbUser => {
-       if(user.activation_token === dbUser.temporary_token){
+      return findByUsername('users',user.email).then(dbUser => {
+        if(user.activation_token === dbUser.temporary_token){
         return bcrypt.hash(user.password, saltrounds)
         .then(hash => {
          return  queryHelper(
            `UPDATE users SET password = '${hash}',`+
-           `temporary_token = null, activated = true `+
+           `temporary_token = null, verified = true `+
             `WHERE email ='${dbUser.email}';
            `).then(user => {
              return true
            })
         })
-       }else{
+       }
+       else{
+         console.log('WRONG TOKEN')
+         return false;
          Promise.reject();
        }
      }).catch(e => {throw e})
@@ -102,7 +106,7 @@ module.exports = {
                        .then(response => true)
                        .catch(e => {throw e})
   },
-  
+
   /**
    * @param  {Object} user
    * updates the time of an unsuccessful
@@ -114,6 +118,18 @@ module.exports = {
                        `current_timestamp WHERE email='${user.email}';`)
                        .then(response => true)
                        .catch(e => {throw e})
-  }
+  },
 
+  // checkUserForEmailChange(user){
+  //   //bcrypt.compareSync(userPassword, hash)
+  //   return findByUsername('users',user.email).then(dbUser => {
+  //     if(verifyPassword(user.password,dbUser.password)){
+  //        return queryHelper(`INSERT INTO user (old_email) `+
+  //                      `VALUES ('{"old_email": "${dbUser.email}"}')`)
+  //     }
+  //   })
+  // }
+    
 }
+
+
