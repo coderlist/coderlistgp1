@@ -1,6 +1,7 @@
 let request = require('supertest'),
    app     = require('../server',)
    expect = require('chai');
+   
 
 describe('Page requests' , function (){
     it('should load home page', function (done){
@@ -15,7 +16,7 @@ describe('Page requests' , function (){
     })
     it('should load admin page', function (done){
         request(app)
-        .get('/admin')
+        .get('/admin', )
         .expect(200, done)
     })
     it('should load login page', function (done){

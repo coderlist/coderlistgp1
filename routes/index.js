@@ -63,13 +63,13 @@ routes.get('/reset-password', (req, res) => {
 // Test routes for Email and Password Templates to check Design
 // Can delete this after all the templates are done
 // Change Password Template missing -> done at the end of this week
-routes.get('/sign-up', (req, res) => { 
-  res.status(200).render('pages/email/sign-up.ejs');
-  return;
-});
+// routes.get('/sign-up', (req, res) => { 
+//   res.status(200).render('pages/email/sign-up.ejs');
+//   return;
+// });
 
 routes.get('/forgot-password', (req, res) => { 
-  res.status(200).render('pages/email/forgot-password.ejs');
+  res.status(200).render('pages/users/forgot-password.ejs');
   return;
 });
 
@@ -308,25 +308,22 @@ routes.post('/enter-password', postEnterPasswordCheck, (req, res) => {
     password : req.body.password
   }
   console.log("gets here");
-  // console.log(verifyUser(user)); this will throw an error
   users.verifyUser(user).then(response => {
-    if (response) {
+    console.log('response :', response);
+    if (response !== undefined) {
       req.flash("info", "There was an error creating user. Please try again or contact your administrator");
       res.status(200).render('pages/enter-password.ejs', {user : {activation_token : req.query.token, email : req.query.email}});
       return;
     } else {
-      req.flash("info", "User created");
-      res.status(200).redirect('pages/users/admin');
-      return
+      req.flash("info", "User created. Please login using your new password");
+      res.logOut();
+      res.status(200).redirect('/login');
+      return;
     }
   }).catch(e =>  e.stack)   //handle error here
 });
 
-
-
-
  /////////////////  Forgot Password //////////////
-
 
 routes.get('/forgot-password', (req, res) => {
   // **create a page with two fields to enter email addresses
