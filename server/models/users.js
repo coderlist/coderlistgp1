@@ -48,7 +48,8 @@ module.exports = {
    * this takes a user object and
    * returns an object with last_login
    * and failed login attempts. It returns
-   * Promise
+   * Promise. The response is an array of a single 
+   * object [{}]
    */
   getNumberOfFailedLogins(user){
     return queryHelper(`SELECT failed_login_attempts,`+

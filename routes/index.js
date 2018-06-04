@@ -320,7 +320,6 @@ routes.post('/enter-password', postEnterPasswordCheck, (req, res) => {
       return
     }
   }).catch(e =>  e.stack)   //handle error here
-
 });
 
 
