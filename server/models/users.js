@@ -73,7 +73,7 @@ module.exports = {
       .catch(e => {throw e})   
   },
 
-  
+
   /**
    * @param  {Object} user
    * accepts a user object and increment 
@@ -88,6 +88,18 @@ module.exports = {
                       ` '${user.email}';`)
       .then(response => true)
       .catch(e => {throw e})
+  },
+
+  /**
+   * @param  {Object} user
+   * accepts user object and sets current_timestamp
+   * for a successful login.
+   */
+  setSuccessfulLoginTime(user){
+    return queryHelper(`UPDATE users SET last_succesful_login = `+ 
+                       `current_timestamp WHERE email='${user.email}';`)
+                       .then(response => true)
+                       .catch(e => {throw e})
   }
 
 }
