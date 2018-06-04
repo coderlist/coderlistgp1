@@ -43,16 +43,37 @@ module.exports = {
      }).catch(e => {throw e})
   },
 
-  getUserLoginTimes(user){
-   
+  /**
+   * @param  {Object} user
+   * this takes a user object and
+   * returns an object with last_login
+   * and failed login attempts. It returns
+   * Promise
+   */
+  getNumberOfFailedLogins(user){
+    return queryHelper(`SELECT failed_login_attempts,`+
+                     `last_failed_login FROM users WHERE`+
+                    ` email = '${user.email}'`)
+                    .then(response => response)
+                    .catch(e => e)
   },
 
-  resetFailedLogins(email){
+  /**
+   * @param  {Object} user
+   * This takes an object and returns a boolean
+   * when the update is done or a db error message 
+   * on failure
+   */
+  resetFailedLogins(user){
     return queryHelper(`UPDATE users`+ 
                        `SET failed_login_attempts = 0`+
-                      `WHERE email ='${email}';`)
+                      `WHERE email ='${user.email}';`)
       .then(result => true)
       .catch(e => {throw e})   
+  },
+
+  addOneToFailedLogins(email){
+    
   }
 
 }
