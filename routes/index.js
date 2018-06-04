@@ -309,15 +309,15 @@ routes.post('/enter-password', postEnterPasswordCheck, (req, res) => {
   }
   console.log("gets here");
   console.log(verifyUser(user));
-  if (verifyUser(user)) {
-    req.flash("info", "There was an error creating user. Please try again or contact your administrator");
-    res.status(200).render('pages/enter-password.ejs', {user : {activation_token : req.query.token, email : req.query.email}});
-    return;
-  } else {
-    req.flash("info", "User created");
-    res.status(200).redirect('pages/users/admin');
-    return
-  }
+  verifyUser(user);
+  //   req.flash("info", "There was an error creating user. Please try again or contact your administrator");
+  //   res.status(200).render('pages/enter-password.ejs', {user : {activation_token : req.query.token, email : req.query.email}});
+  //   return;
+  // } else {
+  //   req.flash("info", "User created");
+  //   res.status(200).redirect('pages/users/admin');
+  //   return
+  // }
   
 });
 
@@ -370,11 +370,6 @@ routes.post('/forgot-password', forgotPasswordCheck, (req, res) => {
 });
   
  
-  
-
-
-
-
 // pages //
 
 
