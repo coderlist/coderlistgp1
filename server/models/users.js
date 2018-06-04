@@ -94,9 +94,23 @@ module.exports = {
    * @param  {Object} user
    * accepts user object and sets current_timestamp
    * for a successful login.
+   * return a Promise
    */
   setSuccessfulLoginTime(user){
     return queryHelper(`UPDATE users SET last_succesful_login = `+ 
+                       `current_timestamp WHERE email='${user.email}';`)
+                       .then(response => true)
+                       .catch(e => {throw e})
+  },
+  
+  /**
+   * @param  {Object} user
+   * updates the time of an unsuccessful
+   * login 
+   * returns a Promise
+   */
+  setLastFailedLoginTime(user){
+    return queryHelper(`UPDATE users SET last_failed_login = `+ 
                        `current_timestamp WHERE email='${user.email}';`)
                        .then(response => true)
                        .catch(e => {throw e})
