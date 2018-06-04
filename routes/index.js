@@ -308,17 +308,18 @@ routes.post('/enter-password', postEnterPasswordCheck, (req, res) => {
     password : req.body.password
   }
   console.log("gets here");
-  console.log(verifyUser(user));
-  verifyUser(user);
-  //   req.flash("info", "There was an error creating user. Please try again or contact your administrator");
-  //   res.status(200).render('pages/enter-password.ejs', {user : {activation_token : req.query.token, email : req.query.email}});
-  //   return;
-  // } else {
-  //   req.flash("info", "User created");
-  //   res.status(200).redirect('pages/users/admin');
-  //   return
-  // }
-  
+  // console.log(verifyUser(user)); this will throw an error
+  users.verifyUser(user).then(response => {
+    if (response) {
+      req.flash("info", "There was an error creating user. Please try again or contact your administrator");
+      res.status(200).render('pages/enter-password.ejs', {user : {activation_token : req.query.token, email : req.query.email}});
+      return;
+    } else {
+      req.flash("info", "User created");
+      res.status(200).redirect('pages/users/admin');
+      return
+    }
+  }).catch(e =>  e.stack)   //handle error here
 });
 
 

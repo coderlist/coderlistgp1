@@ -49,10 +49,10 @@ const queryUnique = (query) => {
  * the email
  */
 const findByUsername = (table, email) => {
-  return queryUnique(`select exists(select\
-     1 from users where email=('${email}'))`).then(res => {
+  return queryUnique(`SELECT EXISTS(SELECT\
+     1 FROM users WHERE email=('${email}'))`).then(res => {
     if (!res.exists) return false
-    return queryUnique(`select * from users where email = '${email}'`)
+    return queryUnique(`SELECT * FROM users WHERE email = '${email}'`)
       .then(user => user)
   }).catch(e => e.message)
 }
