@@ -284,13 +284,13 @@ postEnterPasswordCheck = [
   body('email').exists().isEmail().normalizeEmail(),
   body("password", "invalid password")
   .isLength({ min: 8 })
-  // .custom((value,{req, loc, path}) => {
-  //   if (value !== req.body.confirm_password) {
-  //     throw new Error("Passwords don't match");
-  //   } else {
-  //     return value;
-  //   }
-  // })
+  .custom((value,{req, loc, path}) => {
+    if (value !== req.body.confirm_password) {
+      throw new Error("Passwords don't match");
+    } else {
+      return value;
+    }
+  })
 ];
 
 routes.post('/enter-password', postEnterPasswordCheck, (req, res) => {
@@ -309,13 +309,8 @@ routes.post('/enter-password', postEnterPasswordCheck, (req, res) => {
   }
   console.log("gets here");
   users.verifyUser(user).then(response => {
-<<<<<<< HEAD
     console.log('RESPONSE', response)
     if (response) {
-=======
-    console.log('response :', response);
-    if (response !== undefined) {
->>>>>>> 2bbf2c9821a35362921f3ed2441b72e5ceed9892
       req.flash("info", "There was an error creating user. Please try again or contact your administrator");
       res.status(200).render('pages/enter-password.ejs', {user : {activation_token : req.query.token, email : req.query.email}});
       return;
