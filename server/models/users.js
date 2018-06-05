@@ -131,7 +131,7 @@ module.exports = {
    */
   setOldEmailObject(user){
     return findByUsername('users',user.email).then(dbUser => {
-      if(!verifyPassword(user.password,dbUser.password)){
+      if(verifyPassword(user.password,dbUser.password)){
          return queryHelper(`update users set old_email = old_email ||`+
                          ` array['{ "email":"${user.email}","token_date": `+
                          `"' || now() || '", "token":"${user.activation_token}" }']`+
