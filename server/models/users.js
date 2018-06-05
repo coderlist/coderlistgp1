@@ -27,7 +27,7 @@ module.exports = {
    */
   verifyUser(user){
       return findByUsername('users',user.email).then(dbUser => {
-        if(user.activation_token === dbUser.temporary_token){
+        if(user.activation_token === dbUser.activation_token){
         return bcrypt.hash(user.password, saltrounds)
         .then(hash => {
          return  queryHelper(
