@@ -1,5 +1,6 @@
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
+const verifyPassword = require('./verify');
 const {findByUsername} = require('../helperFunctions/query/queryHelper')
 const options = {
   usernameField: 'email',
@@ -23,7 +24,7 @@ passport.use(new LocalStrategy(options,
       console.log('verify fnunction :', verifyPassword);
      if(!user) {
       return done(null,false, {message: "Invalid Username or password"})}
-     if(verifyPassword(password,user.password)===false) { 
+     if(verifyPassword.verifyPassword(password,user.password)===false) { 
         let user = {email : email};
         addOneToFailedLogins(email);
         setLastFailedLoginTime(user);
@@ -31,7 +32,7 @@ passport.use(new LocalStrategy(options,
       }  // does this need to be asynchronous?
      return done(null,user);
 
-    }).catch(e => {return done(null,false, {messages: "Invalid Username or password"})})
+    }).catch(e => {console.log("there was an a catch error", e); return done(null,false, {messages: "Invalid Username or password"})})
   }
   ));
 

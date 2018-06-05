@@ -35,12 +35,6 @@ routes.get('/about', (req, res) => {
 ///////////////   Login    //////////////////
 
 routes.get('/login', (req, res) => {
-  // **Supply credentials to database
-  // **if invalid user return "Invalid Username or Password" Flash Message
-  // **if failed attempts date > 5 minutes ago. reset failed attempts to 0.
-  // **if failed attempts >= 10  last failure date < 5 minutes ago. respond with "your account has been locked. It will auto unlock soon". 
-  // **on successful login. set successful login to true and date to now. Reset failed login attempts to zero. 
-  // **on failed attempt. if failed attempt date > successful login date, set user (if valid) failed attempts += 1.  Set failure date to now
   res.status(200).render('pages/login', { messages: req.flash('error')});
   return;
 });
@@ -59,6 +53,7 @@ routes.post('/login',
     }
   ), 
   function (req, res){ //// if validatelogin fails. Failure is sent from within this middleware. If this succeeds then this passes to next function.
+
     res.status(200).redirect("/users/admin")
   return;
 })
@@ -233,7 +228,7 @@ routes.post('/users/email-verification', verificationCheck, (req, res) => {
 });
 
 
-routes.get('/users/admin', (req,res) => {
+routes.get('/users/admin', logins.isLoggedIn, (req,res) => {
   res.status(200).render('pages/users/admin.ejs', {messages : req.flash("info"), ckeditorData : req.body.ckeditorHTML || ""});
 });
 
