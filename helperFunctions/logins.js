@@ -1,4 +1,4 @@
-// route middleware to make sure a user is logged in
+const { getNumberOfFailedLogins } = require('../server/models/users')
 class Logins {
   constructor () {
   }
@@ -23,12 +23,32 @@ class Logins {
     return next();
   }
 
-  getNumberOfFailedLogins(req, res, next) {
+  failedLoginsCheck(req, res, next) {
+    console.log('req.body :', req.body);
+    return getNumberOfFailedLogins(req.body)
+      .then(function (data){
+        console.log('data :', data);
+        if (Date.now() < (data.last_failed_login + (1000 * 60 * 5)) ) {
+          resetFailedLogins(req.body);
+          next();
+        }
+        if (data.failed_login_attempts < 10 || data.failed_login_attempts == null) {
+          next();
+        }
+        else {
+          res.status(200).redirect('/login')
+          return;
+        }
+      })
+      .catch(function(err){
+        console.log(err);
+      })
+    
     //database request for failed times
     // if last login failure date > 5 minutes ago update db with failed logins set to 0  this.resetFailedLogins(req.body.email); next()
     // if date < 5 minutes ago and logins < 10 next();
     // if date < 5 minutes ago and logins > 10 then send req.flash('info', 'Too many unsuccesful logins. Your account has been locked. Please try again later'); res.status(200),redirect('./login');
-    next(); // remove when algorithm implemented;
+   // remove when algorithm implemented;
   }
 
   resetFailedLogins(email) {

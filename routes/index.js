@@ -50,8 +50,8 @@ const loginCheck = [
   check('email').isEmail().normalizeEmail(),
 ];
 
-routes.post('/login', loginCheck, logins.getNumberOfFailedLogins, passport.authenticate('local'), function (req, res){ //// if validatelogin fails. Failure is sent from within this middleware. If this succeeds then this passes to next function.
-  res.status(200).json({message: "success"})
+routes.post('/login', loginCheck, logins.failedLoginsCheck, passport.authenticate('local'), function (req, res){ //// if validatelogin fails. Failure is sent from within this middleware. If this succeeds then this passes to next function.
+  res.status(200).redirect("/users/admin")
   return;
 })
 
