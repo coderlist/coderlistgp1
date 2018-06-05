@@ -5,7 +5,7 @@ CREATE TABLE IF NOT EXISTS users (
   password TEXT,
   last_succesful_login TIMESTAMP,
   last_failed_login TIMESTAMP,
-  failed_login_attempts INT ,
+  failed_login_attempts INT,
   first_name TEXT NOT NULL,
   last_name TEXT NOT NULL,
   activated BOOLEAN DEFAULT FALSE,
