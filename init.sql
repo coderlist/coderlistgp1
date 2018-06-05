@@ -11,7 +11,7 @@ CREATE TABLE IF NOT EXISTS users (
   activated BOOLEAN DEFAULT FALSE,
   temporary_token TEXT,
   temporary_token_date TIMESTAMP,
-  old_email TEXT[],
+  old_email json[],
   creation_date TIMESTAMP,
   verified BOOLEAN DEFAULT FALSE,
   forgot_password_token TEXT,

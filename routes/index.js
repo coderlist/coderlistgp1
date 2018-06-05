@@ -321,7 +321,6 @@ routes.post('/enter-password', postEnterPasswordCheck, (req, res) => {
       return;
     }
   }).catch(e =>  res.status(500).send(e.stack))   //handle error here
-
 });
 
  /////////////////  Forgot Password //////////////

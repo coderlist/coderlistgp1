@@ -124,17 +124,15 @@ module.exports = {
   /**
    * @param  {Object} user
    * takes a user object with a token for email change
-   * checks that the user exit and updates the old_email 
-   * column.
-   * research on how to destroy column if verification process
-   * is not completed after 60minutes
+   * checks that the user exist and updates the old_email 
+   * array with json {"email":"","token_date":now(),"token": "token"}.
    * 
    * NOTE: old_email column should be of datatype json[]
    */
-  checkUserForEmailChange(user){
+  setOldEmailObject(user){
     return findByUsername('users',user.email).then(dbUser => {
-      if(verifyPassword(user.password,dbUser.password)){
-         return queryHelper(`update users set old_email =`+
+      if(!verifyPassword(user.password,dbUser.password)){
+         return queryHelper(`update users set old_email = old_email ||`+
                          ` array['{ "email":"${user.email}","token_date": `+
                          `"' || now() || '", "token":"${user.activation_token}" }']`+
                         `::json[] where email='${user.email}';`)
@@ -145,6 +143,24 @@ module.exports = {
         return false;
       }
     }).catch(e => {throw e})
+  },
+
+  
+  
+  /**
+   * @param  {Object} body
+   *  use to retrieve object from old_email array
+   *  where activation token from body equals old_email json token.
+   *  the response includes the email to be changed, assigned token and
+   *  token-time.
+   *  
+   */
+  getOldEmailObject(body){
+    return queryHelper(`with temp_table as (select email, unnest(old_email)`+
+                      ` from users where email='${body.email}') select`+
+                      ` unnest from temp_table where unnest ->> 'token' = ''${body.token}' ;`)
+        .then(response => response)
+        .catch(e => {throw e})
   }
     
 }
