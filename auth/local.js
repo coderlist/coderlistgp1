@@ -20,16 +20,17 @@ passport.use(new LocalStrategy(options,
   (email,password,done) => {
     findByUsername('users',email) 
     .then(user => {
-      console.log('user in passport :', user);
+      console.log('verify fnunction :', verifyPassword);
      if(!user) {
-       
       return done(null,false, {message: "Invalid Username or password"})}
-     if(verifyPassword(password,user.password)===false){ 
-      let user = {email : email};
-      addOneToFailedLogins(email);
-      setLastFailedLoginTime(user);
-       return done(null,false)}  // does this need to be asynchronous?
-     return done(null,user)
+     if(verifyPassword(password,user.password)===false) { 
+        let user = {email : email};
+        addOneToFailedLogins(email);
+        setLastFailedLoginTime(user);
+         return done(null,false);
+      }  // does this need to be asynchronous?
+     return done(null,user);
+
     }).catch(e => {return done(null,false, {messages: "Invalid Username or password"})})
   }
   ));
