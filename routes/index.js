@@ -310,13 +310,13 @@ routes.post('/enter-password', postEnterPasswordCheck, (req, res) => {
   console.log("gets here");
   users.verifyUser(user).then(response => {
     console.log('RESPONSE', response)
-    if (response) {
+    if (!response) {
       req.flash("info", "There was an error creating user. Please try again or contact your administrator");
-      res.status(200).render('pages/enter-password.ejs', {user : {activation_token : req.query.token, email : req.query.email}});
+      res.status(200).render('pages/enter-password.ejs', {messages: req.flash("info"), user : {activation_token : req.query.token, email : req.query.email}});
       return;
     } else {
       req.flash("info", "User created. Please login using your new password");
-      res.logOut();
+      req.logOut();
       res.status(200).redirect('/login');
       return;
     }
