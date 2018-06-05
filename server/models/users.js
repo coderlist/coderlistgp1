@@ -23,7 +23,7 @@ module.exports = {
    * gets token from route in a temporary user object
    * and compare with token on db where email === email 
    * on success, changes activated to true.
-   * It return a Promise
+   * It return a Promise.
    */
   verifyUser(user){
       return findByUsername('users',user.email).then(dbUser => {
@@ -162,7 +162,9 @@ module.exports = {
         .then(response => response)
         .catch(e => {throw e})
   }
-    
+  
+  
+  
 }
 
 
