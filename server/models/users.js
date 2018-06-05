@@ -5,7 +5,7 @@ const {insertOne,
       findByUsername,
       queryHelper, insertInTable} = require('../../helperFunctions/query/queryHelper');
 
-
+/** all functions return a Promise */
 
 module.exports = {
   
@@ -120,15 +120,32 @@ module.exports = {
                        .catch(e => {throw e})
   },
 
-  // checkUserForEmailChange(user){
-  //   //bcrypt.compareSync(userPassword, hash)
-  //   return findByUsername('users',user.email).then(dbUser => {
-  //     if(verifyPassword(user.password,dbUser.password)){
-  //        return queryHelper(`INSERT INTO user (old_email) `+
-  //                      `VALUES ('{"old_email": "${dbUser.email}"}')`)
-  //     }
-  //   })
-  // }
+  
+  /**
+   * @param  {Object} user
+   * takes a user object with a token for email change
+   * checks that the user exit and updates the old_email 
+   * column.
+   * research on how to destroy column if verification process
+   * is not completed after 60minutes
+   * 
+   * NOTE: old_email column should be of datatype json[]
+   */
+  checkUserForEmailChange(user){
+    return findByUsername('users',user.email).then(dbUser => {
+      if(verifyPassword(user.password,dbUser.password)){
+         return queryHelper(`update users set old_email =`+
+                         ` array['{ "email":"${user.email}","token_date": `+
+                         `"' || now() || '", "token":"${user.activation_token}" }']`+
+                        `::json[] where email='${user.email}';`)
+              .then(response => true)
+              .catch(e => {throw e})
+      }else{
+        console.log('VERIFICATION FAILED')
+        return false;
+      }
+    }).catch(e => {throw e})
+  }
     
 }
 
