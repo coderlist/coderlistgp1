@@ -43,6 +43,8 @@ module.exports = {
 
   deletePageById(id){
     return queryHelper(`DELETE FROM pages WHERE page_id= ${id};`)
+    .then(response => true)
+    .catch(e => {throw e})
   }
 
 
