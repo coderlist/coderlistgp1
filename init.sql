@@ -1,6 +1,5 @@
--- create table users
 CREATE TABLE IF NOT EXISTS users (
-  user_id serial UNIQUE,
+  user_id serial UNIQUE,  
   email TEXT NOT NULL UNIQUE, 
   password TEXT,
   last_succesful_login TIMESTAMP,
@@ -11,9 +10,9 @@ CREATE TABLE IF NOT EXISTS users (
   activated BOOLEAN DEFAULT FALSE,
   temporary_token TEXT,
   temporary_token_date TIMESTAMP,
-  old_email TEXT[],
   creation_date TIMESTAMP,
   verified BOOLEAN DEFAULT FALSE,
+  old_email TEXT[],
   forgot_password_token TEXT,
   forgot_password_token_date TIMESTAMP,
   PRIMARY KEY (email)
@@ -23,14 +22,14 @@ CREATE TABLE IF NOT EXISTS users (
 -- create table pages 
 CREATE TABLE IF NOT EXISTS pages (
   page_id SERIAL,
-  created_by TEXT REFERENCES users(email) ON DELETE CASCADE, 
+  created_by TEXT  REFERENCES users(email) ON DELETE CASCADE, 
   creation_date TIMESTAMP DEFAULT NOW(),
-  owner_id SERIAL REFERENCES users(user_id) ON DELETE CASCADE,
-  title TEXT,
+  owner_id SERIAL REFERENCES users(user_id) ON DELETE CASCADE,  
+  title json,    
   is_published BOOLEAN DEFAULT FALSE,
   is_homepage_grid BOOLEAN,
   is_nav_menu BOOLEAN,
-  last_edited_date jSON,
+  last_edited_date jSON, -- object {user and date}
   PRIMARY KEY (page_Id)
 );
 
@@ -44,15 +43,81 @@ CREATE TABLE IF NOT EXISTS user_sessions (
 )
 WITH (OIDS=FALSE);
 
-ALTER TABLE users ALTER COLUMN password DROP NOT NULL;
-ALTER TABLE users ADD COLUMN IF NOT EXISTS active boolean DEFAULT FALSE,
-  ADD COLUMN IF NOT EXISTS activation_token text,
-  ADD COLUMN IF NOT EXISTS user_id serial;
 
-/* 
-creates a function to the time a page
-was edited 
-*/
+ALTER TABLE users DROP COLUMN IF EXISTS active;
+
+ALTER TABLE users DROP COLUMN IF EXISTS activated;
+
+ALTER TABLE users ALTER COLUMN password DROP NOT NULL;
+
+ALTER TABLE pages ALTER COLUMN title SET DATA TYPE TEXT;
+
+ALTER TABLE users ADD COLUMN IF NOT EXISTS activation_token TEXT,
+  ADD COLUMN IF NOT EXISTS user_id serial,
+  ADD COLUMN IF NOT EXISTS old_pasword json[];
+
+ALTER TABLE pages ADD COLUMN IF NOT EXISTS ckeditor_html TEXT;
+ALTER TABLE pages DROP COLUMN IF EXISTS owner_id;
+
+
+ -- adds constraint to email column does
+ --  not recieve empty string
+
+DO $$
+BEGIN
+    IF NOT EXISTS ( SELECT  conname
+                FROM    pg_constraint 
+                WHERE   conname = 'not_empty_string')
+    THEN
+        ALTER TABLE users ADD CONSTRAINT not_empty_string CHECK (email <> '');
+    END IF;
+END$$;
+
+--  add constraint to email column not to
+--  receive undefined
+
+DO $$
+BEGIN
+    IF NOT EXISTS ( SELECT  conname
+                FROM    pg_constraint 
+                WHERE   conname = 'not_undefined')
+    THEN
+        ALTER TABLE users ADD CONSTRAINT not_undefined CHECK (email <>'undefined');
+    END IF;
+END$$;
+
+-- converts text array to json array
+
+DO $$
+BEGIN
+  IF ( select udt_name from information_schema.columns 
+      where table_name = 'users' and column_name='old_email') = '_text'
+  THEN
+     ALTER TABLE users DROP COLUMN old_email;
+     ALTER TABLE users ADD COLUMN old_email json[];
+  END IF;
+END $$;
+
+
+
+-- drops json datatype from last_edited_date column
+-- and cast it to timestamp without zone
+
+-- DO $$
+-- BEGIN 
+--     IF EXISTS (select 1 from information_schema.columns 
+--         where table_name = 'pages' and 
+--         column_name = 'last_edited_date' and data_type = 'json')
+--     THEN 
+--        ALTER TABLE pages DROP COLUMN last_edited_date;
+--        ALTER TABLE pages ADD COLUMN last_edited_date TIMESTAMP;
+--     END IF;
+-- END
+-- $$;
+
+-- creates a function to the time a page
+-- was edited 
+
 
 CREATE OR REPLACE FUNCTION trigger_set_timestamp()
 RETURNS TRIGGER AS $$
@@ -62,9 +127,9 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-/*
-sets a trigger for update action time
-*/
+
+-- sets a trigger for update action time
+
 
 DO $$
 BEGIN
@@ -77,48 +142,3 @@ BEGIN
 END
 $$;
 
-DO $$
-BEGIN
-    IF NOT EXISTS ( SELECT  conname
-                FROM    pg_constraint 
-                WHERE   conname = 'not_empty_string')
-    THEN
-        ALTER TABLE users ADD CONSTRAINT not_empty_string CHECK (email <> '');
-    END IF;
-END$$;
-
-DO $$
-BEGIN
-    IF NOT EXISTS ( SELECT  conname
-                FROM    pg_constraint 
-                WHERE   conname = 'not_undefined')
-    THEN
-        ALTER TABLE users ADD CONSTRAINT not_undefined CHECK (email <>'undefined');
-    END IF;
-END$$;
-
-
-DO $$
-BEGIN
-    IF NOT EXISTS ( SELECT  conname
-                FROM    pg_constraint 
-                WHERE   conname = 'not_empty_string')
-    THEN
-        ALTER TABLE users ADD CONSTRAINT not_empty_string CHECK (email <> '');
-    END IF;
-END$$;
-
-/*
-a function to check for 'undefined'
-input value
-*/
-
-DO $$
-BEGIN
-    IF NOT EXISTS ( SELECT  conname
-                FROM    pg_constraint 
-                WHERE   conname = 'not_undefined')
-    THEN
-        ALTER TABLE users ADD CONSTRAINT not_undefined CHECK (email <>'undefined');
-    END IF;
-END$$;
