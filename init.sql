@@ -29,7 +29,7 @@ CREATE TABLE IF NOT EXISTS pages (
   is_published BOOLEAN DEFAULT FALSE,
   is_homepage_grid BOOLEAN,
   is_nav_menu BOOLEAN,
-  last_edited_date jSON, -- object {user and date}
+  last_edited_date jSON, 
   PRIMARY KEY (page_Id)
 );
 
@@ -103,17 +103,17 @@ END $$;
 -- drops json datatype from last_edited_date column
 -- and cast it to timestamp without zone
 
--- DO $$
--- BEGIN 
---     IF EXISTS (select 1 from information_schema.columns 
---         where table_name = 'pages' and 
---         column_name = 'last_edited_date' and data_type = 'json')
---     THEN 
---        ALTER TABLE pages DROP COLUMN last_edited_date;
---        ALTER TABLE pages ADD COLUMN last_edited_date TIMESTAMP;
---     END IF;
--- END
--- $$;
+DO $$
+BEGIN 
+    IF EXISTS (select 1 from information_schema.columns 
+        where table_name = 'pages' and 
+        column_name = 'last_edited_date' and data_type = 'json')
+    THEN 
+       ALTER TABLE pages DROP COLUMN last_edited_date;
+       ALTER TABLE pages ADD COLUMN last_edited_date TIMESTAMP;
+    END IF;
+END
+$$;
 
 -- creates a function to the time a page
 -- was edited 
