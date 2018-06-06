@@ -58,6 +58,7 @@ ALTER TABLE users ADD COLUMN IF NOT EXISTS activation_token TEXT,
 
 ALTER TABLE pages ADD COLUMN IF NOT EXISTS ckeditor_html TEXT;
 ALTER TABLE pages DROP COLUMN IF EXISTS owner_id;
+ALTER TABLE pages ALTER COLUMN title SET NOT NULL;
 
 
  -- adds constraint to email column does
