@@ -35,5 +35,15 @@ module.exports = {
       .catch(e => {throw e})
   },
 
+  updatePageContentById(id,data){
+     return queryHelper(`UPDATE pages SET ckeditor_html = '${data}' where page_id = ${id};`)
+     .then(response => response)
+     .catch(e => {throw e})
+  },
+
+  deletePageById(id){
+    return queryHelper(`DELETE FROM pages WHERE page_id= ${id};`)
+  }
+
 
 }

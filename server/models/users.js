@@ -42,7 +42,7 @@ module.exports = {
        else{
          console.log('WRONG TOKEN')
          return false;
-         Promise.reject();
+        //Promise.reject();
        }
      }).catch(e => {throw e})
   },
