@@ -10,7 +10,7 @@ const {insertOne,
 module.exports = {
   
   createUser(user){        
-    return insertOne(user).then(result => {
+    return insertInTable(user,'users').then(result => {
        return true
      }).catch(e => {
        throw e
@@ -199,7 +199,31 @@ module.exports = {
     `).then(response => true)
       .catch(e => {throw e})
 
+  },
+
+  
+  /**
+   * @param  {Object} user
+   * delete user by email
+   * associated pages gets deleted due to CASCADE constraint
+   */
+  deleteUserByEmail(user){
+      return queryHelper(`DELETE FROM users WHERE email = '${user.email}';`)
+      .then(response => true)
+      .catch(e => {throw e})
+  },
+
+  
+  /**
+   * @param  {int} rowsLimit
+   * list all using listing first 'rowsLimit' rows
+   */
+  listUsers(rowsLimit){
+    return queryHelper(`SELECT * FROM pages ORDER BY creation_date  FETCH FIRST ${rowsLimit} ONLY;`)
+    .then(response => response)
+      .catch(e => {throw e})
   }
+
   
   
   

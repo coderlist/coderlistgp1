@@ -22,7 +22,7 @@ module.exports = {
   },
 
   getPages(rowsLimit){
-    return queryHelper(`SELECT * FROM pages ORDER BY creation_date ${order} FETCH FIRST ${rowsLimit} ONLY;`)
+    return queryHelper(`SELECT * FROM pages ORDER BY creation_date  FETCH FIRST ${rowsLimit} ONLY;`)
     .then(response => response)
       .catch(e => {throw e})
   },
