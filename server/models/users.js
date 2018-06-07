@@ -165,16 +165,40 @@ module.exports = {
    *             token: '386ebca7-907d-44a0-be0c-371ed1340781' }
    */
   getOldEmailObject(body){
-    return queryHelper(`with temp_table as (select email, unnest(old_email)`+
-                      ` from users where email='${body.email}') select`+
-                      ` unnest from temp_table where unnest ->> 'token' = '${body.change_token}' ;`)
+    return queryHelper(`WITH temp_table AS (SELECT email, unnest(old_email)`+
+                      ` FROM users WHERE email='${body.email}') SELECT`+
+                      ` unnest FROM temp_table WHERE unnest ->> 'token' = '${body.change_token}' ;`)
         .then(response => response[0].unnest)
         .catch(e => {throw e})
   },
 
+  
+  /**
+   * @param  {Object} body
+   * get old and new_email from body.
+   * check function to update by user_later /later/
+   */
   updateUserEmail(body){
-     //1. check if new email has been used
-     //2. update users.email if one is false
+     //change action must have been verified to proceed to this step
+     //1. check old_emal json array if new email has been used
+     //2. update users.email if 1 is false
+     //3. else raise already used exception
+    return queryHelper(`
+    DO $$
+    BEGIN
+       IF NOT EXISTS (with temp_table as (select email,unnest(old_email) 
+          FROM users where email='${body.email}') 
+          SELECT 1 FROM temp_table WHERE unnest ->> 'email'='${body.new_email}') 
+      THEN
+            UPDATE users SET email = '${body.new_email}' WHERE email = '${body.email}';
+      ELSE
+             RAISE EXCEPTION 'email already used';
+      END IF;
+    END
+  $$; 
+    `).then(response => true)
+      .catch(e => {throw e})
+
   }
   
   
