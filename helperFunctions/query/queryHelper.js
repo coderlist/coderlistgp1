@@ -96,8 +96,7 @@ const insertInTable = (anyObj,table) => {
                 ` VALUES (${valsArray.map(val => `'${val}'`)}) RETURNING *`;
     return queryHelper(query)
      .then(users => users)
-     .catch(e => {throw e})
- 
+     .catch(e => {throw e}) 
 }
 
 

@@ -15,7 +15,6 @@ module.exports = {
         .catch(e => {throw e})
   },
 
-
   getPagebyID(id){
     return queryHelper(`SELECT * FROM pages WHERE page_id = ${id};`)
       .then(response => response)
@@ -46,6 +45,5 @@ module.exports = {
     .then(response => true)
     .catch(e => {throw e})
   }
-
 
 }

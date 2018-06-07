@@ -391,20 +391,5 @@ routes.all('*', (req, res) => {
   return;
 });
 
-// Jide's test route //
-
-routes.post('/signme', (req, res) => {
- //const user = _.pick(req.body,['email','first_name','last_name','activation_token'])
- 
-  createUser(user).then(val => {
-    console.log('CREATED')
-    res.status(200).send({message: 'USER CREATED BUT NOT ACTIVATED'})
-  }).catch(e => {
-    console.log(e.message)
-    res.status(400).send(e.message)
-  })
-  
-});
-
 
 module.exports = routes;

@@ -12,7 +12,7 @@ CREATE TABLE IF NOT EXISTS users (
   temporary_token_date TIMESTAMP,
   creation_date TIMESTAMP,
   verified BOOLEAN DEFAULT FALSE,
-  old_email TEXT[],
+  old_email TEXT[],   --- {"email":"","token_date":"","token":""}
   forgot_password_token TEXT,
   forgot_password_token_date TIMESTAMP,
   PRIMARY KEY (email)
@@ -54,7 +54,7 @@ ALTER TABLE pages ALTER COLUMN title SET DATA TYPE TEXT;
 
 ALTER TABLE users ADD COLUMN IF NOT EXISTS activation_token TEXT,
   ADD COLUMN IF NOT EXISTS user_id serial,
-  ADD COLUMN IF NOT EXISTS old_pasword json[];
+  ADD COLUMN IF NOT EXISTS old_pasword json[];  --- {"password":"","token_date":"","change_token":""}
 
 ALTER TABLE pages ADD COLUMN IF NOT EXISTS ckeditor_html TEXT;
 ALTER TABLE pages DROP COLUMN IF EXISTS owner_id;

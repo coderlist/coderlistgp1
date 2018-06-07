@@ -32,7 +32,7 @@ module.exports = {
         .then(hash => {
          return  queryHelper(
            `UPDATE users SET password = '${hash}',`+
-           `temporary_token = null, verified = true `+
+           `activation_token = null, verified = true `+  //activation token set to null
             `WHERE email ='${dbUser.email}';
            `).then(user => {
              return true
@@ -125,16 +125,22 @@ module.exports = {
    * @param  {Object} user
    * takes a user object with a token for email change
    * checks that the user exist and updates the old_email 
-   * array with json {"email":"","token_date":now(),"token": "token"}.
+   * array with json {"email":"","token_date":now(),"token": "token"}
+   * object can be retrieved after verification
    * 
    * NOTE: old_email column should be of datatype json[]
+   * 
+   * sample json { "email":"test@coderlist.com",
+   *              "token_date": "2018-06-07 14:14:51.812341+00", 
+   *               "token":"386ebca7-907d-44a0-be0c-371ed1340781" }
    */
-  setOldEmailObject(user){
+  insertOldEmailObject(user){
     return findByUsername('users',user.email).then(dbUser => {
+      console.log('USERFOUND', user)
       if(verifyPassword(user.password,dbUser.password)){
          return queryHelper(`update users set old_email = old_email ||`+
                          ` array['{ "email":"${user.email}","token_date": `+
-                         `"' || now() || '", "token":"${user.activation_token}" }']`+
+                         `"' || now() || '", "token":"${user.change_token}" }']`+
                         `::json[] where email='${user.email}';`)
               .then(response => true)
               .catch(e => {throw e})
@@ -150,17 +156,25 @@ module.exports = {
   /**
    * @param  {Object} body
    *  use to retrieve object from old_email array
-   *  where activation token from body equals old_email json token.
+   *  where old_email_change_token from body equals old_email json token.
    *  the response includes the email to be changed, assigned token and
-   *  token-time.
+   *  token-insertion-time.
    *  
+   *  sample response : { email: 'test@coderlist.com',
+   *               token_date: '2018-06-07 14:14:51.812341+00',
+   *             token: '386ebca7-907d-44a0-be0c-371ed1340781' }
    */
   getOldEmailObject(body){
     return queryHelper(`with temp_table as (select email, unnest(old_email)`+
                       ` from users where email='${body.email}') select`+
-                      ` unnest from temp_table where unnest ->> 'token' = ''${body.token}' ;`)
-        .then(response => response)
+                      ` unnest from temp_table where unnest ->> 'token' = '${body.change_token}' ;`)
+        .then(response => response[0].unnest)
         .catch(e => {throw e})
+  },
+
+  updateUserEmail(body){
+     //1. check if new email has been used
+     //2. update users.email if one is false
   }
   
   
