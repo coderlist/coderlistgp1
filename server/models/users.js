@@ -219,7 +219,8 @@ module.exports = {
    * list all using listing first 'rowsLimit' rows
    */
   listUsers(rowsLimit){
-    return queryHelper(`SELECT * FROM pages ORDER BY creation_date  FETCH FIRST ${rowsLimit} ONLY;`)
+    return queryHelper(`SELECT email,fist_name,last_name,creation_date FROM users ORDER BY 
+    creation_date  FETCH FIRST ${rowsLimit} ONLY;`)
     .then(response => response)
       .catch(e => {throw e})
   }
