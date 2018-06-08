@@ -19,6 +19,7 @@ const app = express();
 
 app.set('view engine', 'ejs');
 
+const SECRET = "cookie";
 
 app.use(cookieParser());
 app.use(logger('dev'));
