@@ -11,7 +11,7 @@ const Mail = require('../helperFunctions/verification/MailSender');
 // site //
 const createUser = require('../server/models/users').createUser;
 const uuid = require('uuid/v1');
-const _ = require('lodash')
+const _ = require('lodash');
 
 
 
@@ -21,13 +21,18 @@ routes.get('/', (req, res) => {
     {href:"test me one", name:"item 1"},
     {href:"test me two", name:"item 2"}
   ]
-  res.status(200).render('pages/index', {menuItems: menuItems, messages: req.flash('info')}); //ejs example
+  res.status(200).render('pages/website/index', {menuItems: menuItems, messages: req.flash('info')}); //ejs example
+  return;
+});
+
+routes.get('/dashboard', (req, res) => {
+  res.status(200).render('pages/admin/dashboard.ejs');
   return;
 });
 
 
 routes.get('/about', (req, res) => {
-  res.status(200).render('pages/about');
+  res.status(200).render('pages/website/about');
   return;
 });
 
@@ -47,7 +52,7 @@ routes.get('/login', (req, res) => {
 
 
 routes.get('/password', (req, res) => { 
-  res.status(200).render('pages/resetpassword.ejs');
+  res.status(200).render('pages/website/resetpassword.ejs');
   return;
 });
 
@@ -66,13 +71,13 @@ routes.get('/forgot-password', (req, res) => {
 
 // New Password Page
 routes.get('/new-password', (req, res) => {
-  res.status(200).render('pages/newpassword.ejs');
+  res.status(200).render('pages/website/newpassword.ejs');
   return;
 });
 
 // New Sign Up Page 
 routes.get('/signup', (req, res) => {
-  res.status(200).render('pages/signup.ejs');
+  res.status(200).render('pages/website/signup.ejs');
   return;
 });
 
@@ -95,7 +100,7 @@ routes.get('/users/logout', logins.isLoggedIn, logins.logUserOut, (req, res) => 
 const verificationCheck = [
   query('email', 'invalid email').isEmail().normalizeEmail(),
   query('token', 'invalid token').isUUID()
-]
+];
 
 const validationCheck = [
   check('email').isEmail().normalizeEmail(),
@@ -169,7 +174,7 @@ const createUserCheck = [
   body('lastName').trim().isAlphanumeric()
 ];
 
-
+/*
 routes.post('/users/create-user', createUserCheck, (req, res) => { //accessible by authed admin
   
   const errors = validationResult(req);
@@ -189,7 +194,7 @@ routes.post('/users/create-user', createUserCheck, (req, res) => { //accessible 
     last_name : req.body.lastName,
     failed_login_attempts : 0,
     activation_token : generatedToken
-  }
+  };
   createUser(user).then(function(userCreated){ // returns user created true or false
     if (userCreated) {
       let mail = new Mail;
@@ -216,7 +221,7 @@ routes.post('/users/create-user', createUserCheck, (req, res) => { //accessible 
     res.status(200).render('pages/users/create-user.ejs', {messages : req.flash('info'), user});
   })
   return;
-});
+});*/
 
 routes.post('/users/email-verification', verificationCheck, (req, res) => {
   console.log('req.query :', req.query);
@@ -399,7 +404,7 @@ routes.get('/content/manage-all-pages', (req, res) => { //accessible by authed a
 // unknown //
 
 routes.all('*', (req, res) => {
-  res.status(200).render('pages/unknown.ejs', { url: req.url });
+  res.status(200).render('pages/website/unknown.ejs', { url: req.url });
   return;
 });
 

@@ -17,9 +17,8 @@ const uuidv1 = require('uuid/v1');
 
 const app = express();
 
-app.set('view engine', 'ejs');
 
-const SECRET = "cookie";
+app.set('view engine', 'ejs');
 
 app.use(cookieParser());
 app.use(logger('dev'));
