@@ -47,7 +47,6 @@ Dashboard UI
   box-sizing: border-box;
 }
 
-
 html {
   font-family: sans-serif;
   line-height: 1.15;
@@ -1831,6 +1830,10 @@ pre code {
   border-radius: 3px;
   transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
 }
+.page-order {
+  width: 4rem;
+  text-align: center;
+}
 
 @media screen and (prefers-reduced-motion: reduce) {
   .form-control {
@@ -3497,6 +3500,10 @@ input[type="button"].btn-block {
   display: -ms-inline-flexbox;
   display: inline-flex;
   margin-right: 1rem;
+}
+
+.align-center {
+  margin: 0 auto;
 }
 
 .custom-control-input {

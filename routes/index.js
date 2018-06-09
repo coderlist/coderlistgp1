@@ -21,18 +21,18 @@ routes.get('/', (req, res) => {
     {href:"test me one", name:"item 1"},
     {href:"test me two", name:"item 2"}
   ]
-  res.status(200).render('pages/website/index', {menuItems: menuItems, messages: req.flash('info')}); //ejs example
+  res.status(200).render('pages/public/index', {menuItems: menuItems, messages: req.flash('info')}); //ejs example
   return;
 });
 
 routes.get('/dashboard', (req, res) => {
-  res.status(200).render('pages/admin/dashboard.ejs');
+  res.status(200).render('pages/users/dashboard.ejs');
   return;
 });
 
 
 routes.get('/about', (req, res) => {
-  res.status(200).render('pages/website/about');
+  res.status(200).render('pages/public/about');
   return;
 });
 
@@ -52,7 +52,7 @@ routes.get('/login', (req, res) => {
 
 
 routes.get('/password', (req, res) => { 
-  res.status(200).render('pages/website/resetpassword.ejs');
+  res.status(200).render('pages/public/resetpassword.ejs');
   return;
 });
 
@@ -71,13 +71,13 @@ routes.get('/forgot-password', (req, res) => {
 
 // New Password Page
 routes.get('/new-password', (req, res) => {
-  res.status(200).render('pages/website/newpassword.ejs');
+  res.status(200).render('pages/public/newpassword.ejs');
   return;
 });
 
 // New Sign Up Page 
 routes.get('/signup', (req, res) => {
-  res.status(200).render('pages/website/signup.ejs');
+  res.status(200).render('pages/public/signup.ejs');
   return;
 });
 
@@ -92,7 +92,7 @@ routes.get('/signup', (req, res) => {
 //   return;
 // });
 
-routes.get('/users/logout', logins.isLoggedIn, logins.logUserOut, (req, res) => { //testing isLogged in function. To be implemented on all admin routes. Might be worth extracting as it's own mini express app route on /users/.
+routes.get('/users/logout', logins.isLoggedIn, logins.logUserOut, (req, res) => { //testing isLogged in function. To be implemented on all routes. Might be worth extracting as it's own mini express app route on /users/.
   res.status(200).redirect('/');
   return;
 });
@@ -404,7 +404,7 @@ routes.get('/content/manage-all-pages', (req, res) => { //accessible by authed a
 // unknown //
 
 routes.all('*', (req, res) => {
-  res.status(200).render('pages/website/unknown.ejs', { url: req.url });
+  res.status(200).render('pages/public/unknown.ejs', { url: req.url });
   return;
 });
 

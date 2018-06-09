@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <% include ../../partials/head.ejs %>
+</head>
+
+<body>
+    <form class="form" action="/login" method="post">
+        <fieldset>
+            <legend class="title">Sign Up</legend>
+            <div class="error">
+                <div class="error-msg">
+                    You have entered an invalid username or password. Please, try again.
+                </div>
+                <div class="close-msg">
+                    x
+                </div>
+            </div>
+            <div class="form-box">
+                You have been invited by NAME to join our team.
+            </div>
+            <div class="form-box">
+                <input class="input" id="email" type="email" minlength="3" maxlength="64" size="32" value="" required>
+                <label for="email">Enter your email </label>
+            </div>
+            <div class="form-box">
+                <input class="input" id="password" type="password" minlength="8" maxlength="15" size="15" value="" required>
+                <label for="password"> Enter your password </label>
+            </div>
+        </fieldset>
+        <button class="form-btn" value="Login" type="submit">Login</button>
+    </form>
+    <script src="./js/form.js"></script>
+</body>
+
+</html>

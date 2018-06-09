@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script src="https://cdn.ckeditor.com/4.9.2/basic/ckeditor.js"></script>
+  <% include views/partials/head.ejs %>
+</head>
+
+<body>
+  <header>
+    <% include ../../partials/header.ejs %>
+  </header>
+  <br />
+  <br />
+  <br />
+  <br />
+  <br />
+  <br />
+  <br />
+  <br />
+  <br />
+  <form action="#" method="post" name="submitHTML">
+    <textarea name="ckeditorHTML" id="editor1" rows="10" cols="80">
+        <%=ckeditorData || "Please design your page here"%>
+    </textarea>
+    <button class="btn btn-info" onclick="submitHTML">Submit</button>
+    <script>
+        // Replace the <textarea id="editor1"> with a CKEditor
+        // instance, using default configuration.
+        CKEDITOR.replace( 'editor1' );
+    </script>
+</form>
+    <% include ../../partials/flash-message.ejs %>
+  <footer>
+    <% include ../../partials/footer.ejs %>
+    <script>
+      function submitHTML() { document.getElementsByName('submitHTML').submit;}
+    </script>
+  </footer>
+</body>
+</html>
