@@ -52,7 +52,7 @@ routes.get('/login', (req, res) => {
 
 
 routes.get('/password', (req, res) => { 
-  res.status(200).render('pages/public/resetpassword.ejs');
+  res.status(200).render('pages/users/resetpassword.ejs');
   return;
 });
 
