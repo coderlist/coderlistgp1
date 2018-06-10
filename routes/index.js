@@ -20,7 +20,7 @@ routes.get('/', (req, res) => {
   const menuItems = [ 
     {href:"test me one", name:"item 1"},
     {href:"test me two", name:"item 2"}
-  ]
+  ];
   res.status(200).render('pages/public/index', {menuItems: menuItems, messages: req.flash('info')}); //ejs example
   return;
 });
@@ -71,24 +71,24 @@ routes.get('/forgot-password', (req, res) => {
 
 // New Password Page
 routes.get('/new-password', (req, res) => {
-  res.status(200).render('pages/public/newpassword.ejs');
+  res.status(200).render('pages/users/newpassword.ejs');
   return;
 });
 
 // New Sign Up Page 
 routes.get('/signup', (req, res) => {
-  res.status(200).render('pages/public/signup.ejs');
+  res.status(200).render('pages/users/signup.ejs');
   return;
 });
 
 
 // routes.get('/test-flash-start', (req, res) => {
 //   req.flash('info','This is a flash message');
-//   res.status(200).redirect('/test-flash-finish');
+//   res.status(200).redirect('pages/public/test-flash-finish');
 //   return;
 // });
 // routes.get('/test-flash-finish', (req, res) => {
-//   res.status(200).render('pages/test-flash-finish', { messages: req.flash('info') });
+//   res.status(200).render('pages/public/test-flash-finish', { messages: req.flash('info') });
 //   return;
 // });
 
@@ -116,8 +116,8 @@ const validationCheck = [
 routes.get('/users/verify-email', verificationCheck , (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      req.flash("info","Invalid token or email", req.query.email, req.query.token, errors.array())
-      res.redirect('/')
+      req.flash("info","Invalid token or email", req.query.email, req.query.token, errors.array());
+      res.redirect('/');
       return;
     }
     //**check date(now) minus token date is less than 1 week. If greater than a week send flash message saying "token has expired please contact administrator" and redirect to login or setup an administrator email which sends email of person trying to sign up but failing due to token expiry.
@@ -151,7 +151,7 @@ routes.post('/enter-new-password', passwordCheck, (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     req.flash("info","Invalid password or passwords do not match", process.env.NODE_ENV === 'development' ? errors.array() : ""); //error.array() for development only
-    res.redirect('/enter-new-password')
+    res.redirect('/enter-new-password');
     return;
   } 
   // use req.session.email and token to ensure correct user
@@ -370,7 +370,7 @@ routes.post('/forgot-password', forgotPasswordCheck, (req, res) => {
 routes.post('/login', passport.authenticate('local'), function (req, res){ //// if validatelogin fails. Failure is sent from within this middleware. If this succeeds then this passes to next function.
   res.status(200).json({message: "success"})
   return;
-})
+});
 
 const loginCheck = [
   check('email').isEmail().normalizeEmail(),
@@ -383,13 +383,12 @@ routes.post('/login', passport.authenticate('local', {successRedirect: '/users/a
                                                       // function (req, res){ //// if validatelogin fails. Failure is sent from within this middleware. If this succeeds then this passes to next function.
   // res.status(200).json({message: "success"})
 //   return;
-// })
+// });
 
 
 
 
 // pages //
-
 
 routes.get('/content/manage-page', (req, res) => {
   res.status(200).render('pages/content/create-edit-page');
