@@ -1,6 +1,6 @@
 const routes = require('express').Router();
 const { query, check, body, validationResult } = require('express-validator/check');
-const { matchedData, sanitize } = require('express-validator/filter');
+
 const Logins = require('../helperFunctions/Logins');
 const logins = new Logins();
 const checkEmailAndToken = require('../helperFunctions/checkEmailAndToken');
@@ -12,8 +12,10 @@ const Mail = require('../helperFunctions/verification/MailSender');
 const { createUser, verifyUser } = require('../server/models/users');
 const uuid = require('uuid/v1');
 const _ = require('lodash');
+const userRoutes = require('./userRoutes')
 
 
+routes.use('/users/', userRoutes);  // all routes in here require authing
 
 routes.get('/', (req, res) => {
   //get menu items from db maybe set this as some middleware
@@ -24,10 +26,7 @@ routes.get('/', (req, res) => {
   res.status(200).render('pages/public/index', {contentHomePages: "", menuItems: menuItems, messages: req.flash('info')}); //ejs example
 });
 
-routes.get('/users/dashboard', (req, res) => {
-  res.status(200).render('pages/users/dashboard.ejs');
-  return;
-});
+
 
 
 routes.get('/about', (req, res) => {
@@ -76,21 +75,7 @@ routes.get('/reset-password', (req, res) => {
 
 
 // New Password Page
-routes.get('/new-password', (req, res) => {
-  res.status(200).render('pages/users/new-password.ejs');
-  return;
-});
 
-// New Sign Up Page 
-routes.get('/signup', (req, res) => {
-  res.status(200).render('pages/users/signup.ejs');
-  return;
-});
-
-routes.get('/users/logout', logins.isLoggedIn, logins.logUserOut, (req, res) => { //testing isLogged in function. To be implemented on all routes. Might be worth extracting as it's own mini express app route on /users/.
-  res.status(200).redirect('/');
-  return;
-});
 
 const verificationCheck = [
   query('email', 'invalid email').isEmail().normalizeEmail(),
@@ -103,7 +88,7 @@ const validationCheck = [
   check('password').isLength({ min: 8 })
 ];
 
-routes.get('/users/verify-email', verificationCheck , (req, res) => {
+routes.get('/verify-email', verificationCheck , (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       req.flash("info","Invalid token or email", req.query.email, req.query.token, errors.array());
@@ -117,137 +102,14 @@ routes.get('/users/verify-email', verificationCheck , (req, res) => {
     req.flash("info","Successfully verified email. Please enter a password")
   res.status(200).redirect('enter-new-password');
   return;
-});
-
-////////////////////    Enter new Password           ////////////////////
-
-routes.get('/enter-new-password',  (req, res) => {
-  res.status(200).render('pages/public/enter-password', {email: req.session.email, token: req.session.token});
-  return;
-});
-
-const passwordCheck = [
-  check('password').isLength({min: 8}),
-  // password must be at least 8 chars long
-  check('confirm_password').equals(check('password'))
-];
-
-routes.post('/enter-new-password', passwordCheck, (req, res) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    req.flash("info","Invalid password or passwords do not match", process.env.NODE_ENV === 'development' ? errors.array() : ""); //error.array() for development only
-    res.redirect('/enter-new-password');
-    return;
-  } 
-  // use req.session.email and token to ensure correct user
-  // accept the new passwords if they are the same and look up the user name. Set user to validated and modified date to now() and store hashed password.
-  // destroy session and force user to login again
-  res.status(200).redirect('/login');
-  return;
-});
+}); //// needs to be changed should load hidden fields with email and verification token
 
 
-/////////////       Create users           /////////////////////////
-
-routes.get('/users/create-user', (req, res) => { //accessible by authed admin
-  res.status(200).render('pages/users/create-user.ejs');
-});
-
-const createUserCheck = [
-  body('email').isEmail().normalizeEmail(),
-  body('firstName').trim().isAlphanumeric(),
-  body('lastName').trim().isAlphanumeric()
-];
-
-
-routes.post('/users/create-user', createUserCheck, (req, res) => { //accessible by authed admin
-  
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    console.log('ERROR',error)
-    const userTemp = {email : req.body.email || "", firstName : req.body.firstName || "", lastName: req.body.lastName || ""}
-    req.flash("info","Invalid user data", process.env.NODE_ENV === 'development' ? errors.array() : ""); //error.array() for development only
-    res.status(200).render('pages/users/create-user.ejs', {messages : req.flash('info'), userTemp});
-    return;
-  }
-
-  const generatedToken = uuid();
-  const user = {
-    email : req.body.email,
-    last_failed_login: "",
-    first_name : req.body.firstName,
-    last_name : req.body.lastName,
-    failed_login_attempts : 0,
-    activation_token : generatedToken
-  };
-  createUser(user).then(function(userCreated){ // returns user created true or false
-    if (userCreated) {
-      let mail = new Mail;
-      mail.sendVerificationLink(user);
-      req.flash('info', 'user created and email sent');  // email not currently being sent
-      res.redirect('/users/admin'); 
-      return;
-    }
-    else {
-      console.log("There was a create user error", err)
-      req.flash('info', 'There was an error creating this user. Please try again. If you already have please contact support.')
-      res.status(200).render('pages/users/create-user.ejs', {messages : req.flash('info'), user});
-      return;
-    }
-  }).catch(function(err){
-    const userExistsCode = "23505";
-    if (err.code === userExistsCode) {
-      req.flash("info", "User already exists");
-    }
-    else {
-      console.log("There was a system error", err)
-      req.flash('info', 'There was an system error. Please notify support.')
-    }
-    res.status(200).render('pages/users/create-user.ejs', {messages : req.flash('info'), user});
-  })
-  return;
-});
-
-routes.post('/users/email-verification', verificationCheck, (req, res) => {
-  console.log('req.query :', req.query);
-  mail = new Mail();
-  mail.sendVerificationLink(req.body);
-  res.status(200).json({message: "email sent"});
-  return;
-});
-
-
-routes.get('/users/admin', logins.isLoggedIn, (req,res) => {
-  res.status(200).render('pages/users/admin.ejs', {messages : req.flash("info"), ckeditorData : req.body.ckeditorHTML || ""});
-});
-
-const ckeditorHTMLValidation = [
-  sanitize('ckeditorHTML').escape().trim()
-];
-
-routes.post('/users/admin', logins.isLoggedIn,  (req,res) => {
-  console.log('req.body.ckeditorHTML:', req.body.ckeditorHTML);
-  res.status(200).render('pages/users/admin.ejs', {messages : req.flash("info"), ckeditorData : req.body.ckeditorHTML || ""});
-});
 
 
 ////////////           Change user ///////////////////////
 
 
-
-routes.get('/users/edit-user', (req, res) => { //accessible by authed admin
-  res.status(200).render('pages/users/edit-user.ejs', {user:req.body.userToDelete});
-  // confirm page for deleting user. only accessible by authenticated admin.
-});
-
-routes.post('/users/delete-user', (req, res) => {
-  // delete user.  only accessible by authenticated admin via delete user route. something in the post body perhaps. Discuss with colleagues if there is a better way to perform this confirmation
-  return;
-});
-
-routes.get('/users/change-password', (req, res) => { 
-  res.status(200).render('pages/users/changePassword.ejs');
-});
 
 
 
@@ -317,10 +179,10 @@ routes.post('/enter-password', postEnterPasswordCheck, (req, res) => {
 
  /////////////////  Forgot Password //////////////
 
-routes.get('/forgot-password', (req, res) => {
+routes.get('/reset-password', (req, res) => {
   // **create a page with two fields to enter email addresses
   // **ensure that emails both match before being able to post
-  res.status(200).render('pages/users/forgot-password');
+  res.status(200).render('pages/public/forgot-password');
 });  
 
 forgotPasswordCheck = [
@@ -332,7 +194,7 @@ routes.post('/reset-password', forgotPasswordCheck, (req, res) => {
   errors = validationResult(req)
   if (!errors.isEmpty()) {
     req.flash("info","Invalid email");
-    res.status(200).render('pages/users/forgot-password', {messages : req.flash('info')});
+    res.status(200).render('pages/public/reset-password', {messages : req.flash('info')});
     return;
   }
   const user = {
@@ -341,7 +203,7 @@ routes.post('/reset-password', forgotPasswordCheck, (req, res) => {
   }
   if (checkIfUserExists(user.email) === false) {
     req.flash("info","Further instructions have now been sent to the email address provided");
-    res.status(200).render('pages/users/reset-password', {messages : req.flash('info')});
+    res.status(200).render('pages/public/reset-password', {messages : req.flash('info')});
     return;
   } // database request
      
@@ -361,11 +223,6 @@ routes.post('/reset-password', forgotPasswordCheck, (req, res) => {
   
  
   
-
-
-
-
-
 // pages //
 
 routes.get('/content/manage-page', (req, res) => {
