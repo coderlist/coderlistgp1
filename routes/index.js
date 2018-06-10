@@ -21,10 +21,10 @@ routes.get('/', (req, res) => {
     {href:"test me one", name:"item 1"},
     {href:"test me two", name:"item 2"}
   ]
-  res.status(200).render('pages/index', {contentHomePages: "", menuItems: menuItems, messages: req.flash('info')}); //ejs example
+  res.status(200).render('pages/public/index', {contentHomePages: "", menuItems: menuItems, messages: req.flash('info')}); //ejs example
 });
 
-routes.get('/dashboard', (req, res) => {
+routes.get('/users/dashboard', (req, res) => {
   res.status(200).render('pages/users/dashboard.ejs');
   return;
 });
@@ -39,7 +39,7 @@ routes.get('/about', (req, res) => {
 ///////////////   Login    //////////////////
 
 routes.get('/login', (req, res) => {
-  res.status(200).render('pages/login', { messages: req.flash('error')});
+  res.status(200).render('pages/public/login', { messages: req.flash('error')});
   return;
 });
 
@@ -56,19 +56,14 @@ routes.post('/login',
       failureFlash: true 
     }
   ), 
-  function (req, res){ //// if validatelogin fails. Failure is sent from within this middleware. If this succeeds then this passes to next function.
-
-    res.status(200).redirect("/users/admin")
+  function (req, res){
+    res.status(200).redirect("/users/dashboard")
   return;
 })
 
-routes.get('/reset-password', (req, res) => { 
-  res.status(200).render('pages/reset-password.ejs');
-});
 
-routes.get('/password', (req, res) => { 
-  res.status(200).render('pages/users/resetpassword.ejs');
-  return;
+routes.get('/reset-password', (req, res) => { 
+  res.status(200).render('pages/public/reset-password.ejs');
 });
 
 // Test routes for Email and Password Templates to check Design
@@ -79,14 +74,10 @@ routes.get('/password', (req, res) => {
 //   return;
 // });
 
-routes.get('/forgot-password', (req, res) => { 
-  res.status(200).render('pages/users/forgot-password.ejs');
-  return;
-});
 
 // New Password Page
 routes.get('/new-password', (req, res) => {
-  res.status(200).render('pages/users/newpassword.ejs');
+  res.status(200).render('pages/users/new-password.ejs');
   return;
 });
 
@@ -95,16 +86,6 @@ routes.get('/signup', (req, res) => {
   res.status(200).render('pages/users/signup.ejs');
   return;
 });
-
-// routes.get('/test-flash-start', (req, res) => {
-//   req.flash('info','This is a flash message');
-//   res.status(200).redirect('pages/public/test-flash-finish');
-//   return;
-// });
-// routes.get('/test-flash-finish', (req, res) => {
-//   res.status(200).render('pages/public/test-flash-finish', { messages: req.flash('info') });
-//   return;
-// });
 
 routes.get('/users/logout', logins.isLoggedIn, logins.logUserOut, (req, res) => { //testing isLogged in function. To be implemented on all routes. Might be worth extracting as it's own mini express app route on /users/.
   res.status(200).redirect('/');
@@ -134,14 +115,14 @@ routes.get('/users/verify-email', verificationCheck , (req, res) => {
     req.session.token = req.query.token;
     req.session.email = req.query.email; 
     req.flash("info","Successfully verified email. Please enter a password")
-  res.status(200).redirect('/enter-new-password');
+  res.status(200).redirect('enter-new-password');
   return;
 });
 
 ////////////////////    Enter new Password           ////////////////////
 
 routes.get('/enter-new-password',  (req, res) => {
-  res.status(200).render('pages/users/enter-new-password', {email: req.session.email, token: req.session.token});
+  res.status(200).render('pages/public/enter-password', {email: req.session.email, token: req.session.token});
   return;
 });
 
@@ -284,10 +265,10 @@ routes.get('/enter-password', enterPasswordCheck, (req, res) => {
   //console.log('errors :', errors.array());
   if (!errors.isEmpty()){
     req.flash('info', 'Invalid credentials. Please try again or contact your administrator');
-    res.status(200).render('pages/enter-password.ejs', {messages : req.flash('info'), user : {activation_token : req.body.token, email : req.body.email}});
+    res.status(200).render('pages/public/enter-password.ejs', {messages : req.flash('info'), user : {activation_token : req.body.token, email : req.body.email}});
     return;
   }
-  res.status(200).render('pages/enter-password.ejs', {user : {activation_token : req.query.token, email : req.query.email}});
+  res.status(200).render('pages/public/enter-password.ejs', {user : {activation_token : req.query.token, email : req.query.email}});
 });
 
 postEnterPasswordCheck = [
@@ -310,7 +291,7 @@ routes.post('/enter-password', postEnterPasswordCheck, (req, res) => {
   console.log('errors :', errors.array());
   if (!errors.isEmpty()){
     req.flash('info', 'Invalid credentials. Please try again or contact your administrator');
-    res.status(200).render(`pages/enter-password.ejs`, {messages : req.flash('info'), user : {activation_token : req.body.token, email : req.body.email}});
+    res.status(200).render(`pages/public/enter-password.ejs`, {messages : req.flash('info'), user : {activation_token : req.body.token, email : req.body.email}});
     return;
   }
   const user = {
@@ -347,7 +328,7 @@ forgotPasswordCheck = [
   check('confirm_email').equals(check('email'))
 ]
 
-routes.post('/forgot-password', forgotPasswordCheck, (req, res) => {
+routes.post('/reset-password', forgotPasswordCheck, (req, res) => {
   errors = validationResult(req)
   if (!errors.isEmpty()) {
     req.flash("info","Invalid email");
@@ -360,7 +341,7 @@ routes.post('/forgot-password', forgotPasswordCheck, (req, res) => {
   }
   if (checkIfUserExists(user.email) === false) {
     req.flash("info","Further instructions have now been sent to the email address provided");
-    res.status(200).render('pages/users/forgot-password', {messages : req.flash('info')});
+    res.status(200).render('pages/users/reset-password', {messages : req.flash('info')});
     return;
   } // database request
      
@@ -381,26 +362,6 @@ routes.post('/forgot-password', forgotPasswordCheck, (req, res) => {
  
   
 
-
-///////////////   Login    //////////////////
-
-routes.post('/login', passport.authenticate('local'), function (req, res){ //// if validatelogin fails. Failure is sent from within this middleware. If this succeeds then this passes to next function.
-  res.status(200).json({message: "success"})
-  return;
-});
-
-const loginCheck = [
-  check('email').isEmail().normalizeEmail(),
-];
-
-routes.post('/login', passport.authenticate('local', {successRedirect: '/users/admin',
-                                                      failureRedirect: '/login',
-                                                      failureFlash: true}), 
-);
-                                                      // function (req, res){ //// if validatelogin fails. Failure is sent from within this middleware. If this succeeds then this passes to next function.
-  // res.status(200).json({message: "success"})
-//   return;
-// });
 
 
 

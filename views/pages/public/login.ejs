@@ -4,7 +4,11 @@
 <head>
   <% include ../../partials/head.ejs %>
 </head>
+<header>  
+  <% include ../../partials/header.ejs %>
 
+  <script src="./js/form.js"></script>
+</header>
 <body>
   <form class="form" action="/login" method="post">
     <fieldset>
@@ -31,7 +35,7 @@
   </form>
   <% include ../../partials/flash-message.ejs %>
 
-  <script src="./js/form.js"></script>
+  <script src="js/form.js"></script>
 </body>
 
 </html>
