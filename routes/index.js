@@ -187,7 +187,7 @@ userRoutes.get('/verify-change-email', verifyEmailCheckQuery, (req, res) => {
     return;
   }
 
-  res.status(200).render('pages/public/verify-change_email.ejs', {messages : req.flash('info'), user : { new_email : req.query.new_email || "", email_change_token : req.query.email_change_token || ""}});
+  res.status(200).render('pages/public/verify-change_email.ejs', {messages : req.flash('info'), user : { old_email: req.query.old_email, new_email : req.query.new_email || "", email_change_token : req.query.email_change_token || ""}});
 });
   
 verifyEmailCheckBody = [
@@ -213,8 +213,8 @@ userRoutes.post('/verify-change-email', verifyEmailCheckBody, (req, res) => {
   }
   // send new email, old email, password, and email change token to db
   // if ok confirm and send confirmation emails
-  let login = new Login()
-  login.send
+  logins.sendToOldEmail(user);
+  logins.sendEmailChangeConfirmation(user);
 });
 
 

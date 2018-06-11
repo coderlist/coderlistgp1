@@ -4,6 +4,7 @@ const transportEmailConfig = require('./transportEmailConfig');
 const config = require('../../environmentConfig');
 const forgotPasswordEmail = './views/pages/email/forgot-password.ejs';
 const signupEmail = './views/pages/email/sign-up.ejs';
+const changeEmailVerification = './views/pages/email/change-email-verification.ejs';
 
 
 class MailSender {
@@ -91,6 +92,31 @@ class MailSender {
     });
   }
 
+  sendEmailChangeVerificationLink(userDetails) {
+    ejs.renderFile(changeEmailVerification, {userDetails: userDetails, config: config}, function(err, data){
+      if (err) {
+        console.log('err :', err);
+      }
+      else {
+        console.log('userDetails :', userDetails);
+        const verificationLink = {
+          from: process.env.EMAIL_NODEMAILER_USERNAME,
+          to: userDetails.email, 
+          subject: 'Verification for Ginny Bradley Website', 
+          text: 'Here is a link to verify your email which will expire in one week. You will be asked to enter a password. The password has a minimum requirement of 8 characters.If this sign-up was not you then please ignore as the verification link will expire soon. Please feel free to email any concerns you may have. please click the below link to register your email.',
+          html: data
+        }
+        const transporter = nodemailer.createTransport(transportEmailConfig);
+        transporter.sendMail(verificationLink, (error, info) => {
+          if (error) {
+              return console.log(error);
+          }
+          console.log(`Message ${info.messageId} sent: ${info.response}`);
+          return "success";
+        });
+      }
+    })
+  }
 
   sendVerificationLink(userDetails) {
     ejs.renderFile(signupEmail, {userDetails: userDetails, config: config}, function(err, data){
