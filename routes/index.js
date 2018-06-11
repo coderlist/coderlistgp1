@@ -120,7 +120,7 @@ routes.get('/enter-password', enterPasswordCheck, (req, res) => {
   //console.log('errors :', errors.array());
   if (!errors.isEmpty()){
     req.flash('info', 'Invalid credentials. Please try again or contact your administrator');
-    res.status(200).render('pages/public/enter-password.ejs', {messages : req.flash('info'), user : {activation_token : req.body.token, email : req.body.email}});
+    res.status(200).render('pages/public/enter-password.ejs', {messages : req.flash('info'), user : {activation_token : req.body.activation_token, email : req.body.email}});
     return;
   }
   res.status(200).render('pages/public/enter-password.ejs', {user : {activation_token : req.query.token, email : req.query.email}});
@@ -234,7 +234,7 @@ routes.get('/content/manage-all-pages', (req, res) => { //accessible by authed a
 //// for creating users for test purposes only /// remove on production 
 
 routes.get('/create-user', (req, res) => { //accessible by authed admin
-  res.status(200).render('pages/users/create-user.ejs');
+  res.status(200).render('pages/users/create-user.ejs', messages);
 });
 
 const createUserCheck = [
