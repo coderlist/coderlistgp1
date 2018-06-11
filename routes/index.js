@@ -212,8 +212,40 @@ routes.post('/reset-password', forgotPasswordCheck, (req, res) => {
   }
 });
   
- 
+ /// Change email ////////////
+
+ verifyEmailCheckQuery = [
+  query('email_change_token').isUUID(),
+  query('new_email').isEmail().normalizeEmail()
+];
+
+userRoutes.get('/verify-change-email', verifyEmailCheckQuery, (req, res) => { 
+  errors = validationResult(req)
+  if (!errors.isEmpty()) {
+    req.flash("info","Invalid credentials. Please recheck authorisation link or contact your administrator");
+    res.status(200).render('pages/public/verify-email-change', {messages : req.flash('info')});
+    return;
+  }
+  res.status(200).render('pages/users/verify-change_email.ejs', { user : { new_email : req.query.new_email, email_change_token : req.query.email_change_token }});
+});
   
+verifyEmailCheckBody = [
+  body('email_change_token').isUUID(),
+  body('new_email').isEmail().normalizeEmail(),
+  body('password').isLength({min:8})
+];
+
+userRoutes.get('/verify-change-email', verifyEmailCheckBody, (req, res) => {
+  errors = validationResult(req)
+  if (!errors.isEmpty()) {
+    req.flash("info","Invalid email");
+    res.status(200).render('pages/public/reset-password', {messages : req.flash('info')});
+    return;
+  } 
+  res.status(200).render('pages/users/verify-change_email.ejs', { user : { new_email : req.query.new_email, email_change_token : req.query.email_change_token }});
+});
+
+
 // pages // move to pages/content routes
 
 routes.get('/content/manage-page', (req, res) => {

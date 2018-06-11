@@ -15,22 +15,23 @@ userRoutes.get('/dashboard', (req, res) => {
 
 ////////////////////    Enter new Password           ////////////////////
 
-userRoutes.get('/enter-new-password',  (req, res) => {
-  res.status(200).render('pages/public/enter-password', {email: req.session.email, token: req.session.token});
+userRoutes.get('/new-password',  (req, res) => {
+  res.status(200).render('pages/public/new-password', {email: req.session.email, token: req.session.token});
   return;
 });
 
 const passwordCheck = [
+  check('old_password').isLength({min: 8}),
   check('password').isLength({min: 8}),
   // password must be at least 8 chars long
   check('confirm_password').equals(check('password'))
 ];
 
-userRoutes.post('/enter-new-password', passwordCheck, (req, res) => {
+userRoutes.post('/new-password', passwordCheck, (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     req.flash("info","Invalid password or passwords do not match", process.env.NODE_ENV === 'development' ? errors.array() : ""); //error.array() for development only
-    res.redirect('/enter-new-password');
+    res.redirect('/new-password');
     return;
   } 
   // use req.session.email and token to ensure correct user
@@ -132,8 +133,12 @@ userRoutes.get('/new-password', (req, res) => {
 });
 
 
+newPasswordCheck = [
+  body('')
+];
+
 userRoutes.post('/new-password', (req, res) => {
-  
+
 });
 
 // New Sign Up Page 
@@ -158,6 +163,15 @@ userRoutes.post('/delete-user', (req, res) => {
 userRoutes.get('/change-password', (req, res) => { 
   res.status(200).render('pages/users/changePassword.ejs');
 });
+
+
+
+userRoutes.get('/change-email', (req, res) => { 
+  res.status(200).render('pages/users/change_email.ejs');
+});
+
+
+
 
 userRoutes.all('*', (req, res) => {
   res.status(200).render('pages/public/unknown.ejs', { url: req.url });
