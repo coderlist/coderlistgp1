@@ -139,7 +139,7 @@ module.exports = {
       console.log('USERFOUND', user)
       if(verifyPassword(user.password,dbUser.password)){
          return queryHelper(`update users set old_email = old_email ||`+
-                         ` array['{ "email":"${user.email}","token_date": `+
+                         ` array['{ "old_val":"${user.email}", "new_val":"${user.new_email}","token_date": `+
                          `"' || now() || '", "token":"${user.change_token}" }']`+
                         `::json[] where email='${user.email}';`)
               .then(response => true)
