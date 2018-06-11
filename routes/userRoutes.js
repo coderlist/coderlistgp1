@@ -15,22 +15,23 @@ userRoutes.get('/dashboard', (req, res) => {
 
 ////////////////////    Enter new Password           ////////////////////
 
-userRoutes.get('/enter-new-password',  (req, res) => {
-  res.status(200).render('pages/public/enter-password', {email: req.session.email, token: req.session.token});
+userRoutes.get('/new-password',  (req, res) => {
+  res.status(200).render('pages/public/new-password', {email: req.session.email, token: req.session.token});
   return;
 });
 
 const passwordCheck = [
+  check('old_password').isLength({min: 8}),
   check('password').isLength({min: 8}),
   // password must be at least 8 chars long
   check('confirm_password').equals(check('password'))
 ];
 
-userRoutes.post('/enter-new-password', passwordCheck, (req, res) => {
+userRoutes.post('/new-password', passwordCheck, (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     req.flash("info","Invalid password or passwords do not match", process.env.NODE_ENV === 'development' ? errors.array() : ""); //error.array() for development only
-    res.redirect('/enter-new-password');
+    res.redirect('/new-password');
     return;
   } 
   // use req.session.email and token to ensure correct user
@@ -49,8 +50,8 @@ userRoutes.get('/create-user', (req, res) => { //accessible by authed admin
 
 const createUserCheck = [
   body('email').isEmail().normalizeEmail(),
-  body('firstName').trim().isAlphanumeric(),
-  body('lastName').trim().isAlphanumeric()
+  body('first_name').trim().isAlphanumeric(),
+  body('last_name').trim().isAlphanumeric()
 ];
 
 
@@ -59,20 +60,19 @@ userRoutes.post('/create-user', createUserCheck, (req, res) => { //accessible by
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     console.log('ERROR',error)
-    const userTemp = {email : req.body.email || "", firstName : req.body.firstName || "", lastName: req.body.lastName || ""}
+    const userTemp = {email : req.body.email || "", first_name : req.body.first_name || "", lastName: req.body.last_name || ""}
     req.flash("info","Invalid user data", process.env.NODE_ENV === 'development' ? errors.array() : ""); //error.array() for development only
     res.status(200).render('pages/users/create-user.ejs', {messages : req.flash('info'), userTemp});
     return;
   }
 
-  const generatedToken = uuid();
   const user = {
     email : req.body.email,
     last_failed_login: "",
-    first_name : req.body.firstName,
-    last_name : req.body.lastName,
+    first_name : req.body.first_name,
+    last_name : req.body.last_name,
     failed_login_attempts : 0,
-    activation_token : generatedToken
+    activation_token : uuid()
   };
   createUser(user).then(function(userCreated){ // returns user created true or false
     if (userCreated) {
@@ -132,8 +132,12 @@ userRoutes.get('/new-password', (req, res) => {
 });
 
 
+newPasswordCheck = [
+  body('')
+];
+
 userRoutes.post('/new-password', (req, res) => {
-  
+
 });
 
 // New Sign Up Page 
@@ -158,6 +162,15 @@ userRoutes.post('/delete-user', (req, res) => {
 userRoutes.get('/change-password', (req, res) => { 
   res.status(200).render('pages/users/changePassword.ejs');
 });
+
+
+
+userRoutes.get('/change-email', (req, res) => { 
+  res.status(200).render('pages/users/change_email.ejs');
+});
+
+
+
 
 userRoutes.all('*', (req, res) => {
   res.status(200).render('pages/public/unknown.ejs', { url: req.url });
