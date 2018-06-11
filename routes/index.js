@@ -138,7 +138,7 @@ routes.post('/enter-password', postEnterPasswordCheck, (req, res) => {
 routes.get('/reset-password', (req, res) => {
   // **create a page with two fields to enter email addresses
   // **ensure that emails both match before being able to post
-  res.status(200).render('pages/public/forgot-password');
+  res.status(200).render('pages/public/reset-password');
 });  
 
 forgotPasswordCheck = [
@@ -186,23 +186,35 @@ userRoutes.get('/verify-change-email', verifyEmailCheckQuery, (req, res) => {
     res.status(200).render('pages/public/verify-email-change', {messages : req.flash('info')});
     return;
   }
-  res.status(200).render('pages/public/verify-change_email.ejs', { user : { new_email : req.query.new_email || "", email_change_token : req.query.email_change_token || ""}});
+
+  res.status(200).render('pages/public/verify-change_email.ejs', {messages : req.flash('info'), user : { new_email : req.query.new_email || "", email_change_token : req.query.email_change_token || ""}});
 });
   
 verifyEmailCheckBody = [
-  body('email_change_token').isUUID(),
-  body('new_email').isEmail().normalizeEmail(),
+  body('email_change_token').isUUID(), // hidden
+  body('new_email').isEmail().normalizeEmail(),  // hidden
+  body('old_email').isEmail().normalizeEmail(),  // hidden
   body('password').isLength({min:8})
 ];
 
-userRoutes.get('/verify-change-email', verifyEmailCheckBody, (req, res) => {
+userRoutes.post('/verify-change-email', verifyEmailCheckBody, (req, res) => {
   errors = validationResult(req)
   if (!errors.isEmpty()) {
     req.flash("info","Invalid email");
-    res.status(200).render('pages/public/verify-change-email', {messages : req.flash('info')});
+    res.status(200).render('pages/public/verify-change_email.ejs', { messages : req.flash('info'), user : { new_email : req.body.new_email, email_change_token : req.body.email_change_token }});
     return;
   } 
-  res.status(200).render('pages/public/verify-change_email.ejs', { user : { new_email : req.query.new_email, email_change_token : req.query.email_change_token }});
+  
+  user = {
+    new_email : req.body.email,
+    old_email : req.boy.old_mail,
+    password : req.body.password,
+    email_change_token : req.body.email_change_token
+  }
+  // send new email, old email, password, and email change token to db
+  // if ok confirm and send confirmation emails
+  let login = new Login()
+  login.send
 });
 
 
