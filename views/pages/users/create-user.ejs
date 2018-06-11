@@ -13,13 +13,13 @@
     <form id="contact" action="" method="post">
       <h4>Create User Form</h4>
       <fieldset>
-        <input placeholder="First name" type="text" tabindex="1" value="<% (typeof user == 'object' && user) ? user.firstName : ''%>" required autofocus>
+        <input placeholder="First name" name="first_name" type="text" tabindex="1" value="<% (typeof user == 'object' && user) ? user.firstName : ''%>" required autofocus>
       </fieldset>
       <fieldset>
-        <input placeholder="First name" type="text" tabindex="2" value="<% (typeof user == 'object' && user) ? user.lastName : ''%>" required>
+        <input placeholder="Last name" name="last_name" type="text" tabindex="2" value="<% (typeof user == 'object' && user) ? user.lastName : ''%>" required>
       </fieldset>
       <fieldset>
-        <input placeholder="Your Email Address" type="email" tabindex="3" value="<% (typeof user == 'object' && user) ? user.email : ''%>" required>
+        <input placeholder="Your Email Address" name="email" type="email" tabindex="3" value="<% (typeof user == 'object' && user) ? user.email : ''%>" required>
       </fieldset>
       <fieldset>
         <button name="submit" type="submit" id="contact-submit" data-submit="...Sending">Submit</button>
