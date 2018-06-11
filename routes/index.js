@@ -65,46 +65,6 @@ routes.get('/reset-password', (req, res) => {
   res.status(200).render('pages/public/reset-password.ejs');
 });
 
-// Test routes for Email and Password Templates to check Design
-// Can delete this after all the templates are done
-// Change Password Template missing -> done at the end of this week
-// routes.get('/sign-up', (req, res) => { 
-//   res.status(200).render('pages/email/sign-up.ejs');
-//   return;
-// });
-
-
-// New Password Page
-
-
-// const verificationCheck = [
-//   query('email', 'invalid email').isEmail().normalizeEmail(),
-//   query('token', 'invalid token').isUUID()
-// ];
-
-// const validationCheck = [
-//   check('email').isEmail().normalizeEmail(),
-//   // password must be at least 5 chars long
-//   check('password').isLength({ min: 8 })
-// ];
-
-// // routes.get('/verify-email', verificationCheck , (req, res) => {
-// //     const errors = validationResult(req);
-// //     if (!errors.isEmpty()) {
-// //       req.flash("info","Invalid token or email", req.query.email, req.query.token, errors.array());
-// //       res.redirect('/');
-// //       return;
-// //     }
-// //     verifyUser(user).then()
-// //     req.session.token = req.query.token;
-// //     req.session.email = req.query.email; 
-// //     req.flash("info","Successfully verified email. Please enter a password")
-// //   res.status(200).redirect('enter-new-password');
-// //   return;
-// // }); //// needs to be changed should load hidden fields with email and verification token
-
-
-
 ///////////////       Register User      //////////////////
 
 //  This is the page the user has to enter a new password after clicking the activation link from their email
@@ -287,21 +247,16 @@ routes.post('/create-user', createUserCheck, (req, res) => { //accessible by aut
     return;
   }
 
-  const generatedToken = uuid();
+
   const user = {
     email : req.body.email,
     last_failed_login: "",
-    first_name : req.body.firstName,
-    last_name : req.body.lastName,
+    first_name : req.body.first_name,
+    last_name : req.body.last_name,
     failed_login_attempts : 0,
-    activation_token : generatedToken,
-    creation_date : Date.now(),
-    temporary_token_date : Date.now(),
-    last_succesful_login : Date.now(),
-    last_failed_login : ""
-
-
+    activation_token : UUID()
   };
+
   createUser(user).then(function(userCreated){ // returns user created true or false
     if (userCreated) {
       let mail = new Mail;

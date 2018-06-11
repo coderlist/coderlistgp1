@@ -50,8 +50,8 @@ userRoutes.get('/create-user', (req, res) => { //accessible by authed admin
 
 const createUserCheck = [
   body('email').isEmail().normalizeEmail(),
-  body('firstName').trim().isAlphanumeric(),
-  body('lastName').trim().isAlphanumeric()
+  body('first_name').trim().isAlphanumeric(),
+  body('last_name').trim().isAlphanumeric()
 ];
 
 
@@ -60,20 +60,19 @@ userRoutes.post('/create-user', createUserCheck, (req, res) => { //accessible by
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     console.log('ERROR',error)
-    const userTemp = {email : req.body.email || "", firstName : req.body.firstName || "", lastName: req.body.lastName || ""}
+    const userTemp = {email : req.body.email || "", first_name : req.body.first_name || "", lastName: req.body.last_name || ""}
     req.flash("info","Invalid user data", process.env.NODE_ENV === 'development' ? errors.array() : ""); //error.array() for development only
     res.status(200).render('pages/users/create-user.ejs', {messages : req.flash('info'), userTemp});
     return;
   }
 
-  const generatedToken = uuid();
   const user = {
     email : req.body.email,
     last_failed_login: "",
-    first_name : req.body.firstName,
-    last_name : req.body.lastName,
+    first_name : req.body.first_name,
+    last_name : req.body.last_name,
     failed_login_attempts : 0,
-    activation_token : generatedToken
+    activation_token : uuid()
   };
   createUser(user).then(function(userCreated){ // returns user created true or false
     if (userCreated) {
