@@ -163,14 +163,35 @@ userRoutes.get('/change-password', (req, res) => {
   res.status(200).render('pages/users/changePassword.ejs');
 });
 
-
+////////////////// Change email whilst validated  //////////////////////
 
 userRoutes.get('/change-email', (req, res) => { 
   res.status(200).render('pages/users/change_email.ejs');
 });
 
+changeEmailCheck = [
+  body('new_email').isEmail().normalizeEmail,
+  body('confirm_new_email').isEmail().normalizeEmail,
+  body('confirm_new_email').equals(check('new_email'))
+];
+
+userRoutes.post('/change-email', changeEmailCheck, (req, res) => {
+  if (!errors.isEmpty()) {
+    const userTemp = {email : req.body.new_email || ""}
+    req.flash("info","Invalid user data", process.env.NODE_ENV === 'development' ? errors.array() : ""); //error.array() for development only
+    res.status(200).render('pages/users/change-email.ejs', {messages : req.flash('info'), userTemp});
+    return;
+  }
+  user = {
+    old_email : req.session.email,
+    new_email : req.body.new_email,
+    email_change_token : uuid()
+  }
+  sendEmailChangeVerificationLink(user);
+});
 
 
+//////////////         end of change email whilst validated ////////////////
 
 userRoutes.all('*', (req, res) => {
   res.status(200).render('pages/public/unknown.ejs', { url: req.url });

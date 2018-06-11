@@ -13,12 +13,8 @@ const user = {
 
 let mail = new Mail();
 mail.sendPasswordReset(user);
-console.log("1");
 mail.sendToOldEmail(user);
-console.log("2");
 mail.sendPasswordChangeConfirmation(user);
-console.log("3");
 mail.sendVerificationLink(user);
-console.log("4");
 mail.sendEmailChangeConfirmation(user);
-console.log('5');
+mail.sendEmailChangeVerificationLink(user);

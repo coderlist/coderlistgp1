@@ -211,10 +211,19 @@ userRoutes.post('/verify-change-email', verifyEmailCheckBody, (req, res) => {
     password : req.body.password,
     email_change_token : req.body.email_change_token
   }
+  if (changeEmail(user) === false) {
+    req.flash("info","Invalid credentials. Please try again.");
+    res.status(200).render('pages/public/verify-change_email.ejs', { messages : req.flash('info'), user : { new_email : req.body.new_email, email_change_token : req.body.email_change_token }});
+    return;
+  }
   // send new email, old email, password, and email change token to db
   // if ok confirm and send confirmation emails
   logins.sendToOldEmail(user);
   logins.sendEmailChangeConfirmation(user);
+  req.logOut();
+  req.flash('info', 'Please now login with your new email');
+  res.status(200).redirect('./login');
+
 });
 
 
