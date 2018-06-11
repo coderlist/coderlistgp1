@@ -10,7 +10,7 @@ const {insertOne,
 module.exports = {
   
   createUser(user){        
-    return insertInTable(user,'users').then(result => {
+    return insertOne(user).then(result => {
        return true
      }).catch(e => {
        throw e
