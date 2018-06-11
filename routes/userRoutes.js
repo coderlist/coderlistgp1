@@ -131,6 +131,11 @@ userRoutes.get('/new-password', (req, res) => {
   return;
 });
 
+
+userRoutes.post('/new-password', (req, res) => {
+  
+});
+
 // New Sign Up Page 
 
 
