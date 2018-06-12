@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <% include ../partials/head.ejs %>
+</head>
+
+<body>
+    <% include ../partials/header.ejs %>
+        <% include ../partials/delete-alert-message.ejs %>
+            <div class="my-3 my-md-5">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <form action="https://httpbin.org/post" method="post" class="card ">
+                                <div class="card-header">
+                                    <h3 class="card-title">Edit Page</h3>
+                                </div>
+                                <div class="form-group ">
+                                    <label class="form-label">Title</label>
+                                    <input type="text" class="form-control" name="title" placeholder="Title.." required>
+                                </div>
+                                <div class="form-group ">
+                                    <label class="form-label"></label>
+                                    <textarea class="form-control" name="content" rows="6" placeholder="Content.." required>Use CKEditor in this area</textarea>
+                                </div>
+                                <div class="form-group ">
+                                    <label class="form-label">Short description
+                                        <span class="form-label-small">0/120</span>
+                                    </label>
+                                    <textarea class="form-control" name="description" rows="6" placeholder="Description.." max-length="120" required></textarea>
+                                </div>
+                                <div class="form-group form-image">
+                                    <div class="card form-image-preview">
+                                        <img class="card-img-top img-top-preview" src="https://images.unsplash.com/photo-1475563011407-6bf489b1c361?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=9cd5b743b42d8cc767b58af0c51602c6&auto=format&fit=crop&w=1050&q=80"
+                                            alt="And this isn&#39;t my nose. This is a false one.">
+                                    </div>
+                                    <div class="form-image-preview-upload">
+                                        <div class="form-label">Size: 300 x 300 px</div>
+                                        <div class="custom-file">
+                                            <input type="file" class="custom-file-input" name="image" required>
+                                            <label class="custom-file-label">Upload Image</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card-footer text-right">
+                                    <button type="button" class="btn btn-danger delete-this">Delete Page</button>
+                                    <button type="reset" class="btn btn-primary">Reset Changes</button>
+                                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <% include ../partials/footer.ejs %>
+                <!-- Scripts -->
+                <script src="js/alert-message.js"></script>
+</body>
+
+</html>

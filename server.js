@@ -17,8 +17,6 @@ const validator = require('express-validator');
 const uuidv1 = require('uuid/v1');
 
 const app = express();
-
-
 app.set('view engine', 'ejs');
 
 app.use(cookieParser());

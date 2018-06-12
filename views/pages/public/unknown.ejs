@@ -2,27 +2,19 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <% include ../../partials/head.ejs %>
+  <% include ../partials/head.ejs %>
 </head>
-
 <body>
-  <header>
-      <% include ../../partials/header.ejs %>
-  </header>
-  <br />
-  <br />
-  <br />
-  <br />
-  <br />
-  <br />
-  <br />
-  <br />
-  <br />
-  <br />
-  <br />
-  <h2>The "<%=url%>" url does not have the page you are looking for nor any other page. Sorry. If you think it should please contact the admin team.</h2>
-  <footer>
-      <% include ../../partials/footer.ejs %>
-  </footer>
+    <div class="page">
+        <div class="page-content">
+        <div class="container text-center">
+          <div class="display-1 text-muted mb-5"><i class="si si-exclamation"></i> 404</div>
+          <h1 class="h1 mb-5">Oops..  The page you were trying to reach could not be found... </h1>
+          <a class="btn btn-primary" href="javascript:history.back()">
+            <i class="fe fe-arrow-left mr-2"></i>Go back
+          </a>
+        </div>
+      </div>
+      </div>
 </body>
 </html>
