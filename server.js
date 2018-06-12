@@ -17,6 +17,7 @@ const validator = require('express-validator');
 const uuidv1 = require('uuid/v1');
 
 const app = express();
+
 app.set('view engine', 'ejs');
 
 app.use(cookieParser());
@@ -28,7 +29,7 @@ app.use(session({
     pool,                
     tableName : 'user_sessions'   
   }),
-  secret: process.env.COOKIE_SECRET || SECRET,
+  secret: process.env.COOKIE_SECRET,
   resave: false,
   saveUninitialized: true,
   cookie: { maxAge: 30 * 24 * 60 * 60 * 1000 } 
