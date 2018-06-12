@@ -4917,11 +4917,11 @@ input[type="button"].btn-block {
   }
 }
 /* Password Alert */
-.password-alert{
+.password-alert, .email-alert{
   display: none;
   position: relative;
 }
-.password-alert-message{
+.password-alert-message, .email-alert-message{
   height: auto;
   top: 0;
   animation: slideinpassword 1s linear;
