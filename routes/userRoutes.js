@@ -204,7 +204,7 @@ changeEmailCheck = [
   body("password", "invalid password").isLength({min:8}),
   body('new_email').isEmail().normalizeEmail()
   .custom((value,{req, loc, path}) => {
-    if (value !== req.body.confirm_email.normalizeEmail()) {
+    if (value !== req.body.confirm_new_email.normalizeEmail()) {
       throw new Error("Passwords don't match");
     } else {
       return value;
@@ -213,18 +213,36 @@ changeEmailCheck = [
 ];
 
 userRoutes.post('/change-email', changeEmailCheck, (req, res) => {
+  let errors = validationResult(req);
   if (!errors.isEmpty()) {
-    const userTemp = {email : req.body.new_email || ""}
+    const userTemp = {new_email : req.body.new_email || "", old_email : req.body.old_email || ""}
     req.flash("info","Invalid user data", process.env.NODE_ENV === 'development' ? errors.array() : ""); //error.array() for development only
-    res.status(200).render('pages/users/change-email.ejs', {messages : req.flash('info'), userTemp});
+    res.status(200).render('pages/users/change-email.ejs', {messages : req.flash('info'), userTemp});// insert variable into form data
     return;
   }
+
+
   user = {
     old_email : req.session.email,
     new_email : req.body.new_email,
     email_change_token : uuid()
   }
-  sendEmailChangeVerificationLink(user);
+  updateUserEmail(user)
+  .then(function (data){
+    if (!data){
+      req.flash('info','Invalid credentials')
+      res.status(200).redirect('users/change-email.ejs',); 
+      return;
+    }
+    sendEmailChangeVerificationLink(user);
+    req.flash('info', "An email has been sent to your new email with further instructions");
+    res.redirect('users/dashboard');
+  }).catch(function(err){
+    console.log('err :', err);
+    req.flash('info', "An internal error has occurred. Please contact your administrator");
+    res.redirect('users/dashboard');
+    return;
+  })
 });
 
 
