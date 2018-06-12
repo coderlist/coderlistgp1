@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <% include ../../partials/head.ejs %>
+</head>
+<header>  
+  <% include ../../partials/header.ejs %>
+
+  <script src="./js/form.js"></script>
+</header>
+<body>
+  <form class="form" action="/login" method="post">
+    <fieldset>
+      <legend class="title">Log In</legend>
+      <div class="error">
+        <div class="error-msg">
+          You have entered an invalid username or password. Please, try again.
+        </div>
+        <div class="close-msg">
+          x
+        </div>
+      </div>
+      <div class="form-box">
+        <input class="input" name="email" id="email" type="email" minlength="3" maxlength="64" size="32"  value="" required>
+        <label for="email">Enter your email </label>
+      </div>
+      <div class="form-box">
+        <input class="input" name="password" id="password" type="password" minlength="8" maxlength="100" size="15" value="" required>
+        <label for="password"> Enter your password </label>
+      </div>
+    </fieldset>
+    <button class="form-btn" value="Login" type="submit">Login</button>
+    <a class="form-url" href="/password">Forgot Password?</a>
+  </form>
+  <% include ../../partials/flash-message.ejs %>
+
+  <script src="js/form.js"></script>
+</body>
+
+</html>

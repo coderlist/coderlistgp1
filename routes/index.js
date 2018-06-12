@@ -8,7 +8,7 @@ const users = require('../server/models/users');
 const passport = require('../auth/local');
 const Mail = require('../helperFunctions/verification/MailSender');
 // site //
-const { createUser, verifyUser } = require('../server/models/users');
+const { createUser, verifyUser, addOneToFailedLogins } = require('../server/models/users');
 const uuid = require('uuid/v1');
 const _ = require('lodash');
 const userRoutes = require('./userRoutes')
@@ -39,6 +39,10 @@ routes.get('/test', (req, res) => {
 ///////////////   Login    //////////////////
 
 routes.get('/login', (req, res) => {
+  if (req.isAuthenticated()){
+    res.redirect('./users/dashboard');
+    return;
+  }
   res.status(200).render('pages/public/login', { messages: req.flash('error')});
   return;
 });
@@ -57,6 +61,7 @@ routes.post('/login',
     }
   ), 
   function (req, res){
+    req.session.email = req.body.email;
     res.status(200).redirect("/users/dashboard")
   return;
 })

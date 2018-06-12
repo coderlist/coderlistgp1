@@ -180,7 +180,7 @@ module.exports = {
    */
   updateUserEmail(body){
      //change action must have been verified to proceed to this step
-     //1. check old_emal json array if new email has been used
+     //1. check old_email json array if new email has been used
      //2. update users.email if 1 is false
      //3. else raise already used exception
     return queryHelper(`

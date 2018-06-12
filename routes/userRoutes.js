@@ -5,6 +5,7 @@ const Logins = require('../helperFunctions/Logins');
 const logins = new Logins();
 const { query, check, body, validationResult } = require('express-validator/check');
 const { matchedData, sanitize } = require('express-validator/filter');
+const { updatePassword, updateUserEmail } = require('../server/models/users');
 
 userRoutes.use(logins.isLoggedIn);
 
@@ -16,29 +17,56 @@ userRoutes.get('/dashboard', (req, res) => {
 ////////////////////    Enter new Password           ////////////////////
 
 userRoutes.get('/new-password',  (req, res) => {
-  res.status(200).render('pages/public/new-password', {email: req.session.email, token: req.session.token});
+  res.status(200).render('pages/users/new-password', {messages : req.flash('info')});
   return;
 });
 
 const passwordCheck = [
-  check('old_password').isLength({min: 8}),
-  check('password').isLength({min: 8}),
-  // password must be at least 8 chars long
-  check('confirm_password').equals(check('password'))
+  body('old_password').isLength({min: 8}),
+  body("password", "invalid password")
+  .isLength({ min: 8 })
+  .custom((value,{req, loc, path}) => {
+    if (value !== req.body.password2) {
+      throw new Error("Passwords don't match");
+    } else {
+      return value;
+    }
+  })
 ];
 
 userRoutes.post('/new-password', passwordCheck, (req, res) => {
   const errors = validationResult(req);
+  console.log('getshere :', req.body);
   if (!errors.isEmpty()) {
     req.flash("info","Invalid password or passwords do not match", process.env.NODE_ENV === 'development' ? errors.array() : ""); //error.array() for development only
-    res.redirect('/new-password');
+    res.redirect('/users/new-password');
     return;
   } 
-  // use req.session.email and token to ensure correct user
-  // accept the new passwords if they are the same and look up the user name. Set user to validated and modified date to now() and store hashed password.
-  // destroy session and force user to login again
-  res.status(200).redirect('/login');
-  return;
+  console.log('req.session.email :', req.session.email);
+  user = {
+    email : req.session.email,
+    old_password : req.body.old_password,
+    new_password : req.body.new_password
+  }
+
+  updatePassword(user)
+  .then(function (data){
+    if (!data) {
+      req.flash('info', 'Invalid credentials');
+      res.status(200).render('pages/users/new-password', {messages : req.flash('info')});
+      return;
+    }
+    req.logOut();
+    req.flash('info', 'Password updated. Please login with your new password');
+    res.status(200).redirect('/login');
+    return;
+  }).catch(function (err) {
+    req.flash('info', 'There was an internal error. Please contact your administrator');
+    res.status(200).redirect('/users/dashboard');
+    console.log(err)
+    return;    
+  });  
+  
 });
 
 
@@ -126,19 +154,21 @@ userRoutes.post('/admin', (req,res) => {
 
 
 
-userRoutes.get('/new-password', (req, res) => {
-  res.status(200).render('pages/users/new-password.ejs');
-  return;
-});
+// userRoutes.get('/new-password', (req, res) => {
+//   res.status(200).render('pages/users/new-password.ejs');
+//   return;
+// });
 
 
-newPasswordCheck = [
-  body('')
-];
+// newPasswordCheck = [
+//   body('old_password').isLength({min:8}),
+//   body('password').isLength({min:8}),
+//   body('confirm_password').isLength({min:8})
+// ];
 
-userRoutes.post('/new-password', (req, res) => {
+// userRoutes.post('/new-password', (req, res) => {
 
-});
+// });
 
 // New Sign Up Page 
 
@@ -166,7 +196,7 @@ userRoutes.get('/change-password', (req, res) => {
 ////////////////// Change email whilst validated  //////////////////////
 
 userRoutes.get('/change-email', (req, res) => { 
-  res.status(200).render('pages/users/change_email.ejs');
+  res.status(200).render('pages/users/change-email.ejs');
 });
 
 changeEmailCheck = [
