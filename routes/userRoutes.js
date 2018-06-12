@@ -16,17 +16,17 @@ userRoutes.get('/dashboard', (req, res) => {
 
 ////////////////////    Enter new Password           ////////////////////
 
-userRoutes.get('/new-password',  (req, res) => {
-  res.status(200).render('pages/users/new-password', {messages : req.flash('info')});
+userRoutes.get('/change-password',  (req, res) => {
+  res.status(200).render('pages/users/change-password', {messages : req.flash('info')});
   return;
 });
 
 const passwordCheck = [
   body('old_password').isLength({min: 8}),
-  body("password", "invalid password")
+  body("new_password", "invalid password")
   .isLength({ min: 8 })
   .custom((value,{req, loc, path}) => {
-    if (value !== req.body.password2) {
+    if (value !== req.body.confirm_password) {
       throw new Error("Passwords don't match");
     } else {
       return value;
@@ -34,12 +34,12 @@ const passwordCheck = [
   })
 ];
 
-userRoutes.post('/new-password', passwordCheck, (req, res) => {
+userRoutes.post('/change-password', passwordCheck, (req, res) => {
   const errors = validationResult(req);
   console.log('getshere :', req.body);
   if (!errors.isEmpty()) {
     req.flash("info","Invalid password or passwords do not match", process.env.NODE_ENV === 'development' ? errors.array() : ""); //error.array() for development only
-    res.redirect('/users/new-password');
+    res.redirect('/users/change-password');
     return;
   } 
   console.log('req.session.email :', req.session.email);
@@ -53,7 +53,7 @@ userRoutes.post('/new-password', passwordCheck, (req, res) => {
   .then(function (data){
     if (!data) {
       req.flash('info', 'Invalid credentials');
-      res.status(200).render('pages/users/new-password', {messages : req.flash('info')});
+      res.status(200).render('pages/users/change-password', {messages : req.flash('info')});
       return;
     }
     req.logOut();
