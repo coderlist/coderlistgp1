@@ -2,8 +2,9 @@ const ejs = require("ejs");
 const nodemailer = require('nodemailer');
 const transportEmailConfig = require('./transportEmailConfig');
 const config = require('../../environmentConfig');
-const forgotPasswordEmail = require('../../views/pages/email/forgot-password.ejs');
+const forgotPasswordEmail = './views/pages/email/forgot-password.ejs';
 const signupEmail = './views/pages/email/sign-up.ejs';
+const changeEmailVerification = './views/pages/email/change-email-verification.ejs';
 
 
 class MailSender {
@@ -38,9 +39,9 @@ class MailSender {
   sendToOldEmail(userDetails) {
     const oldEmail = {
       from: process.env.EMAIL_NODEMAILER_USERNAME,
-      to: userDetails.email, 
-      subject: 'Email change confirmation for Ginny Bradley Website', 
-      text: 'Confirmation that email has been changed for the Ginny Bradley website',
+      to: userDetails.old_email, 
+      subject: 'Email change confirmation for Ginny Bradley Website sent to old email', 
+      text: `Confirmation that your email has been changed for the Ginny Bradley website to ${userDetails.new_email}`,
       html: `` 
     }
     const transporter = nodemailer.createTransport(transportEmailConfig);
@@ -70,6 +71,51 @@ class MailSender {
       console.log(`Message ${info.messageId} sent: ${info.response}`);
       return "success";
     });
+  }
+
+  sendEmailChangeConfirmation(userDetails) {
+    
+    const emailChangeConfirmation = {
+      from: process.env.EMAIL_NODEMAILER_USERNAME, // sender address
+      to: userDetails.new_email, 
+      subject: 'New Email change confirmation for Ginny Bradley Website', 
+      text: `Confirmation that email has been changed for the Ginny Bradley website from ${userDetails.old_email}`,
+      html: `` 
+   }
+    const transporter = nodemailer.createTransport(transportEmailConfig);
+    transporter.sendMail(emailChangeConfirmation, (error, info) => {
+      if (error) {
+          return console.log(error);
+      }
+      console.log(`Message ${info.messageId} sent: ${info.response}`);
+      return "success";
+    });
+  }
+
+  sendEmailChangeVerificationLink(userDetails) {
+    ejs.renderFile(changeEmailVerification, {userDetails: userDetails, config: config}, function(err, data){
+      if (err) {
+        console.log('err :', err);
+      }
+      else {
+        console.log('userDetails :', userDetails);
+        const newEmailLink = {
+          from: process.env.EMAIL_NODEMAILER_USERNAME,
+          to: userDetails.email, 
+          subject: 'New email verification link for Ginny Bradley Website', 
+          text: 'new email verification link',
+          html: data
+        }
+        const transporter = nodemailer.createTransport(transportEmailConfig);
+        transporter.sendMail(newEmailLink, (error, info) => {
+          if (error) {
+              return console.log(error);
+          }
+          console.log(`Message ${info.messageId} sent: ${info.response}`);
+          return "success";
+        });
+      }
+    })
   }
 
   sendVerificationLink(userDetails) {

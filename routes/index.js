@@ -62,46 +62,6 @@ routes.get('/reset-password', (req, res) => {
   res.status(200).render('pages/public/reset-password.ejs');
 });
 
-// Test routes for Email and Password Templates to check Design
-// Can delete this after all the templates are done
-// Change Password Template missing -> done at the end of this week
-// routes.get('/sign-up', (req, res) => { 
-//   res.status(200).render('pages/email/sign-up.ejs');
-//   return;
-// });
-
-
-// New Password Page
-
-
-// const verificationCheck = [
-//   query('email', 'invalid email').isEmail().normalizeEmail(),
-//   query('token', 'invalid token').isUUID()
-// ];
-
-// const validationCheck = [
-//   check('email').isEmail().normalizeEmail(),
-//   // password must be at least 5 chars long
-//   check('password').isLength({ min: 8 })
-// ];
-
-// // routes.get('/verify-email', verificationCheck , (req, res) => {
-// //     const errors = validationResult(req);
-// //     if (!errors.isEmpty()) {
-// //       req.flash("info","Invalid token or email", req.query.email, req.query.token, errors.array());
-// //       res.redirect('/');
-// //       return;
-// //     }
-// //     verifyUser(user).then()
-// //     req.session.token = req.query.token;
-// //     req.session.email = req.query.email; 
-// //     req.flash("info","Successfully verified email. Please enter a password")
-// //   res.status(200).redirect('enter-new-password');
-// //   return;
-// // }); //// needs to be changed should load hidden fields with email and verification token
-
-
-
 ///////////////       Register User      //////////////////
 
 //  This is the page the user has to enter a new password after clicking the activation link from their email
@@ -117,7 +77,7 @@ routes.get('/enter-password', enterPasswordCheck, (req, res) => {
   //console.log('errors :', errors.array());
   if (!errors.isEmpty()){
     req.flash('info', 'Invalid credentials. Please try again or contact your administrator');
-    res.status(200).render('pages/public/enter-password.ejs', {messages : req.flash('info'), user : {activation_token : req.body.token, email : req.body.email}});
+    res.status(200).render('pages/public/enter-password.ejs', {messages : req.flash('info'), user : {activation_token : req.body.activation_token, email : req.body.email}});
     return;
   }
   res.status(200).render('pages/public/enter-password.ejs', {user : {activation_token : req.query.token, email : req.query.email}});
@@ -175,7 +135,7 @@ routes.post('/enter-password', postEnterPasswordCheck, (req, res) => {
 routes.get('/reset-password', (req, res) => {
   // **create a page with two fields to enter email addresses
   // **ensure that emails both match before being able to post
-  res.status(200).render('pages/public/forgot-password');
+  res.status(200).render('pages/public/reset-password');
 });  
 
 forgotPasswordCheck = [
@@ -209,8 +169,61 @@ routes.post('/reset-password', forgotPasswordCheck, (req, res) => {
   }
 });
   
- 
+ /// Change email ////////////
+
+ verifyEmailCheckQuery = [
+  query('email_change_token').isUUID(),
+  query('new_email').isEmail().normalizeEmail()
+];
+
+userRoutes.get('/verify-change-email', verifyEmailCheckQuery, (req, res) => { 
+  errors = validationResult(req)
+  if (!errors.isEmpty()) {
+    req.flash("info","Invalid credentials. Please recheck authorisation link or contact your administrator");
+    res.status(200).render('pages/public/verify-email-change', {messages : req.flash('info')});
+    return;
+  }
+
+  res.status(200).render('pages/public/verify-change_email.ejs', {messages : req.flash('info'), user : { old_email: req.query.old_email, new_email : req.query.new_email || "", email_change_token : req.query.email_change_token || ""}});
+});
   
+verifyEmailCheckBody = [
+  body('email_change_token').isUUID(), // hidden
+  body('new_email').isEmail().normalizeEmail(),  // hidden
+  body('old_email').isEmail().normalizeEmail(),  // hidden
+  body('password').isLength({min:8})
+];
+
+userRoutes.post('/verify-change-email', verifyEmailCheckBody, (req, res) => {
+  errors = validationResult(req)
+  if (!errors.isEmpty()) {
+    req.flash("info","Invalid email");
+    res.status(200).render('pages/public/verify-change_email.ejs', { messages : req.flash('info'), user : { new_email : req.body.new_email, email_change_token : req.body.email_change_token }});
+    return;
+  } 
+  
+  user = {
+    new_email : req.body.email,
+    old_email : req.boy.old_mail,
+    password : req.body.password,
+    email_change_token : req.body.email_change_token
+  }
+  if (changeEmail(user) === false) {
+    req.flash("info","Invalid credentials. Please try again.");
+    res.status(200).render('pages/public/verify-change_email.ejs', { messages : req.flash('info'), user : { new_email : req.body.new_email, email_change_token : req.body.email_change_token }});
+    return;
+  }
+  // send new email, old email, password, and email change token to db
+  // if ok confirm and send confirmation emails
+  logins.sendToOldEmail(user);
+  logins.sendEmailChangeConfirmation(user);
+  req.logOut();
+  req.flash('info', 'Please now login with your new email');
+  res.status(200).redirect('./login');
+
+});
+
+
 // pages // move to pages/content routes
 
 routes.get('/content/manage-page', (req, res) => {
@@ -231,7 +244,7 @@ routes.get('/content/manage-all-pages', (req, res) => { //accessible by authed a
 //// for creating users for test purposes only /// remove on production 
 
 routes.get('/create-user', (req, res) => { //accessible by authed admin
-  res.status(200).render('pages/users/create-user.ejs');
+  res.status(200).render('pages/users/create-user.ejs', messages);
 });
 
 const createUserCheck = [
@@ -252,21 +265,16 @@ routes.post('/create-user', createUserCheck, (req, res) => { //accessible by aut
     return;
   }
 
-  const generatedToken = uuid();
+
   const user = {
     email : req.body.email,
     last_failed_login: "",
-    first_name : req.body.firstName,
-    last_name : req.body.lastName,
+    first_name : req.body.first_name,
+    last_name : req.body.last_name,
     failed_login_attempts : 0,
-    activation_token : generatedToken,
-    creation_date : Date.now(),
-    temporary_token_date : Date.now(),
-    last_succesful_login : Date.now(),
-    last_failed_login : ""
-
-
+    activation_token : UUID()
   };
+
   createUser(user).then(function(userCreated){ // returns user created true or false
     if (userCreated) {
       let mail = new Mail;
