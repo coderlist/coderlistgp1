@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <% include ../partials/head.ejs %>
+</head>
+
+<body>
+    <% include ../partials/header.ejs %>
+        <div class="my-3 my-md-5">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-3">
+                        <h3 class="page-title mb-5">Admin</h3>
+                        <div>
+                            <div class="list-group list-group-transparent mb-0">
+                                <a href="#" class="list-group-item list-group-item-action d-flex align-items-center active">
+                                    <span class="icon mr-3">
+                                        <i class="fe fe-user"></i>
+                                    </span>Profile
+                                </a>
+                                <a href="#" class="list-group-item list-group-item-action d-flex align-items-center">
+                                        <span class="icon mr-3">
+                                            <i class="fe fe-edit"></i>
+                                        </span>Change Password
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-9">
+                        <form class="card">
+                            <div class="card-body">
+                                <h3 class="card-title">Edit Profile</h3>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label class="form-label" for="name">Name</label>
+                                            <input name="first_name" type="text" id="name" class="form-control" placeholder="Name" value="Chet">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label class="form-label" for="surname">Surname</label>
+                                            <input name="last_name" type="text" id="surname" class="form-control" placeholder="Surname" value="Faker">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label class="form-label" for="email">Email address</label>
+                                            <input name="email" type="email" id="email" class="form-control" placeholder="Email">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-footer text-right">
+                                <button type="reset" class="btn btn-primary">Reset Changes</button>
+                                <button type="submit" class="btn btn-primary">Update Profile</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <% include ../partials/footer.ejs %>
+</body>
+
+</html>

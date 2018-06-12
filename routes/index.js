@@ -1,6 +1,5 @@
 const routes = require('express').Router();
 const { query, check, body, validationResult } = require('express-validator/check');
-
 const Logins = require('../helperFunctions/Logins');
 const logins = new Logins();
 const checkEmailAndToken = require('../helperFunctions/checkEmailAndToken');
@@ -25,8 +24,6 @@ routes.get('/', (req, res) => {
   ]
   res.status(200).render('pages/public/index', {contentHomePages: "", menuItems: menuItems, messages: req.flash('info')}); //ejs example
 });
-
-
 
 
 routes.get('/about', (req, res) => {
