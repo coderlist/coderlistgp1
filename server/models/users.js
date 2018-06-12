@@ -218,9 +218,11 @@ module.exports = {
    * @param  {int} rowsLimit
    * list all using listing first 'rowsLimit' rows
    */
-  listUsers(rowStart,rowEnd){
+  //starting with (rowStart + 1) row, 
+  // list (n) rows 
+  listUsers(rowStart,n){
     return queryHelper(`SELECT email,fist_name,last_name,creation_date FROM users ORDER BY 
-    creation_date  FETCH FIRST ${rowEnd} ROWS ONLY OFFSET ${rowStart};`)
+    creation_date  FETCH FIRST ${n} ROWS ONLY OFFSET ${rowStart};`)
     .then(response => response)
       .catch(e => {throw e})
   }
