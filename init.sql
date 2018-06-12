@@ -143,6 +143,19 @@ BEGIN
 END
 $$;
 
+-- alter foreign constraint on pages
+
+DO $$
+BEGIN
+  IF ( select confdeltype from pg_constraint 
+      where conname = 'pages_created_by_fkey') = 'c'
+  THEN
+     ALTER TABLE pages DROP CONSTRAINT pages_created_by_fkey;
+     ALTER TABLE pages ADD CONSTRAINT pages_created_by_fkey FOREIGN KEY 
+     (created_by) REFERENCES users(email) ON DELETE SET NULL;
+  END IF;
+END $$;
+
 
               
         
