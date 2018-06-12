@@ -200,9 +200,16 @@ userRoutes.get('/change-email', (req, res) => {
 });
 
 changeEmailCheck = [
-  body('new_email').isEmail().normalizeEmail,
-  body('confirm_new_email').isEmail().normalizeEmail,
-  body('confirm_new_email').equals(check('new_email'))
+  
+  body("password", "invalid password").isLength({min:8}),
+  body('new_email').isEmail().normalizeEmail()
+  .custom((value,{req, loc, path}) => {
+    if (value !== req.body.confirm_email.normalizeEmail()) {
+      throw new Error("Passwords don't match");
+    } else {
+      return value;
+    }
+  })
 ];
 
 userRoutes.post('/change-email', changeEmailCheck, (req, res) => {

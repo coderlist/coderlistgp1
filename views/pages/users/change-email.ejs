@@ -46,7 +46,7 @@
                                         <div class="col-md-12">
                                             <div class="form-group">
                                                 <label class="form-label" for="email">Current Email Address</label>
-                                                <input name="old_email" type="email" id="email" class="form-control" placeholder="Current email.." required>
+                                                <input name="new_email" type="email" id="email" class="form-control" placeholder="Current email.." required>
                                             </div>
                                         </div>
                                     </div>
@@ -54,7 +54,7 @@
                                         <div class="col-md-12">
                                             <div class="form-group">
                                                 <label class="form-label" for="newEmail">New Email Address</label>
-                                                <input name="new_email" type="email" id="newEmail" class="form-control" placeholder="New Email..." value="<% (typeof user == 'object' && user) ? user.email : ''%>"
+                                                <input name="confirm_new_email" type="email" id="newEmail" class="form-control" placeholder="New Email..." value="<% (typeof user == 'object' && user) ? user.email : ''%>"
                                                     required>
                                             </div>
                                         </div>
