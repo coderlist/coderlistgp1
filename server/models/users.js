@@ -218,12 +218,41 @@ module.exports = {
    * @param  {int} rowsLimit
    * list all using listing first 'rowsLimit' rows
    */
-  listUsers(rowsLimit){
+  //starting with (rowStart + 1) row, 
+  // list (n) rows 
+  listUsers(rowStart,n){
     return queryHelper(`SELECT email,fist_name,last_name,creation_date FROM users ORDER BY 
-    creation_date  FETCH FIRST ${rowsLimit} ONLY;`)
+    creation_date  FETCH FIRST ${n} ROWS ONLY OFFSET ${rowStart};`)
     .then(response => response)
       .catch(e => {throw e})
+  },
+
+
+  /**
+   * @param  {Object} body
+   * update user password
+   */
+  updatePassword(body){
+    //node sends email, old_password and new_password
+    return findByUsername('users',body.email).then(dbUser => {
+      if(verifyPassword(body.old_password,dbUser.password)){
+        return bcrypt.hash(body.new_password, saltrounds)
+        .then(hash => {
+         return  queryHelper(
+           `UPDATE users SET password = '${hash}' WHERE email ='${dbUser.email}';`)
+           .then(user => {
+             return true
+           }).catch(e => {throw e})
+        })
+      }else{
+        return false;
+      }
+    }).catch(e => {throw e})
   }
 }
+
+
+
+
 
 
