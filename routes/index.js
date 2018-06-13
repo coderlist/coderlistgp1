@@ -3,7 +3,7 @@ const { query, check, body, validationResult } = require('express-validator/chec
 const Logins = require('../helperFunctions/Logins');
 const logins = new Logins();
 const checkEmailAndToken = require('../helperFunctions/checkEmailAndToken');
-const users = require('../server/models/users');
+const users = require('../server/models/users').user;
 // basic //
 const passport = require('../auth/local');
 const Mail = require('../helperFunctions/verification/MailSender');

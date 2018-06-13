@@ -1,20 +1,40 @@
 const bcrypt = require('bcrypt');
 const saltrounds = 10;
-const {verifyPassword} = require('../../auth/verify');
-const {insertOne,
-      findByUsername,
-      queryHelper, insertInTable} = require('../../helperFunctions/query/queryHelper');
+const {
+  verifyPassword
+} = require('../../auth/verify');
+const {
+  insertOne,
+  findByUsername,
+  queryHelper,
+  insertInTable
+} = require('../../helperFunctions/query/queryHelper');
 
 /** all functions return a Promise */
 
-module.exports = {
-  
-  createUser(user){        
+const user = {
+
+  createUser(user) {
     return insertOne(user).then(result => {
-       return true
-     }).catch(e => {
-       throw e
-     })  
+      return true
+    }).catch(e => {
+      throw e
+    })
+  },
+
+  /**
+   * @param  {int} rowsLimit
+   * list all using listing first 'rowsLimit' rows
+   */
+  //starting with (rowStart + 1) row, 
+  // list (n) rows 
+  listUsers(rowStart, n) {
+    return queryHelper(`SELECT email,fist_name,last_name,creation_date FROM users ORDER BY 
+    creation_date  FETCH FIRST ${n} ROWS ONLY OFFSET ${rowStart};`)
+      .then(response => response)
+      .catch(e => {
+        throw e
+      })
   },
 
   /**
@@ -25,26 +45,27 @@ module.exports = {
    * on success, changes activated to true.
    * It return a Promise.
    */
-  verifyUser(user){
-      return findByUsername('users',user.email).then(dbUser => {
-        if(user.activation_token === dbUser.activation_token){
+  verifyUser(user) {
+    return findByUsername('users', user.email).then(dbUser => {
+      if (user.activation_token === dbUser.activation_token) {
         return bcrypt.hash(user.password, saltrounds)
-        .then(hash => {
-         return  queryHelper(
-           `UPDATE users SET password = '${hash}',`+
-           `activation_token = null, verified = true `+  //activation token set to null
-            `WHERE email ='${dbUser.email}';
+          .then(hash => {
+            return queryHelper(
+              `UPDATE users SET password = '${hash}',` +
+              `activation_token = null, verified = true ` + //activation token set to null
+              `WHERE email ='${dbUser.email}';
            `).then(user => {
-             return true
-           })
-        })
-       }
-       else{
-         console.log('WRONG TOKEN')
-         return false;
+              return true
+            })
+          })
+      } else {
+        console.log('WRONG TOKEN')
+        return false;
         //Promise.reject();
-       }
-     }).catch(e => {throw e})
+      }
+    }).catch(e => {
+      throw e
+    })
   },
 
   /**
@@ -55,12 +76,12 @@ module.exports = {
    * Promise. The response is an array of a single 
    * object [{}]
    */
-  getNumberOfFailedLogins(user){
-    return queryHelper(`SELECT failed_login_attempts,`+
-                     `last_failed_login FROM users WHERE`+
-                    ` email = '${user.email}'`)
-                    .then(response => response)
-                    .catch(e => e)
+  getNumberOfFailedLogins(user) {
+    return queryHelper(`SELECT failed_login_attempts,` +
+        `last_failed_login FROM users WHERE` +
+        ` email = '${user.email}'`)
+      .then(response => response)
+      .catch(e => e)
   },
 
   /**
@@ -69,12 +90,14 @@ module.exports = {
    * when the update is done or a db error message 
    * on failure
    */
-  resetFailedLogins(user){
-    return queryHelper(`UPDATE users`+ 
-                       `SET failed_login_attempts = 0`+
-                      `WHERE email ='${user.email}';`)
+  resetFailedLogins(user) {
+    return queryHelper(`UPDATE users` +
+        `SET failed_login_attempts = 0` +
+        `WHERE email ='${user.email}';`)
       .then(result => true)
-      .catch(e => {throw e})   
+      .catch(e => {
+        throw e
+      })
   },
 
 
@@ -86,12 +109,14 @@ module.exports = {
    * on failure
    * return a Promise 
    */
-  addOneToFailedLogins(user){
-    return queryHelper(`UPDATE users SET failed_login_attempts =`+ 
-                      ` failed_login_attempts + 1 WHERE email =`+ 
-                      ` '${user.email}';`)
+  addOneToFailedLogins(user) {
+    return queryHelper(`UPDATE users SET failed_login_attempts =` +
+        ` failed_login_attempts + 1 WHERE email =` +
+        ` '${user.email}';`)
       .then(response => true)
-      .catch(e => {throw e})
+      .catch(e => {
+        throw e
+      })
   },
 
   /**
@@ -100,11 +125,13 @@ module.exports = {
    * for a successful login.
    * return a Promise
    */
-  setSuccessfulLoginTime(user){
-    return queryHelper(`UPDATE users SET last_succesful_login = `+ 
-                       `current_timestamp WHERE email='${user.email}';`)
-                       .then(response => true)
-                       .catch(e => {throw e})
+  setSuccessfulLoginTime(user) {
+    return queryHelper(`UPDATE users SET last_succesful_login = ` +
+        `current_timestamp WHERE email='${user.email}';`)
+      .then(response => true)
+      .catch(e => {
+        throw e
+      })
   },
 
   /**
@@ -113,14 +140,17 @@ module.exports = {
    * login 
    * returns a Promise
    */
-  setLastFailedLoginTime(user){
-    return queryHelper(`UPDATE users SET last_failed_login = `+ 
-                       `current_timestamp WHERE email='${user.email}';`)
-                       .then(response => true)
-                       .catch(e => {throw e})
+  setLastFailedLoginTime(user) {
+    return queryHelper(`UPDATE users SET last_failed_login = ` +
+        `current_timestamp WHERE email='${user.email}';`)
+      .then(response => true)
+      .catch(e => {
+        throw e
+      })
   },
 
-  
+  /////////////////// CHANGE EMAIL ///////////////////////////////////////
+
   /**
    * @param  {Object} user
    * takes a user object with a token for email change
@@ -134,25 +164,29 @@ module.exports = {
    *              "token_date": "2018-06-07 14:14:51.812341+00", 
    *               "token":"386ebca7-907d-44a0-be0c-371ed1340781" }
    */
-  insertOldEmailObject(user){
-    return findByUsername('users',user.email).then(dbUser => {
+  insertOldEmailObject(user) {
+    return findByUsername('users', user.email).then(dbUser => {
       console.log('USERFOUND', user)
-      if(verifyPassword(user.password,dbUser.password)){
-         return queryHelper(`update users set old_email = old_email ||`+
-                         ` array['{ "old_val":"${user.email}", "new_val":"${user.new_email}","token_date": `+
-                         `"' || now() || '", "token":"${user.change_token}" }']`+
-                        `::json[] where email='${user.email}';`)
-              .then(response => true)
-              .catch(e => {throw e})
-      }else{
+      if (verifyPassword(user.password, dbUser.password)) {
+        return queryHelper(`update users set old_email = old_email ||` +
+            ` array['{ "old_val":"${user.email}", "new_val":"${user.new_email}","token_date": ` +
+            `"' || now() || '", "token":"${user.change_token}" }']` +
+            `::json[] where email='${user.email}';`)
+          .then(response => true)
+          .catch(e => {
+            throw e
+          })
+      } else {
         console.log('VERIFICATION FAILED')
         return false;
       }
-    }).catch(e => {throw e})
+    }).catch(e => {
+      throw e
+    })
   },
 
-  
-  
+
+
   /**
    * @param  {Object} body
    *  use to retrieve object from old_email array
@@ -164,25 +198,27 @@ module.exports = {
    *               token_date: '2018-06-07 14:14:51.812341+00',
    *             token: '386ebca7-907d-44a0-be0c-371ed1340781' }
    */
-  getOldEmailObject(body){
-    return queryHelper(`WITH temp_table AS (SELECT email, unnest(old_email)`+
-                      ` FROM users WHERE email='${body.email}') SELECT`+
-                      ` unnest FROM temp_table WHERE unnest ->> 'token' = '${body.change_token}' ;`)
-        .then(response => response[0].unnest)
-        .catch(e => {throw e})
+  getOldEmailObject(body) {
+    return queryHelper(`WITH temp_table AS (SELECT email, unnest(old_email)` +
+        ` FROM users WHERE email='${body.email}') SELECT` +
+        ` unnest FROM temp_table WHERE unnest ->> 'token' = '${body.change_token}' ;`)
+      .then(response => response[0].unnest)
+      .catch(e => {
+        throw e
+      })
   },
 
-  
+
   /**
    * @param  {Object} body
    * get old and new_email from body.
    * check function to update by user_later /later/
    */
-  updateUserEmail(body){
-     //change action must have been verified to proceed to this step
-     //1. check old_emal json array if new email has been used
-     //2. update users.email if 1 is false
-     //3. else raise already used exception
+  updateUserEmail(body) {
+    //change action must have been verified to proceed to this step
+    //1. check old_emal json array if new email has been used
+    //2. update users.email if 1 is false
+    //3. else raise already used exception
     return queryHelper(`
     DO $$
     BEGIN
@@ -197,62 +233,149 @@ module.exports = {
     END
   $$; 
     `).then(response => true)
-      .catch(e => {throw e})
+      .catch(e => {
+        throw e
+      })
 
   },
 
-  
+
   /**
    * @param  {Object} user
    * delete user by email
    * associated pages gets deleted due to CASCADE constraint
    */
-  deleteUserByEmail(user){
-      return queryHelper(`DELETE FROM users WHERE email = '${user.email}';`)
+  deleteUserByEmail(user) {
+    return queryHelper(`DELETE FROM users WHERE email = '${user.email}';`)
       .then(response => true)
-      .catch(e => {throw e})
+      .catch(e => {
+        throw e
+      })
   },
 
-  
-  /**
-   * @param  {int} rowsLimit
-   * list all using listing first 'rowsLimit' rows
-   */
-  //starting with (rowStart + 1) row, 
-  // list (n) rows 
-  listUsers(rowStart,n){
-    return queryHelper(`SELECT email,fist_name,last_name,creation_date FROM users ORDER BY 
-    creation_date  FETCH FIRST ${n} ROWS ONLY OFFSET ${rowStart};`)
-    .then(response => response)
-      .catch(e => {throw e})
-  },
 
+  //////////////////// CHANGE PASSWORD  ///////////////////////////////////
 
   /**
    * @param  {Object} body
    * update user password
    */
-  updatePassword(body){
+  updatePassword(body) {
     //node sends email, old_password and new_password
-    return findByUsername('users',body.email).then(dbUser => {
-      if(verifyPassword(body.old_password,dbUser.password)){
+    return findByUsername('users', body.email).then(dbUser => {
+      if (verifyPassword(body.old_password, dbUser.password)) {
         return bcrypt.hash(body.new_password, saltrounds)
-        .then(hash => {
-         return  queryHelper(
-           `UPDATE users SET password = '${hash}' WHERE email ='${dbUser.email}';`)
-           .then(user => {
-             return true
-           }).catch(e => {throw e})
-        })
-      }else{
+          .then(hash => {
+            return queryHelper(
+                `UPDATE users SET password = '${hash}' WHERE email ='${dbUser.email}';`)
+              .then(user => {
+                return true
+              }).catch(e => {
+                throw e
+              })
+          })
+      } else {
         return false;
       }
-    }).catch(e => {throw e})
-  }
+    }).catch(e => {
+      throw e
+    })
+  },
+
+
+  /**
+   * @param  {Object} body
+   * 
+   * when user clicks on forgot password. This should be called 
+   * to store generated change token and the old password as json.
+   * 
+   * The object can be retrieved later to compare token from user email
+   * and update email if token matches
+   */
+
+  insertOldPasswordObject(body) {
+    return findByUsername('users', body.email).then(dbUser => {
+      return queryHelper(`update users set old_password = old_password ||` +
+          ` array['{ "old_val":"${dbUser.password}", "token_date": ` +
+          `"' || now() || '", "token":"${body.change_password_token}" }']` +
+          `::json[] where email='${dbUser.email}';`)
+        .then(response => true)
+      // .catch(e => {throw e})
+    }).catch(e => {
+      throw e
+    })
+  },
+
+
+
+  /**
+   * @param  {Object} body
+   * 
+   * functions recieves user password_change_token.
+   * confirms if such token exist in the array and true
+   * 
+   * changePassword should be called withing getOldPasswordObject success
+   */
+  getOldPasswordObject(body) {
+    return queryHelper(`WITH temp_table AS (SELECT email, unnest(old_password)` +
+        ` FROM users WHERE email='${body.email}') SELECT` +
+        ` unnest FROM temp_table WHERE unnest ->> 'token' = '${body.change_password_token}' ;`)
+      .then(response => {
+       // response[0].unnest
+       return true
+      })
+      .catch(e => {
+        throw e
+      })
+  },
+
+  /**
+   * @param  {String} email
+   * 
+   * gets all old passwords ever used by a user and
+   * returns an array
+   */
+  getOldPasswordsArray(email) {
+    return queryHelper(`
+   select array(select unnest(old_password) ->> 'old_val' as 
+   old_values from users where email='${email}')
+   `).then(response => response[0].array)
+      .catch(e => {
+        throw e
+      })
+  },
+
 }
 
 
 
+/**
+   * @param  {Object} body
+   * 
+   * if getOldPasswordObject is successful. updatePassword can be called on
+   * success to update the password.
+   * 
+   * It checkes if password have ever been used by user. updates if false.
+   */
+const changePassword = function(body)  {
+ return  user.getOldPasswordsArray(body.email).then(array => {
+    const i = 0; 
+    while (i < array.length) {
+      if (verifyPassword(body.new_password, array[i])) {
+        return Promise.reject(new Error('password already used'));
+      }
+      i++;
+    }
+    return bcrypt.hash(body.new_password, saltrounds)
+      .then(hash => {
+        return queryHelper(`UPDATE users SET password = '${hash}' 
+        where email = '${body.email}'`)
+          .then(response =>{
+               return true
+            })
+  
+      }).catch(e => { throw e})
+ }).catch(e => {throw e})  
+}
 
-
-
+module.exports = {user,changePassword}

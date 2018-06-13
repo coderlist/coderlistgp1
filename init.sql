@@ -48,13 +48,15 @@ ALTER TABLE users DROP COLUMN IF EXISTS active;
 
 ALTER TABLE users DROP COLUMN IF EXISTS activated;
 
+ALTER TABLE users DROP COLUMN IF EXISTS old_pasword;
+
 ALTER TABLE users ALTER COLUMN password DROP NOT NULL;
 
 ALTER TABLE pages ALTER COLUMN title SET DATA TYPE TEXT;
 
 ALTER TABLE users ADD COLUMN IF NOT EXISTS activation_token TEXT,
   ADD COLUMN IF NOT EXISTS user_id serial,
-  ADD COLUMN IF NOT EXISTS old_pasword json[];  --- {"password":"","token_date":"","change_token":""}
+  ADD COLUMN IF NOT EXISTS old_password json[];  --- {"password":"","token_date":"","change_token":""}
 
 ALTER TABLE pages ADD COLUMN IF NOT EXISTS ckeditor_html TEXT;
 ALTER TABLE pages DROP COLUMN IF EXISTS owner_id;
@@ -131,7 +133,6 @@ $$ LANGUAGE plpgsql;
 
 -- sets a trigger for update action time
 
-
 DO $$
 BEGIN
   IF NOT EXISTS (SELECT 1 FROM pg_trigger WHERE tgname = 'set_timestamp') THEN
@@ -155,6 +156,11 @@ BEGIN
      (created_by) REFERENCES users(email) ON DELETE SET NULL;
   END IF;
 END $$;
+
+
+
+
+
 
 
               
