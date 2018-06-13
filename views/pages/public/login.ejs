@@ -1,41 +1,48 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 
 <head>
-  <% include ../../partials/head.ejs %>
+    <% include ../partials/head.ejs %>
 </head>
-<header>  
-  <% include ../../partials/header.ejs %>
 
-  <script src="./js/form.js"></script>
-</header>
 <body>
-  <form class="form" action="/login" method="post">
-    <fieldset>
-      <legend class="title">Log In</legend>
-      <div class="error">
-        <div class="error-msg">
-          You have entered an invalid username or password. Please, try again.
+    <div class="page">
+        <div class="page-single">
+            <div class="container">
+                <div class="row">
+                    <div class="col col-login mx-auto">
+                        <form class="card" action="" method="post">
+                            <div class="card-body p-6">
+                                <div class="card-title">Login into your account</div>
+                                <div class="form-group">
+                                    <label class="form-label">Email address</label>
+                                    <input name="email" type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter email" minlength="3" maxlength="64" size="32"  value="" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">
+                                        Password
+                                    </label>
+                                    <input name="password" type="password" class="form-control" id="exampleInputPassword1" placeholder="Password" minlength="8" maxlength="100" size="15" value="" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="custom-control custom-checkbox">
+                                        <input type="checkbox" class="custom-control-input">
+                                        <span class="custom-control-label">Remember me</span>
+                                    </label>
+                                </div>
+                                <div class="form-footer">
+                                    <button type="submit" class="btn btn-primary btn-block">Sign in</button>
+                                </div>
+                            </div>
+                        </form>
+                        <div class="text-center text-muted">
+                            <a href="./forgot-password.html">Forgot Password</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="close-msg">
-          x
-        </div>
-      </div>
-      <div class="form-box">
-        <input class="input" name="email" id="email" type="email" minlength="3" maxlength="64" size="32"  value="" required>
-        <label for="email">Enter your email </label>
-      </div>
-      <div class="form-box">
-        <input class="input" name="password" id="password" type="password" minlength="8" maxlength="100" size="15" value="" required>
-        <label for="password"> Enter your password </label>
-      </div>
-    </fieldset>
-    <button class="form-btn" value="Login" type="submit">Login</button>
-    <a class="form-url" href="/password">Forgot Password?</a>
-  </form>
-  <% include ../../partials/flash-message.ejs %>
-
-  <script src="js/form.js"></script>
+    </div>
 </body>
 
 </html>

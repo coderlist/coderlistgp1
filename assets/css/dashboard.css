@@ -13166,6 +13166,9 @@ a.icon:hover {
   -ms-flex-align: center;
   align-items: center;
 }
+.manage-navigation-items-header {
+  justify-content: space-between;
+}
 
 .card-header .card-title {
   margin-bottom: 0;

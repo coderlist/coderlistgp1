@@ -214,11 +214,19 @@ const user = {
    * get old and new_email from body.
    * check function to update by user_later /later/
    */
+<<<<<<< HEAD
   updateUserEmail(body) {
     //change action must have been verified to proceed to this step
     //1. check old_emal json array if new email has been used
     //2. update users.email if 1 is false
     //3. else raise already used exception
+=======
+  updateUserEmail(body){
+     //change action must have been verified to proceed to this step
+     //1. check old_email json array if new email has been used
+     //2. update users.email if 1 is false
+     //3. else raise already used exception
+>>>>>>> 72c2fda695bcddae5e59712022d78849f54fa151
     return queryHelper(`
     DO $$
     BEGIN

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <% include ../../partials/head.ejs %>
+</head>
+
+<body>
+  <header>
+      <% include ../../partials/header.ejs %>
+  </header>
+  <h2>Welcome to the create user page</h2>
+  <div class="container">  
+    <form id="contact" action="" method="post">
+      <h4>Create User Form</h4>
+      <fieldset>
+        <input placeholder="First name" name="first_name" type="text" tabindex="1" value="<% (typeof user == 'object' && user) ? user.first_name : ''%>" required autofocus>
+      </fieldset>
+      <fieldset>
+        <input placeholder="Last name" name="last_name" type="text" tabindex="2" value="<% (typeof user == 'object' && user) ? user.last_name : ''%>" required>
+      </fieldset>
+      <fieldset>
+        <input placeholder="Your Email Address" name="email" type="email" tabindex="3" value="<% (typeof user == 'object' && user) ? user.email : ''%>" required>
+      </fieldset>
+      <fieldset>
+        <button name="submit" type="submit" id="contact-submit" data-submit="...Sending">Submit</button>
+      </fieldset>
+    </form>
+   
+    <% include ../../partials/flash-message.ejs %>
+  </div>
+  <footer>
+      <% include ../../partials/footer.ejs %>
+  </footer>
+</body>
+</html>
