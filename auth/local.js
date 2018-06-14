@@ -31,6 +31,7 @@ passport.use(new LocalStrategy(options,
         setLastFailedLoginTime(user);
          return done(null,false);
       }  // does this need to be asynchronous?
+        
      return done(null,user);
 
     }).catch(e => {console.log("there was an a catch error", e); return done(null,false, {messages: "Invalid Username or password"})})

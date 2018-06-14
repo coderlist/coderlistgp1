@@ -61,6 +61,7 @@ routes.post('/login',
     }
   ), 
   function (req, res){
+    // set succesfull login
     req.session.email = req.body.email;
     res.status(200).redirect("/users/dashboard")
   return;
