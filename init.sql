@@ -69,7 +69,6 @@ ALTER TABLE pages ALTER COLUMN title SET DATA TYPE TEXT;
 
 ALTER TABLE users ADD COLUMN IF NOT EXISTS activation_token TEXT,
   ADD COLUMN IF NOT EXISTS is_admin BOOLEAN DEFAULT FALSE,
-  ADD COLUMN IF NOT EXISTS user_id serial,
   ADD COLUMN IF NOT EXISTS old_password json[];  --- {"password":"","token_date":"","change_token":""}
 
 ALTER TABLE pages ADD COLUMN IF NOT EXISTS ckeditor_html TEXT;
