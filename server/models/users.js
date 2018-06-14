@@ -303,8 +303,6 @@ const user = {
     })
   },
 
-
-
   /**
    * @param  {Object} body
    * 
@@ -343,9 +341,6 @@ const user = {
   },
 
 }
-
-
-
 /**
    * @param  {Object} body
    * 

@@ -43,7 +43,7 @@ routes.get('/login', (req, res) => {
     res.redirect('./users/dashboard');
     return;
   }
-  res.status(200).render('pages/public/login', { messages: req.flash('error')});
+  res.status(200).render('pages/public/login', { messages: req.flash('message')} );
   return;
 });
 
@@ -137,7 +137,7 @@ routes.post('/enter-password', postEnterPasswordCheck, (req, res) => {
   }).catch(e =>  res.status(500).send(e.stack))   //handle error here
 });
 
- /////////////////  Forgot Password //////////////
+ /////////////////  reset Password //////////////
 
 
 /// This is the page where a user who has forgotten their password and is not logged in can ask for a reset link.
@@ -148,12 +148,12 @@ routes.get('/reset-password', (req, res) => {
   res.status(200).render('pages/public/reset-password');
 });  
 
-forgotPasswordCheck = [
+resetPasswordCheck = [
   check('email').isLength({min: 8}),
   check('confirm_email').equals(check('email'))
 ]
 
-routes.post('/reset-password', forgotPasswordCheck, (req, res) => {
+routes.post('/reset-password', resetPasswordCheck, (req, res) => {
   errors = validationResult(req)
   if (!errors.isEmpty()) {
     req.flash("info","Invalid email");
@@ -186,7 +186,7 @@ routes.post('/reset-password', forgotPasswordCheck, (req, res) => {
   query('new_email').isEmail().normalizeEmail()
 ];
 
-userRoutes.get('/verify-change-email', verifyEmailCheckQuery, (req, res) => { 
+routes.get('/verify-change-email', verifyEmailCheckQuery, (req, res) => { 
   errors = validationResult(req)
   if (!errors.isEmpty()) {
     req.flash("info","Invalid credentials. Please recheck authorisation link or contact your administrator");
@@ -204,7 +204,7 @@ verifyEmailCheckBody = [
   body('password').isLength({min:8})
 ];
 
-userRoutes.post('/verify-change-email', verifyEmailCheckBody, (req, res) => {
+routes.post('/verify-change-email', verifyEmailCheckBody, (req, res) => {
   errors = validationResult(req)
   if (!errors.isEmpty()) {
     req.flash("info","Invalid email");
