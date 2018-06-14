@@ -267,9 +267,19 @@ header {
 
 .grid .active .square-content {
     position: absolute;
-    top: 35%;
+    bottom: 30%;
     padding: 1.2rem;
     width: 100%;
+    animation: slidein 0.5s;
+}
+
+@keyframes slidein {
+    from {
+       bottom: 10%; 
+    }
+    to {
+        bottom: 30%;
+    }
 }
 
 .grid .square .square-title,
@@ -335,7 +345,53 @@ button {
 }
 
 /* Contact Form */
-
+input {
+    font-size: 1.1rem;
+}
+textarea {
+    font-size: 1.1rem;
+}
+.form {
+    width: 100%;
+    margin-top: 1.5rem;
+    display: flex;
+    flex-direction: column;
+}
+.form .form-header .form-title {
+    font-size: 2rem;
+    margin: 0 0 1rem 0;
+}
+.form .form-group {
+    width: 100%;
+    margin: 0 0 1rem 0;
+}
+.form .form-group .form-label {
+    font-size: 1.5rem;
+    margin: 0 0 1rem 0;
+    display: block;
+}
+.form .form-group .form-control {
+    height: 2rem;
+    width: 100%;
+}
+.form .form-group .form-control, .form .form-group .form-control-text-area  {
+    padding: 0.5rem;
+}
+.form .form-group .form-control-text-area {
+    width: 100%;
+}
+.form .form-footer .btn {
+    height: auto;
+    font-size: 1rem;
+    color: rgb(255, 255, 255 );
+    margin-left: 0.5rem;
+    padding: 1rem;
+    background-color: rgb(114, 190, 215);
+}
+.form .form-footer {
+    display: flex;
+    justify-content: flex-end;
+}
 
 
 
@@ -349,6 +405,7 @@ button {
         flex-direction: row;
         justify-content: space-between;
     }
+
 }
 
 @media screen and (min-width: 700px) {
@@ -371,11 +428,17 @@ button {
     .grid .square {
         width: calc(50% - 0.5rem);
     }
+    .form .form-group .form-control, .form .form-group .form-control-text-area  {
+        padding: 1.5rem;
+    }
 }
 
 @media screen and (min-width: 900px) {
     main {
         margin: 84px auto 0 auto;
+    }
+    .form {
+        width: 960px;
     }
     .grid .square {
         width: calc(33% - 0.5rem);
