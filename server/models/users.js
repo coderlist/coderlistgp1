@@ -1,13 +1,10 @@
 const bcrypt = require('bcrypt');
 const saltrounds = 10;
-const {
-  verifyPassword
-} = require('../../auth/verify');
+const {verifyPassword} = require('../../auth/verify');
 const {
   insertOne,
   findByUsername,
-  queryHelper,
-  insertInTable
+  queryHelper
 } = require('../../helperFunctions/query/queryHelper');
 
 /** all functions return a Promise */
@@ -378,4 +375,7 @@ const changePassword = function(body)  {
  }).catch(e => {throw e})  
 }
 
-module.exports = {user,changePassword}
+module.exports = {
+  user,
+  changePassword
+}
