@@ -33,6 +33,19 @@ CREATE TABLE IF NOT EXISTS pages (
   PRIMARY KEY (page_Id)
 );
 
+-- craete table images
+CREATE TABLE IF NOT EXISTS images (
+ image_id SERIAL,
+ image_name TEXT,
+ created TIMESTAMP DEFAULT NOW(),
+ location TEXT,
+ page_id INTEGER REFERENCES pages(page_id) ON DELETE CASCADE,
+ page_image BOOLEAN,
+ banner_image BOOLEAN,
+ uploaded_images BOOLEAN,
+ PRIMARY KEY (image_id)  
+);
+
 
 -- creates tables user_sessions 
 CREATE TABLE IF NOT EXISTS user_sessions (
@@ -55,6 +68,7 @@ ALTER TABLE users ALTER COLUMN password DROP NOT NULL;
 ALTER TABLE pages ALTER COLUMN title SET DATA TYPE TEXT;
 
 ALTER TABLE users ADD COLUMN IF NOT EXISTS activation_token TEXT,
+  ADD COLUMN IF NOT EXISTS is_admin BOOLEAN DEFAULT FALSE,
   ADD COLUMN IF NOT EXISTS user_id serial,
   ADD COLUMN IF NOT EXISTS old_password json[];  --- {"password":"","token_date":"","change_token":""}
 
