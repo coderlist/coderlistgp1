@@ -313,13 +313,13 @@ const user = {
    * 
    * changePassword should be called withing getOldPasswordObject success
    */
-  getOldPasswordObject(body) {
-    return queryHelper(`WITH temp_table AS (SELECT email, unnest(old_password)` +
-        ` FROM users WHERE email='${body.email}') SELECT` +
-        ` unnest FROM temp_table WHERE unnest ->> 'token' = '${body.change_password_token}' ;`)
-      .then(response => {
-       // response[0].unnest
-       return true
+  getOldPasswordObject(body) {  
+   return queryHelper(`WITH temp_table AS (SELECT email, unnest(old_password) 
+   FROM users WHERE email='${body.email}') SELECT unnest,(timestamp 'now()') - (unnest ->> 'token_date')::timestamp > interval '1 hour' AS 
+   time_diff_bool FROM temp_table WHERE unnest ->> 'token' = '${body.change_password_token}';`)
+    .then(response => {
+       
+       return response[0]
       })
       .catch(e => {
         throw e
