@@ -30,7 +30,6 @@ const config = {
     max: 10,
     idleTimeoutMillis: 30000,
   },
-
   "production": {
     user: process.env.PG_USER,
     database: `GINNY_BRADLEY_PRODUCTION`,
