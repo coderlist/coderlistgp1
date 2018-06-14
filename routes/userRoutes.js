@@ -5,7 +5,7 @@ const Logins = require('../helperFunctions/Logins');
 const logins = new Logins();
 const { query, check, body, validationResult } = require('express-validator/check');
 const { matchedData, sanitize } = require('express-validator/filter');
-const { updatePassword, updateUserEmail } = require('../server/models/users');
+const { updatePassword, updateUserEmail } = require('../server/models/users').user;
 
 userRoutes.use(logins.isLoggedIn);
 

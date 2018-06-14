@@ -2,7 +2,7 @@ const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 const verifyPassword = require('./verify');
 const {findByUsername} = require('../helperFunctions/query/queryHelper')
-const { setLastFailedLoginTime, addOneToFailedLogins } = require('../server/models/users');
+const { setLastFailedLoginTime, addOneToFailedLogins } = require('../server/models/users').user;
 const options = {
   usernameField: 'email',
   passwordField: 'password'

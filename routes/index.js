@@ -8,7 +8,7 @@ const users = require('../server/models/users').user;
 const passport = require('../auth/local');
 const Mail = require('../helperFunctions/verification/MailSender');
 // site //
-const { createUser, verifyUser, addOneToFailedLogins } = require('../server/models/users');
+const { createUser, verifyUser, addOneToFailedLogins } = require('../server/models/users').user;
 const uuid = require('uuid/v1');
 const _ = require('lodash');
 const userRoutes = require('./userRoutes')
@@ -259,8 +259,8 @@ routes.get('/create-user', (req, res) => { //accessible by authed admin
 
 const createUserCheck = [
   body('email').isEmail().normalizeEmail(),
-  body('firstName').trim().isAlphanumeric(),
-  body('lastName').trim().isAlphanumeric()
+  body('first_name').trim().isAlphanumeric(),
+  body('last_name').trim().isAlphanumeric()
 ];
 
 
@@ -268,8 +268,8 @@ routes.post('/create-user', createUserCheck, (req, res) => { //accessible by aut
   
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    console.log('ERROR',error)
-    const userTemp = {email : req.body.email || "", firstName : req.body.firstName || "", lastName: req.body.lastName || ""}
+    console.log('ERROR',errors)
+    const userTemp = {email : req.body.email || "", firstName : req.body.first_name || "", lastName: req.body.last_name || ""}
     req.flash("info","Invalid user data", process.env.NODE_ENV === 'development' ? errors.array() : ""); //error.array() for development only
     res.status(200).render('pages/users/create-user.ejs', {messages : req.flash('info'), userTemp});
     return;
@@ -282,7 +282,7 @@ routes.post('/create-user', createUserCheck, (req, res) => { //accessible by aut
     first_name : req.body.first_name,
     last_name : req.body.last_name,
     failed_login_attempts : 0,
-    activation_token : UUID()
+    activation_token : uuid()
   };
 
   createUser(user).then(function(userCreated){ // returns user created true or false
