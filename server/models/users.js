@@ -88,7 +88,7 @@ const user = {
    * on failure
    */
   resetFailedLogins(user) {
-    return queryHelper(`UPDATE users` +
+    return queryHelper(`UPDATE users ` +
         `SET failed_login_attempts = 0` +
         `WHERE email ='${user.email}';`)
       .then(result => true)

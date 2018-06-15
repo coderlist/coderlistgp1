@@ -8,7 +8,8 @@ const users = require('../server/models/users').user;
 const passport = require('../auth/local');
 const Mail = require('../helperFunctions/verification/MailSender');
 // site //
-const { createUser, verifyUser, addOneToFailedLogins } = require('../server/models/users').user;
+const { createUser, insertOldEmailObject, verifyUser, addOneToFailedLogins, getOldPasswordObject, insertOldPasswordObject } = require('../server/models/users').user;
+const { changePassword } = require('../server/models/users').changePassword;
 const uuid = require('uuid/v1');
 const _ = require('lodash');
 const userRoutes = require('./userRoutes')
@@ -61,7 +62,6 @@ routes.post('/login',
     }
   ), 
   function (req, res){
-    // set succesfull login
     req.session.email = req.body.email;
     res.status(200).redirect("/users/dashboard")
   return;
@@ -109,8 +109,6 @@ postEnterPasswordCheck = [
 
 routes.post('/enter-password', postEnterPasswordCheck, (req, res) => {
   let errors = validationResult(req);
-  console.log('req.body :', req.body);
-  console.log('errors :', errors.array());
   if (!errors.isEmpty()){
     req.flash('info', 'Invalid credentials. Please try again or contact your administrator');
     res.status(200).render(`pages/public/enter-password.ejs`, {messages : req.flash('info'), user : {activation_token : req.body.token, email : req.body.email}});
@@ -142,42 +140,107 @@ routes.post('/enter-password', postEnterPasswordCheck, (req, res) => {
 
 /// This is the page where a user who has forgotten their password and is not logged in can ask for a reset link.
 
-routes.get('/reset-password', (req, res) => {
+routes.get('/reset-password-request', (req, res) => {
   // **create a page with two fields to enter email addresses
   // **ensure that emails both match before being able to post
-  res.status(200).render('pages/public/reset-password');
+  res.status(200).render('pages/public/reset-password-request', {messages : req.flash('info')});
+});  
+
+
+requestResetPasswordCheck = [
+  body('confirm_email').isEmail().trim().normalizeEmail(),
+  body("email").isLength({min: 8})
+  .isEmail().trim().normalizeEmail()
+  .custom((value,{req, loc, path}) => {
+    if (value !== req.body.confirm_email) {
+      throw new Error("Emails don't match");
+    } else {
+      return value;
+    }
+  })
+]
+
+routes.post('/reset-password-request', requestResetPasswordCheck, (req, res) => {
+  errors = validationResult(req)
+  
+  if (!errors.isEmpty()) {
+    console.log('first req.body :', req.body, errors.array());
+    req.flash("info","Invalid email");
+    res.status(200).render('pages/public/reset-password-request', {messages : req.flash('info')});
+    return;
+  }
+  const user = {
+    forgot_password_token : uuid(),
+    email : req.body.email
+  }
+  console.log('req.body :', req.body);
+  insertOldPasswordObject(user)
+  .then(data => {
+    if (!data) {
+      req.flash("info","Further instructions have now been sent to the email address provided");
+      res.status(200).render('pages/public/index.ejs', {messages : req.flash('info')});
+      return;
+    } 
+    else {
+      let mail = new Mail();
+      mail.sendPasswordReset(user);
+      req.flash("info","Further instructions have now been sent to your email");
+      res.status(200).redirect('/');
+      return;
+    }
+  });
+})
+
+/////////   Change password with reset link //////////////////////
+
+routes.get('/reset-password', (req, res) => {
+  
+  res.status(200).render('pages/public/reset-password', {messages : req.flash('info')});
 });  
 
 resetPasswordCheck = [
-  check('email').isLength({min: 8}),
-  check('confirm_email').equals(check('email'))
+  body('email').isLength({min: 8}),
+  body('forgot_password_token').isUUID(),
+  body("password", "invalid password")
+  .isLength({ min: 8 })
+  .custom((value,{req, loc, path}) => {
+    if (value !== req.body.confirm_password) {
+      throw new Error("Passwords don't match");
+    } else {
+      return value;
+    }
+  })
 ]
 
 routes.post('/reset-password', resetPasswordCheck, (req, res) => {
   errors = validationResult(req)
   if (!errors.isEmpty()) {
-    req.flash("info","Invalid email");
-    res.status(200).render('pages/public/reset-password', {messages : req.flash('info')});
+    req.flash("info","Invalid credentials");
+    res.status(200).render('pages/public/reset-password', {messages : req.flash('info'), user : { email : req.body.email, forgot_password_token : req.body.forgot_password_token}});
     return;
   }
   const user = {
-    activation_token : uuid(),
-    email : req.body.email.trim().normalizeEmail()
+    email : req.body.email,
+    password: req.body.password,
+    forgot_password_token : req.body.forgot_password_token
   }
-  if (checkIfUserExists(user.email) === false) {
-    req.flash("info","Further instructions have now been sent to the email address provided");
-    res.status(200).render('pages/public/reset-password', {messages : req.flash('info')});
-    return;
-  } 
-  else {
-    sendActivationTokenToDb(user);
-    let mail = new Mail();
-    mail.sendPasswordReset(user);
-    req.flash("info","Further instructions have now been sent to your email");
-    res.status(200).render('pages/users/forgot-password', {messages : req.flash('info')});
-    return;
-  }
-});
+  getOldPasswordObject(user)
+  .then(data => {
+    console.log('data from getoldpasswordobject :', data);
+    if (!data) {
+      req.flash('info', 'Invalid Credentials');
+      req.status(200).render('pages/public/reset-password', {messages : req.flash('info'), user : { email : req.body.email, forgot_password_token : req.body.forgot_password_token}})
+      return;
+    }
+    changePassword(user)
+    .then(() => {
+      req.flash('info', 'Your password has been changed. Please login');
+        req.status(200).redirect('/login');
+        return;
+    })
+  });
+})
+  
   
  /// Change email ////////////
 
@@ -190,11 +253,10 @@ routes.get('/verify-change-email', verifyEmailCheckQuery, (req, res) => {
   errors = validationResult(req)
   if (!errors.isEmpty()) {
     req.flash("info","Invalid credentials. Please recheck authorisation link or contact your administrator");
-    res.status(200).render('pages/public/verify-email-change', {messages : req.flash('info')});
+    res.status(200).render('pages/public/verify-change-email', {messages : req.flash('info')});
     return;
   }
-
-  res.status(200).render('pages/public/verify-change_email.ejs', {messages : req.flash('info'), user : { old_email: req.query.old_email, new_email : req.query.new_email || "", email_change_token : req.query.email_change_token || ""}});
+  res.status(200).render('pages/public/verify-change-email.ejs', {messages : req.flash('info'), user : { old_email: req.query.old_email, new_email : req.query.new_email || "", email_change_token : req.query.email_change_token || ""}});
 });
   
 verifyEmailCheckBody = [
@@ -248,9 +310,6 @@ routes.get('/content/manage-all-pages', (req, res) => { //accessible by authed a
 
 // unknown //
 
-
-
-
 //// for creating users for test purposes only /// remove on production 
 
 routes.get('/create-user', (req, res) => { //accessible by authed admin
@@ -274,7 +333,6 @@ routes.post('/create-user', createUserCheck, (req, res) => { //accessible by aut
     res.status(200).render('pages/users/create-user.ejs', {messages : req.flash('info'), userTemp});
     return;
   }
-
 
   const user = {
     email : req.body.email,
