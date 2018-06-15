@@ -33,7 +33,7 @@ routes.get('/about', (req, res) => {
 });
 
 routes.get('/test', (req, res) => {
-  res.status(200).render('pages/public/navigationpage');
+  res.status(200).render('pages/users/navigationpage');
   return;
 });
 // users //
@@ -67,10 +67,6 @@ routes.post('/login',
   return;
 })
 
-
-routes.get('/reset-password', (req, res) => { 
-  res.status(200).render('pages/public/reset-password.ejs');
-});
 
 ///////////////       Register User      //////////////////
 
@@ -193,9 +189,20 @@ routes.post('/reset-password-request', requestResetPasswordCheck, (req, res) => 
 
 /////////   Change password with reset link //////////////////////
 
-routes.get('/reset-password', (req, res) => {
-  
-  res.status(200).render('pages/public/reset-password', {messages : req.flash('info')});
+checkQueryResetPassword = [
+  query('forgot_password_token').isUUID(),
+  query('email').isEmail().normalizeEmail()
+];
+
+
+
+routes.get('/reset-password', checkQueryResetPassword, (req, res) => {
+  console.log('req.query :', req.query);
+  user = {
+    forgot_password_token : req.query.forgot_password_token,
+    email : req.query.email
+  }
+  res.status(200).render('pages/public/reset-password', {messages : req.flash('info'), user : user});
 });  
 
 resetPasswordCheck = [
@@ -215,6 +222,7 @@ resetPasswordCheck = [
 routes.post('/reset-password', resetPasswordCheck, (req, res) => {
   errors = validationResult(req)
   if (!errors.isEmpty()) {
+    console.log('errors :', errors.array());
     req.flash("info","Invalid credentials");
     res.status(200).render('pages/public/reset-password', {messages : req.flash('info'), user : { email : req.body.email, forgot_password_token : req.body.forgot_password_token}});
     return;
@@ -227,15 +235,15 @@ routes.post('/reset-password', resetPasswordCheck, (req, res) => {
   getOldPasswordObject(user)
   .then(data => {
     console.log('data from getoldpasswordobject :', data);
-    if (!data) {
-      req.flash('info', 'Invalid Credentials');
-      req.status(200).render('pages/public/reset-password', {messages : req.flash('info'), user : { email : req.body.email, forgot_password_token : req.body.forgot_password_token}})
+    if (!data.time_diff_bool) {
+      req.flash('info', 'Link expired');
+      res.status(200).redirect('/reset-password-request')
       return;
     }
     changePassword(user)
     .then(() => {
       req.flash('info', 'Your password has been changed. Please login');
-        req.status(200).redirect('/login');
+        res.status(200).redirect('/login');
         return;
     })
   });
