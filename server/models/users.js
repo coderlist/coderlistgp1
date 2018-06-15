@@ -294,7 +294,7 @@ const user = {
     return findByUsername('users', body.email).then(dbUser => {
       return queryHelper(`update users set old_password = old_password ||` +
           ` array['{ "old_val":"${dbUser.password}", "token_date": ` +
-          `"' || now() || '", "token":"${body.change_password_token}" }']` +
+          `"' || now() || '", "token":"${body.forgot_password_token}" }']` +
           `::json[] where email='${dbUser.email}';`)
         .then(response => true)
       // .catch(e => {throw e})
@@ -314,7 +314,7 @@ const user = {
   getOldPasswordObject(body) {  
    return queryHelper(`WITH temp_table AS (SELECT email, unnest(old_password) 
    FROM users WHERE email='${body.email}') SELECT unnest,(timestamp 'now()') - (unnest ->> 'token_date')::timestamp > interval '1 hour' AS 
-   time_diff_bool FROM temp_table WHERE unnest ->> 'token' = '${body.change_password_token}';`)
+   time_diff_bool FROM temp_table WHERE unnest ->> 'token' = '${body.forgot_password_token}';`)
     .then(response => {
        
        return response[0]
