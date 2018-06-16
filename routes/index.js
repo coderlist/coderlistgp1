@@ -8,8 +8,8 @@ const users = require('../server/models/users').user;
 const passport = require('../auth/local');
 const Mail = require('../helperFunctions/verification/MailSender');
 // site //
-const { createUser, updateUserEmail, getOldPasswordObject, insertOldPasswordObject } = require('../server/models/users').user;
-const { changePassword } = require('../server/models/users').changePassword;
+const { createUser, insertOldEmailObject, verifyUser, addOneToFailedLogins, getOldPasswordObject, insertOldPasswordObject } = require('../server/models/users').user;
+const changePassword = require('../server/models/users').changePassword;
 const uuid = require('uuid/v1');
 const _ = require('lodash');
 const userRoutes = require('./userRoutes')
@@ -198,11 +198,19 @@ checkQueryResetPassword = [
 
 routes.get('/reset-password', checkQueryResetPassword, (req, res) => {
   console.log('req.query :', req.query);
+  console.log('req.body',req.body)
+  // user = {
+  //   forgot_password_token : req.query.forgot_password_token,
+  //   email : req.query.email
+  // }
   user = {
-    forgot_password_token : req.query.forgot_password_token,
-    email : req.query.email
+    forgot_password_token : req.body.forgot_password_token,
+    email : req.body.email
   }
-  res.status(200).render('pages/public/reset-password', {messages : req.flash('info'), user : user});
+  insertOldPasswordObject(user).then(response =>{
+    res.status(200).render('pages/public/reset-password', {messages : req.flash('info'), user : user});
+  }).catch(e => res.status(500).send(e.stack))
+  
 });  
 
 resetPasswordCheck = [
@@ -229,23 +237,25 @@ routes.post('/reset-password', resetPasswordCheck, (req, res) => {
   }
   const user = {
     email : req.body.email,
-    password: req.body.password,
+    new_password: req.body.password,
     forgot_password_token : req.body.forgot_password_token
   }
   getOldPasswordObject(user)
   .then(data => {
-    console.log('data from getoldpasswordobject :', data);
-    if (!data.time_diff_bool) {
+  //  console.log('data from getoldpasswordobject :', data);
+    if (data.time_diff_bool) {
+      console.log('expired')
       req.flash('info', 'Link expired');
       res.status(200).redirect('/reset-password-request')
       return;
     }
     changePassword(user)
     .then(() => {
+      console.log('UPDATED')
       req.flash('info', 'Your password has been changed. Please login');
         res.status(200).redirect('/login');
         return;
-    })
+    }).catch(e => res.status(500).send(e.stack) )
   });
 })
   
@@ -353,7 +363,7 @@ routes.post('/create-user', createUserCheck, (req, res) => { //accessible by aut
     first_name : req.body.first_name,
     last_name : req.body.last_name,
     failed_login_attempts : 0,
-    activation_token : uuid()
+    activation_token :  uuid()
   };
 
   createUser(user).then(function(userCreated){ // returns user created true or false
