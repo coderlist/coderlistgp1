@@ -296,7 +296,7 @@ routes.post('/verify-change-email', verifyEmailCheckBody, (req, res) => {
   .then(data => {
     if (!data) {
       req.flash("info","Invalid credentials. Please try again.");
-      res.status(200).render('pages/public/verify-change_email.ejs', { messages : req.flash('info'), user : { new_email : req.body.new_email, email_change_token : req.body.email_change_token }});
+      res.status(200).render('pages/public/verify-change_email.ejs', { messages : req.flash('info'), user : { old_email: req.body.old_email, new_email : req.body.new_email, email_change_token : req.body.email_change_token }});
       return;
     }
     let mail = new Mail();
