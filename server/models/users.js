@@ -162,13 +162,13 @@ const user = {
    *               "token":"386ebca7-907d-44a0-be0c-371ed1340781" }
    */
   insertOldEmailObject(user) {
-    return findByUsername('users', user.email).then(dbUser => {
+    return findByUsername('users', user.old_email).then(dbUser => {
       console.log('USERFOUND', user)
       if (verifyPassword(user.password, dbUser.password)) {
         return queryHelper(`update users set old_email = old_email ||` +
-            ` array['{ "old_val":"${user.email}", "new_val":"${user.new_email}","token_date": ` +
-            `"' || now() || '", "token":"${user.change_token}" }']` +
-            `::json[] where email='${user.email}';`)
+            ` array['{ "old_val":"${user.old_email}", "new_val":"${user.new_email}","token_date": ` +
+            `"' || now() || '", "token":"${user.email_change_token}" }']` +
+            `::json[] where email='${user.old_email}';`)
           .then(response => true)
           .catch(e => {
             throw e
@@ -197,7 +197,7 @@ const user = {
    */
   getOldEmailObject(body) {
     return queryHelper(`WITH temp_table AS (SELECT email, unnest(old_email)` +
-        ` FROM users WHERE email='${body.email}') SELECT` +
+        ` FROM users WHERE email='${body.old_email}') SELECT` +
         ` unnest FROM temp_table WHERE unnest ->> 'token' = '${body.change_token}' ;`)
       .then(response => response[0].unnest)
       .catch(e => {
@@ -220,10 +220,10 @@ const user = {
     DO $$
     BEGIN
        IF NOT EXISTS (with temp_table as (select email,unnest(old_email) 
-          FROM users where email='${body.email}') 
+          FROM users where email='${body.old_email}') 
           SELECT 1 FROM temp_table WHERE unnest ->> 'email'='${body.new_email}') 
       THEN
-            UPDATE users SET email = '${body.new_email}' WHERE email = '${body.email}';
+            UPDATE users SET email = '${body.new_email}' WHERE email = '${body.old_email}';
       ELSE
              RAISE EXCEPTION 'email already used';
       END IF;

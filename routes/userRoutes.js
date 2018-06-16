@@ -5,7 +5,7 @@ const Logins = require('../helperFunctions/Logins');
 const logins = new Logins();
 const { query, check, body, validationResult } = require('express-validator/check');
 const { matchedData, sanitize } = require('express-validator/filter');
-const { updatePassword, updateUserEmail } = require('../server/models/users').user;
+const { updatePassword, updateUserEmail, insertOldEmailObject } = require('../server/models/users').user;
 const uuid = require('uuid/v1');
 const Mail = require('../helperFunctions/verification/MailSender');
 
@@ -227,15 +227,17 @@ userRoutes.post('/change-email-request', changeEmailCheck, (req, res) => {
 
 
   user = {
+    password : req.body.password,
     old_email : req.session.email,
     new_email : req.body.new_email,
     email_change_token : uuid()
   }
-  updateUserEmail(user)
+  insertOldEmailObject(user)
   .then(function (data){
+    console.log('datas :', data);
     if (!data){
       req.flash('info','Invalid credentials')
-      res.status(200).redirect('/users/change-email.ejs',); 
+      res.status(200).redirect('/users/change-email-request.ejs',); 
       return;
     }
     let mail = new Mail();
