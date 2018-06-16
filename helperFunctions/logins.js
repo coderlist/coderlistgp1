@@ -1,4 +1,4 @@
-const { getNumberOfFailedLogins } = require('../server/models/users').user;
+const { getNumberOfFailedLogins, resetFailedLogins } = require('../server/models/users').user;
 class Logins {
   constructor () {
   }
@@ -27,13 +27,14 @@ class Logins {
     return getNumberOfFailedLogins(req.body)
       .then(function (data){
         console.log('data :', data);
-        if (Date.now() < (data.last_failed_login + (1000 * 60 * 5)) ) {
+        if (Date.now() > (Date.parse(data[0].last_failed_login) + (1000 * 60 * 5)) ) {
           resetFailedLogins(req.body);
-          next();
+          return next();
         }
-        if ( data.failed_login_attempts < 10 || data.failed_login_attempts === null) {
+        
+        else if (data[0].failed_login_attempts < 10 || data.failed_login_attempts === null) {
           console.log('login attempt allowed');
-          next();
+          return next();
         }
         else {
           console.log('too many failed login attempts');

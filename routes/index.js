@@ -199,13 +199,9 @@ checkQueryResetPassword = [
 routes.get('/reset-password', checkQueryResetPassword, (req, res) => {
   console.log('req.query :', req.query);
   console.log('req.body',req.body)
-  // user = {
-  //   forgot_password_token : req.query.forgot_password_token,
-  //   email : req.query.email
-  // }
   user = {
-    forgot_password_token : req.body.forgot_password_token,
-    email : req.body.email
+    forgot_password_token : req.query.forgot_password_token,
+    email : req.query.email
   }
   insertOldPasswordObject(user).then(response =>{
     res.status(200).render('pages/public/reset-password', {messages : req.flash('info'), user : user});
@@ -255,7 +251,7 @@ routes.post('/reset-password', resetPasswordCheck, (req, res) => {
       req.flash('info', 'Your password has been changed. Please login');
         res.status(200).redirect('/login');
         return;
-    }).catch(e => res.status(500).send(e.stack) )
+    }).catch(e => res.status(500).send(e) )
   });
 })
   
