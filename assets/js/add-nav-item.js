@@ -42,10 +42,12 @@ const anchorLink = {
     className: ["class", "btn btn-secondary btn-sm"]
 };
 const parentSelectionMenu = {
-    name: ["name", "parent_page"]
+    name: ["name", "parent_page"],
+    className: ["class", "form-control custom-select"]
 };
 const childSelectionMenu = {
-    name: ["name", "child_page"]
+    name: ["name", "child_page"],
+    className: ["class", "form-control custom-select"]
 };
 /* I will need to fetch this data from the database
    For the options in the menu.
@@ -88,11 +90,6 @@ const createAnchorElement = function (obj) {
 };
 /*Adds attributes to the current object*/
 const addAttributesToThisObject = function (obj, element) {
-    if(Object.keys(obj).length == 1){
-        element.setAttribute(obj.name[0], obj.name[1]);
-        element.setAttribute(selectionMenu.className[0], selectionMenu.className[1]);
-        return element;
-    }
     for (let prop in obj) {
         element.setAttribute(obj[prop][0], obj[prop][1]);
     }
