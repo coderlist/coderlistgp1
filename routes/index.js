@@ -8,7 +8,7 @@ const users = require('../server/models/users').user;
 const passport = require('../auth/local');
 const Mail = require('../helperFunctions/verification/MailSender');
 // site //
-const { createUser, insertOldEmailObject, verifyUser, addOneToFailedLogins, getOldPasswordObject, insertOldPasswordObject } = require('../server/models/users').user;
+const { createUser, updateUserEmail, getOldPasswordObject, insertOldPasswordObject } = require('../server/models/users').user;
 const { changePassword } = require('../server/models/users').changePassword;
 const uuid = require('uuid/v1');
 const _ = require('lodash');
@@ -292,15 +292,16 @@ routes.post('/verify-change-email', verifyEmailCheckBody, (req, res) => {
     password : req.body.password,
     change_token : req.body.email_change_token
   }
-  insertOldEmailObject(user)
+  updateUserEmail(user)
   .then(data => {
     if (!data) {
       req.flash("info","Invalid credentials. Please try again.");
       res.status(200).render('pages/public/verify-change_email.ejs', { messages : req.flash('info'), user : { new_email : req.body.new_email, email_change_token : req.body.email_change_token }});
       return;
     }
-    logins.sendToOldEmail(user);
-    logins.sendEmailChangeConfirmation(user);
+    let mail = new Mail();
+    mail.sendToOldEmail(user);
+    mail.sendEmailChangeConfirmation(user);
     req.logOut();
     req.flash('info', 'Please now login with your new email');
     res.status(200).redirect('./login');
