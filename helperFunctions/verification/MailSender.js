@@ -101,7 +101,7 @@ class MailSender {
         console.log('userDetails :', userDetails);
         const newEmailLink = {
           from: process.env.EMAIL_NODEMAILER_USERNAME,
-          to: userDetails.email, 
+          to: userDetails.new_email, 
           subject: 'New email verification link for Ginny Bradley Website', 
           text: 'new email verification link',
           html: data

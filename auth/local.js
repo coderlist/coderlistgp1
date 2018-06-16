@@ -2,7 +2,7 @@ const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 const verifyPassword = require('./verify');
 const {findByUsername} = require('../helperFunctions/query/queryHelper')
-const { setSuccessfulLoginTime, setLastFailedLoginTime, addOneToFailedLogins } = require('../server/models/users').user;
+const { resetFailedLogins, setSuccessfulLoginTime, setLastFailedLoginTime, addOneToFailedLogins } = require('../server/models/users').user;
 const options = {
   usernameField: 'email',
   passwordField: 'password'
@@ -26,22 +26,26 @@ passport.use(new LocalStrategy(options,
       return done(null,false, {message: "Invalid Username or password"})
     }
     if(verifyPassword.verifyPassword(password,user.password)===false) { 
-      let user = {email : email};
       addOneToFailedLogins(user)
-      .then(function() {
+      .then(() => {
         setLastFailedLoginTime(user)
-        .then(function() {
+        .then(() => {
           return done(null,false, {message: "Invalid Username or password"});
         });
-      });
+      }).catch(e => {console.log("there was an a catch error", e); return done(null,false, {message: "Invalid Username or password"})});
     } 
     else {// does this need to be asynchronous?
-     setSuccessfulLoginTime(user)
-     return done(null,user);
+      setSuccessfulLoginTime(user)
+      .then(data => {
+        resetFailedLogins(user)
+      })
+      .then(data => { 
+        return done(null,user);
+      }).catch(e => {console.log("there was an a catch error", e); return done(null,false, {message: "Invalid Username or password"})})
     }
-    }).catch(e => {console.log("there was an a catch error", e); return done(null,false, {message: "Invalid Username or password"})})
-  }
-  ));
+  }).catch(e => {console.log("there was an a catch error", e); return done(null,false, {message: "System Error"})})
+}))
+
 
   init();
 

@@ -11,7 +11,7 @@ module.exports = {
   createPage(user) {
     return queryHelper(`INSERT INTO pages (created_by, title)`+
                        ` VALUES ('${user.email}', '${user.title}')`)
-        .then(response => concole.log('PAGE CREATED'))
+        .then(response => console.log('PAGE CREATED'))
         .catch(e => {throw e})
   },
 

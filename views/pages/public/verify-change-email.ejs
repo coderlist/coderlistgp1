@@ -1,37 +1,67 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
+
 <head>
-  <% include ../../partials/head.ejs %>
+    <% include ../partials/head.ejs %>
 </head>
 
 <body>
-  <header>
-    <% include ../../partials/header.ejs %>
-  </header>
-  <h2>Welcome to the change page</h2>
-  <div class="container">  
-    <form id="contact" method="post">
-      <h4>Change email form</h4>
-      <fieldset>
-        <input name="email_change_token" type="hidden" tabindex="1" value="<%=user.email_change_token%>" required autofocus>
-      </fieldset>
-      <fieldset>
-          <input name="old_email" type="hidden" tabindex="1" value="<%=user.old_email%>" required autofocus>
-        </fieldset>
-      <fieldset>
-        <input name="new_email" type="hidden" tabindex="1" value="<%=user.new_email>" required autofocus>
-      </fieldset>
-      <fieldset>
-        <input placeholder="Password" name="password" type="password" tabindex="2" value="" required>
-      </fieldset>
-      <fieldset>
-        <button name="submit" type="submit" id="contact-submit" data-submit="...Sending">Submit</button>
-      </fieldset>
-    </form>
-    <% include ../../partials/flash-message.ejs %>
-  </div>
-  <footer>
-    <% include ../../partials/footer.ejs %>
-  </footer>
+    <% include ../partials/header.ejs %>
+    
+        <div class="my-3 my-md-5">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-3">
+                        <h3 class="page-title mb-5">Admin</h3>
+                        <div>
+                            <div class="list-group list-group-transparent mb-0">
+                                <a href="#" class="list-group-item list-group-item-action d-flex align-items-center">
+                                    <span class="icon mr-3">
+                                        <i class="fe fe-user"></i>
+                                    </span>Profile
+                                </a>
+                                <a href="#" class="list-group-item list-group-item-action d-flex align-items-center">
+                                    <span class="icon mr-3">
+                                        <i class="fe fe-edit"></i>
+                                    </span>Change Password
+                                </a>
+                                <a href="#" class="list-group-item list-group-item-action d-flex align-items-center active">
+                                    <span class="icon mr-3">
+                                        <i class="fe fe-mail"></i>
+                                    </span>Change Email
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-9">
+                        <form class="card" method="post">
+                            <div class="card-body">
+                                <h3 class="card-title">Change Email Address</h3>
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="form-group">
+                                                <input name="new_email" type="hidden" id="new_email" class="form-control" value="<%= (typeof user == 'object' && user) ? user.new_email : ''%>"required>
+                                                <input name="old_email" type="hidden" id="old_email" class="form-control" value="<%= (typeof user == 'object' && user) ? user.old_email : ''%>"required>
+                                                <input name="email_change_token" type="hidden" id="email_change_token" value="<%= (typeof user == 'object' && user) ? user.email_change_token : ''%>" class="form-control" required>
+                                                <label class="form-label" for="password">Password</label>
+                                                <input name="password" type="password" id="password" class="form-control" placeholder="Password" required>
+                                            </div>
+                                        </div>
+                                    </div>
+                              </div>
+                            <div class="card-footer text-right">
+                                <button type="reset" class="btn btn-primary">Reset Changes</button>
+                                <button type="submit" class="btn btn-primary email-confirmation">Change Email</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+        <% include ../partials/footer.ejs %>
+        <% include ../partials/flash-message.ejs %>
+      
 </body>
+
 </html>
