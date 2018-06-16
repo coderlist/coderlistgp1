@@ -8,6 +8,43 @@ const { matchedData, sanitize } = require('express-validator/filter');
 const { updatePassword, updateUserEmail, insertOldEmailObject } = require('../server/models/users').user;
 const uuid = require('uuid/v1');
 const Mail = require('../helperFunctions/verification/MailSender');
+const multer = require('multer');
+const imageUploadLocation = './assets/images/';
+const path = require('path');
+let storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, imageUploadLocation)
+  },
+  filename: function(req, file, next){
+    console.log(file);
+    const ext = file.mimetype.split('/')[1];
+    req.fileLocation = file.fieldname + '-' + Date.now() + '.'+ext
+    next(null, req.fileLocation);
+  },
+  fileFilter: function(req, file, next){
+    if(!file){
+      next();
+    }
+    const image = file.mimetype.startsWith('image/');
+    if(image){
+      console.log('photo uploaded');
+      next(null, true);
+    }else{
+      console.log("file not supported");
+      //TODO:  A better message response to user on failure.
+    return next();
+    }
+  }
+});
+
+const crypto = require('crypto');
+// crypto.pseudoRandomBytes(16, function(err, raw) {
+//   if (err) return callback(err);
+
+//   callback(null, raw.toString('hex') + path.extname(file.originalname));
+// });
+
+const upload = multer({storage : storage});
 
 userRoutes.use(logins.isLoggedIn);
 
@@ -16,7 +53,7 @@ userRoutes.get('/dashboard', (req, res) => {
   return;
 });
 
-////////////////////    Enter new Password           ////////////////////
+////////////////////    Change password while authenticated ////////////////////
 
 userRoutes.get('/change-password',  (req, res) => {
   res.status(200).render('pages/users/change-password', {messages : req.flash('info')});
@@ -38,13 +75,11 @@ const passwordCheck = [
 
 userRoutes.post('/change-password', passwordCheck, (req, res) => {
   const errors = validationResult(req);
-  console.log('getshere :', req.body);
   if (!errors.isEmpty()) {
     req.flash("info","Invalid password or passwords do not match", process.env.NODE_ENV === 'development' ? errors.array() : ""); //error.array() for development only
     res.redirect('/users/change-password');
     return;
   } 
-  console.log('req.session.email :', req.session.email);
   user = {
     email : req.session.email,
     old_password : req.body.old_password,
@@ -54,10 +89,13 @@ userRoutes.post('/change-password', passwordCheck, (req, res) => {
   updatePassword(user)
   .then(function (data){
     if (!data) {
+      console.log("failed to update password");
       req.flash('info', 'Invalid credentials');
       res.status(200).render('pages/users/change-password', {messages : req.flash('info')});
       return;
     }
+    let mail = new Mail();
+    mail.sendPasswordChangeConfirmation(user);
     req.logOut();
     req.flash('info', 'Password updated. Please login with your new password');
     res.status(200).redirect('/login');
@@ -251,6 +289,26 @@ userRoutes.post('/change-email-request', changeEmailCheck, (req, res) => {
     return;
   })
 });
+
+/////////////  Uploads with multer    ///////////////////
+
+
+userRoutes.get('/upload-images', function (req, res){
+  res.status(200).render('pages/users/upload-images.ejs')
+})
+
+
+userRoutes.post('/upload-images', upload.single('image'), (req, res) => {
+  console.log('req.body :', req.body, path.join(imageUploadLocation + req.fileLocation));
+  if (!req.file) {
+    req.flash("No file received");
+    return res.status(200).redirect('/users/upload-images')
+    
+  } else {
+    req.flash("File received", );
+    return res.status(200).redirect('/users/upload-images')
+  }
+})
 
 
 //////////////         end of change email whilst validated ////////////////

@@ -60,3 +60,23 @@ describe('Page requests' , function (){
         .expect(200)
     });
 })
+
+let request2 = require('superagent');
+
+function createAuthenticatedRequest(app, loginDetails, done) {
+  var authenticatedRequest = request.agent();
+  authenticatedRequest
+      .post(server)
+      .send(loginDetails)
+      .end(function(error, response) {
+          if (error) {
+              throw error;
+          } 
+          done(authenticatedRequest)
+      });
+// Using auxiliary function in test cases.
+createAuthenticatedRequest(server, loginDetails, function(request) {
+  request
+      .get('/admin')
+      .expect(200, done);
+});
