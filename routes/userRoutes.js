@@ -170,14 +170,6 @@ userRoutes.post('/create-user', createUserCheck, (req, res) => { //accessible by
   return;
 });
 
-// userRoutes.post('/users/email-verification', verificationCheck, (req, res) => {
-//   console.log('req.query :', req.query);
-//   mail = new Mail();
-//   mail.sendVerificationLink(req.body);
-//   res.status(200).json({message: "email sent"});
-//   return;
-// });
-
 
 userRoutes.get('/admin', (req,res) => {
   res.status(200).render('pages/users/admin.ejs', {messages : req.flash("info"), ckeditorData : req.body.ckeditorHTML || ""});
@@ -191,27 +183,6 @@ userRoutes.post('/admin', (req,res) => {
   console.log('req.body.ckeditorHTML:', req.body.ckeditorHTML);
   res.status(200).render('pages/users/admin.ejs', {messages : req.flash("info"), ckeditorData : req.body.ckeditorHTML || ""});
 });
-
-
-
-// userRoutes.get('/new-password', (req, res) => {
-//   res.status(200).render('pages/users/new-password.ejs');
-//   return;
-// });
-
-
-// newPasswordCheck = [
-//   body('old_password').isLength({min:8}),
-//   body('password').isLength({min:8}),
-//   body('confirm_password').isLength({min:8})
-// ];
-
-// userRoutes.post('/new-password', (req, res) => {
-
-// });
-
-// New Sign Up Page 
-
 
 userRoutes.get('/logout', logins.isLoggedIn, logins.logUserOut, (req, res) => { //testing isLogged in function. To be implemented on all routes. Might be worth extracting as it's own mini express app route on /users/.
   res.status(200).redirect('/');
