@@ -28,13 +28,16 @@ class Logins {
       .then(function (data){
         console.log('data :', data);
         if (Date.now() < (data.last_failed_login + (1000 * 60 * 5)) ) {
-          resetFailedLogins(req.body); // should this be add one to failed logins? (kristian)
+          resetFailedLogins(req.body);
           next();
         }
-        if (data.failed_login_attempts < 10 || data.failed_login_attempts == null) {
+        if ( data.failed_login_attempts < 10 || data.failed_login_attempts === null) {
+          console.log('login attempt allowed');
           next();
         }
         else {
+          console.log('too many failed login attempts');
+          req.flash('info', 'Too many failed login attempts. Please try later');
           res.status(200).redirect('/login')
           return;
         }

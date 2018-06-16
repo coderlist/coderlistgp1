@@ -16,7 +16,7 @@ userRoutes.get('/dashboard', (req, res) => {
   return;
 });
 
-////////////////////    Enter new Password           ////////////////////
+////////////////////    Change password while authenticated ////////////////////
 
 userRoutes.get('/change-password',  (req, res) => {
   res.status(200).render('pages/users/change-password', {messages : req.flash('info')});
@@ -54,10 +54,13 @@ userRoutes.post('/change-password', passwordCheck, (req, res) => {
   updatePassword(user)
   .then(function (data){
     if (!data) {
+      console.log("failed to update password");
       req.flash('info', 'Invalid credentials');
       res.status(200).render('pages/users/change-password', {messages : req.flash('info')});
       return;
     }
+    let mail = new Mail();
+    mail.sendPasswordChangeConfirmation(user);
     req.logOut();
     req.flash('info', 'Password updated. Please login with your new password');
     res.status(200).redirect('/login');

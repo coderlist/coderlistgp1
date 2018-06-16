@@ -31,7 +31,7 @@ app.use(session({
     tableName : 'user_sessions'   
   }),
   secret: process.env.COOKIE_SECRET,
-  resave: false,
+  resave: true,
   saveUninitialized: true,
   cookie: { maxAge: 30 * 24 * 60 * 60 * 1000 } 
 }));
