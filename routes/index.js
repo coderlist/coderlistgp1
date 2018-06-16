@@ -392,10 +392,9 @@ routes.post('/create-user', createUserCheck, (req, res) => { //accessible by aut
 
 
 
+
 routes.all('*', (req, res) => {
   res.status(200).render('pages/public/unknown.ejs', { url: req.url });
   return;
 });
-
-
 module.exports = routes;
