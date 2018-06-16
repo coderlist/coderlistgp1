@@ -253,18 +253,21 @@ routes.post('/reset-password', resetPasswordCheck, (req, res) => {
  /// Change email ////////////
 
  verifyEmailCheckQuery = [
+   query('old_email').isEmail().normalizeEmail(),
   query('email_change_token').isUUID(),
   query('new_email').isEmail().normalizeEmail()
 ];
 
 routes.get('/verify-change-email', verifyEmailCheckQuery, (req, res) => { 
   errors = validationResult(req)
+  console.log('req.query :', req.query);
+  const user = {old_email : req.query.old_email, new_email : req.query.new_email, email_change_token : req.query.email_change_token}
   if (!errors.isEmpty()) {
     req.flash("info","Invalid credentials. Please recheck authorisation link or contact your administrator");
-    res.status(200).render('pages/public/verify-change-email', {messages : req.flash('info')});
+    res.status(200).render('pages/public/verify-change-email', {messages : req.flash('info'), user : user});
     return;
   }
-  res.status(200).render('pages/public/verify-change-email.ejs', {messages : req.flash('info'), user : { old_email: req.query.old_email, new_email : req.query.new_email || "", email_change_token : req.query.email_change_token || ""}});
+  res.status(200).render('pages/public/verify-change-email.ejs', {messages : req.flash('info'), user : {email_change_token: req.query.email_change_token, old_email: req.query.old_email, new_email : req.query.new_email || "", email_change_token : req.query.email_change_token || ""}});
 });
   
 verifyEmailCheckBody = [
@@ -276,31 +279,32 @@ verifyEmailCheckBody = [
 
 routes.post('/verify-change-email', verifyEmailCheckBody, (req, res) => {
   errors = validationResult(req)
+  console.log('errors.array() :', errors.array());
   if (!errors.isEmpty()) {
     req.flash("info","Invalid email");
-    res.status(200).render('pages/public/verify-change_email.ejs', { messages : req.flash('info'), user : { new_email : req.body.new_email, email_change_token : req.body.email_change_token }});
+    res.status(200).render('pages/public/verify-change-email.ejs', { messages : req.flash('info'), user : { old_email : req.body.old_email, new_email : req.body.new_email, email_change_token : req.body.email_change_token }});
     return;
   } 
   
   user = {
     new_email : req.body.email,
-    old_email : req.boy.old_mail,
+    old_email : req.body.old_email,
     password : req.body.password,
-    email_change_token : req.body.email_change_token
+    change_token : req.body.email_change_token
   }
-  if (changeEmail(user) === false) {
-    req.flash("info","Invalid credentials. Please try again.");
-    res.status(200).render('pages/public/verify-change_email.ejs', { messages : req.flash('info'), user : { new_email : req.body.new_email, email_change_token : req.body.email_change_token }});
-    return;
-  }
-  // send new email, old email, password, and email change token to db
-  // if ok confirm and send confirmation emails
-  logins.sendToOldEmail(user);
-  logins.sendEmailChangeConfirmation(user);
-  req.logOut();
-  req.flash('info', 'Please now login with your new email');
-  res.status(200).redirect('./login');
-
+  insertOldEmailObject(user)
+  .then(data => {
+    if (!data) {
+      req.flash("info","Invalid credentials. Please try again.");
+      res.status(200).render('pages/public/verify-change_email.ejs', { messages : req.flash('info'), user : { new_email : req.body.new_email, email_change_token : req.body.email_change_token }});
+      return;
+    }
+    logins.sendToOldEmail(user);
+    logins.sendEmailChangeConfirmation(user);
+    req.logOut();
+    req.flash('info', 'Please now login with your new email');
+    res.status(200).redirect('./login');
+  })
 });
 
 
