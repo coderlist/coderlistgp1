@@ -351,7 +351,7 @@ const user = {
    */
 const changePassword = function(body)  {
  return  user.getOldPasswordsArray(body.email).then(array => {
-    const i = 0; 
+    let i = 0; 
     while (i < array.length) {
       if (verifyPassword(body.new_password, array[i])) {
         return Promise.reject(new Error('password already used'));
@@ -360,6 +360,7 @@ const changePassword = function(body)  {
     }
     return bcrypt.hash(body.new_password, saltrounds)
       .then(hash => {
+        console.log('HASHED',hash)
         return queryHelper(`UPDATE users SET password = '${hash}' 
         where email = '${body.email}'`)
           .then(response =>{
