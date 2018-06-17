@@ -25,7 +25,22 @@ main {
     /* 960px / 16px = 60 */
     margin: 64px 1rem 1rem 1rem;
 }
-
+/* Heading styles */
+h1 {
+    font-size: 3rem;
+}
+h2 {
+    font-size: 2.5rem;
+}
+h3 {
+    font-size: 2rem;
+}
+h4 {
+    font-size: 1.5rem;
+}
+h5 {
+    font-size: 1rem;
+}
 /* header */
 
 header {

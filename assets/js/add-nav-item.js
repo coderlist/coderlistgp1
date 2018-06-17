@@ -1,3 +1,13 @@
+/* Fetch JSON FILE */
+fetch('/page-navmenu-request')
+    .then((res) => {
+        return res;
+    })
+    .then((navitems) => {
+        console.log(navitems);
+    });
+
+
 /*
  *   Variables for
  *   Main menu navigation table
@@ -8,18 +18,33 @@
 const tableMenuItem = document.querySelector(".table-menu-items");
 const addNewMenuItemButton = document.querySelectorAll(".add-new-item-button");
 const tableSubMenuItem = document.querySelector(".table-sub-menu-items");
+/* 
+* Important menu variables
+* parentMenuItemPage defines what kind of options this menu should render -> Parent Pages
+* childMenuItemPage defines what kind of options this menu should render -> Child of these Parent Pages
+* inputFieldName && inputFieldOrderNumber define what kind of input should be render
+* Input with for the Page Name or an input for an order number
+*/
+const parentMenuItemPage = "parentMenuItemPage";
+const childMenuItemPage = "childMenuItemPage";
+const inputFieldName = "inputFieldName";
+const inputFieldOrderNumber = "inputFieldOrderNumber";
 /* I will need to fetch this data from the database
    For the options in the menu.
    Hardcoding an array of names to see how it works.
 */
 const arrNames = ["no-link", "about", "workshops"];
 /* Creates Input Field */
-const createInputFieldPageName = function () {
-    const input = `<input type="text" class="form-control" name="page_name" placeholder="Page Name">`;
-    return `<td>${input}</td>`;
-};
-const createInputFieldOrderNumber = function () {
-    const input = `<input type="text" class="form-control page-order" name="page_order" placeholder="1">`;
+const createInputFieldPageName = function (inputFieldName) {
+    let input = "";
+    switch(inputFieldName){
+        case "inputFieldName":
+            input = `<input type="text" class="form-control" name="page_name" placeholder="Page Name">`;
+            break;
+        case "inputFieldOrderNumber":
+            input = `<input type="text" class="form-control page-order" name="page_order" placeholder="1">`;
+            break;
+    }
     return `<td>${input}</td>`;
 };
 /* Creates selection control menu */
@@ -29,12 +54,12 @@ const createSelectionMenu = function (pageName) {
     });
     let select = ``;
     switch(pageName){
-        case "parentPage":
+        case "parentMenuItemPage":
             select = `<td><select name="parent_page" class="form-control custom-select">
             ${options}
             </select></td>`;
             break;
-        case "childPage":
+        case "childMenuItemPage":
             select = `<td><select name="child_page" class="form-control custom-select">
             ${options}
             </select></td>`;
@@ -45,7 +70,6 @@ const createSelectionMenu = function (pageName) {
             </select></td>`;
     }
     return select;
-   ;
 };
 /* Creates an Anchor Element */
 const createAnchorElement = function () {
@@ -61,13 +85,13 @@ const menuItemList = function () {
         let thisNode = '';
         switch (i) {
             case 0:
-                thisNode = createInputFieldPageName();
+                thisNode = createInputFieldPageName(inputFieldName);
                 break;
             case 1:
                 thisNode = createSelectionMenu();
                 break;
             case 2:
-                thisNode = createInputFieldOrderNumber();
+                thisNode = createInputFieldPageName(inputFieldOrderNumber);
                 break;
             case 3:
                 thisNode = createAnchorElement();
@@ -79,23 +103,22 @@ const menuItemList = function () {
 };
 /* Submenu items have two extra elements */
 const subMenuItemList = function () {
-    const parentPage = "parentPage";
-    const childPage = "childPage";
+    
     let html = '';
     for (let i = 0; i < 5; i++) {
         let thisNode = '';
         switch (i) {
             case 0:
-                thisNode = createInputFieldPageName();
+                thisNode = createInputFieldPageName(inputFieldName);
                 break;
             case 1:
-                thisNode = createSelectionMenu(parentPage);
+                thisNode = createSelectionMenu(parentMenuItemPage);
                 break;
             case 2:
-                thisNode = createSelectionMenu(childPage);
+                thisNode = createSelectionMenu(childMenuItemPage);
                 break;
             case 3:
-                thisNode = createInputFieldOrderNumber();
+                thisNode = createInputFieldPageName(inputFieldOrderNumber);
                 break;
             case 4:
                 thisNode = createAnchorElement();
@@ -109,12 +132,12 @@ const subMenuItemList = function () {
 const addNewMenuItem = function (event) {
     if (event.target.classList.contains("sub-menu-item-button") ) {
         /* Append the result of createTableData */
-        const html = `<tr>${subMenuItemList()}</tr>`
+        const html = `<tr>${subMenuItemList()}</tr>`;
         /* Insert item before the first child */
         tableSubMenuItem.insertAdjacentHTML('afterbegin', html);
     } else {
         /* Append the result of createTableData */
-        const html = `<tr>${menuItemList()}</tr>`
+        const html = `<tr>${menuItemList()}</tr>`;
         /* Insert item before the first child */
         tableMenuItem.insertAdjacentHTML('afterbegin', html);
     }
