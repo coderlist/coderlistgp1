@@ -35,6 +35,16 @@ const user = {
   },
 
   /**
+   * @param  {String} email
+   * find user_id by email
+   */
+  findIdByEmail(email){
+      return queryHelper(`SELECT (user_id) FROM USERS WHERE email='${email}';`)
+        .then(response => response)
+        .catch(e => {throw e})
+  },
+
+  /**
    * 
    * @param {Object} user 
    * gets token from route in a temporary user object
