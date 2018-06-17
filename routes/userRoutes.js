@@ -103,7 +103,7 @@ userRoutes.get('/profile', function (req, res) {
 userRoutes.get('/:name-page', function (req, res) {
   const url = req.url;
   res.status(200).render('pages/users/edit-page.ejs', { 
-    title: req.url === "/create-page" ? "Create Page" : "Edit Page", 
+    title: url === "/create-page" ? "Create Page" : "Edit Page", 
     active: "active", 
     messages: req.flash('info')
   })
@@ -111,7 +111,7 @@ userRoutes.get('/:name-page', function (req, res) {
 userRoutes.get('/:name-user', function (req, res) {
   const url = req.url;
   res.status(200).render('pages/users/edit-user.ejs', { 
-    title: req.url === "/create-user" ? "Create User" : "Edit User", 
+    title: url === "/create-user" ? "Create User" : "Edit User", 
     active: "active", 
     messages: req.flash('info')
   })
