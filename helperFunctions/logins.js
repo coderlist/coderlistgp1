@@ -16,22 +16,24 @@ class Logins {
   }
   
   logUserOut(req, res, next) {
-  // uncomment the below line when passport is installed and configured. ****8
-    if (req.user) { // Handle just in case a user accesses this route while not logged in.
-      req.logout() 
-    }
+    req.logout();
     return next();
   }
 
   failedLoginsCheck(req, res, next) {
     return getNumberOfFailedLogins(req.body)
       .then(function (data){
-        console.log('data :', data);
+        if (data.length === 0) { // handles invalid username
+          console.log('Invalid username or password');
+          req.flash('info', 'Invalid username or password');
+          res.status(200).redirect('/login')
+          return;
+        }
         if (Date.now() > (Date.parse(data[0].last_failed_login) + (1000 * 60 * 5)) ) {
           resetFailedLogins(req.body);
           return next();
         }   
-        else if (data[0].failed_login_attempts < 10 || data.failed_login_attempts === null) {
+        else if (data[0].failed_login_attempts < 10 || data[0].failed_login_attempts === null) {
           console.log('login attempt allowed');
           return next();
         }
