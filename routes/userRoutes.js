@@ -282,6 +282,44 @@ userRoutes.post('/upload-images', upload.single('image'), (req, res) => {
 })
 
 
+userRoutes.get('/page-navmenu-request', function (req, res){
+  const fakeData = [
+      {
+        page_id: 1,
+        title : "Parent 1",
+        parent : null,
+        link : null
+      },
+      {
+        page_id: 2,
+        title : "Parent 2",
+        parent : null,
+        link : null
+      },
+      {
+        page_id: 3,
+        title : "Page 3",
+        parent : "Parent 1",
+        link : `./user/pages/:Page_3`
+      },
+      {
+        page_id: 4,
+        title : "Page 4",
+        parent : "Parent 2",
+        link: `./user/pages/:Page_4`
+      },
+      {
+        page_id: 5,
+        title : "Page 5",
+        parent : "Parent 1",
+        link : `./user/pages/:Page_5`
+      }
+    ]
+    console.log('JSON.stringify :', JSON.stringify);
+  res.status(200).send(JSON.stringify(fakeData));
+
+  })
+
 //////////////         end of change email whilst validated ////////////////
 
 userRoutes.all('*', (req, res) => {
