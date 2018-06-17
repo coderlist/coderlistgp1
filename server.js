@@ -18,9 +18,7 @@ const uuidv1 = require('uuid/v1');
 
 
 const app = express();
-
 app.set('view engine', 'ejs');
-
 app.use(cookieParser());
 app.use(logger('dev'));
 app.use(express.static('assets', {}));
@@ -31,7 +29,7 @@ app.use(session({
     tableName : 'user_sessions'   
   }),
   secret: process.env.COOKIE_SECRET,
-  resave: false,
+  resave: true,
   saveUninitialized: true,
   cookie: { maxAge: 30 * 24 * 60 * 60 * 1000 } 
 }));

@@ -8,166 +8,115 @@
 const tableMenuItem = document.querySelector(".table-menu-items");
 const addNewMenuItemButton = document.querySelectorAll(".add-new-item-button");
 const tableSubMenuItem = document.querySelector(".table-sub-menu-items");
-/* 
- *   Array of Objects to hold their attributes
- *   type
- *   class
- *   name
- *   placeholder
- *   value
- *   href
- */
-/* Input Page Name Object */
-const inputNameObj = {
-    type: ["type", "text"],
-    className: ["class", "form-control"],
-    name: ["name", "page_name"],
-    placeholder: ["placeholder", "Page Name"]
-};
-/* Input Page Order Object */
-const inputOrderObj = {
-    type: ["type", "text"],
-    className: ["class", "form-control page-order"],
-    name: ["name", "page_order"],
-    placeholder: ["placeholder", "1"]
-};
-/* Select Page Menu */
-const selectionMenu = {
-    name: ["name", "menu_page"],
-    className: ["class", "form-control custom-select"]
-};
-/* Save Page Object */
-const anchorLink = {
-    url: ["href", "javascript:void(0)"],
-    className: ["class", "btn btn-secondary btn-sm"]
-};
-const parentSelectionMenu = {
-    name: ["name", "parent_page"]
-};
-const childSelectionMenu = {
-    name: ["name", "child_page"]
-};
 /* I will need to fetch this data from the database
    For the options in the menu.
    Hardcoding an array of names to see how it works.
 */
 const arrNames = ["no-link", "about", "workshops"];
 /* Creates Input Field */
-const createInputField = function (obj) {
-    const input = document.createElement("INPUT");
-    const element = addAttributesToThisObject(obj, input);
-    return element;
+const createInputFieldPageName = function () {
+    const input = `<input type="text" class="form-control" name="page_name" placeholder="Page Name">`;
+    return `<td>${input}</td>`;
+};
+const createInputFieldOrderNumber = function () {
+    const input = `<input type="text" class="form-control page-order" name="page_order" placeholder="1">`;
+    return `<td>${input}</td>`;
 };
 /* Creates selection control menu */
-const createSelectionMenu = function (obj) {
-    const select = document.createElement("SELECT");
-    const element = addAttributesToThisObject(obj, select);
-    element.appendChild(createOptionField());
-    return element;
-};
-/*Creates option fields -> Based on what pages are available*/
-const createOptionField = function (obj, element) {
-    /* Document Fragment to append all the child nodes */
-    const fragment = document.createDocumentFragment();
-    for (let i = 0; i < 3; i++) {
-        const option = document.createElement("OPTION");
-        const name = arrNames[i];
-        const text = document.createTextNode(name);
-        option.appendChild(text);
-        fragment.appendChild(option);
+const createSelectionMenu = function (pageName) {
+    const options = arrNames.map((option, index) => {
+        return `<option value="${index}">${option}</option>`
+    });
+    let select = ``;
+    switch(pageName){
+        case "parentPage":
+            select = `<td><select name="parent_page" class="form-control custom-select">
+            ${options}
+            </select></td>`;
+            break;
+        case "childPage":
+            select = `<td><select name="child_page" class="form-control custom-select">
+            ${options}
+            </select></td>`;
+            break;
+        default:
+            select = `<td><select name="menu_page" class="form-control custom-select">
+            ${options}
+            </select></td>`;
     }
-    return fragment;
+    return select;
+   ;
 };
 /* Creates an Anchor Element */
-const createAnchorElement = function (obj) {
-    const anchor = document.createElement("A");
-    const text = document.createTextNode("Save");
-    anchor.appendChild(text);
-    const element = addAttributesToThisObject(obj, anchor);
-    return element;
+const createAnchorElement = function () {
+    const anchor = `<a href="javascript:void(0)" class="btn btn-secondary btn-sm">Save</a>`
+    return `<td>${anchor}</td>`
 };
-/*Adds attributes to the current object*/
-const addAttributesToThisObject = function (obj, element) {
-    if(Object.keys(obj).length == 1){
-        element.setAttribute(obj.name[0], obj.name[1]);
-        element.setAttribute(selectionMenu.className[0], selectionMenu.className[1]);
-        return element;
-    }
-    for (let prop in obj) {
-        element.setAttribute(obj[prop][0], obj[prop][1]);
-    }
-    return element;
-};
+
 /* Display menu items */
 const menuItemList = function () {
-    /* Document Fragment to append all the child nodes */
-    const fragment = document.createDocumentFragment();
+    /* Append all elements to the html variable */
+    let html = '';
     for (let i = 0; i < 4; i++) {
-        const td = document.createElement("TD");
-        let thisNode = "";
+        let thisNode = '';
         switch (i) {
             case 0:
-                thisNode = createInputField(inputNameObj);
+                thisNode = createInputFieldPageName();
                 break;
             case 1:
-                thisNode = createSelectionMenu(selectionMenu);
+                thisNode = createSelectionMenu();
                 break;
             case 2:
-                thisNode = createInputField(inputOrderObj);
+                thisNode = createInputFieldOrderNumber();
                 break;
             case 3:
-                thisNode = createAnchorElement(anchorLink);
+                thisNode = createAnchorElement();
                 break;
         }
-        td.appendChild(thisNode);
-        fragment.appendChild(td);
+        html += thisNode;
     }
-    return fragment;
+    return html;
 };
 /* Submenu items have two extra elements */
 const subMenuItemList = function () {
-    /* Document Fragment to append all the child nodes */
-    const fragment = document.createDocumentFragment();
+    const parentPage = "parentPage";
+    const childPage = "childPage";
+    let html = '';
     for (let i = 0; i < 5; i++) {
-        const td = document.createElement("TD");
-        let thisNode = "";
+        let thisNode = '';
         switch (i) {
             case 0:
-                thisNode = createInputField(inputNameObj);
+                thisNode = createInputFieldPageName();
                 break;
             case 1:
-                thisNode = createSelectionMenu(parentSelectionMenu);
+                thisNode = createSelectionMenu(parentPage);
                 break;
             case 2:
-                thisNode = createSelectionMenu(childSelectionMenu);
+                thisNode = createSelectionMenu(childPage);
                 break;
             case 3:
-                thisNode = createInputField(inputOrderObj);
+                thisNode = createInputFieldOrderNumber();
                 break;
             case 4:
-                thisNode = createAnchorElement(anchorLink);
+                thisNode = createAnchorElement();
                 break;
         }
-        td.appendChild(thisNode);
-        fragment.appendChild(td);
+        html += thisNode;
     }
-    return fragment;
+    return html;
 };
 /* Function to prepend the new item */
 const addNewMenuItem = function (event) {
-    /* Create a new table row DOM NODE */
-    const tableRow = document.createElement("TR");
     if (event.target.classList.contains("sub-menu-item-button") ) {
-        tableRow.appendChild(subMenuItemList());
-        const firstChild = tableSubMenuItem.firstChild;
-        tableSubMenuItem.insertBefore(tableRow, firstChild);
+        /* Append the result of createTableData */
+        const html = `<tr>${subMenuItemList()}</tr>`
+        /* Insert item before the first child */
+        tableSubMenuItem.insertAdjacentHTML('afterbegin', html);
     } else {
         /* Append the result of createTableData */
-        tableRow.appendChild(menuItemList());
-        /* Get the first child node of parent element */
-        const firstChild = tableMenuItem.firstChild;
+        const html = `<tr>${menuItemList()}</tr>`
         /* Insert item before the first child */
-        tableMenuItem.insertBefore(tableRow, firstChild);
+        tableMenuItem.insertAdjacentHTML('afterbegin', html);
     }
 };
 /* Event Listeners */

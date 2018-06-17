@@ -8,7 +8,7 @@ const users = require('../server/models/users').user;
 const passport = require('../auth/local');
 const Mail = require('../helperFunctions/verification/MailSender');
 // site //
-const { createUser, insertOldEmailObject, verifyUser, addOneToFailedLogins, getOldPasswordObject, insertOldPasswordObject } = require('../server/models/users').user;
+const { createUser, updateUserEmail, insertOldEmailObject, verifyUser, addOneToFailedLogins, getOldPasswordObject, insertOldPasswordObject } = require('../server/models/users').user;
 const changePassword = require('../server/models/users').changePassword;
 const uuid = require('uuid/v1');
 const _ = require('lodash');
@@ -33,7 +33,7 @@ routes.get('/about', (req, res) => {
 });
 
 routes.get('/test', (req, res) => {
-  res.status(200).render('pages/users/navigationpage');
+  res.status(200).render('pages/public/navigationpage');
   return;
 });
 // users //
@@ -199,13 +199,9 @@ checkQueryResetPassword = [
 routes.get('/reset-password', checkQueryResetPassword, (req, res) => {
   console.log('req.query :', req.query);
   console.log('req.body',req.body)
-  // user = {
-  //   forgot_password_token : req.query.forgot_password_token,
-  //   email : req.query.email
-  // }
   user = {
-    forgot_password_token : req.body.forgot_password_token,
-    email : req.body.email
+    forgot_password_token : req.query.forgot_password_token,
+    email : req.query.email
   }
   insertOldPasswordObject(user).then(response =>{
     res.status(200).render('pages/public/reset-password', {messages : req.flash('info'), user : user});
@@ -255,7 +251,7 @@ routes.post('/reset-password', resetPasswordCheck, (req, res) => {
       req.flash('info', 'Your password has been changed. Please login');
         res.status(200).redirect('/login');
         return;
-    }).catch(e => res.status(500).send(e.stack) )
+    }).catch(e => res.status(500).send(e) )
   });
 })
   
@@ -302,15 +298,16 @@ routes.post('/verify-change-email', verifyEmailCheckBody, (req, res) => {
     password : req.body.password,
     change_token : req.body.email_change_token
   }
-  insertOldEmailObject(user)
+  updateUserEmail(user)
   .then(data => {
     if (!data) {
       req.flash("info","Invalid credentials. Please try again.");
-      res.status(200).render('pages/public/verify-change_email.ejs', { messages : req.flash('info'), user : { new_email : req.body.new_email, email_change_token : req.body.email_change_token }});
+      res.status(200).render('pages/public/verify-change_email.ejs', { messages : req.flash('info'), user : { old_email: req.body.old_email, new_email : req.body.new_email, email_change_token : req.body.email_change_token }});
       return;
     }
-    logins.sendToOldEmail(user);
-    logins.sendEmailChangeConfirmation(user);
+    let mail = new Mail();
+    mail.sendToOldEmail(user);
+    mail.sendEmailChangeConfirmation(user);
     req.logOut();
     req.flash('info', 'Please now login with your new email');
     res.status(200).redirect('./login');
@@ -335,7 +332,7 @@ routes.get('/content/manage-all-pages', (req, res) => { //accessible by authed a
 //// for creating users for test purposes only /// remove on production 
 
 routes.get('/create-user', (req, res) => { //accessible by authed admin
-  res.status(200).render('pages/users/create-user.ejs', messages);
+  res.status(200).render('pages/users/create-user.ejs', {messages: req.flash('info')});
 });
 
 const createUserCheck = [
@@ -395,10 +392,9 @@ routes.post('/create-user', createUserCheck, (req, res) => { //accessible by aut
 
 
 
+
 routes.all('*', (req, res) => {
   res.status(200).render('pages/public/unknown.ejs', { url: req.url });
   return;
 });
-
-
 module.exports = routes;

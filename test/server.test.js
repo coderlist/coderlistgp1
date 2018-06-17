@@ -60,3 +60,32 @@ describe('Page requests' , function (){
         .expect(200)
     });
 })
+// let Cookies;
+
+// describe('Functional Test <Sessions>:', function () {
+//   it('should create user session for valid user', function (done) {
+//     request(app)
+//       .post('/login')
+//       .set('Accept','application/json')
+//       .send({"email": "kristiansigston@gmail.com", "password": "frefrefre"})
+//       .expect('Content-Type', /html/)
+//       .expect(200)
+//       .end(function (err, res) {
+//         done();
+//       });
+//   });
+//   it('should get user session for current user', function (done) {
+//     var req = request(app).get('/login');
+//     // Set cookie to get saved user session
+//     req.cookies = Cookies;
+//     req.set('Accept','html')
+//       .expect('Content-Type', /html/)
+//       .expect(200)
+//       .end(function (err, res) {
+//         res.body.id.should.equal('1');
+//         res.body.short_name.should.equal('kristiansigston@gmail.com');
+//         res.body.email.should.equal('kristiansigston@gmail.com');
+//         done();
+//       });
+//   });
+// });

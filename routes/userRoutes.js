@@ -8,6 +8,43 @@ const { matchedData, sanitize } = require('express-validator/filter');
 const { updatePassword, updateUserEmail, insertOldEmailObject } = require('../server/models/users').user;
 const uuid = require('uuid/v1');
 const Mail = require('../helperFunctions/verification/MailSender');
+const multer = require('multer');
+const imageUploadLocation = './assets/images/';
+const path = require('path');
+let storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, imageUploadLocation)
+  },
+  filename: function(req, file, next){
+    console.log(file);
+    const ext = file.mimetype.split('/')[1];
+    req.fileLocation = file.fieldname + '-' + Date.now() + '.'+ext
+    next(null, req.fileLocation);
+  },
+  fileFilter: function(req, file, next){
+    if(!file){
+      next();
+    }
+    const image = file.mimetype.startsWith('image/');
+    if(image){
+      console.log('photo uploaded');
+      next(null, true);
+    }else{
+      console.log("file not supported");
+      //TODO:  A better message response to user on failure.
+    return next();
+    }
+  }
+});
+
+const crypto = require('crypto');
+// crypto.pseudoRandomBytes(16, function(err, raw) {
+//   if (err) return callback(err);
+
+//   callback(null, raw.toString('hex') + path.extname(file.originalname));
+// });
+
+const upload = multer({storage : storage});
 
 userRoutes.use(logins.isLoggedIn);
 
@@ -16,7 +53,7 @@ userRoutes.get('/dashboard', (req, res) => {
   return;
 });
 
-////////////////////    Enter new Password           ////////////////////
+////////////////////    Change password while authenticated ////////////////////
 
 userRoutes.get('/change-password',  (req, res) => {
   res.status(200).render('pages/users/change-password', {messages : req.flash('info')});
@@ -38,13 +75,11 @@ const passwordCheck = [
 
 userRoutes.post('/change-password', passwordCheck, (req, res) => {
   const errors = validationResult(req);
-  console.log('getshere :', req.body);
   if (!errors.isEmpty()) {
     req.flash("info","Invalid password or passwords do not match", process.env.NODE_ENV === 'development' ? errors.array() : ""); //error.array() for development only
     res.redirect('/users/change-password');
     return;
   } 
-  console.log('req.session.email :', req.session.email);
   user = {
     email : req.session.email,
     old_password : req.body.old_password,
@@ -54,10 +89,13 @@ userRoutes.post('/change-password', passwordCheck, (req, res) => {
   updatePassword(user)
   .then(function (data){
     if (!data) {
+      console.log("failed to update password");
       req.flash('info', 'Invalid credentials');
       res.status(200).render('pages/users/change-password', {messages : req.flash('info')});
       return;
     }
+    let mail = new Mail();
+    mail.sendPasswordChangeConfirmation(user);
     req.logOut();
     req.flash('info', 'Password updated. Please login with your new password');
     res.status(200).redirect('/login');
@@ -132,14 +170,6 @@ userRoutes.post('/create-user', createUserCheck, (req, res) => { //accessible by
   return;
 });
 
-// userRoutes.post('/users/email-verification', verificationCheck, (req, res) => {
-//   console.log('req.query :', req.query);
-//   mail = new Mail();
-//   mail.sendVerificationLink(req.body);
-//   res.status(200).json({message: "email sent"});
-//   return;
-// });
-
 
 userRoutes.get('/admin', (req,res) => {
   res.status(200).render('pages/users/admin.ejs', {messages : req.flash("info"), ckeditorData : req.body.ckeditorHTML || ""});
@@ -153,27 +183,6 @@ userRoutes.post('/admin', (req,res) => {
   console.log('req.body.ckeditorHTML:', req.body.ckeditorHTML);
   res.status(200).render('pages/users/admin.ejs', {messages : req.flash("info"), ckeditorData : req.body.ckeditorHTML || ""});
 });
-
-
-
-// userRoutes.get('/new-password', (req, res) => {
-//   res.status(200).render('pages/users/new-password.ejs');
-//   return;
-// });
-
-
-// newPasswordCheck = [
-//   body('old_password').isLength({min:8}),
-//   body('password').isLength({min:8}),
-//   body('confirm_password').isLength({min:8})
-// ];
-
-// userRoutes.post('/new-password', (req, res) => {
-
-// });
-
-// New Sign Up Page 
-
 
 userRoutes.get('/logout', logins.isLoggedIn, logins.logUserOut, (req, res) => { //testing isLogged in function. To be implemented on all routes. Might be worth extracting as it's own mini express app route on /users/.
   res.status(200).redirect('/');
@@ -252,6 +261,63 @@ userRoutes.post('/change-email-request', changeEmailCheck, (req, res) => {
   })
 });
 
+/////////////  Uploads with multer    ///////////////////
+
+
+userRoutes.get('/upload-images', function (req, res){
+  res.status(200).render('pages/users/upload-images.ejs')
+})
+
+
+userRoutes.post('/upload-images', upload.single('image'), (req, res) => {
+  console.log('req.body :', req.body, path.join(imageUploadLocation + req.fileLocation));
+  if (!req.file) {
+    req.flash("No file received");
+    return res.status(200).redirect('/users/upload-images')
+    
+  } else {
+    req.flash("File received", );
+    return res.status(200).redirect('/users/upload-images')
+  }
+})
+
+
+userRoutes.get('/page-navmenu-request', function (req, res){
+  const fakeData = [
+      {
+        page_id: 1,
+        title : "Parent 1",
+        parent : null,
+        link : null
+      },
+      {
+        page_id: 2,
+        title : "Parent 2",
+        parent : null,
+        link : null
+      },
+      {
+        page_id: 3,
+        title : "Page 3",
+        parent : "Parent 1",
+        link : `./user/pages/:Page_3`
+      },
+      {
+        page_id: 4,
+        title : "Page 4",
+        parent : "Parent 2",
+        link: `./user/pages/:Page_4`
+      },
+      {
+        page_id: 5,
+        title : "Page 5",
+        parent : "Parent 1",
+        link : `./user/pages/:Page_5`
+      }
+    ]
+  res.status(200).send(JSON.stringify(fakeData));
+
+  })
 
 //////////////         end of change email whilst validated ////////////////
 

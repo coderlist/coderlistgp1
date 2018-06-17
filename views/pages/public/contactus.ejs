@@ -10,35 +10,37 @@
         <% include ../../partials/header.ejs %>
     </header>
     <main>
-            <div class="container">
-                    <form class="card" action="" method="post">
-                        <div class="card-body">
-                            <div class="card-title"> Contact us</div>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label" for="name">Name</label>
-                            <input name="first_name" type="name" class="form-control" id="name" aria-describedby="emailHelp" placeholder="Name.." minlength="3" maxlength="64" size="32"  value="" required>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label" for="name">Surname</label>
-                            <input name="last_name" type="name" class="form-control" id="name" aria-describedby="emailHelp" placeholder="Surname.." minlength="3" maxlength="64" size="32"  value="" required>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label" for="email">Email address</label>
-                            <input name="email" type="email" class="form-control" id="email" aria-describedby="emailHelp" placeholder="Email.." minlength="3" maxlength="64" size="32"  value="" required>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label"></label>
-                            <textarea class="form-control" name="message" rows="6" placeholder="Message..." required></textarea>
-                        </div>
-                        <div class="card-footer text-right">
-                            <button type="reset" class="btn btn-primary">Reset Changes</button>
-                            <button type="submit" class="btn btn-primary">Send Email</button>
-                        </div>
-                    </form>
-                </div>
-        <% include ../../partials/flash-message.ejs %>   
+        <form class="form" action="" method="post">
+            <div class="form-header">
+                <div class="form-title"> Contact us</div>
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="name">Name</label>
+                <input name="first_name" type="name" class="form-control" id="name" aria-describedby="first_name" placeholder="Name.." minlength="3"
+                    maxlength="64" value="" required>
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="surName">Surname</label>
+                <input name="last_name" type="name" class="form-control" id="surName" aria-describedby="last_name" placeholder="Surname.."
+                    minlength="3" maxlength="64" value="" required>
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="email">Email</label>
+                <input name="email" type="email" class="form-control" id="email" aria-describedby="email_address" placeholder="Email.." minlength="3"
+                    maxlength="64" value="" required>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Message</label>
+                <textarea class="form-control-text-area" rows="8" name="message" placeholder="Message..." required></textarea>
+            </div>
+            <div class="form-footer">
+                <button type="reset" class="btn">Reset Changes</button>
+                <button type="submit" class="btn">Send Email</button>
+            </div>
+        </form>
+        <% include ../../partials/flash-message.ejs %>
     </main>
     <% include ../../partials/footer.ejs %>
 </body>
+
 </html>
