@@ -332,7 +332,7 @@ routes.get('/content/manage-all-pages', (req, res) => { //accessible by authed a
 //// for creating users for test purposes only /// remove on production 
 
 routes.get('/create-user', (req, res) => { //accessible by authed admin
-  res.status(200).render('pages/users/create-user.ejs', messages);
+  res.status(200).render('pages/users/create-user.ejs', {messages: req.flash('info')});
 });
 
 const createUserCheck = [
