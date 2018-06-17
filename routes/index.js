@@ -15,6 +15,7 @@ const _ = require('lodash');
 const userRoutes = require('./userRoutes')
 
 
+
 routes.use('/users/', userRoutes);  // all routes in here require authing
 
 routes.get('/', (req, res) => {
@@ -32,10 +33,7 @@ routes.get('/about', (req, res) => {
   return;
 });
 
-routes.get('/test', (req, res) => {
-  res.status(200).render('pages/public/navigationpage');
-  return;
-});
+
 // users //
 ///////////////   Login    //////////////////
 
@@ -86,7 +84,7 @@ routes.get('/enter-password', enterPasswordCheck, (req, res) => {
     res.status(200).render('pages/public/enter-password.ejs', {messages : req.flash('info'), user : {activation_token : req.body.activation_token, email : req.body.email}});
     return;
   }
-  res.status(200).render('pages/public/enter-password.ejs', {user : {activation_token : req.query.token, email : req.query.email}});
+  res.status(200).render('pages/public/enter-password.ejs', {messages: req.flash('info'), user : {activation_token : req.query.token, email : req.query.email}});
 });
 
 postEnterPasswordCheck = [
@@ -318,12 +316,12 @@ routes.post('/verify-change-email', verifyEmailCheckBody, (req, res) => {
 // pages // move to pages/content routes
 
 routes.get('/content/manage-page', (req, res) => {
-  res.status(200).render('pages/content/create-edit-page');
+  res.status(200).render('pages/content/create-edit-page', {messages: req.flash('info')});
   return;
 });
 
 routes.get('/content/manage-all-pages', (req, res) => { //accessible by authed admin
-  res.status(200).render('pages/content/manage-all-pages.ejs');
+  res.status(200).render('pages/content/manage-all-pages.ejs', {messages: req.flash('info')});
   return;
 });
 
@@ -346,7 +344,7 @@ routes.post('/create-user', createUserCheck, (req, res) => { //accessible by aut
   
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    console.log('ERROR',errors)
+    console.log('ERROR',errors.array())
     const userTemp = {email : req.body.email || "", firstName : req.body.first_name || "", lastName: req.body.last_name || ""}
     req.flash("info","Invalid user data", process.env.NODE_ENV === 'development' ? errors.array() : ""); //error.array() for development only
     res.status(200).render('pages/users/create-user.ejs', {messages : req.flash('info'), userTemp});
@@ -363,6 +361,7 @@ routes.post('/create-user', createUserCheck, (req, res) => { //accessible by aut
   };
 
   createUser(user).then(function(userCreated){ // returns user created true or false
+    console.log('userCreated :', userCreated);
     if (userCreated) {
       let mail = new Mail;
       mail.sendVerificationLink(user);
