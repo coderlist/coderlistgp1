@@ -26,7 +26,12 @@ class Logins {
   failedLoginsCheck(req, res, next) {
     return getNumberOfFailedLogins(req.body)
       .then(function (data){
-        console.log('data :', data);
+        if (data.length === 0) {
+          console.log('Invalid username or password');
+          req.flash('info', 'Invalid username or password');
+          res.status(200).redirect('/login')
+          return;
+        }
         if (Date.now() > (Date.parse(data[0].last_failed_login) + (1000 * 60 * 5)) ) {
           resetFailedLogins(req.body);
           return next();
