@@ -10,7 +10,7 @@ CREATE TABLE IF NOT EXISTS users (
   activated BOOLEAN DEFAULT FALSE,
   temporary_token TEXT,
   temporary_token_date TIMESTAMP,
-  creation_date TIMESTAMP,
+  creation_date TIMESTAMP ,
   verified BOOLEAN DEFAULT FALSE,
   old_email TEXT[],   --- {"email":"","token_date":"","token":""}
   forgot_password_token TEXT,
@@ -65,7 +65,10 @@ ALTER TABLE users DROP COLUMN IF EXISTS old_pasword;
 
 ALTER TABLE users ALTER COLUMN password DROP NOT NULL;
 
+ALTER TABLE users ALTER COLUMN creation_date SET DEFAULT now();
+
 ALTER TABLE pages ALTER COLUMN title SET DATA TYPE TEXT;
+
 
 ALTER TABLE users ADD COLUMN IF NOT EXISTS activation_token TEXT,
   ADD COLUMN IF NOT EXISTS is_admin BOOLEAN DEFAULT FALSE,
