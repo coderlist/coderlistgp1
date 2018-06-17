@@ -346,7 +346,7 @@ routes.post('/create-user', createUserCheck, (req, res) => { //accessible by aut
   
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    console.log('ERROR',errors)
+    console.log('ERROR',errors.array())
     const userTemp = {email : req.body.email || "", firstName : req.body.first_name || "", lastName: req.body.last_name || ""}
     req.flash("info","Invalid user data", process.env.NODE_ENV === 'development' ? errors.array() : ""); //error.array() for development only
     res.status(200).render('pages/users/create-user.ejs', {messages : req.flash('info'), userTemp});
@@ -363,6 +363,7 @@ routes.post('/create-user', createUserCheck, (req, res) => { //accessible by aut
   };
 
   createUser(user).then(function(userCreated){ // returns user created true or false
+    console.log('userCreated :', userCreated);
     if (userCreated) {
       let mail = new Mail;
       mail.sendVerificationLink(user);
