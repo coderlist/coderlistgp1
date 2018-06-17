@@ -64,14 +64,17 @@ userRoutes.use(logins.isLoggedIn);
 userRoutes.get('/', (req, res) => {
   res.status(200).render('pages/users/dashboard.ejs', { title: 'Dashboard', 
   active: "active", 
-  username: req.user.first_name + " " + req.user.last_name});
+  username: req.user.first_name + " " + req.user.last_name,
+  messages: req.flash('info')});
   return;
 });
 
 userRoutes.get('/dashboard', (req, res) => {
   res.status(200).render('pages/users/dashboard.ejs', { title: 'Dashboard', 
   active: "active", 
-  username: req.user.first_name + " " + req.user.last_name});
+  username: req.user.first_name + " " + req.user.last_name,
+  messages: req.flash('info')
+});
   return;
 });
 
@@ -82,34 +85,45 @@ userRoutes.get('/manage-nav', function (req, res) {
   res.status(200).render('pages/users/manage-nav.ejs', { 
     title: 'Manage Navigation Items', 
     active: "active", 
-    username: req.user.first_name + " " + req.user.last_name})
+    username: req.user.first_name + " " + req.user.last_name,
+    messages: req.flash('info')
+  })
 })
 userRoutes.get('/manage-pdfs', function (req, res) {
   res.status(200).render('pages/users/manage-pdfs.ejs', { 
     title: 'Manage PDF Files', 
     active: "active", 
-    username: req.user.first_name + " " + req.user.last_name})
+    username: req.user.first_name + " " + req.user.last_name,
+    messages: req.flash('info')
+  })
 })
 userRoutes.get('/profile', function (req, res) {
   res.status(200).render('pages/users/profile.ejs', { 
     title: 'Profile', 
     active: "active", 
-    username: req.user.first_name + " " + req.user.last_name})
+    username: req.user.first_name + " " + req.user.last_name,
+    messages: req.flash('info')
+  })
 })
 userRoutes.get('/:name-page', function (req, res) {
   const url = req.url;
   res.status(200).render('pages/users/edit-page.ejs', { 
     title: req.url === "/create-page" ? "Create Page" : "Edit Page", 
     active: "active", 
-    username: req.user.first_name + " " + req.user.last_name})
+    username: req.user.first_name + " " + req.user.last_name,
+    messages: req.flash('info')
+  })
 })
 userRoutes.get('/:name-user', function (req, res) {
   const url = req.url;
   res.status(200).render('pages/users/edit-user.ejs', { 
     title: req.url === "/create-user" ? "Create User" : "Edit User", 
     active: "active", 
-    username: req.user.first_name + " " + req.user.last_name})
+    username: req.user.first_name + " " + req.user.last_name,
+    messages: req.flash('info')
+  })
 })
+
 
 ////////////////////    Change password while authenticated ////////////////////
 
@@ -227,7 +241,7 @@ userRoutes.post('/create-user', createUserCheck, (req, res) => { //accessible by
       let mail = new Mail;
       mail.sendVerificationLink(user);
       req.flash('info', 'user created and email sent'); // email not currently being sent
-      res.redirect('/users/admin');
+      res.redirect('/users/dashboard');
       return;
     } else {
       console.log("There was a create user error", err)
@@ -282,7 +296,8 @@ userRoutes.get('/logout', logins.isLoggedIn, logins.logUserOut, (req, res) => { 
 
 userRoutes.get('/edit-user', (req, res) => { //accessible by authed admin
   res.status(200).render('pages/users/edit-user.ejs', {
-    user: req.body.userToDelete
+    user: req.body.userToDelete,
+    messages: req.flash('info')
   });
   // confirm page for deleting user. only accessible by authenticated admin.
 });
@@ -293,7 +308,7 @@ userRoutes.post('/delete-user', (req, res) => {
 });
 
 userRoutes.get('/change-password', (req, res) => {
-  res.status(200).render('pages/users/changePassword.ejs');
+  res.status(200).render('pages/users/changePassword.ejs', {messages: req.flash('info')});
 });
 
 ////////////////// Change email whilst validated  //////////////////////
@@ -302,7 +317,9 @@ userRoutes.get('/change-email-request', (req, res) => {
   res.status(200).render('pages/users/change-email-request.ejs', {
     title: `Change Email`,
     username: req.user.first_name + " " + req.user.last_name,
-    active: "active"});
+    active: "active",
+    messages: req.flash('info')
+  });
 });
 
 changeEmailCheck = [
@@ -372,7 +389,7 @@ userRoutes.post('/change-email-request', changeEmailCheck, (req, res) => {
 
 
 userRoutes.get('/upload-images', function (req, res) {
-  res.status(200).render('pages/users/upload-images.ejs')
+  res.status(200).render('pages/users/upload-images.ejs', {messages: req.flash('info')})
 })
 
 
