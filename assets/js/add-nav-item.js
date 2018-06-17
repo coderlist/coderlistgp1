@@ -1,3 +1,30 @@
+/* Fetch JSON file */
+const init = {
+    method: 'GET',
+    headers: {
+        'Content-type': 'application/json'
+    },
+    mode: 'same-origin',
+    credentials: 'include'
+}
+
+fetch('/users/page-navmenu-request', init)
+        .then(function(response) {
+            return response.json();
+        }).then(function(data){
+            data.forEach(page => {
+                pageNames.push(page.page);
+                console.log(page.children !== null);
+                if(page.children !== null){
+                    parentPageName.push(page.page);
+                    page.children.forEach(child => {
+                        childPageName.push(child.page);
+                    });
+                }
+            });
+        }).catch(function(error){
+            console.log("It wasn't possible to return any data from the server: ", error);
+        });
 /*
  *   Variables for
  *   Main menu navigation table
@@ -23,7 +50,9 @@ const inputFieldOrderNumber = "inputFieldOrderNumber";
    For the options in the menu.
    Hardcoding an array of names to see how it works.
 */
-const arrNames = ["no-link", "about", "workshops"];
+const pageNames = ['no-link'];
+const parentPageName = [];
+const childPageName = [];
 /* Creates Input Field */
 const createInputFieldPageName = function (inputFieldName) {
     let input = "";
@@ -39,22 +68,29 @@ const createInputFieldPageName = function (inputFieldName) {
 };
 /* Creates selection control menu */
 const createSelectionMenu = function (pageName) {
-    const options = arrNames.map((option, index) => {
-        return `<option value="${index}">${option}</option>`
-    });
+    let options = '';
     let select = ``;
     switch(pageName){
         case "parentMenuItemPage":
+            options = parentPageName.map((option, index) => {
+                return `<option value="${index}">${option}</option>`
+            });
             select = `<td><select name="parent_page" class="form-control custom-select">
             ${options}
             </select></td>`;
             break;
         case "childMenuItemPage":
+            options = childPageName.map((option, index) => {
+                return `<option value="${index}">${option}</option>`
+            });
             select = `<td><select name="child_page" class="form-control custom-select">
             ${options}
             </select></td>`;
             break;
         default:
+            options = pageNames.map((option, index) => {
+                return `<option value="${index}">${option}</option>`
+            });
             select = `<td><select name="menu_page" class="form-control custom-select">
             ${options}
             </select></td>`;

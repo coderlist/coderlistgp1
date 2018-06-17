@@ -369,50 +369,50 @@ userRoutes.post('/upload-images', upload.single('image'), (req, res) => {
 userRoutes.get('/page-navmenu-request', function (req, res) {
   const pages = [{
       page: "Home",
-      link: "/",
+      link: "Home",
       order: "1",
       children: null
     },
     {
       page: "About",
-      link: "/about",
+      link: "About",
       order: "2",
       children: null
     },
     {
-      page: "WorkShops",
+      page: "Workshops",
       link: "no-link",
       order: "3",
       children: [{
           page: "Private Sessions",
-          link: "./test",
+          link: "Private sessions",
           order: "1"
         },
         {
           page: "Nursery Level",
-          link: "/test",
+          link: "Nursery level",
           order: "2"
         },
         {
           page: "Small Groups",
-          link: "/test",
+          link: "Small groups",
           order: "3"
         },
         {
           page: "Weekly Classes",
-          link: "/test",
+          link: "Weekly classes",
           order: "4"
         }
       ]
     },
     {
-      page: "Contact Us",
-      link: "./test",
+      page: "Contact",
+      link: "Contact",
       order: "4",
       children: null
     }
   ]
-  console.log('JSON.stringify :', JSON.stringify);
+  console.log('JSON.stringify :', JSON.stringify(pages));
   res.status(200).send(JSON.stringify(pages));
 })
 
