@@ -61,14 +61,17 @@ const upload = multer({
 });
 
 userRoutes.use(logins.isLoggedIn);
-
 userRoutes.get('/', (req, res) => {
-  res.status(200).render('pages/users/dashboard.ejs');
+  res.status(200).render('pages/users/dashboard.ejs', { title: 'Dashboard', 
+  active: "active", 
+  username: req.user.first_name + " " + req.user.last_name});
   return;
 });
 
 userRoutes.get('/dashboard', (req, res) => {
-  res.status(200).render('pages/users/dashboard.ejs');
+  res.status(200).render('pages/users/dashboard.ejs', { title: 'Dashboard', 
+  active: "active", 
+  username: req.user.first_name + " " + req.user.last_name});
   return;
 });
 
@@ -76,25 +79,45 @@ userRoutes.get('/dashboard', (req, res) => {
 /////////////////////// Admin page routes /////////////////////
 
 userRoutes.get('/manage-nav', function (req, res) {
-  res.status(200).render('pages/users/manage-nav.ejs')
+  res.status(200).render('pages/users/manage-nav.ejs', { 
+    title: 'Manage Navigation Items', 
+    active: "active", 
+    username: req.user.first_name + " " + req.user.last_name})
 })
 userRoutes.get('/manage-pdfs', function (req, res) {
-  res.status(200).render('pages/users/manage-pdfs.ejs')
+  res.status(200).render('pages/users/manage-pdfs.ejs', { 
+    title: 'Manage PDF Files', 
+    active: "active", 
+    username: req.user.first_name + " " + req.user.last_name})
 })
 userRoutes.get('/profile', function (req, res) {
-  res.status(200).render('pages/users/profile.ejs')
+  res.status(200).render('pages/users/profile.ejs', { 
+    title: 'Profile', 
+    active: "active", 
+    username: req.user.first_name + " " + req.user.last_name})
 })
 userRoutes.get('/:name-page', function (req, res) {
-  res.status(200).render('pages/users/edit-page.ejs')
+  const url = req.url;
+  res.status(200).render('pages/users/edit-page.ejs', { 
+    title: req.url === "/create-page" ? "Create Page" : "Edit Page", 
+    active: "active", 
+    username: req.user.first_name + " " + req.user.last_name})
 })
 userRoutes.get('/:name-user', function (req, res) {
-  res.status(200).render('pages/users/create-user.ejs')
+  const url = req.url;
+  res.status(200).render('pages/users/edit-user.ejs', { 
+    title: req.url === "/create-user" ? "Create User" : "Edit User", 
+    active: "active", 
+    username: req.user.first_name + " " + req.user.last_name})
 })
 
 ////////////////////    Change password while authenticated ////////////////////
 
 userRoutes.get('/change-password', (req, res) => {
   res.status(200).render('pages/users/change-password', {
+    title: `Change Password`,
+    active: "active",
+    username: req.user.first_name + " " + req.user.last_name,
     messages: req.flash('info')
   });
   return;
@@ -276,7 +299,10 @@ userRoutes.get('/change-password', (req, res) => {
 ////////////////// Change email whilst validated  //////////////////////
 
 userRoutes.get('/change-email-request', (req, res) => {
-  res.status(200).render('pages/users/change-email-request.ejs');
+  res.status(200).render('pages/users/change-email-request.ejs', {
+    title: `Change Email`,
+    username: req.user.first_name + " " + req.user.last_name,
+    active: "active"});
 });
 
 changeEmailCheck = [
@@ -409,6 +435,32 @@ userRoutes.get('/page-navmenu-request', function (req, res) {
       link: "Contact",
       order: "4",
       children: null
+    },
+    {
+      page: "Another Page",
+      link: "no-link",
+      order: "3",
+      children: [{
+          page: "New Sessions",
+          link: "New sessions",
+          order: "1"
+        },
+        {
+          page: "New Level",
+          link: "New level",
+          order: "2"
+        },
+        {
+          page: "New Groups",
+          link: "New groups",
+          order: "3"
+        },
+        {
+          page: "New Classes",
+          link: "New classes",
+          order: "4"
+        }
+      ]
     }
   ]
   console.log('JSON.stringify :', JSON.stringify(pages));
@@ -419,7 +471,8 @@ userRoutes.get('/page-navmenu-request', function (req, res) {
 
 userRoutes.all('*', (req, res) => {
   res.status(200).render('pages/public/unknown.ejs', {
-    url: req.url
+    url: req.url,
+    title: '404 Not Found'
   });
   return;
 });

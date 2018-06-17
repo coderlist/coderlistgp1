@@ -14,7 +14,11 @@
                         <div class="col-md-12">
                             <form action="https://httpbin.org/post" method="post" class="card ">
                                 <div class="card-header">
-                                    <h3 class="card-title">This title should change based on what the user wants: Create or Edit Page</h3>
+                                        <% if (title === "Create Page") { %> 
+                                            <h3 class="card-title">Create Page</h3>
+                                        <% } else { %>
+                                            <h3 class="card-title">Edit Page</h3>
+                                        <% } %> 
                                 </div>
                                 <div class="form-group ">
                                     <label class="form-label">Title</label>
@@ -44,10 +48,16 @@
                                     </div>
                                 </div>
                                 <div class="card-footer text-right">
+                                    <% if (title === "Edit Page") { %> 
                                     <button name="delete_page" type="button" class="btn btn-danger delete-this">Delete Page</button>
+                                    <% } %>
                                     <button name="save_draft" type="submit" class="btn btn-primary">Save Draft</button>
+                                    <% if (title === "Create Page") { %> 
                                     <button name="publish_page" type="submit" class="btn btn-primary">Publish</button>
+                                    <% } %>
+                                    <% if (title === "Edit Page") { %> 
                                     <button name="update_page" type="submit" class="btn btn-primary">Update</button>
+                                    <% } %>
                                     <label class="custom-control custom-checkbox">
                                         <input type="checkbox" class="custom-control-input" name="publish_edit_page" value="option1" checked="">
                                         <span class="custom-control-label">Publish</span>
