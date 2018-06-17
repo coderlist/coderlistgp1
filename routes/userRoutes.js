@@ -315,7 +315,6 @@ userRoutes.get('/page-navmenu-request', function (req, res){
         link : `./user/pages/:Page_5`
       }
     ]
-    console.log('JSON.stringify :', JSON.stringify);
   res.status(200).send(JSON.stringify(fakeData));
 
   })
