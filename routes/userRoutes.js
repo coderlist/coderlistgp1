@@ -63,12 +63,12 @@ const upload = multer({
 userRoutes.use(logins.isLoggedIn);
 
 userRoutes.get('/', (req, res) => {
-  res.status(200).render('pages/users/dashboard.ejs');
+  res.status(200).render('pages/users/dashboard.ejs', {messages: req.flash('info')});
   return;
 });
 
 userRoutes.get('/dashboard', (req, res) => {
-  res.status(200).render('pages/users/dashboard.ejs');
+  res.status(200).render('pages/users/dashboard.ejs', {messages: req.flash('info')});
   return;
 });
 
@@ -76,19 +76,19 @@ userRoutes.get('/dashboard', (req, res) => {
 /////////////////////// Admin page routes /////////////////////
 
 userRoutes.get('/manage-nav', function (req, res) {
-  res.status(200).render('pages/users/manage-nav.ejs')
+  res.status(200).render('pages/users/manage-nav.ejs', {messages: req.flash('info')})
 })
 userRoutes.get('/manage-pdfs', function (req, res) {
-  res.status(200).render('pages/users/manage-pdfs.ejs')
+  res.status(200).render('pages/users/manage-pdfs.ejs', {messages: req.flash('info')})
 })
 userRoutes.get('/profile', function (req, res) {
-  res.status(200).render('pages/users/profile.ejs')
+  res.status(200).render('pages/users/profile.ejs', {messages: req.flash('info')})
 })
 userRoutes.get('/:name-page', function (req, res) {
-  res.status(200).render('pages/users/edit-page.ejs')
+  res.status(200).render('pages/users/edit-page.ejs', {messages: req.flash('info')})
 })
 userRoutes.get('/:name-user', function (req, res) {
-  res.status(200).render('pages/users/create-user.ejs')
+  res.status(200).render('pages/users/create-user.ejs', {messages: req.flash('info')})
 })
 
 ////////////////////    Change password while authenticated ////////////////////
@@ -204,7 +204,7 @@ userRoutes.post('/create-user', createUserCheck, (req, res) => { //accessible by
       let mail = new Mail;
       mail.sendVerificationLink(user);
       req.flash('info', 'user created and email sent'); // email not currently being sent
-      res.redirect('/users/admin');
+      res.redirect('/users/dashboard');
       return;
     } else {
       console.log("There was a create user error", err)
@@ -259,7 +259,8 @@ userRoutes.get('/logout', logins.isLoggedIn, logins.logUserOut, (req, res) => { 
 
 userRoutes.get('/edit-user', (req, res) => { //accessible by authed admin
   res.status(200).render('pages/users/edit-user.ejs', {
-    user: req.body.userToDelete
+    user: req.body.userToDelete,
+    messages: req.flash('info')
   });
   // confirm page for deleting user. only accessible by authenticated admin.
 });
@@ -270,13 +271,13 @@ userRoutes.post('/delete-user', (req, res) => {
 });
 
 userRoutes.get('/change-password', (req, res) => {
-  res.status(200).render('pages/users/changePassword.ejs');
+  res.status(200).render('pages/users/changePassword.ejs', {messages: req.flash('info')});
 });
 
 ////////////////// Change email whilst validated  //////////////////////
 
 userRoutes.get('/change-email-request', (req, res) => {
-  res.status(200).render('pages/users/change-email-request.ejs');
+  res.status(200).render('pages/users/change-email-request.ejs', {messages: req.flash('info')});
 });
 
 changeEmailCheck = [
@@ -346,7 +347,7 @@ userRoutes.post('/change-email-request', changeEmailCheck, (req, res) => {
 
 
 userRoutes.get('/upload-images', function (req, res) {
-  res.status(200).render('pages/users/upload-images.ejs')
+  res.status(200).render('pages/users/upload-images.ejs', {messages: req.flash('info')})
 })
 
 

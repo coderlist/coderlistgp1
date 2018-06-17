@@ -15,6 +15,7 @@ const _ = require('lodash');
 const userRoutes = require('./userRoutes')
 
 
+
 routes.use('/users/', userRoutes);  // all routes in here require authing
 
 routes.get('/', (req, res) => {
@@ -83,7 +84,7 @@ routes.get('/enter-password', enterPasswordCheck, (req, res) => {
     res.status(200).render('pages/public/enter-password.ejs', {messages : req.flash('info'), user : {activation_token : req.body.activation_token, email : req.body.email}});
     return;
   }
-  res.status(200).render('pages/public/enter-password.ejs', {user : {activation_token : req.query.token, email : req.query.email}});
+  res.status(200).render('pages/public/enter-password.ejs', {messages: req.flash('info'), user : {activation_token : req.query.token, email : req.query.email}});
 });
 
 postEnterPasswordCheck = [
@@ -315,12 +316,12 @@ routes.post('/verify-change-email', verifyEmailCheckBody, (req, res) => {
 // pages // move to pages/content routes
 
 routes.get('/content/manage-page', (req, res) => {
-  res.status(200).render('pages/content/create-edit-page');
+  res.status(200).render('pages/content/create-edit-page', {messages: req.flash('info')});
   return;
 });
 
 routes.get('/content/manage-all-pages', (req, res) => { //accessible by authed admin
-  res.status(200).render('pages/content/manage-all-pages.ejs');
+  res.status(200).render('pages/content/manage-all-pages.ejs', {messages: req.flash('info')});
   return;
 });
 
