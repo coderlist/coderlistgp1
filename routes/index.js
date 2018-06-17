@@ -32,10 +32,7 @@ routes.get('/about', (req, res) => {
   return;
 });
 
-routes.get('/test', (req, res) => {
-  res.status(200).render('pages/public/navigationpage');
-  return;
-});
+
 // users //
 ///////////////   Login    //////////////////
 

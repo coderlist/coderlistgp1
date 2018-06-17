@@ -1,13 +1,3 @@
-/* Fetch JSON FILE */
-fetch('/page-navmenu-request')
-    .then((res) => {
-        return res;
-    })
-    .then((navitems) => {
-        console.log(navitems);
-    });
-
-
 /*
  *   Variables for
  *   Main menu navigation table
@@ -103,7 +93,6 @@ const menuItemList = function () {
 };
 /* Submenu items have two extra elements */
 const subMenuItemList = function () {
-    
     let html = '';
     for (let i = 0; i < 5; i++) {
         let thisNode = '';

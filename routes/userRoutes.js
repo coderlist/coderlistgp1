@@ -62,10 +62,34 @@ const upload = multer({
 
 userRoutes.use(logins.isLoggedIn);
 
+userRoutes.get('/', (req, res) => {
+  res.status(200).render('pages/users/dashboard.ejs');
+  return;
+});
+
 userRoutes.get('/dashboard', (req, res) => {
   res.status(200).render('pages/users/dashboard.ejs');
   return;
 });
+
+
+/////////////////////// Admin page routes /////////////////////
+
+userRoutes.get('/manage-nav', function (req, res) {
+  res.status(200).render('pages/users/manage-nav.ejs')
+})
+userRoutes.get('/manage-pdfs', function (req, res) {
+  res.status(200).render('pages/users/manage-pdfs.ejs')
+})
+userRoutes.get('/profile', function (req, res) {
+  res.status(200).render('pages/users/profile.ejs')
+})
+userRoutes.get('/:name-page', function (req, res) {
+  res.status(200).render('pages/users/edit-page.ejs')
+})
+userRoutes.get('/:name-user', function (req, res) {
+  res.status(200).render('pages/users/create-user.ejs')
+})
 
 ////////////////////    Change password while authenticated ////////////////////
 
@@ -337,6 +361,8 @@ userRoutes.post('/upload-images', upload.single('image'), (req, res) => {
     return res.status(200).redirect('/users/upload-images')
   }
 })
+
+
 
 
 userRoutes.get('/page-navmenu-request', function (req, res) {
