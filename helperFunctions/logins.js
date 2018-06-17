@@ -31,7 +31,7 @@ class Logins {
           resetFailedLogins(req.body);
           return next();
         }   
-        else if (data[0].failed_login_attempts < 10 || data.failed_login_attempts === null) {
+        else if (data[0].failed_login_attempts < 10 || data[0].failed_login_attempts === null) {
           console.log('login attempt allowed');
           return next();
         }
