@@ -401,7 +401,10 @@ routes.post('/create-user', createUserCheck, (req, res) => { //accessible by aut
 
 
 routes.all('*', (req, res) => {
-  res.status(200).render('pages/public/unknown.ejs', { url: req.url });
+  res.status(200).render('pages/public/unknown.ejs', { 
+    title: '404 Not Found',
+    url: req.url 
+  });
   return;
 });
 module.exports = routes;

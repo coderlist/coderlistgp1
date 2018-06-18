@@ -61,14 +61,18 @@ const upload = multer({
 });
 
 userRoutes.use(logins.isLoggedIn);
-
 userRoutes.get('/', (req, res) => {
-  res.status(200).render('pages/users/dashboard.ejs', {messages: req.flash('info')});
+  res.status(200).render('pages/users/dashboard.ejs', { title: 'Dashboard', 
+  active: "active",
+  messages: req.flash('info')});
   return;
 });
 
 userRoutes.get('/dashboard', (req, res) => {
-  res.status(200).render('pages/users/dashboard.ejs', {messages: req.flash('info')});
+  res.status(200).render('pages/users/dashboard.ejs', { title: 'Dashboard', 
+  active: "active",
+  messages: req.flash('info')
+});
   return;
 });
 
@@ -76,25 +80,50 @@ userRoutes.get('/dashboard', (req, res) => {
 /////////////////////// Admin page routes /////////////////////
 
 userRoutes.get('/manage-nav', function (req, res) {
-  res.status(200).render('pages/users/manage-nav.ejs', {messages: req.flash('info')})
+  res.status(200).render('pages/users/manage-nav.ejs', { 
+    title: 'Manage Navigation Items', 
+    active: "active", 
+    messages: req.flash('info')
+  })
 })
 userRoutes.get('/manage-pdfs', function (req, res) {
-  res.status(200).render('pages/users/manage-pdfs.ejs', {messages: req.flash('info')})
+  res.status(200).render('pages/users/manage-pdfs.ejs', { 
+    title: 'Manage PDF Files', 
+    active: "active", 
+    messages: req.flash('info')
+  })
 })
 userRoutes.get('/profile', function (req, res) {
-  res.status(200).render('pages/users/profile.ejs', {messages: req.flash('info')})
+  res.status(200).render('pages/users/profile.ejs', { 
+    title: 'Profile', 
+    active: "active", 
+    messages: req.flash('info')
+  })
 })
 userRoutes.get('/:name-page', function (req, res) {
-  res.status(200).render('pages/users/edit-page.ejs', {messages: req.flash('info')})
+  const url = req.url;
+  res.status(200).render('pages/users/edit-page.ejs', { 
+    title: url === "/create-page" ? "Create Page" : "Edit Page", 
+    active: "active", 
+    messages: req.flash('info')
+  })
 })
 userRoutes.get('/:name-user', function (req, res) {
-  res.status(200).render('pages/users/create-user.ejs', {messages: req.flash('info')})
+  const url = req.url;
+  res.status(200).render('pages/users/edit-user.ejs', { 
+    title: url === "/create-user" ? "Create User" : "Edit User", 
+    active: "active", 
+    messages: req.flash('info')
+  })
 })
+
 
 ////////////////////    Change password while authenticated ////////////////////
 
 userRoutes.get('/change-password', (req, res) => {
   res.status(200).render('pages/users/change-password', {
+    title: `Change Password`,
+    active: "active",
     messages: req.flash('info')
   });
   return;
@@ -277,7 +306,11 @@ userRoutes.get('/change-password', (req, res) => {
 ////////////////// Change email whilst validated  //////////////////////
 
 userRoutes.get('/change-email-request', (req, res) => {
-  res.status(200).render('pages/users/change-email-request.ejs', {messages: req.flash('info')});
+  res.status(200).render('pages/users/change-email-request.ejs', {
+    title: `Change Email`,
+    active: "active",
+    messages: req.flash('info')
+  });
 });
 
 changeEmailCheck = [
@@ -410,6 +443,32 @@ userRoutes.get('/page-navmenu-request', function (req, res) {
       link: "Contact",
       order: "4",
       children: null
+    },
+    {
+      page: "Another Page",
+      link: "no-link",
+      order: "3",
+      children: [{
+          page: "New Sessions",
+          link: "New sessions",
+          order: "1"
+        },
+        {
+          page: "New Level",
+          link: "New level",
+          order: "2"
+        },
+        {
+          page: "New Groups",
+          link: "New groups",
+          order: "3"
+        },
+        {
+          page: "New Classes",
+          link: "New classes",
+          order: "4"
+        }
+      ]
     }
   ]
   console.log('JSON.stringify :', JSON.stringify(pages));
@@ -420,7 +479,8 @@ userRoutes.get('/page-navmenu-request', function (req, res) {
 
 userRoutes.all('*', (req, res) => {
   res.status(200).render('pages/public/unknown.ejs', {
-    url: req.url
+    url: req.url,
+    title: '404 Not Found'
   });
   return;
 });

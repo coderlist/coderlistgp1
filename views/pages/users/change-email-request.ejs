@@ -11,28 +11,7 @@
         <div class="my-3 my-md-5">
             <div class="container">
                 <div class="row">
-                    <div class="col-md-3">
-                        <h3 class="page-title mb-5">Profile</h3>
-                        <div>
-                            <div class="list-group list-group-transparent mb-0">
-                                <a href="/users/profile" class="list-group-item list-group-item-action d-flex align-items-center active">
-                                    <span class="icon mr-3">
-                                        <i class="fe fe-user"></i>
-                                    </span>Ginny Bradley
-                                </a>
-                                <a href="/users/change-password" class="list-group-item list-group-item-action d-flex align-items-center">
-                                    <span class="icon mr-3">
-                                        <i class="fe fe-edit"></i>
-                                    </span>Change Password
-                                </a>
-                                <a href="/users/change-email-request" class="list-group-item list-group-item-action d-flex align-items-center">
-                                    <span class="icon mr-3">
-                                        <i class="fe fe-mail"></i>
-                                    </span>Change Email
-                                </a>
-                            </div>
-                        </div>
-                    </div>
+                    <% include ../partials/profile-nav.ejs %>
                     <div class="col-lg-9">
                         <form class="card" action="" method="post">
                             <div class="card-body">

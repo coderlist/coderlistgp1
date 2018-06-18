@@ -7,6 +7,7 @@ class Logins {
     // if user is authenticated in the session, carry on
     //  Uncomment the below if statement when Passportjs is installed *************
     if (req.isAuthenticated()) {
+      res.locals.username = req.user.first_name + " " + req.user.last_name;
       return next();
     }
     // if they aren't redirect them to the home page

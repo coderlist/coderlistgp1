@@ -13,14 +13,20 @@ fetch('/users/page-navmenu-request', init)
             return response.json();
         }).then(function(data){
             data.forEach(page => {
-                pageNames.push(page.page);
-                console.log(page.children !== null);
+                console.log(page.page);
+                /* If parent page has children */
                 if(page.children !== null){
+                    /* Get page name */
                     parentPageName.push(page.page);
+                    /* Get children pages */
                     page.children.forEach(child => {
                         childPageName.push(child.page);
+                        console.log(child.page);
                     });
+                    
                 }
+                /* Get Parent pages who don't have Children */
+                pageNames.push(page.page);
             });
         }).catch(function(error){
             console.log("It wasn't possible to return any data from the server: ", error);
