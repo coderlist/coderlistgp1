@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <% include ../partials/head.ejs %>
+</head>
+
+<body>
+    <% include ../partials/header.ejs %>
+        <% include ../partials/delete-alert-message.ejs %>
+            <div class="my-3 my-md-5">
+                <div class="container">
+                    <div class="page-header">
+                        <h1 class="page-title">
+                            Manage Navigation Items
+                        </h1>
+                    </div>
+                    <div class="row row-cards row-deck">
+                        <div class="col-md-12">
+                            <div class="card">
+                                <div class="card-header manage-navigation-items-header">
+                                    <h3 class="card-title">Main menu</h3>
+                                    <div class="text-right">
+                                        <button class="btn btn-primary ml-auto add-new-item-button menu-item-button">Add new item</button>
+                                    </div>
+                                </div>
+                                <div class="table-responsive">
+                                    <table class="table card-table table-vcenter text-nowrap">
+                                        <thead>
+                                            <tr>
+                                                <th>Title</th>
+                                                <th>Page</th>
+                                                <th>Order</th>
+                                                <th></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="table-menu-items">
+                                            <% for(var i = 0; i < 2; i++){ %> 
+                                            <tr>
+                                                <td>
+                                                    <input type="text" class="form-control" name="page_name" placeholder="Workshops">
+                                                </td>
+                                                <td>
+                                                    <select name="menu_page" class="form-control custom-select">
+                                                        <option value="1">no-link</option>
+                                                        <option value="2">about</option>
+                                                        <option value="3">workshops</option>
+                                                    </select>
+                                                </td>
+                                                <td>
+                                                    <input type="text" class="form-control page-order" name="page_order" placeholder="1">
+                                                </td>
+                                                <td>
+                                                    <a href="javascript:void(0)" class="btn btn-secondary btn-sm">Save</a>
+                                                </td>
+                                            </tr>
+                                            <% }%>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="card">
+                                <div class="card-header manage-navigation-items-header">
+                                    <h3 class="card-title">Sub menu</h3>
+                                    <div class="text-right">
+                                        <button class="btn btn-primary ml-auto add-new-item-button sub-menu-item-button">Add new item</button>
+                                    </div>
+                                </div>
+                                <div class="table-responsive">
+                                    <table class="table card-table table-vcenter text-nowrap ">
+                                        <thead>
+                                            <tr>
+                                                <th>Title</th>
+                                                <th>Parent</th>
+                                                <th>Page</th>
+                                                <th>Order</th>
+                                                <th></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="table-sub-menu-items">
+                                            <% for(var i = 0; i < 2; i++){ %> 
+                                            <tr>
+                                                <td>
+                                                    <input type="text" class="form-control" name="page_name" placeholder="Nursery Classes">
+                                                </td>
+                                                <td>
+                                                    <select name="parent_page" class=" custom-select">
+                                                        <option value="1">Workshops</option>
+                                                        <option value="2">about</option>
+                                                        <option value="3">workshops</option>
+                                                    </select>
+                                                </td>
+                                                <td>
+                                                    <select name="child_page" class="form-control custom-select">
+                                                        <option value="1">Nursery Classes</option>
+                                                        <option value="2">about</option>
+                                                        <option value="3">workshops</option>
+                                                    </select>
+                                                </td>
+                                                <td>
+                                                    <input type="text" class="form-control page-order" name="page_order" placeholder="1">
+                                                </td>
+                                                <td>
+                                                    <a href="javascript:void(0)" class="btn btn-secondary btn-sm">Save</a>
+                                                </td>
+                                            </tr>
+                                            <% }%>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <% include ../partials/footer.ejs %>
+            <!-- Scripts -->
+            <script src="/js/add-nav-item.js"></script>
+</body>
+
+</html>
