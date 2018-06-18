@@ -38,11 +38,19 @@ routes.get('/about', (req, res) => {
 ///////////////   Login    //////////////////
 
 routes.get('/login', (req, res) => {
+  const sess = req.session
   if (req.isAuthenticated()){
     res.redirect('./users/dashboard');
     return;
   }
+  
+  console.log(sess.id)
+  console.log(sess.cookie)
+  
   res.status(200).render('pages/public/login', { messages: req.flash('message')} );
+  sess.destroy(function(err){
+    console.log('cannot access session here')
+  })
   return;
 });
 
@@ -113,6 +121,7 @@ routes.post('/enter-password', postEnterPasswordCheck, (req, res) => {
     activation_token : req.body.activation_token,
     password : req.body.password
   }
+  console.log('USERR',user)
   console.log("gets here");
   users.verifyUser(user).then(response => {
     console.log('RESPONSE', response)
@@ -196,7 +205,6 @@ checkQueryResetPassword = [
 
 routes.get('/reset-password', checkQueryResetPassword, (req, res) => {
   console.log('req.query :', req.query);
-  console.log('req.body',req.body)
   user = {
     forgot_password_token : req.query.forgot_password_token,
     email : req.query.email
@@ -249,8 +257,8 @@ routes.post('/reset-password', resetPasswordCheck, (req, res) => {
       req.flash('info', 'Your password has been changed. Please login');
         res.status(200).redirect('/login');
         return;
-    }).catch(e => res.status(500).send(e) )
-  });
+    }).catch(e => res.status(500).send(e.stack) )
+  }).catch(e => res.status(500).send(e.stack) )
 })
   
   

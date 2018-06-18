@@ -300,11 +300,11 @@ const user = {
    * and update email if token matches
    */
 
-  insertOldPasswordObject(body) {
-    return findByUsername('users', body.email).then(dbUser => {
+  insertOldPasswordObject(query) {
+    return findByUsername('users', query.email).then(dbUser => {
       return queryHelper(`update users set old_password = old_password ||` +
           ` array['{ "old_val":"${dbUser.password}", "token_date": ` +
-          `"' || now() || '", "token":"${body.forgot_password_token}" }']` +
+          `"' || now() || '", "token":"${query.forgot_password_token}" }']` +
           `::json[] where email='${dbUser.email}';`)
         .then(response => true)
       // .catch(e => {throw e})
