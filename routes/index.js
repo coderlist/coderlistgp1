@@ -47,7 +47,7 @@ routes.get('/login', (req, res) => {
   console.log(sess.id)
   console.log(sess.cookie)
   
-  res.status(200).render('pages/public/login', { messages: req.flash('message')} );
+  res.status(200).render('pages/public/login', { title: 'Login', messages: req.flash('message')} );
   sess.destroy(function(err){
     console.log('cannot access session here')
   })
@@ -146,7 +146,7 @@ routes.post('/enter-password', postEnterPasswordCheck, (req, res) => {
 routes.get('/reset-password-request', (req, res) => {
   // **create a page with two fields to enter email addresses
   // **ensure that emails both match before being able to post
-  res.status(200).render('pages/public/reset-password-request', {messages : req.flash('info')});
+  res.status(200).render('pages/public/reset-password-request', { title: 'Reset Password', messages : req.flash('info')});
 });  
 
 
@@ -210,7 +210,7 @@ routes.get('/reset-password', checkQueryResetPassword, (req, res) => {
     email : req.query.email
   }
   insertOldPasswordObject(user).then(response =>{
-    res.status(200).render('pages/public/reset-password', {messages : req.flash('info'), user : user});
+    res.status(200).render('pages/public/reset-password', {title: 'Reset Password', messages : req.flash('info'), user : user});
   }).catch(e => res.status(500).send(e.stack))
   
 });  
@@ -276,10 +276,10 @@ routes.get('/verify-change-email', verifyEmailCheckQuery, (req, res) => {
   const user = {old_email : req.query.old_email, new_email : req.query.new_email, email_change_token : req.query.email_change_token}
   if (!errors.isEmpty()) {
     req.flash("info","Invalid credentials. Please recheck authorisation link or contact your administrator");
-    res.status(200).render('pages/public/verify-change-email', {messages : req.flash('info'), user : user});
+    res.status(200).render('pages/public/verify-change-email', {title: 'Verify Email', messages : req.flash('info'), user : user});
     return;
   }
-  res.status(200).render('pages/public/verify-change-email.ejs', {messages : req.flash('info'), user : {email_change_token: req.query.email_change_token, old_email: req.query.old_email, new_email : req.query.new_email || "", email_change_token : req.query.email_change_token || ""}});
+  res.status(200).render('pages/public/verify-change-email.ejs', {title: 'Verify Email', messages : req.flash('info'), user : {email_change_token: req.query.email_change_token, old_email: req.query.old_email, new_email : req.query.new_email || "", email_change_token : req.query.email_change_token || ""}});
 });
   
 verifyEmailCheckBody = [
@@ -338,7 +338,7 @@ routes.get('/content/manage-all-pages', (req, res) => { //accessible by authed a
 //// for creating users for test purposes only /// remove on production 
 
 routes.get('/create-user', (req, res) => { //accessible by authed admin
-  res.status(200).render('pages/users/create-user.ejs', {messages: req.flash('info')});
+  res.status(200).render('pages/users/create-user.ejs', {title: 'Create User', active: 'active', username: 'Ginny Bradley', messages: req.flash('info')});
 });
 
 const createUserCheck = [
