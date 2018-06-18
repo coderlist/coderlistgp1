@@ -359,7 +359,7 @@ userRoutes.post('/change-email-request', changeEmailCheck, (req, res) => {
       console.log('datas :', data);
       if (!data) {
         req.flash('info', 'Invalid credentials')
-        res.status(200).redirect('/users/change-email-request.ejs', );
+        res.status(200).redirect('/users/change-email-request.ejs');
         return;
       }
       let mail = new Mail();
