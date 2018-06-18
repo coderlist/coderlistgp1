@@ -108,14 +108,7 @@ userRoutes.get('/:name-page', function (req, res) {
     messages: req.flash('info')
   })
 })
-userRoutes.get('/:name-user', function (req, res) {
-  const url = req.url;
-  res.status(200).render('pages/users/edit-user.ejs', { 
-    title: url === "/create-user" ? "Create User" : "Edit User", 
-    active: "active", 
-    messages: req.flash('info')
-  })
-})
+
 
 
 ////////////////////    Change password while authenticated ////////////////////
@@ -191,9 +184,14 @@ userRoutes.post('/change-password', passwordCheck, (req, res) => {
 
 /////////////       Create users           /////////////////////////
 
-userRoutes.get('/create-user', (req, res) => { //accessible by authed admin
-  res.status(200).render('pages/users/create-user.ejs');
-});
+userRoutes.get('/:name-user', function (req, res) {
+  const url = req.url;
+  res.status(200).render('pages/users/edit-user.ejs', { 
+    title: url === "/create-user" ? "Create User" : "Edit User", 
+    active: "active", 
+    messages: req.flash('info')
+  })
+})
 
 const createUserCheck = [
   body('email').isEmail().normalizeEmail(),
