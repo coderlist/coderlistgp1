@@ -62,7 +62,8 @@ const upload = multer({
 
 userRoutes.use(logins.isLoggedIn);
 userRoutes.get('/', (req, res) => {
-  res.status(200).render('pages/users/dashboard.ejs', { title: 'Dashboard', 
+  res.status(200).render('pages/users/dashboard.ejs', { 
+  title: 'Dashboard', 
   active: "active",
   messages: req.flash('info')});
   return;
@@ -71,8 +72,9 @@ userRoutes.get('/', (req, res) => {
 userRoutes.get('/dashboard', (req, res) => {
   res.status(200).render('pages/users/dashboard.ejs', { title: 'Dashboard', 
   active: "active",
-  messages: req.flash('info')
-});
+  messageTitle: "Delete USER", 
+  messages: req.flash('Are you sure you want to delete this user?')
+  });
   return;
 });
 
@@ -89,8 +91,9 @@ userRoutes.get('/manage-nav', function (req, res) {
 userRoutes.get('/manage-pdfs', function (req, res) {
   res.status(200).render('pages/users/manage-pdfs.ejs', { 
     title: 'Manage PDF Files', 
-    active: "active", 
-    messages: req.flash('info')
+    active: "active",
+    messageTitle: "Delete PDF",
+    messages: req.flash('Are you sure you want to delete this PDF?')
   })
 })
 userRoutes.get('/profile', function (req, res) {
@@ -104,8 +107,9 @@ userRoutes.get('/:name-page', function (req, res) {
   const url = req.url;
   res.status(200).render('pages/users/edit-page.ejs', { 
     title: url === "/create-page" ? "Create Page" : "Edit Page", 
-    active: "active", 
-    messages: req.flash('info')
+    active: "active",
+    messageTitle: "Delete Page", 
+    messages: url === "/edit-page" ? req.flash('Are you sure you want to delete this PAGE?') : ''
   })
 })
 
@@ -188,8 +192,9 @@ userRoutes.get('/:name-user', function (req, res) {
   const url = req.url;
   res.status(200).render('pages/users/edit-user.ejs', { 
     title: url === "/create-user" ? "Create User" : "Edit User", 
-    active: "active", 
-    messages: req.flash('info')
+    active: "active",
+    messageTitle: url === "/edit-user" ? "Delete USER" : '',  
+    messages: url === "/edit-user" ? req.flash('Are you sure you want to delete this USER?') : ''
   })
 })
 
