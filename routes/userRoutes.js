@@ -71,7 +71,7 @@ userRoutes.get('/', (req, res) => {
 });
 
 userRoutes.get('/dashboard', (req, res) => {
-  listUsers(1, 10).then(function(data){
+  listUsers(0, 9).then(function(data){
     console.log('data :', data);
     res.status(200).render('pages/users/dashboard.ejs', { 
   title: 'Dashboard', 

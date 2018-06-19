@@ -44,19 +44,14 @@
                                                             </td>
                                                             <td>
                                                                 <div>
-                                                                    <%=user.first_name%>
-                                                                        <%user.last_name%>
-                                                                </div>
-                                                                <div class="small text-muted">
-                                                                    <%= user.creation_date%>
+                                                                    <%=user.first_name + " " + user.last_name %>
                                                                 </div>
                                                             </td>
-
                                                             <td>
                                                                 <%=user.email%>
                                                             </td>
                                                             <td>
-                                                                <div class="small text-muted">Last login</div>
+                                                                <div class="small text-muted">Activity</div>
                                                                 <div>
                                                                     <%= user.last_succesful_login%>
                                                                 </div>
