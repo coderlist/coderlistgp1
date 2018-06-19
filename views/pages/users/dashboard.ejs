@@ -30,50 +30,55 @@
                                                 <th>ID</th>
                                                 <th>User</th>
                                                 <th>Email</th>
+                                                <th>Last Login</th>
                                                 <th></th>
                                             </tr>
                                         </thead>
                                         <% if (users) { %>
-                                          <%= console.log(users)%>
-                                        <tbody>
-                                            <% users.map(function(user) {%>
-                                            <tr>
-                                                <td>
-                                                    <div><%=user.first_name%> <%user.last_name%> </div>
-                                                    <div class="small text-muted">
-                                                        <%= user.creation_date%>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>
-                                                    <div data-id="0001">0001</div>
-                                                </td>
-                                                <td>
-                                                    <%=user.email%>
-                                                </td>
-                                                <td>
-                                                    <div class="small text-muted">Last login</div>
-                                                    <div><%= user.last_succesful_login%></div>
-                                                </td>
-                                                <td class="text-center">
-                                                    <div class="item-action dropdown">
-                                                        <a href="javascript:void(0)" data-toggle="dropdown" class="icon" aria-expanded="false">
-                                                            <i class="fe fe-more-vertical"></i>
-                                                        </a>
-                                                        <div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; transform: translate3d(15px, 20px, 0px); top: 0px; left: 0px; will-change: transform;">
-                                                            <a href="/users/edit-user" class="dropdown-item" userid="<%=user.user_id%>">
-                                                                <i class="dropdown-icon fe fe-edit-2"></i> Edit User </a>
-                                                            <div class="dropdown-divider"></div>
-                                                            <a href="javascript:void(0)" class="dropdown-item delete-this" userid="<%=user.user_id%>">
-                                                                <i class="dropdown-icon fe fe-delete"></i> Delete User</a>
-                                                        </div>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                            <% }) %>
-                                        </tbody>
-                                        <% } %>
+                                            <%= console.log(users)%>
+                                                <tbody>
+                                                    <% users.map(function(user) {%>
+                                                        <tr>
+                                                            <td>
+                                                                <div data-id="0001">0001</div>
+                                                            </td>
+                                                            <td>
+                                                                <div>
+                                                                    <%=user.first_name%>
+                                                                        <%user.last_name%>
+                                                                </div>
+                                                                <div class="small text-muted">
+                                                                    <%= user.creation_date%>
+                                                                </div>
+                                                            </td>
+
+                                                            <td>
+                                                                <%=user.email%>
+                                                            </td>
+                                                            <td>
+                                                                <div class="small text-muted">Last login</div>
+                                                                <div>
+                                                                    <%= user.last_succesful_login%>
+                                                                </div>
+                                                            </td>
+                                                            <td class="text-center">
+                                                                <div class="item-action dropdown">
+                                                                    <a href="javascript:void(0)" data-toggle="dropdown" class="icon" aria-expanded="false">
+                                                                        <i class="fe fe-more-vertical"></i>
+                                                                    </a>
+                                                                    <div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; transform: translate3d(15px, 20px, 0px); top: 0px; left: 0px; will-change: transform;">
+                                                                        <a href="/users/edit-user" class="dropdown-item" userid="<%=user.user_id%>">
+                                                                            <i class="dropdown-icon fe fe-edit-2"></i> Edit User </a>
+                                                                        <div class="dropdown-divider"></div>
+                                                                        <a href="javascript:void(0)" class="dropdown-item delete-this" userid="<%=user.user_id%>">
+                                                                            <i class="dropdown-icon fe fe-delete"></i> Delete User</a>
+                                                                    </div>
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                        <% }) %>
+                                                </tbody>
+                                                <% } %>
                                     </table>
                                 </div>
                             </div>
@@ -98,44 +103,44 @@
                                             </tr>
                                         </thead>
                                         <% if (typeof pages === 'object') { %>
-                                        <tbody>
-                                            <tr>
-                                                <td>
-                                                    <span class="text-muted">001401</span>
-                                                </td>
-                                                <td>
-                                                    <a href="invoice.html" class="text-inherit">Private Sessions</a>
-                                                </td>
-                                                <td>
-                                                    <label class="custom-control custom-checkbox custom-control-inline">
-                                                        <input type="checkbox" class="custom-control-input" name="published" value="option1">
-                                                        <span class="custom-control-label"></span>
-                                                    </label>
-                                                </td>
-                                                <td>
-                                                    <label class="custom-control custom-checkbox custom-control-inline">
-                                                        <input type="checkbox" class="custom-control-input" name="page_grid" value="option1">
-                                                        <span class="custom-control-label"></span>
-                                                    </label>
-                                                </td>
-                                                <td>
-                                                    <label class="custom-control custom-checkbox custom-control-inline">
-                                                        <input type="checkbox" class="custom-control-input" name="navigation_bar" value="option1">
-                                                        <span class="custom-control-label"></span>
-                                                    </label>
-                                                </td>
-                                                <td>
-                                                    <input type="text" class="form-control page-order" name="page_order" placeholder="1">
-                                                </td>
-                                                <td>
-                                                    <a href="javascript:void(0)" class="btn btn-secondary btn-sm">Save Order</a>
-                                                </td>
-                                                <td>
-                                                    <a href="/users/edit-page" class="btn btn-secondary btn-sm">Edit Page</a>
-                                                </td>
-                                            </tr>
-                                        </tbody>
-                                        <% } %>
+                                            <tbody>
+                                                <tr>
+                                                    <td>
+                                                        <span class="text-muted">001401</span>
+                                                    </td>
+                                                    <td>
+                                                        <a href="invoice.html" class="text-inherit">Private Sessions</a>
+                                                    </td>
+                                                    <td>
+                                                        <label class="custom-control custom-checkbox custom-control-inline">
+                                                            <input type="checkbox" class="custom-control-input" name="published" value="option1">
+                                                            <span class="custom-control-label"></span>
+                                                        </label>
+                                                    </td>
+                                                    <td>
+                                                        <label class="custom-control custom-checkbox custom-control-inline">
+                                                            <input type="checkbox" class="custom-control-input" name="page_grid" value="option1">
+                                                            <span class="custom-control-label"></span>
+                                                        </label>
+                                                    </td>
+                                                    <td>
+                                                        <label class="custom-control custom-checkbox custom-control-inline">
+                                                            <input type="checkbox" class="custom-control-input" name="navigation_bar" value="option1">
+                                                            <span class="custom-control-label"></span>
+                                                        </label>
+                                                    </td>
+                                                    <td>
+                                                        <input type="text" class="form-control page-order" name="page_order" placeholder="1">
+                                                    </td>
+                                                    <td>
+                                                        <a href="javascript:void(0)" class="btn btn-secondary btn-sm">Save Order</a>
+                                                    </td>
+                                                    <td>
+                                                        <a href="/users/edit-page" class="btn btn-secondary btn-sm">Edit Page</a>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                            <% } %>
                                     </table>
                                 </div>
                             </div>
