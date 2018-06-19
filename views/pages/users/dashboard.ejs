@@ -33,20 +33,22 @@
                                                 <th></th>
                                             </tr>
                                         </thead>
+                                        <% if (typeof user === 'object' ) { %>
                                         <tbody>
                                             <tr>
+                                                
                                                 <td>
-                                                    <div>Elizabeth Martin</div>
+                                                    <div><%= `$(user.fisrt_name) $(user.last_name)' %> <</div>
                                                     <div class="small text-muted">
-                                                        Registered: Mar 19, 2018
+                                                        <%= user.registered_date%>
                                                     </div>
                                                 </td>
                                                 <td>
-                                                    example@example.com
+                                                    <%=user.email%>
                                                 </td>
                                                 <td>
                                                     <div class="small text-muted">Last login</div>
-                                                    <div>4 minutes ago</div>
+                                                    <div><%= user.last_successful_login%></div>
                                                 </td>
                                                 <td class="text-center">
                                                     <div class="item-action dropdown">
@@ -64,6 +66,7 @@
                                                 </td>
                                             </tr>
                                         </tbody>
+                                        <% } %>
                                     </table>
                                 </div>
                             </div>
@@ -86,6 +89,7 @@
                                                 <th></th>
                                             </tr>
                                         </thead>
+                                        <% if (typeof pages === 'object') { %>
                                         <tbody>
                                             <tr>
                                                 <td>
@@ -117,6 +121,7 @@
                                                 </td>
                                             </tr>
                                         </tbody>
+                                        <% } %>
                                     </table>
                                 </div>
                             </div>
