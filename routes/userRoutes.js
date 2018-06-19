@@ -77,7 +77,7 @@ userRoutes.get('/dashboard', (req, res) => {
   title: 'Dashboard', 
   active: "active",
   messageTitle: "Delete USER",
-  users : data,
+  users: data,
   messages: req.flash('info')
   })
   
