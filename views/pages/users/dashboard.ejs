@@ -18,7 +18,7 @@
                     </div>
 
                     <div class="row row-cards row-deck">
-                        <div class="form-group col-md-6">
+                        <div class="form-group col-md-12">
                             <label class="form-label" for="callToAction">Call to Action Text</label>
                             <textarea class="form-control" id="callToAction" name="content" rows="2" placeholder="Content.." required>Use CKEditor in this area</textarea>
                         </div>
@@ -103,26 +103,29 @@
                                               <% pages.map(function(page){%>
                                                 <tr>
                                                     <td>
-                                                        <span class="text-muted"><%=pages.title%>></span>
+                                                        <span class="text-muted"><%=page.page_id%></span>
                                                     </td>
                                                     <td>
-                                                        <a href="invoice.html" class="text-inherit">Published? <%pages.is_published%>></a>
+                                                        <a href="invoice.html" class="text-inherit"><%=page.title%></a>
                                                     </td>
                                                     <td>
                                                         <label class="custom-control custom-checkbox custom-control-inline">
-                                                            <input type="checkbox" class="custom-control-input" name="published" value="option1">
+                                                            <input type="checkbox" class="custom-control-input" name="published" value="option1"
+                                                            <%= page.is_published ? "checked" : ""%>>
                                                             <span class="custom-control-label"></span>
                                                         </label>
                                                     </td>
                                                     <td>
                                                         <label class="custom-control custom-checkbox custom-control-inline">
-                                                            <input type="checkbox" class="custom-control-input" name="page_grid" value="option1">
+                                                            <input type="checkbox" class="custom-control-input" name="page_grid" value="option1"
+                                                            <%= page.is_homepage_grid ? "checked" : ""%>>
                                                             <span class="custom-control-label"></span>
                                                         </label>
                                                     </td>
                                                     <td>
                                                         <label class="custom-control custom-checkbox custom-control-inline">
-                                                            <input type="checkbox" class="custom-control-input" name="navigation_bar" value="option1">
+                                                            <input type="checkbox" class="custom-control-input" name="navigation_bar" value="option1"
+                                                            <%= page.is_nav_menu ? "checked" : ""%>>
                                                             <span class="custom-control-label"></span>
                                                         </label>
                                                     </td>
