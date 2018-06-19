@@ -33,14 +33,15 @@
                                                 <th></th>
                                             </tr>
                                         </thead>
-                                        <% if (typeof user === 'object' ) { %>
+                                        <% if (users) { %>
+                                          <%= console.log(users)%>
                                         <tbody>
+                                            <% users.map(function(user) {%>
                                             <tr>
-                                                
                                                 <td>
-                                                    <div><%= `$(user.first_name) $(user.last_name)' %> <</div>
+                                                    <div><%=user.first_name%> <%user.last_name%> </div>
                                                     <div class="small text-muted">
-                                                        <%= user.registered_date%>
+                                                        <%= user.creation_date%>
                                                     </div>
                                                 </td>
                                                 <td>
@@ -48,7 +49,7 @@
                                                 </td>
                                                 <td>
                                                     <div class="small text-muted">Last login</div>
-                                                    <div><%= user.last_successful_login%></div>
+                                                    <div><%= user.last_succesful_login%></div>
                                                 </td>
                                                 <td class="text-center">
                                                     <div class="item-action dropdown">
@@ -56,15 +57,16 @@
                                                             <i class="fe fe-more-vertical"></i>
                                                         </a>
                                                         <div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; transform: translate3d(15px, 20px, 0px); top: 0px; left: 0px; will-change: transform;">
-                                                            <a href="/users/edit-user" class="dropdown-item" userid="<%=user.user_id%>"></a>
+                                                            <a href="/users/edit-user" class="dropdown-item" userid="<%=user.user_id%>">
                                                                 <i class="dropdown-icon fe fe-edit-2"></i> Edit User </a>
                                                             <div class="dropdown-divider"></div>
-                                                            <a href="javascript:void(0)" class="dropdown-item delete-this" userid="<%=user.user_id%>>
+                                                            <a href="javascript:void(0)" class="dropdown-item delete-this" userid="<%=user.user_id%>">
                                                                 <i class="dropdown-icon fe fe-delete"></i> Delete User</a>
                                                         </div>
                                                     </div>
                                                 </td>
                                             </tr>
+                                            <% }) %>
                                         </tbody>
                                         <% } %>
                                     </table>
