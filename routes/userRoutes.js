@@ -19,6 +19,10 @@ const {
   insertOldEmailObject,
   listUsers
 } = require('../server/models/users').user;
+const {
+  createPage,
+  getPages
+} = require('../server/models/pages');
 const uuid = require('uuid/v1');
 const Mail = require('../helperFunctions/verification/MailSender');
 const multer = require('multer');
@@ -71,15 +75,21 @@ userRoutes.get('/', (req, res) => {
 });
 
 userRoutes.get('/dashboard', (req, res) => {
-  listUsers(0, 9).then(function(data){
-    console.log('data :', data);
+  listUsers(0, 9)
+  .then(function(userData){
+  getPages(9) //this need to be thought more about
+  .then(function(pageData){
     res.status(200).render('pages/users/dashboard.ejs', { 
   title: 'Dashboard', 
   active: "active",
   messageTitle: "Delete USER",
-  users : data,
+  users : userData,
+  pages : pageData,
   messages: req.flash('info')
   })
+}).catch(function(err){
+  console.log('err :', err);
+})
   
 });
   return;
@@ -484,6 +494,24 @@ userRoutes.get('/page-navmenu-request', function (req, res) {
   console.log('JSON.stringify :', JSON.stringify(pages));
   res.status(200).send(JSON.stringify(pages));
 })
+
+
+userRoutes.post('/create-page', function(req, res){
+  pageData = {
+    created_by: req.session.user_id,
+    title: req.body.title,
+    ckeditorHTML: req.body.content,
+    short_description: req.body.short_description,
+    email: req.session.email
+  }
+  
+  // i would like page id from the db please
+  createPage(pageData).then(function(data){
+    console.log('data :', data);
+  }).catch(function(err){
+    console.log('err :', err);
+  })
+});
 
 //////////////         end of change email whilst validated ////////////////
 

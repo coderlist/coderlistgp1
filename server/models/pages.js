@@ -1,4 +1,4 @@
-const {queryHelper} = require('../../helperFunctions/queryHelper');
+const {queryHelper} = require('../../helperFunctions/query/queryHelper');
 
 /**
  * exports all pages database query functions
@@ -9,8 +9,8 @@ const {queryHelper} = require('../../helperFunctions/queryHelper');
 
 module.exports = {
   createPage(user) {
-    return queryHelper(`INSERT INTO pages (created_by, title)`+
-                       ` VALUES ('${user.email}', '${user.title}')`)
+    return queryHelper(`INSERT INTO pages (created_by,title,ckeditor_html)`+
+                       ` VALUES ('${user.email}', '${user.title}', '${user.ckeditorHTML}')`)
         .then(response => console.log('PAGE CREATED'))
         .catch(e => {throw e})
   },
@@ -22,7 +22,7 @@ module.exports = {
   },
 
   getPages(rowsLimit){
-    return queryHelper(`SELECT * FROM pages ORDER BY creation_date  FETCH FIRST ${rowsLimit} ONLY;`)
+    return queryHelper(`SELECT * FROM pages ORDER BY creation_date  FETCH FIRST ${rowsLimit} ROW ONLY`)
     .then(response => response)
       .catch(e => {throw e})
   },

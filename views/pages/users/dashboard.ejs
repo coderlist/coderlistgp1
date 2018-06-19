@@ -3,6 +3,7 @@
 
 <head>
     <% include ../partials/head.ejs %>
+    <script src="/ckeditor/ckeditor.js"></script>
 </head>
 
 <body>
@@ -40,7 +41,7 @@
                                                     <% users.map(function(user) {%>
                                                         <tr>
                                                             <td>
-                                                                <div data-id="0001"><%=user.user_id%></div>
+                                                                <div data-id="user.user_id"><%=user.user_id%></div>
                                                             </td>
                                                             <td>
                                                                 <div>
@@ -99,12 +100,13 @@
                                         </thead>
                                         <% if (typeof pages === 'object') { %>
                                             <tbody>
+                                              <% pages.map(function(page){%>
                                                 <tr>
                                                     <td>
-                                                        <span class="text-muted">001401</span>
+                                                        <span class="text-muted"><%=pages.title%>></span>
                                                     </td>
                                                     <td>
-                                                        <a href="invoice.html" class="text-inherit">Private Sessions</a>
+                                                        <a href="invoice.html" class="text-inherit">Published? <%pages.is_published%>></a>
                                                     </td>
                                                     <td>
                                                         <label class="custom-control custom-checkbox custom-control-inline">
@@ -134,6 +136,7 @@
                                                         <a href="/users/edit-page" class="btn btn-secondary btn-sm">Edit Page</a>
                                                     </td>
                                                 </tr>
+                                                <%})%>
                                             </tbody>
                                             <% } %>
                                     </table>
@@ -146,6 +149,13 @@
             <% include ../partials/footer.ejs %>
                 <!-- Scripts -->
                 <script src="/js/alert-message.js"></script>
+                <script>
+                    // Replace the <textarea id="editor1"> with a CKEditor
+                    // instance, using default configuration.
+                   
+                      CKEDITOR.replace( 'callToAction' );
+                    
+                </script>
 </body>
 
 </html>
