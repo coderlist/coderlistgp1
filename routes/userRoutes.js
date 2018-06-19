@@ -66,6 +66,7 @@ userRoutes.get('/', (req, res) => {
   res.status(200).render('pages/users/dashboard.ejs', { 
   title: 'Dashboard', 
   active: "active",
+  messageTitle: "Delete User",
   messages: req.flash('info')});
   return;
 });
@@ -73,12 +74,12 @@ userRoutes.get('/', (req, res) => {
 userRoutes.get('/dashboard', (req, res) => {
   listUsers(0, 9).then(function(data){
     console.log('data :', data);
-    res.status(200).render('pages/users/dashboard.ejs', { 
-  title: 'Dashboard', 
-  active: "active",
-  messageTitle: "Delete USER",
-  users: data,
-  messages: req.flash('info')
+  res.status(200).render('pages/users/dashboard.ejs', { 
+    title: 'Dashboard', 
+    active: "active",
+    messageTitle: "Delete User",
+    users: data,
+    messages: req.flash('info')
   })
   
 });
@@ -200,7 +201,7 @@ userRoutes.get('/:name-user', function (req, res) {
   res.status(200).render('pages/users/edit-user.ejs', { 
     title: url === "/create-user" ? "Create User" : "Edit User", 
     active: "active",
-    messageTitle: url === "/edit-user" ? "Delete USER" : '',  
+    messageTitle: url === "/edit-user" ? "Delete User" : '',  
     messages: url === "/edit-user" ? req.flash('Are you sure you want to delete this USER?') : ''
   })
 })
