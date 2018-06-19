@@ -45,6 +45,18 @@ const user = {
   },
 
   /**
+   * @param  {String} email
+   * find user details by email
+   */
+  getUserByEmail(email){
+    return queryHelper(`SELECT (first_name,last_name,
+      ,creation_date,last_succesful_login) 
+      FROM USERS WHERE email='${email}';`)
+    .then(response => response)
+    .catch(e => {throw e})
+  },
+
+  /**
    * 
    * @param {Object} user 
    * gets token from route in a temporary user object
