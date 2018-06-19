@@ -33,29 +33,15 @@
                                                 <th></th>
                                             </tr>
                                         </thead>
+                                        <% if (users) { %>
+                                          <%= console.log(users)%>
                                         <tbody>
+                                            <% users.map(function(user) {%>
                                             <tr>
                                                 <td>
-                                                    <div data-id="0001">0001</div>
-                                                </td>
-                                                <td>
-                                                    <div data-name="Elizabeth Martin" class="name">Elizabeth Martin</div>
-                                                </td>
-                                                <td>
-                                                    <div data-email="example@example.com" class="email">example@example.com</div>
-                                                </td>
-                                                <td class="text-center">
-                                                    <div class="item-action dropdown">
-                                                        <a href="javascript:void(0)" data-toggle="dropdown" class="icon" aria-expanded="false">
-                                                            <i class="fe fe-more-vertical"></i>
-                                                        </a>
-                                                        <div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; transform: translate3d(15px, 20px, 0px); top: 0px; left: 0px; will-change: transform;">
-                                                            <a href="/users/edit-user" class="dropdown-item">
-                                                                <i class="dropdown-icon fe fe-edit-2"></i> Edit User </a>
-                                                            <div class="dropdown-divider"></div>
-                                                            <a href="javascript:void(0)" class="dropdown-item delete-this">
-                                                                <i class="dropdown-icon fe fe-delete"></i> Delete User</a>
-                                                        </div>
+                                                    <div><%=user.first_name%> <%user.last_name%> </div>
+                                                    <div class="small text-muted">
+                                                        <%= user.creation_date%>
                                                     </div>
                                                 </td>
                                             </tr>
@@ -64,10 +50,11 @@
                                                     <div data-id="0001">0001</div>
                                                 </td>
                                                 <td>
-                                                    <div data-name="Elizabeth Martin" class="name">Elizabeth Martin</div>
+                                                    <%=user.email%>
                                                 </td>
                                                 <td>
-                                                    <div data-email="example@example.com" class="email">example@example.com</div>
+                                                    <div class="small text-muted">Last login</div>
+                                                    <div><%= user.last_succesful_login%></div>
                                                 </td>
                                                 <td class="text-center">
                                                     <div class="item-action dropdown">
@@ -75,16 +62,18 @@
                                                             <i class="fe fe-more-vertical"></i>
                                                         </a>
                                                         <div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; transform: translate3d(15px, 20px, 0px); top: 0px; left: 0px; will-change: transform;">
-                                                            <a href="/users/edit-user" class="dropdown-item">
+                                                            <a href="/users/edit-user" class="dropdown-item" userid="<%=user.user_id%>">
                                                                 <i class="dropdown-icon fe fe-edit-2"></i> Edit User </a>
                                                             <div class="dropdown-divider"></div>
-                                                            <a href="javascript:void(0)" class="dropdown-item delete-this">
+                                                            <a href="javascript:void(0)" class="dropdown-item delete-this" userid="<%=user.user_id%>">
                                                                 <i class="dropdown-icon fe fe-delete"></i> Delete User</a>
                                                         </div>
                                                     </div>
                                                 </td>
                                             </tr>
+                                            <% }) %>
                                         </tbody>
+                                        <% } %>
                                     </table>
                                 </div>
                             </div>
@@ -108,6 +97,7 @@
                                                 <th></th>
                                             </tr>
                                         </thead>
+                                        <% if (typeof pages === 'object') { %>
                                         <tbody>
                                             <tr>
                                                 <td>
@@ -145,6 +135,7 @@
                                                 </td>
                                             </tr>
                                         </tbody>
+                                        <% } %>
                                     </table>
                                 </div>
                             </div>

@@ -26,7 +26,7 @@ const user = {
   //starting with (rowStart + 1) row, 
   // list (n) rows 
   listUsers(rowStart, n) {
-    return queryHelper(`SELECT email,fist_name,last_name,creation_date FROM users ORDER BY 
+    return queryHelper(`SELECT email,first_name,last_name,creation_date,last_succesful_login FROM users ORDER BY 
     creation_date  FETCH FIRST ${n} ROWS ONLY OFFSET ${rowStart};`)
       .then(response => response)
       .catch(e => {
@@ -42,6 +42,18 @@ const user = {
       return queryHelper(`SELECT (user_id) FROM USERS WHERE email='${email}';`)
         .then(response => response)
         .catch(e => {throw e})
+  },
+
+  /**
+   * @param  {String} email
+   * find user details by email
+   */
+  getUserByEmail(email){
+    return queryHelper(`SELECT (first_name,last_name,
+      ,creation_date,last_succesful_login) 
+      FROM USERS WHERE email='${email}';`)
+    .then(response => response)
+    .catch(e => {throw e})
   },
 
   /**

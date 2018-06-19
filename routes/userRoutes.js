@@ -16,7 +16,8 @@ const {
 const {
   updatePassword,
   updateUserEmail,
-  insertOldEmailObject
+  insertOldEmailObject,
+  listUsers
 } = require('../server/models/users').user;
 const uuid = require('uuid/v1');
 const Mail = require('../helperFunctions/verification/MailSender');
@@ -70,11 +71,15 @@ userRoutes.get('/', (req, res) => {
 });
 
 userRoutes.get('/dashboard', (req, res) => {
-  res.status(200).render('pages/users/dashboard.ejs', { title: 'Dashboard', 
-  active: "active",
-  messageTitle: "Delete USER", 
-  messages: req.flash('Are you sure you want to delete this user?')
-  });
+  listUsers(1, 10).then(function(data){
+    console.log('data :', data);
+    res.status(200).render('pages/users/dashboard.ejs', { title: 'Dashboard', 
+  active: "active", 
+  users : data,
+  messages: req.flash('info')
+  })
+  
+});
   return;
 });
 
