@@ -37,9 +37,10 @@
                                             <%= console.log(users)%>
                                                 <tbody>
                                                     <% users.map(function(user) {%>
-                                                        <input type="hidden" class="this_name" value="<%=user.first_name + ' ' + user.last_name %>" />
-                                                        <input type="hidden" class="this_id" value="<%=user.user_id %>" />
+                                                        
                                                         <tr>
+                                                            <input type="hidden" class="this_name" value="<%=user.first_name + ' ' + user.last_name %>" />
+                                                            <input type="hidden" class="this_id" value="<%=user.user_id %>" />
                                                             <td>
                                                                 <div class="name"><%=user.first_name + " " + user.last_name %></div>
                                                             </td>
