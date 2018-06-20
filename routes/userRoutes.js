@@ -184,6 +184,8 @@ userRoutes.post('/change-password', passwordCheck, (req, res) => {
         console.log("failed to update password");
         req.flash('info', 'Invalid credentials');
         res.status(200).render('pages/users/change-password', {
+          title: 'Profile', 
+          active: "active",
           messages: req.flash('info')
         });
         return;
@@ -196,7 +198,10 @@ userRoutes.post('/change-password', passwordCheck, (req, res) => {
       return;
     }).catch(function (err) {
       req.flash('info', 'There was an internal error. Please contact your administrator');
-      res.status(200).redirect('./dashboard');
+      res.status(200).redirect('./dashboard', { 
+        title: 'Dashboard', 
+        active: "active"
+      });
       console.log(err)
       return;
     });
@@ -235,6 +240,8 @@ userRoutes.post('/create-user', createUserCheck, (req, res) => { //accessible by
     }
     req.flash("info", "Invalid user data", process.env.NODE_ENV === 'development' ? errors.array() : ""); //error.array() for development only
     res.status(200).render('pages/users/create-user.ejs', {
+      title: 'Create User', 
+      active: "active",
       messages: req.flash('info'),
       userTemp
     });
@@ -254,7 +261,10 @@ userRoutes.post('/create-user', createUserCheck, (req, res) => { //accessible by
       let mail = new Mail;
       mail.sendVerificationLink(user);
       req.flash('info', 'user created and email sent'); // email not currently being sent
-      res.redirect('/users/dashboard');
+      res.redirect('/users/dashboard', {
+        title: 'Dashboard', 
+        active: "active" 
+      });
       return;
     } else {
       console.log("There was a create user error", err)
@@ -274,6 +284,8 @@ userRoutes.post('/create-user', createUserCheck, (req, res) => { //accessible by
       req.flash('info', 'There was an system error. Please notify support.')
     }
     res.status(200).render('pages/users/create-user.ejs', {
+      title: 'Create User', 
+      active: "active", 
       messages: req.flash('info'),
       user
     });
@@ -309,6 +321,8 @@ userRoutes.get('/logout', logins.isLoggedIn, logins.logUserOut, (req, res) => { 
 
 userRoutes.get('/edit-user', (req, res) => { //accessible by authed admin
   res.status(200).render('pages/users/edit-user.ejs', {
+    title: 'Edit User', 
+    active: "active",
     user: req.body.userToDelete,
     messages: req.flash('info')
   });
@@ -321,14 +335,18 @@ userRoutes.post('/delete-user', (req, res) => {
 });
 
 userRoutes.get('/change-password', (req, res) => {
-  res.status(200).render('pages/users/changePassword.ejs', {messages: req.flash('info')});
+  res.status(200).render('pages/users/changePassword.ejs', {
+    title: 'Profile', 
+    active: "active",
+    messages: req.flash('info')
+  });
 });
 
 ////////////////// Change email whilst validated  //////////////////////
 
 userRoutes.get('/change-email-request', (req, res) => {
   res.status(200).render('pages/users/change-email-request.ejs', {
-    title: `Change Email`,
+    title: `Profile`,
     active: "active",
     messages: req.flash('info')
   });
@@ -364,6 +382,7 @@ userRoutes.post('/change-email-request', changeEmailCheck, (req, res) => {
     }
     req.flash("info", "Invalid user data", process.env.NODE_ENV === 'development' ? errors.array() : ""); //error.array() for development only
     res.status(200).render('pages/users/change-email-request.ejs', {
+      title: 'Profile',
       messages: req.flash('info'),
       userTemp
     }); // insert variable into form data
@@ -382,17 +401,28 @@ userRoutes.post('/change-email-request', changeEmailCheck, (req, res) => {
       console.log('datas :', data);
       if (!data) {
         req.flash('info', 'Invalid credentials')
-        res.status(200).redirect('/users/change-email-request.ejs');
+        res.status(200).redirect('/users/change-email-request.ejs', {
+          title: 'Profile', 
+          active: "active"
+        });
         return;
       }
       let mail = new Mail();
       mail.sendEmailChangeVerificationLink(user);
       req.flash('info', "An email has been sent to your new email with further instructions");
-      res.redirect('/users/dashboard');
+      res.redirect('/users/dashboard', {
+        title: 'Dashboard', 
+        active: "active",
+        messageTitle: "Delete User"
+      });
     }).catch(function (err) {
       console.log('err :', err);
       req.flash('info', "An internal error has occurred. Please contact your administrator");
-      res.redirect('/users/dashboard');
+      res.redirect('/users/dashboard', {
+        title: 'Dashboard', 
+        active: "active",
+        messageTitle: "Delete User"
+      });
       return;
     })
 });
@@ -412,7 +442,7 @@ userRoutes.post('/upload-images', upload.single('image'), (req, res) => {
     return res.status(200).redirect('/users/upload-images')
 
   } else {
-    req.flash("File received", );
+    req.flash("File received");
     return res.status(200).redirect('/users/upload-images')
   }
 })
