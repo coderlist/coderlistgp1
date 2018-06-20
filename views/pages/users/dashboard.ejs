@@ -16,7 +16,6 @@
                             Dashboard
                         </h1>
                     </div>
-
                     <div class="row row-cards row-deck">
                         <div class="form-group col-md-12">
                             <label class="form-label" for="callToAction">Call to Action Text</label>
@@ -38,6 +37,8 @@
                                             <%= console.log(users)%>
                                                 <tbody>
                                                     <% users.map(function(user) {%>
+                                                        <input type="hidden" class="this_name" value="<%=user.first_name + ' ' + user.last_name %>" />
+                                                        <input type="hidden" class="this_id" value="<%=user.user_id %>" />
                                                         <tr>
                                                             <td>
                                                                 <div class="name"><%=user.first_name + " " + user.last_name %></div>
@@ -55,10 +56,10 @@
                                                                         <i class="fe fe-more-vertical"></i>
                                                                     </a>
                                                                     <div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; transform: translate3d(15px, 20px, 0px); top: 0px; left: 0px; will-change: transform;">
-                                                                        <a href="/users/edit-user" class="dropdown-item" data-userid="<%=user.user_id%>">
+                                                                        <a href="/users/edit-user" class="dropdown-item">
                                                                             <i class="dropdown-icon fe fe-edit-2"></i> Edit User </a>
                                                                         <div class="dropdown-divider"></div>
-                                                                        <a href="javascript:void(0)" class="dropdown-item delete-this" data-userid="<%=user.user_id%>">
+                                                                        <a href="javascript:void(0)" class="dropdown-item delete-this">
                                                                             <i class="dropdown-icon fe fe-delete"></i> Delete User</a>
                                                                     </div>
                                                                 </div>

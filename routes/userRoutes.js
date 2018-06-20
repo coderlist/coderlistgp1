@@ -81,12 +81,12 @@ userRoutes.get('/dashboard', (req, res) => {
   getPages(9) //this need to be thought more about
   .then(function(pageData){
     res.status(200).render('pages/users/dashboard.ejs', { 
-  title: 'Dashboard', 
-  active: "active",
-  messageTitle: "Delete USER",
-  users : userData,
-  pages : pageData,
-  messages: req.flash('info')
+      title: 'Dashboard', 
+      active: "active",
+      messageTitle: "Delete User",
+      users : userData,
+      pages : pageData,
+      messages: req.flash('info')
   })
 }).catch(function(err){
   console.log('err :', err);
