@@ -16,8 +16,13 @@ const {
 const {
   updatePassword,
   updateUserEmail,
-  insertOldEmailObject
+  insertOldEmailObject,
+  listUsers
 } = require('../server/models/users').user;
+const {
+  createPage,
+  getPages
+} = require('../server/models/pages');
 const uuid = require('uuid/v1');
 const Mail = require('../helperFunctions/verification/MailSender');
 const multer = require('multer');
@@ -62,16 +67,30 @@ const upload = multer({
 
 userRoutes.use(logins.isLoggedIn);
 userRoutes.get('/', (req, res) => {
-  res.status(200).render('pages/users/dashboard.ejs', { title: 'Dashboard', 
+  res.status(200).render('pages/users/dashboard.ejs', { 
+  title: 'Dashboard', 
   active: "active",
   messages: req.flash('info')});
   return;
 });
 
 userRoutes.get('/dashboard', (req, res) => {
-  res.status(200).render('pages/users/dashboard.ejs', { title: 'Dashboard', 
+  listUsers(0, 9)
+  .then(function(userData){
+  getPages(9) //this need to be thought more about
+  .then(function(pageData){
+    res.status(200).render('pages/users/dashboard.ejs', { 
+  title: 'Dashboard', 
   active: "active",
+  messageTitle: "Delete USER",
+  users : userData,
+  pages : pageData,
   messages: req.flash('info')
+  })
+}).catch(function(err){
+  console.log('err :', err);
+})
+  
 });
   return;
 });
@@ -89,8 +108,9 @@ userRoutes.get('/manage-nav', function (req, res) {
 userRoutes.get('/manage-pdfs', function (req, res) {
   res.status(200).render('pages/users/manage-pdfs.ejs', { 
     title: 'Manage PDF Files', 
-    active: "active", 
-    messages: req.flash('info')
+    active: "active",
+    messageTitle: "Delete PDF",
+    messages: req.flash('Are you sure you want to delete this PDF?')
   })
 })
 userRoutes.get('/profile', function (req, res) {
@@ -104,8 +124,9 @@ userRoutes.get('/:name-page', function (req, res) {
   const url = req.url;
   res.status(200).render('pages/users/edit-page.ejs', { 
     title: url === "/create-page" ? "Create Page" : "Edit Page", 
-    active: "active", 
-    messages: req.flash('info')
+    active: "active",
+    messageTitle: "Delete Page", 
+    messages: url === "/edit-page" ? req.flash('Are you sure you want to delete this PAGE?') : ''
   })
 })
 
@@ -188,8 +209,9 @@ userRoutes.get('/:name-user', function (req, res) {
   const url = req.url;
   res.status(200).render('pages/users/edit-user.ejs', { 
     title: url === "/create-user" ? "Create User" : "Edit User", 
-    active: "active", 
-    messages: req.flash('info')
+    active: "active",
+    messageTitle: url === "/edit-user" ? "Delete USER" : '',  
+    messages: url === "/edit-user" ? req.flash('Are you sure you want to delete this USER?') : ''
   })
 })
 
@@ -472,6 +494,24 @@ userRoutes.get('/page-navmenu-request', function (req, res) {
   console.log('JSON.stringify :', JSON.stringify(pages));
   res.status(200).send(JSON.stringify(pages));
 })
+
+
+userRoutes.post('/create-page', function(req, res){
+  pageData = {
+    created_by: req.session.user_id,
+    title: req.body.title,
+    ckeditorHTML: req.body.content,
+    short_description: req.body.short_description,
+    email: req.session.email
+  }
+  
+  // i would like page id from the db please
+  createPage(pageData).then(function(data){
+    console.log('data :', data);
+  }).catch(function(err){
+    console.log('err :', err);
+  })
+});
 
 //////////////         end of change email whilst validated ////////////////
 

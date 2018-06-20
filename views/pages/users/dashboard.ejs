@@ -3,6 +3,7 @@
 
 <head>
     <% include ../partials/head.ejs %>
+    <script src="/ckeditor/ckeditor.js"></script>
 </head>
 
 <body>
@@ -17,9 +18,9 @@
                     </div>
 
                     <div class="row row-cards row-deck">
-                        <div class="form-group col-md-6">
+                        <div class="form-group col-md-12">
                             <label class="form-label" for="callToAction">Call to Action Text</label>
-                            <textarea class="form-control" name="content" rows="2"  placeholder="Content.." required>Use CKEditor in this area</textarea>
+                            <textarea class="form-control" id="callToAction" name="content" rows="2" placeholder="Content.." required>Use CKEditor in this area</textarea>
                         </div>
                         <div class="col-lg-12">
                             <div class="card">
@@ -27,46 +28,53 @@
                                     <table class="table table-hover table-outline table-vcenter text-nowrap card-table">
                                         <thead>
                                             <tr>
+                                                <th>ID</th>
                                                 <th>User</th>
                                                 <th>Email</th>
-                                                <th>Activity</th>
+                                                <th>Last Login</th>
                                                 <th></th>
                                             </tr>
                                         </thead>
-                                        <% if (typeof user === 'object' ) { %>
-                                        <tbody>
-                                            <tr>
-                                                
-                                                <td>
-                                                    <div><%= `$(user.fisrt_name) $(user.last_name)' %> <</div>
-                                                    <div class="small text-muted">
-                                                        <%= user.registered_date%>
-                                                    </div>
-                                                </td>
-                                                <td>
-                                                    <%=user.email%>
-                                                </td>
-                                                <td>
-                                                    <div class="small text-muted">Last login</div>
-                                                    <div><%= user.last_successful_login%></div>
-                                                </td>
-                                                <td class="text-center">
-                                                    <div class="item-action dropdown">
-                                                        <a href="javascript:void(0)" data-toggle="dropdown" class="icon" aria-expanded="false">
-                                                            <i class="fe fe-more-vertical"></i>
-                                                        </a>
-                                                        <div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; transform: translate3d(15px, 20px, 0px); top: 0px; left: 0px; will-change: transform;">
-                                                            <a href="/users/edit-user" class="dropdown-item">
-                                                                <i class="dropdown-icon fe fe-edit-2"></i> Edit User </a>
-                                                            <div class="dropdown-divider"></div>
-                                                            <a href="javascript:void(0)" class="dropdown-item delete-this">
-                                                                <i class="dropdown-icon fe fe-delete"></i> Delete User</a>
-                                                        </div>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        </tbody>
-                                        <% } %>
+                                        <% if (users) { %>
+                                            <%= console.log(users)%>
+                                                <tbody>
+                                                    <% users.map(function(user) {%>
+                                                        <tr>
+                                                            <td>
+                                                                <div data-id="user.user_id"><%=user.user_id%></div>
+                                                            </td>
+                                                            <td>
+                                                                <div>
+                                                                    <%=user.first_name + " " + user.last_name %>
+                                                                </div>
+                                                            </td>
+                                                            <td>
+                                                                <%=user.email%>
+                                                            </td>
+                                                            <td>
+                                                                <div class="small text-muted">Activity</div>
+                                                                <div>
+                                                                    <%= user.last_succesful_login%>
+                                                                </div>
+                                                            </td>
+                                                            <td class="text-center">
+                                                                <div class="item-action dropdown">
+                                                                    <a href="javascript:void(0)" data-toggle="dropdown" class="icon" aria-expanded="false">
+                                                                        <i class="fe fe-more-vertical"></i>
+                                                                    </a>
+                                                                    <div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; transform: translate3d(15px, 20px, 0px); top: 0px; left: 0px; will-change: transform;">
+                                                                        <a href="/users/edit-user" class="dropdown-item" data-userid="<%=user.user_id%>">
+                                                                            <i class="dropdown-icon fe fe-edit-2"></i> Edit User </a>
+                                                                        <div class="dropdown-divider"></div>
+                                                                        <a href="javascript:void(0)" class="dropdown-item delete-this" data-userid="<%=user.user_id%>">
+                                                                            <i class="dropdown-icon fe fe-delete"></i> Delete User</a>
+                                                                    </div>
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                        <% }) %>
+                                                </tbody>
+                                                <% } %>
                                     </table>
                                 </div>
                             </div>
@@ -84,44 +92,56 @@
                                                 <th>Name</th>
                                                 <th>Published</th>
                                                 <th>Home Page Grid</th>
+                                                <th>Navigation</th>
                                                 <th>Page Order</th>
                                                 <th>Options</th>
                                                 <th></th>
                                             </tr>
                                         </thead>
                                         <% if (typeof pages === 'object') { %>
-                                        <tbody>
-                                            <tr>
-                                                <td>
-                                                    <span class="text-muted">001401</span>
-                                                </td>
-                                                <td>
-                                                    <a href="invoice.html" class="text-inherit">Private Sessions</a>
-                                                </td>
-                                                <td>
-                                                    <label class="custom-control custom-checkbox custom-control-inline">
-                                                        <input type="checkbox" class="custom-control-input" name="published" value="option1">
-                                                        <span class="custom-control-label"></span>
-                                                    </label>
-                                                </td>
-                                                <td>
-                                                    <label class="custom-control custom-checkbox custom-control-inline">
-                                                        <input type="checkbox" class="custom-control-input" name="page_grid" value="option1">
-                                                        <span class="custom-control-label"></span>
-                                                    </label>
-                                                </td>
-                                                <td>
-                                                    <input type="text" class="form-control page-order" name="page_order" placeholder="1">
-                                                </td>
-                                                <td>
-                                                    <a href="javascript:void(0)" class="btn btn-secondary btn-sm">Save Order</a>
-                                                </td>
-                                                <td>
-                                                    <a href="/users/edit-page" class="btn btn-secondary btn-sm">Edit Page</a>
-                                                </td>
-                                            </tr>
-                                        </tbody>
-                                        <% } %>
+                                            <tbody>
+                                              <% pages.map(function(page){%>
+                                                <tr>
+                                                    <td>
+                                                        <span class="text-muted"><%=page.page_id%></span>
+                                                    </td>
+                                                    <td>
+                                                        <a href="invoice.html" class="text-inherit"><%=page.title%></a>
+                                                    </td>
+                                                    <td>
+                                                        <label class="custom-control custom-checkbox custom-control-inline">
+                                                            <input type="checkbox" class="custom-control-input" name="published" value="option1"
+                                                            <%= page.is_published ? "checked" : ""%>>
+                                                            <span class="custom-control-label"></span>
+                                                        </label>
+                                                    </td>
+                                                    <td>
+                                                        <label class="custom-control custom-checkbox custom-control-inline">
+                                                            <input type="checkbox" class="custom-control-input" name="page_grid" value="option1"
+                                                            <%= page.is_homepage_grid ? "checked" : ""%>>
+                                                            <span class="custom-control-label"></span>
+                                                        </label>
+                                                    </td>
+                                                    <td>
+                                                        <label class="custom-control custom-checkbox custom-control-inline">
+                                                            <input type="checkbox" class="custom-control-input" name="navigation_bar" value="option1"
+                                                            <%= page.is_nav_menu ? "checked" : ""%>>
+                                                            <span class="custom-control-label"></span>
+                                                        </label>
+                                                    </td>
+                                                    <td>
+                                                        <input type="text" class="form-control page-order" name="page_order" placeholder="1">
+                                                    </td>
+                                                    <td>
+                                                        <a href="javascript:void(0)" class="btn btn-secondary btn-sm">Save Order</a>
+                                                    </td>
+                                                    <td>
+                                                        <a href="/users/edit-page" class="btn btn-secondary btn-sm">Edit Page</a>
+                                                    </td>
+                                                </tr>
+                                                <%})%>
+                                            </tbody>
+                                            <% } %>
                                     </table>
                                 </div>
                             </div>
@@ -130,7 +150,15 @@
                 </div>
             </div>
             <% include ../partials/footer.ejs %>
-            <!-- Scripts -->
-            <script src="/js/alert-message.js"></script>
+                <!-- Scripts -->
+                <script src="/js/alert-message.js"></script>
+                <script>
+                    // Replace the <textarea id="editor1"> with a CKEditor
+                    // instance, using default configuration.
+                   
+                      CKEDITOR.replace( 'callToAction' );
+                    
+                </script>
 </body>
+
 </html>
