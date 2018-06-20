@@ -26,7 +26,7 @@ const user = {
   //starting with (rowStart + 1) row, 
   // list (n) rows 
   listUsers(rowStart, n) {
-    return queryHelper(`SELECT email,fist_name,last_name,
+    return queryHelper(`SELECT email,fist_name,last_name,last_failed_login
     creation_date FROM users ORDER BY 
     creation_date  FETCH FIRST ${n} ROWS ONLY OFFSET ${rowStart};`)
       .then(response => response)
