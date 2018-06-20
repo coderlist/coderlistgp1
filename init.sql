@@ -74,13 +74,15 @@ ALTER TABLE pages ALTER COLUMN is_nav_menu SET DEFAULT FALSE;
 ALTER TABLE pages ALTER COLUMN is_homepage_grid SET DEFAULT FALSE;
 
 
+
 ALTER TABLE users ADD COLUMN IF NOT EXISTS activation_token TEXT,
   ADD COLUMN IF NOT EXISTS is_admin BOOLEAN DEFAULT FALSE,
   ADD COLUMN IF NOT EXISTS old_password json[];  --- {"password":"","token_date":"","change_token":""}
 
 ALTER TABLE users ALTER COLUMN is_admin SET DEFAULT TRUE;
 
-ALTER TABLE pages ADD COLUMN IF NOT EXISTS ckeditor_html TEXT;
+ALTER TABLE pages ADD COLUMN IF NOT EXISTS ckeditor_html TEXT,
+   ADD COLUMN IF NOT EXISTS order_number INTEGER;
 ALTER TABLE pages DROP COLUMN IF EXISTS owner_id;
 ALTER TABLE pages ALTER COLUMN title SET NOT NULL;
 
