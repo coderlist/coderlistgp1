@@ -4,4 +4,4 @@ indexTest.js
 vscode
 .vscode
 .vscode/
-.env
+helperFunctions/verification/mailTestManual.js
