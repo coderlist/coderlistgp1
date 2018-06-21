@@ -44,6 +44,20 @@ module.exports = {
     return queryHelper(`DELETE FROM pages WHERE page_id= ${id};`)
     .then(response => true)
     .catch(e => {throw e})
+  },
+
+  testCreatePage(body) {
+    if(body.isNav){
+      return queryHelper(`INSERT INTO page_navigations (created_by,name,title,link,order_number,content)`+
+      ` VALUES ('${body.email}','${body.name}', '${body.title}','${body.link}','${body.order_number}', '${body.content}')`)
+.then(response => console.log('navigation item created'))
+.catch(e => {throw e})
+    }else{
+      return queryHelper(`INSERT INTO pages (created_by,title,description,order_number,ckeditor_html)`+
+                       ` VALUES ('${body.email}', '${body.title}','${body.description}','${body.order_number}', '${body.ckeditorHTML}')`)
+        .then(response => console.log('PAGE CREATED'))
+        .catch(e => {throw e})
+    }
   }
 
 }
