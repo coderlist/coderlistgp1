@@ -26,9 +26,9 @@ const user = {
   //starting with (rowStart + 1) row, 
   // list (n) rows 
   listUsers(rowStart, n) {
-    return queryHelper(`SELECT email,fist_name,last_name,last_failed_login
+    return queryHelper(`SELECT user_id, email, first_name, last_name, last_failed_login, last_succesful_login, 
     creation_date FROM users ORDER BY 
-    creation_date  FETCH FIRST ${n} ROWS ONLY OFFSET ${rowStart};`)
+    user_id  FETCH FIRST ${n} ROWS ONLY OFFSET ${rowStart};`)
       .then(response => response)
       .catch(e => {
         throw e

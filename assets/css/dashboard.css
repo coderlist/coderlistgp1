@@ -10125,8 +10125,7 @@ img {
   align-items: stretch;
 }
 
-.row-deck > .col .card,
-.row-deck > [class*='col-'] .card {
+.row-deck > .col .card {
   -ms-flex: 1 1 auto;
   flex: 1 1 auto;
 }

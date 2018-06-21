@@ -34,6 +34,12 @@ routes.get('/about', (req, res) => {
 });
 
 
+routes.get('/contact', (req, res) => {
+  res.status(200).render('pages/public/contactus');
+  return;
+});
+
+
 // users //
 ///////////////   Login    //////////////////
 

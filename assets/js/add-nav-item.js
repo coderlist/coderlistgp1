@@ -1,4 +1,10 @@
-/* Fetch JSON file */
+/* 
+* Arrays to hold pages, parent pages and child pages names.
+*/
+const pageNames = ['no-link'];
+const parentPageName = [];
+const childPageName = [];
+/* Options for fetch method */
 const init = {
     method: 'GET',
     headers: {
@@ -7,7 +13,6 @@ const init = {
     mode: 'same-origin',
     credentials: 'include'
 }
-
 fetch('/users/page-navmenu-request', init)
         .then(function(response) {
             return response.json();
@@ -52,13 +57,6 @@ const parentMenuItemPage = "parentMenuItemPage";
 const childMenuItemPage = "childMenuItemPage";
 const inputFieldName = "inputFieldName";
 const inputFieldOrderNumber = "inputFieldOrderNumber";
-/* I will need to fetch this data from the database
-   For the options in the menu.
-   Hardcoding an array of names to see how it works.
-*/
-const pageNames = ['no-link'];
-const parentPageName = [];
-const childPageName = [];
 /* Creates Input Field */
 const createInputFieldPageName = function (inputFieldName) {
     let input = "";
@@ -113,50 +111,20 @@ const createAnchorElement = function () {
 const menuItemList = function () {
     /* Append all elements to the html variable */
     let html = '';
-    for (let i = 0; i < 4; i++) {
-        let thisNode = '';
-        switch (i) {
-            case 0:
-                thisNode = createInputFieldPageName(inputFieldName);
-                break;
-            case 1:
-                thisNode = createSelectionMenu();
-                break;
-            case 2:
-                thisNode = createInputFieldPageName(inputFieldOrderNumber);
-                break;
-            case 3:
-                thisNode = createAnchorElement();
-                break;
-        }
-        html += thisNode;
-    }
+    html = createInputFieldPageName(inputFieldName) + 
+        createSelectionMenu() + 
+        createInputFieldPageName(inputFieldOrderNumber) + 
+        createAnchorElement();
     return html;
 };
 /* Submenu items have two extra elements */
 const subMenuItemList = function () {
     let html = '';
-    for (let i = 0; i < 5; i++) {
-        let thisNode = '';
-        switch (i) {
-            case 0:
-                thisNode = createInputFieldPageName(inputFieldName);
-                break;
-            case 1:
-                thisNode = createSelectionMenu(parentMenuItemPage);
-                break;
-            case 2:
-                thisNode = createSelectionMenu(childMenuItemPage);
-                break;
-            case 3:
-                thisNode = createInputFieldPageName(inputFieldOrderNumber);
-                break;
-            case 4:
-                thisNode = createAnchorElement();
-                break;
-        }
-        html += thisNode;
-    }
+    html = createInputFieldPageName(inputFieldName) +
+        createSelectionMenu(parentMenuItemPage) +
+        createSelectionMenu(childMenuItemPage) +
+        createInputFieldPageName(inputFieldOrderNumber) +
+        createAnchorElement();
     return html;
 };
 /* Function to prepend the new item */

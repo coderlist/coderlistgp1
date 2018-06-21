@@ -19,7 +19,6 @@ const uuidv1 = require('uuid/v1');
 
 const app = express();
 app.set('view engine', 'ejs');
-const SECRET = "coder";
 //app.use(cookieParser());
 app.use(logger('dev'));
 app.use(express.static('assets', {}));
@@ -38,7 +37,6 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(flash());
-
 
 app.use('/', routes);
 

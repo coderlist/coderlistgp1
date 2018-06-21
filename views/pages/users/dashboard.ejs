@@ -16,7 +16,6 @@
                             Dashboard
                         </h1>
                     </div>
-
                     <div class="row row-cards row-deck">
                         <div class="form-group col-md-12">
                             <label class="form-label" for="callToAction">Call to Action Text</label>
@@ -28,7 +27,6 @@
                                     <table class="table table-hover table-outline table-vcenter text-nowrap card-table">
                                         <thead>
                                             <tr>
-                                                <th>ID</th>
                                                 <th>User</th>
                                                 <th>Email</th>
                                                 <th>Last Login</th>
@@ -39,23 +37,19 @@
                                             <%= console.log(users)%>
                                                 <tbody>
                                                     <% users.map(function(user) {%>
+                                                        
                                                         <tr>
+                                                            <input type="hidden" class="this_name" value="<%=`${user.first_name} ${user.last_name}` %>" />
+                                                            <input type="hidden" class="this_id" value="<%=user.user_id %>" />
                                                             <td>
-                                                                <div data-id="user.user_id"><%=user.user_id%></div>
+                                                                <div class="name"><%= `${user.first_name} ${user.last_name}` %></div>
                                                             </td>
                                                             <td>
-                                                                <div>
-                                                                    <%=user.first_name + " " + user.last_name %>
-                                                                </div>
-                                                            </td>
-                                                            <td>
-                                                                <%=user.email%>
+                                                                <div class="email"><%=user.email%></div>
                                                             </td>
                                                             <td>
                                                                 <div class="small text-muted">Activity</div>
-                                                                <div>
-                                                                    <%= user.last_succesful_login%>
-                                                                </div>
+                                                                <div><%= user.last_succesful_login%></div>
                                                             </td>
                                                             <td class="text-center">
                                                                 <div class="item-action dropdown">
@@ -63,10 +57,10 @@
                                                                         <i class="fe fe-more-vertical"></i>
                                                                     </a>
                                                                     <div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; transform: translate3d(15px, 20px, 0px); top: 0px; left: 0px; will-change: transform;">
-                                                                        <a href="/users/edit-user" class="dropdown-item" data-userid="<%=user.user_id%>">
+                                                                        <a href="/users/edit-user" class="dropdown-item">
                                                                             <i class="dropdown-icon fe fe-edit-2"></i> Edit User </a>
                                                                         <div class="dropdown-divider"></div>
-                                                                        <a href="javascript:void(0)" class="dropdown-item delete-this" data-userid="<%=user.user_id%>">
+                                                                        <a href="javascript:void(0)" class="dropdown-item delete-this">
                                                                             <i class="dropdown-icon fe fe-delete"></i> Delete User</a>
                                                                     </div>
                                                                 </div>
