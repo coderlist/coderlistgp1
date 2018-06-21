@@ -24,17 +24,17 @@
                                 <input type="hidden" class="this_id" value="1" />
                                 <div class="form-group ">
                                     <label class="form-label">Title</label>
-                                    <input type="text" class="form-control this_name" name="title" placeholder="Title.." value="Hello World" required>
+                                    <input type="text" class="form-control this_name" name="title" placeholder="Title.." value="<% (typeof page == 'object' && page) ? page.title : 'Hello World' %>" required>
                                 </div>
                                 <div class="form-group ">
                                     <label class="form-label"></label>
-                                    <textarea class="form-control" name="content" rows="6" placeholder="Content.." required>Use CKEditor in this area. I have temporarily removed uploading images as this requires further consideration and more work. This should now upload pages. I will add images soon.</textarea>
+                                    <textarea class="form-control" name="content" rows="6" placeholder="Content.." value="<% (typeof page == 'object' && page) ? page.ckeditor_html : 'Use CKEditor in this area. I have temporarily removed uploading images as this requires further consideration and more work. This should now upload pages. I will add images soon.' %>" required></textarea>
                                 </div>
                                 <div class="form-group ">
                                     <label class="form-label">Short description
                                         <span class="form-label-small">0/120</span>
                                     </label>
-                                    <textarea class="form-control" name="description" rows="6" placeholder="Description.." value="" max-length="120" required></textarea>
+                                    <textarea class="form-control" name="description" rows="6" placeholder="Description.." value="<% (typeof page == 'object' && page) ? page.description : 'Add a description' %>" max-length="120" required></textarea>
                                 </div>
                                 <!-- <div class="form-group form-image">
                                     <div class="card form-image-preview">
