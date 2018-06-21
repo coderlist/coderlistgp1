@@ -2,6 +2,10 @@ const express = require('express');
 const userRoutes = new express.Router();
 const passport = require('../auth/local');
 const Logins = require('../helperFunctions/Logins');
+const UserLocalsNavigationStyling = require('../helperFunctions/navigation-locals');
+const userLocalsNavigationStyling = new UserLocalsNavigationStyling();
+const MessageTitles = require('../helperFunctions/message-titles');
+const messageTitles = new MessageTitles();
 const logins = new Logins();
 const {
   query,
@@ -66,10 +70,20 @@ const upload = multer({
 });
 
 userRoutes.use(logins.isLoggedIn);
+
+/* Please, refer to the navigation-locals.js file
+*  It can be found in the helperFunctions folder
+*  For more instructions in how to use this module
+*/
+userRoutes.use(userLocalsNavigationStyling.setLocals);
+/* Please, refer to the message-titles.js file
+*  It can be found in the helperFunctions folder
+*  For more instructions in how to use this module
+*/
+userRoutes.use(messageTitles.setMessageTitles);
+
 userRoutes.get('/', (req, res) => {
   res.status(200).render('pages/users/dashboard.ejs', { 
-  title: 'Dashboard', 
-  active: "active",
   messages: req.flash('info')});
   return;
 });
@@ -80,12 +94,9 @@ userRoutes.get('/dashboard', (req, res) => {
   getPages(9) //this need to be thought more about
   .then(function(pageData){
     res.status(200).render('pages/users/dashboard.ejs', { 
-  title: 'Dashboard', 
-  active: "active",
-  messageTitle: "Delete USER",
-  users : userData,
-  pages : pageData,
-  messages: req.flash('info')
+      users : userData,
+      pages : pageData,
+      messages: req.flash('info')
   })
 }).catch(function(err){
   console.log('err :', err);
@@ -100,32 +111,22 @@ userRoutes.get('/dashboard', (req, res) => {
 
 userRoutes.get('/manage-nav', function (req, res) {
   res.status(200).render('pages/users/manage-nav.ejs', { 
-    title: 'Manage Navigation Items', 
-    active: "active", 
     messages: req.flash('info')
   })
 })
 userRoutes.get('/manage-pdfs', function (req, res) {
   res.status(200).render('pages/users/manage-pdfs.ejs', { 
-    title: 'Manage PDF Files', 
-    active: "active",
-    messageTitle: "Delete PDF",
     messages: req.flash('Are you sure you want to delete this PDF?')
   })
 })
 userRoutes.get('/profile', function (req, res) {
   res.status(200).render('pages/users/profile.ejs', { 
-    title: 'Profile', 
-    active: "active", 
     messages: req.flash('info')
   })
 })
 userRoutes.get('/:name-page', function (req, res) {
   const url = req.url;
-  res.status(200).render('pages/users/edit-page.ejs', { 
-    title: url === "/create-page" ? "Create Page" : "Edit Page", 
-    active: "active",
-    messageTitle: "Delete Page", 
+  res.status(200).render('pages/users/edit-page.ejs', {
     messages: url === "/edit-page" ? req.flash('Are you sure you want to delete this PAGE?') : ''
   })
 })
@@ -136,8 +137,6 @@ userRoutes.get('/:name-page', function (req, res) {
 
 userRoutes.get('/change-password', (req, res) => {
   res.status(200).render('pages/users/change-password', {
-    title: `Change Password`,
-    active: "active",
     messages: req.flash('info')
   });
   return;
@@ -208,9 +207,6 @@ userRoutes.post('/change-password', passwordCheck, (req, res) => {
 userRoutes.get('/:name-user', function (req, res) {
   const url = req.url;
   res.status(200).render('pages/users/edit-user.ejs', { 
-    title: url === "/create-user" ? "Create User" : "Edit User", 
-    active: "active",
-    messageTitle: url === "/edit-user" ? "Delete USER" : '',  
     messages: url === "/edit-user" ? req.flash('Are you sure you want to delete this USER?') : ''
   })
 })
@@ -272,7 +268,7 @@ userRoutes.post('/create-user', createUserCheck, (req, res) => { //accessible by
       console.log("There was a system error", err)
       req.flash('info', 'There was an system error. Please notify support.')
     }
-    res.status(200).render('pages/users/create-user.ejs', {
+    res.status(200).render('pages/users/create-user.ejs', { 
       messages: req.flash('info'),
       user
     });
@@ -320,15 +316,15 @@ userRoutes.post('/delete-user', (req, res) => {
 });
 
 userRoutes.get('/change-password', (req, res) => {
-  res.status(200).render('pages/users/changePassword.ejs', {messages: req.flash('info')});
+  res.status(200).render('pages/users/changePassword.ejs', {
+    messages: req.flash('info')
+  });
 });
 
 ////////////////// Change email whilst validated  //////////////////////
 
 userRoutes.get('/change-email-request', (req, res) => {
   res.status(200).render('pages/users/change-email-request.ejs', {
-    title: `Change Email`,
-    active: "active",
     messages: req.flash('info')
   });
 });
@@ -363,6 +359,7 @@ userRoutes.post('/change-email-request', changeEmailCheck, (req, res) => {
     }
     req.flash("info", "Invalid user data", process.env.NODE_ENV === 'development' ? errors.array() : ""); //error.array() for development only
     res.status(200).render('pages/users/change-email-request.ejs', {
+      title: 'Profile',
       messages: req.flash('info'),
       userTemp
     }); // insert variable into form data
@@ -411,7 +408,7 @@ userRoutes.post('/upload-images', upload.single('image'), (req, res) => {
     return res.status(200).redirect('/users/upload-images')
 
   } else {
-    req.flash("File received", );
+    req.flash("File received");
     return res.status(200).redirect('/users/upload-images')
   }
 })
@@ -517,8 +514,7 @@ userRoutes.post('/create-page', function(req, res){
 
 userRoutes.all('*', (req, res) => {
   res.status(200).render('pages/public/unknown.ejs', {
-    url: req.url,
-    title: '404 Not Found'
+    url: req.url
   });
   return;
 });

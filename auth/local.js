@@ -41,9 +41,19 @@ passport.use(new LocalStrategy(options,
       })
       .then(data => { 
         return done(null,user);
-      }).catch(e => {console.log("there was an a catch error", e); return done(null,false, {message: "Invalid Username or password"})})
+      }).catch(e => {
+        console.log("there was an a catch error", e); 
+        return done(
+          null,
+          false, 
+          {message: "Invalid Username or password"})})
     }
-  }).catch(e => {console.log("there was an a catch error", e); return done(null,false, {message: "System Error"})})
+  }).catch(e => {
+    console.log("there was an a catch error", e); 
+    return done(
+      null,
+      false, 
+      {message: "System Error"})})
 }))
 
 
