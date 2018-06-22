@@ -48,7 +48,7 @@ const queryUnique = (query) => {
  * returns a user that matches 
  * the email
  */
-const findByUsername = (table, email) => {
+const findByEmail = (table, email) => {
   return queryUnique(`SELECT EXISTS(SELECT\
      1 FROM users WHERE email=('${email}'))`).then(res => {
     if (!res.exists) return false
@@ -104,6 +104,6 @@ module.exports = {
   queryHelper,
   queryUnique,
   insertOne,
-  findByUsername,
+  findByEmail,
   insertInTable
 };

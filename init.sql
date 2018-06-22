@@ -25,11 +25,11 @@ CREATE TABLE IF NOT EXISTS pages (
   created_by TEXT  REFERENCES users(email) ON DELETE CASCADE, 
   creation_date TIMESTAMP DEFAULT NOW(),
   owner_id SERIAL REFERENCES users(user_id) ON DELETE CASCADE,  
-  title json,    
+  title JSON,    
   is_published BOOLEAN DEFAULT FALSE,
   is_homepage_grid BOOLEAN,
   is_nav_menu BOOLEAN,
-  last_edited_date jSON, 
+  last_edited_date JSON, 
   PRIMARY KEY (page_Id)
 );
 
@@ -47,10 +47,11 @@ CREATE TABLE IF NOT EXISTS images (
 );
 
 
+
 -- creates tables user_sessions 
 CREATE TABLE IF NOT EXISTS user_sessions (
   sid VARCHAR NOT NULL COLLATE "default",
-	sess json NOT NULL,
+	sess JSON NOT NULL,
 	expire TIMESTAMP(6) NOT NULL,
   PRIMARY KEY (sid) NOT DEFERRABLE INITIALLY IMMEDIATE
 )
@@ -77,15 +78,16 @@ ALTER TABLE pages ALTER COLUMN is_homepage_grid SET DEFAULT FALSE;
 
 ALTER TABLE users ADD COLUMN IF NOT EXISTS activation_token TEXT,
   ADD COLUMN IF NOT EXISTS is_admin BOOLEAN DEFAULT FALSE,
-  ADD COLUMN IF NOT EXISTS old_password json[];  --- {"password":"","token_date":"","change_token":""}
+  ADD COLUMN IF NOT EXISTS old_password JSON[];  --- {"password":"","token_date":"","change_token":""}
 
 ALTER TABLE users ALTER COLUMN is_admin SET DEFAULT TRUE;
 
 ALTER TABLE pages ADD COLUMN IF NOT EXISTS ckeditor_html TEXT,
    ADD COLUMN IF NOT EXISTS order_number INTEGER,
-   ADD COLUMN IF NOT EXISTS page_description TEXT;
+   ADD COLUMN IF NOT EXISTS page_description TEXT,
+   ADD COLUMN IF NOT EXISTS owner_id INT;
 
-ALTER TABLE pages DROP COLUMN IF EXISTS owner_id;
+--ALTER TABLE pages DROP COLUMN IF EXISTS owner_id;
 ALTER TABLE pages ALTER COLUMN title SET NOT NULL;
 
 
@@ -123,7 +125,7 @@ BEGIN
       where table_name = 'users' and column_name='old_email') = '_text'
   THEN
      ALTER TABLE users DROP COLUMN old_email;
-     ALTER TABLE users ADD COLUMN old_email json[];
+     ALTER TABLE users ADD COLUMN old_email JSON[];
   END IF;
 END $$;
 
