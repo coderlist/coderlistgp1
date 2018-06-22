@@ -438,12 +438,13 @@ userRoutes.get('/upload-images', function (req, res) {
 userRoutes.post('/upload-images', upload.single('image'), (req, res) => {
   console.log('req.body :', req.body, path.join(imageUploadLocation + req.fileLocation));
   if (!req.file) {
-    req.flash("No file received");
-    return res.status(200).redirect('/users/upload-images')
+    req.flash('info', 'No file received');
+    res.status(200).redirect('/users/upload-images');
+    return;
 
   } else {
-    req.flash("File received");
-    return res.status(200).redirect('/users/upload-images')
+    req.flash('info', 'File received');
+    res.status(200).redirect('/users/upload-images')
   }
 })
 
