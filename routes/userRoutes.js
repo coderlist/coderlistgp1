@@ -164,6 +164,7 @@ userRoutes.get('/edit-page/:page_id', pageIDCheck, function (req, res) {
       res.status(200).redirect('/users/edit-page');
       return;  
     }
+    console.log('data at page :', data[0].title);
     res.status(200).render('pages/users/edit-page.ejs', {page: data[0]});
     return;
   })

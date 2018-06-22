@@ -1,0 +1,99 @@
+
+Group Project #1 - Website with CMS for London business. 
+
+Project overview
+
+This project is to build a website with a content management system (CMS) for a small, new local business in London. The business provides classes for children to help with confidence, stress, and social skills. 
+
+They need the ability to create and delete pages on their site, as well as manage the content using a rich text editor. The two most important factors are ease of use, and the consistency between how the content of pages looks in the text editor in the admin, and how it looks on the customer facing pages. WYSIWYG is key. 
+
+
+Customer facing design
+
+Customer facing designs can be seen here: https://www.figma.com/proto/EDtRbQ1fAaDmUY7sBshcR4gI/CoderList-Group-Project-1-GinnyBradley?scaling=contain&node-id=2%3A3 
+
+If you create an account, and click the comment symbol in the top left hand corner, you will be able to view and make comment on the designs. I’ve made some explaining some of the functionality. 
+
+Font-family: Lato
+Color: #333
+
+The squares grid on the home page will be generated based on the pages of the site, and the header and footer will be the same throughout. However, everything else will be controlled by the client using a rich text editor to create and edit content. 
+
+
+Admin / CMS
+
+Template: 
+We have chosen to use this admin template: 
+https://tabler.github.io/?ref=producthunt 
+
+It should include most of the elements we need, but we can create custom ones where necessary. 
+
+
+Requirements: 
+
+Admin users:
+
+Login
+This will require email and password fields. 
+
+Forgot password option. 
+
+List all users
+There will need to be a page that displays all users. 
+It should include the option to view / edit that user. 
+It should give the option to create a new user. 
+It should give the option to delete user. (It should show a confirmation before deletion actually takes place). 
+
+Create / edit user
+Just need an email, password and confirm password field in a form. 
+
+Manage Pages
+
+View all pages
+Show a list of all pages on the site
+Give the ability to edit the page. 
+Give the ability to delete the page (It should show a confirmation before deletion actually takes place). 
+
+Create / edit page
+A page title. 
+An option to upload an image that will appear in the square on the homepage of the site. 
+An option to add a short description of the page (max 120 characters). 
+An option to publish / unpublish the page. 
+CKEditor4 used to update the contents of the page. 
+Consistency and reliability is key
+You should provide them with a range of header sizes
+They do not need many of the advanced features, so it can be kept to the standard content editing, image / media upload etc. 
+Please include the view source option. 
+
+
+Home page
+This should have a free text editor to allow for content to be added to the top of the home page. 
+It should also show a list of all published pages, and allow the user to select which ones will appear as squares on the homepage. 
+It should also allow the user to decide which order the page squares appear on the home page. 
+
+
+
+Menu
+
+This should be its own page that allows the user to set the structure / order of the menu. 
+
+It needs to have top and sub level menu items. Top level items can contain other pages, and do not necessarily have to be pages themselves. For example, ‘workshops’ below is only there as a container for the sub pages, it is not a page itself, whereas ‘contact’ will link straight through to its own page. 
+
+
+It could take some thinking to get this working well, so come up with a design between you, and then speak to us about your ideas. 
+
+
+PDFs page
+
+The client uses a lot of PDFs for brochures / forms etc. that they need to be able to link to in the site. 
+
+This page should:
+Allow for a new PDF to be uploaded. 
+List all the previously uploaded PDFs. 
+Allow PDFs to be deleted. 
+Allow the user to copy the path of the uploaded PDF, so that it can be linked to in the text editor. 
+
+
+
+
+
