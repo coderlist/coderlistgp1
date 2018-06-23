@@ -96,6 +96,7 @@
                                             <tbody>
                                               <% pages.map(function(page){%>
                                                 <tr>
+                                                    <input type="hidden" class="page_id" value="<%=page.page_id %>" />
                                                     <td>
                                                         <span class="text-muted"><%=page.page_id%></span>
                                                     </td>
@@ -130,7 +131,7 @@
                                                         <a href="javascript:void(0)" class="btn btn-secondary btn-sm">Save Order</a>
                                                     </td>
                                                     <td>
-                                                        <a href="/users/edit-page" class="btn btn-secondary btn-sm">Edit Page</a>
+                                                        <a href="/users/edit-page/<%=page.page_id %>" class="btn btn-secondary btn-sm">Edit Page</a>
                                                     </td>
                                                 </tr>
                                                 <%})%>

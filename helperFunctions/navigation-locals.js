@@ -12,8 +12,15 @@ class UserLocalsNavigationStyling {
     constructor(){}
     setLocals(req, res, next){
         res.locals.username =  req.user.first_name ?  req.user.first_name + " " + req.user.last_name : 'Hello User';
-        res.locals.active = 'active';
+        res.locals.active = 'active';  
         const url = req.url;
+        let id = '';
+        if(url.match("\/edit-page\/") == "/edit-page/"){
+            id = url.match(/\d+$/);
+        } 
+        if(url.match("\/edit-user\/") == "/edit-user/"){
+            id = url.match(/\d+$/);
+        }
         switch(url){
             case "/": res.locals.title = 'Dashboard';
                 break;
@@ -21,11 +28,11 @@ class UserLocalsNavigationStyling {
                 break;
             case "/create-user": res.locals.title = 'Create User';
                 break;
-            case "/edit-user": res.locals.title = 'Edit User';
+            case `/edit-user/${id}`: res.locals.title = 'Edit User';
                 break;
             case "/edit-page": res.locals.title = 'Create Page';
                 break;
-            case "/edit-page/:id": res.locals.title = 'Edit Page';
+            case `/edit-page/${id}`: res.locals.title = 'Edit Page';
                 break;
             case "/profile": res.locals.title = 'Profile';
                 break;
