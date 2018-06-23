@@ -10,6 +10,7 @@ const logins = new Logins();
 const {
   query,
   check,
+  param,
   body,
   validationResult
 } = require('express-validator/check');
@@ -25,7 +26,8 @@ const {
 } = require('../server/models/users').user;
 const {
   createPage,
-  getPages
+  getPages,
+  getPagebyID
 } = require('../server/models/pages');
 const uuid = require('uuid/v1');
 const Mail = require('../helperFunctions/verification/MailSender');
@@ -124,14 +126,48 @@ userRoutes.get('/profile', function (req, res) {
     messages: req.flash('info')
   })
 })
-userRoutes.get('/:name-page', function (req, res) {
-  const url = req.url;
-  res.status(200).render('pages/users/edit-page.ejs', {
-    messages: url === "/edit-page" ? req.flash('Are you sure you want to delete this PAGE?') : ''
-  })
+// userRoutes.get('/:name-page', function (req, res) {
+//   const url = req.url;
+//   res.status(200).render('pages/users/edit-page.ejs', {
+//     messages: url === "/edit-page" ? req.flash('Are you sure you want to delete this PAGE?') : ''
+//   })
+// })
+
+userRoutes.get('/edit-page', function (req, res) { //  with no id number this should just create a page
+  res.status(200).render('pages/users/edit-page.ejs', {messages: req.flash('info')})
 })
 
+const pageIDCheck = [
+  param('page_id').isInt()
+]
 
+userRoutes.get('/edit-page/:page_id', pageIDCheck, function (req, res) {
+  let errors = validationResult(req);
+  let pageID = parseInt(req.params.page_id);
+  console.log('page_id :', pageID);
+  console.log('errors :', errors.array());
+  if (!errors) {
+    req.flash('info', 'invalid pageID');
+    res.status(200).redirect('users/edit-page');
+  }
+  getPagebyID(pageID)
+  .then(function(data){
+    console.log('data :', data);
+    if (data.length === 0) { // Check to make sure page data exists
+      req.flash('info', 'No such page exists');
+      res.status(200).redirect('/users/edit-page');
+      return;
+    }
+    console.log('(!(req.session.isAdmin || req.session.email === data.created_by)) :', req.session.email, data[0].created_by,(!(req.session.isAdmin || req.session.email === data.created_by)));
+    if (!(req.session.isAdmin || req.session.email === data[0].created_by)) { // Check page ownership or admin
+      req.flash('info', 'This is not your page to modify');
+      res.status(200).redirect('/users/edit-page');
+      return;  
+    }
+    res.status(200).render('pages/users/edit-page.ejs', {page: data[0]});
+    return;
+  })
+})
 
 ////////////////////    Change password while authenticated ////////////////////
 
@@ -375,7 +411,6 @@ userRoutes.post('/change-email-request', changeEmailCheck, (req, res) => {
   }
   insertOldEmailObject(user)
     .then(function (data) {
-      console.log('datas :', data);
       if (!data) {
         req.flash('info', 'Invalid credentials')
         res.status(200).redirect('/users/change-email-request.ejs');
@@ -386,7 +421,6 @@ userRoutes.post('/change-email-request', changeEmailCheck, (req, res) => {
       req.flash('info', "An email has been sent to your new email with further instructions");
       res.redirect('/users/dashboard');
     }).catch(function (err) {
-      console.log('err :', err);
       req.flash('info', "An internal error has occurred. Please contact your administrator");
       res.redirect('/users/dashboard');
       return;
@@ -404,12 +438,13 @@ userRoutes.get('/upload-images', function (req, res) {
 userRoutes.post('/upload-images', upload.single('image'), (req, res) => {
   console.log('req.body :', req.body, path.join(imageUploadLocation + req.fileLocation));
   if (!req.file) {
-    req.flash("No file received");
-    return res.status(200).redirect('/users/upload-images')
+    req.flash('info', 'No file received');
+    res.status(200).redirect('/users/upload-images');
+    return;
 
   } else {
-    req.flash("File received");
-    return res.status(200).redirect('/users/upload-images')
+    req.flash('info', 'File received');
+    res.status(200).redirect('/users/upload-images')
   }
 })
 
@@ -498,15 +533,20 @@ userRoutes.post('/create-page', function(req, res){
     created_by: req.session.user_id,
     title: req.body.title,
     ckeditorHTML: req.body.content,
-    short_description: req.body.short_description,
-    email: req.session.email
+    page_description: req.body.description,
+    email: req.session.email,
+    order_number: 1
+
   }
   
   // i would like page id from the db please
   createPage(pageData).then(function(data){
-    console.log('data :', data);
+    req.flash('info', 'Page created successfully');
+    res.status(200).redirect('/users/dashboard');
   }).catch(function(err){
-    console.log('err :', err);
+    req.flash('info', 'There was an error creating the page');
+    res.status(200).render('/pages/users/edit-page.ejs', {messages: req.flash('info'), page : pageData});
+    
   })
 });
 

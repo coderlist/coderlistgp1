@@ -1,9 +1,9 @@
 const bcrypt = require('bcrypt');
 const saltrounds = 10;
-const {verifyPassword} = require('../../auth/verify');
+const {comparePassword} = require('../../auth/verify');
 const {
   insertOne,
-  findByUsername,
+  findByEmail,
   queryHelper
 } = require('../../helperFunctions/query/queryHelper');
 
@@ -65,8 +65,8 @@ const user = {
    * on success, changes activated to true.
    * It return a Promise.
    */
-  verifyUser(user) {
-    return findByUsername('users', user.email).then(dbUser => {
+  activateUser(user) {
+    return findByEmail('users', user.email).then(dbUser => {
       if (user.activation_token === dbUser.activation_token) {
         return bcrypt.hash(user.password, saltrounds)
           .then(hash => {
@@ -185,9 +185,8 @@ const user = {
    *               "token":"386ebca7-907d-44a0-be0c-371ed1340781" }
    */
   insertOldEmailObject(user) {
-    return findByUsername('users', user.old_email).then(dbUser => {
-      console.log('USERFOUND', user)
-      if (verifyPassword(user.password, dbUser.password)) {
+    return findByEmail('users', user.old_email).then(dbUser => {
+      if (comparePassword(user.password, dbUser.password)) {
         return queryHelper(`update users set old_email = old_email ||` +
             ` array['{ "old_val":"${user.old_email}", "new_val":"${user.new_email}","token_date": ` +
             `"' || now() || '", "token":"${user.email_change_token}" }']` +
@@ -282,8 +281,8 @@ const user = {
    */
   updatePassword(body) {
     //node sends email, old_password and new_password
-    return findByUsername('users', body.email).then(dbUser => {
-      if (verifyPassword(body.old_password, dbUser.password)) {
+    return findByEmail('users', body.email).then(dbUser => {
+      if (comparePassword(body.old_password, dbUser.password)) {
         return bcrypt.hash(body.new_password, saltrounds)
           .then(hash => {
             return queryHelper(
@@ -314,7 +313,7 @@ const user = {
    */
 
   insertOldPasswordObject(query) {
-    return findByUsername('users', query.email).then(dbUser => {
+    return findByEmail('users', query.email).then(dbUser => {
       return queryHelper(`update users set old_password = old_password ||` +
           ` array['{ "old_val":"${dbUser.password}", "token_date": ` +
           `"' || now() || '", "token":"${query.forgot_password_token}" }']` +
@@ -376,14 +375,13 @@ const changePassword = function(body)  {
  return  user.getOldPasswordsArray(body.email).then(array => {
     let i = 0; 
     while (i < array.length) {
-      if (verifyPassword(body.new_password, array[i])) {
+      if (comparePassword(body.new_password, array[i])) {
         return Promise.reject(new Error('password already used'));
       }
       i++;
     }
     return bcrypt.hash(body.new_password, saltrounds)
       .then(hash => {
-        console.log('HASHED',hash)
         return queryHelper(`UPDATE users SET password = '${hash}' 
         where email = '${body.email}'`)
           .then(response =>{

@@ -8,7 +8,7 @@ const users = require('../server/models/users').user;
 const passport = require('../auth/local');
 const Mail = require('../helperFunctions/verification/MailSender');
 // site //
-const { createUser, updateUserEmail, insertOldEmailObject, verifyUser, addOneToFailedLogins, getOldPasswordObject, insertOldPasswordObject } = require('../server/models/users').user;
+const { createUser, updateUserEmail, insertOldEmailObject, activateUser, addOneToFailedLogins, getOldPasswordObject, insertOldPasswordObject } = require('../server/models/users').user;
 const changePassword = require('../server/models/users').changePassword;
 const uuid = require('uuid/v1');
 const _ = require('lodash');
@@ -129,7 +129,7 @@ routes.post('/enter-password', postEnterPasswordCheck, (req, res) => {
   }
   console.log('USERR',user)
   console.log("gets here");
-  users.verifyUser(user).then(response => {
+  users.activateUser(user).then(response => {
     console.log('RESPONSE', response)
     if (!response) {
       req.flash("info", "There was an error creating user. Please try again or contact your administrator");
