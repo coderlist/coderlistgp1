@@ -541,6 +541,7 @@ userRoutes.post('/create-page', function(req, res){
   }
   
   // i would like page id from the db please
+  console.log('pageData :', pageData);
   createPage(pageData).then(function(data){
     req.flash('info', 'Page created successfully');
     res.status(200).redirect('/users/dashboard');
