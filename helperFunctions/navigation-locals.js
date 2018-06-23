@@ -23,9 +23,9 @@ class UserLocalsNavigationStyling {
                 break;
             case "/edit-user": res.locals.title = 'Edit User';
                 break;
-            case "/create-page": res.locals.title = 'Create Page';
+            case "/edit-page": res.locals.title = 'Create Page';
                 break;
-            case "/edit-page": res.locals.title = 'Edit Page';
+            case "/edit-page/:id": res.locals.title = 'Edit Page';
                 break;
             case "/profile": res.locals.title = 'Profile';
                 break;

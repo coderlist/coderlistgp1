@@ -126,6 +126,7 @@ userRoutes.get('/profile', function (req, res) {
     messages: req.flash('info')
   })
 })
+
 // userRoutes.get('/:name-page', function (req, res) {
 //   const url = req.url;
 //   res.status(200).render('pages/users/edit-page.ejs', {
@@ -528,7 +529,7 @@ userRoutes.get('/page-navmenu-request', function (req, res) {
 })
 
 
-userRoutes.post('/create-page', function(req, res){
+userRoutes.post('/edit-page', function(req, res){
   pageData = {
     created_by: req.session.user_id,
     title: req.body.title,
@@ -536,7 +537,6 @@ userRoutes.post('/create-page', function(req, res){
     page_description: req.body.description,
     email: req.session.email,
     order_number: 1
-
   }
   
   // i would like page id from the db please

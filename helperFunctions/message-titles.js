@@ -16,7 +16,7 @@ class MessageTitles {
                 break;
             case "/manage-pdfs": res.locals.messageTitle = 'Delete PDF';
                 break;
-            case "/edit-page": res.locals.messageTitle = 'Delete Page';
+            case "/edit-page/": res.locals.messageTitle = 'Delete Page';
                 break;
             default: res.locals.messageTitle = 'You are about to delete this:';
         }
