@@ -9,11 +9,11 @@ const {queryHelper} = require('../../helperFunctions/query/queryHelper');
 
 module.exports = {
   createPage(body) {
-    return queryHelper(`INSERT INTO pages (created_by,owner_id,title,description,order_number,ckeditor_html)`+
+    return queryHelper(`INSERT INTO pages (created_by,owner_id,title,page_description,order_number,ckeditor_html)`+
                        ` VALUES ('${body.email}',(SELECT user_id FROM users WHERE email = '${body.email}'),
-                       '${body.title}','${body.description}','${body.order_number}', '${body.ckeditorHTML}')`)
+                       '${body.title}','${body.page_description}','${body.order_number}', '${body.ckeditorHTML}')`)
         .then(response => console.log('PAGE CREATED'))
-        .catch(e => {throw e})
+        .catch(e => {console.log('e :', e); throw e})
   },
 
   getPagebyID(id){
