@@ -148,7 +148,7 @@ userRoutes.get('/edit-page/:page_id', pageIDCheck, function (req, res) {
   console.log('errors :', errors.array());
   if (!errors) {
     req.flash('info', 'invalid pageID');
-    res.status(200).redirect('users/edit-page');
+    res.status(200).redirect('/users/edit-page');
   }
   getPagebyID(pageID)
   .then(function(data){
@@ -164,6 +164,7 @@ userRoutes.get('/edit-page/:page_id', pageIDCheck, function (req, res) {
       res.status(200).redirect('/users/edit-page');
       return;  
     }
+    console.log('getshere');
     res.status(200).render('pages/users/edit-page.ejs', {page: data[0]});
     return;
   })
@@ -545,7 +546,7 @@ userRoutes.post('/create-page', function(req, res){
     res.status(200).redirect('/users/dashboard');
   }).catch(function(err){
     req.flash('info', 'There was an error creating the page');
-    res.status(200).render('/pages/users/edit-page.ejs', {messages: req.flash('info'), page : pageData});
+    res.status(200).render('pages/users/edit-page.ejs', {messages: req.flash('info'), page : pageData[0]});
     
   })
 });
