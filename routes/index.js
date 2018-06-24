@@ -52,11 +52,13 @@ routes.get('/login', (req, res) => {
   
   console.log(sess.id)
   console.log(sess.cookie)
-  
-  res.status(200).render('pages/public/login', { title: 'Login', messages: req.flash('message')} );
-  sess.destroy(function(err){
-    console.log('cannot access session here')
-  })
+  messagesInfo = req.flash('info') 
+  messagesError = req.flash('error');
+  messages = messagesInfo + messagesError;
+  res.status(200).render('pages/public/login', { title: 'Login', messages: messages} );
+  // sess.destroy(function(err){
+  //   console.log('cannot access session here')
+  // })
   return;
 });
 
@@ -74,6 +76,9 @@ routes.post('/login',
     }
   ), 
   function (req, res){
+    findIdByEmail(req.body.email).then(function(data){
+      
+    })
     req.session.email = req.body.email;
     res.status(200).redirect("/users/dashboard")
   return;

@@ -166,7 +166,7 @@ userRoutes.get('/edit-page/:page_id', pageIDCheck, function (req, res) {
       return;  
     }
     console.log('getshere');
-    res.status(200).render('pages/users/edit-page.ejs', {page: data[0]});
+    res.status(200).render('pages/users/edit-page.ejs', {page: data[0], messages: req.flash('info')});
     return;
   })
 })
@@ -340,10 +340,25 @@ userRoutes.get('/logout', logins.isLoggedIn, logins.logUserOut, (req, res) => { 
 });
 
 
-userRoutes.get('/edit-user', (req, res) => { //accessible by authed admin
+const checkUserID = [
+  param('user_id').isInt()
+]
+
+userRoutes.get('/edit-user/:user_id', checkUserID, (req, res) => { //accessible by authed admin
+  errors = validationResult(req);
+  if (!errors){
+    req.flash('info', 'Invalid user ID');
+    res.status(200).redirect('/users/dashboard');
+    return;
+  }
+  
+  // check if user isAdmin ? or is user_id === req.session.userId
+
+
+
   res.status(200).render('pages/users/edit-user.ejs', {
-    user: req.body.userToDelete,
-    messages: req.flash('info')
+    messages: req.flash('info'), 
+    user : user
   });
   // confirm page for deleting user. only accessible by authenticated admin.
 });

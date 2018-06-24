@@ -25,7 +25,7 @@ class Logins {
       .then(function (data){
         if (data.length === 0) { // handles invalid username
           console.log('Invalid username or password');
-          req.flash('info', 'Invalid username or password');
+          req.flash('error', 'Invalid username or password');
           res.status(200).redirect('/login')
           return;
         }
@@ -40,7 +40,7 @@ class Logins {
         }
         else {
           console.log('too many failed login attempts'); // if failed login attempts is greater than 10 and last login is less than 5 minutes ago then exit from route and do not allow a login attempt
-          req.flash('info', 'Too many failed login attempts. Please try later');
+          req.flash('error', 'Too many failed login attempts. Please try later');
           res.status(200).redirect('/login')
           return;
         }

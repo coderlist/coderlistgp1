@@ -37,13 +37,25 @@
                                                     </div>
                                             </div>
                                             <div class="row">
+                                                    <div class="col-md-12">
+                                                            <div class="form-group">
+                                                                <label class="form-label" for="surname">Super Admin?</label>
+                                                                <input name="is_admin" type="checkbox" id="isAdmin" class="form-control" 
+                                                                <% if (typeof user === 'object' && user.length > 0) {  %>
+                                                                  <%= !user.is_admin ? "checked" : "" %>
+                                                                <%} %> 
+                                                                 required>
+                                                            </div>
+                                                    </div>
+                                            </div>
+                                            <!-- <div class="row">
                                                 <div class="col-md-12">
                                                     <div class="form-group">
                                                         <label class="form-label" for="email">Email address</label>
                                                         <input name="email" type="email" id="email" class="form-control" placeholder="Email@Example.com" value="<% (typeof user == 'object' && user) ? user.email : ''%>" required>
                                                     </div>
                                                 </div>
-                                            </div>
+                                            </div> i don't think we need anemail address. To change this is a different route -->
                                         </div>
                                 <div class="card-footer text-right">
                                     <% if (title === "Edit User") { %> 

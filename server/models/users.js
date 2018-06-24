@@ -57,6 +57,19 @@ const user = {
     .catch(e => {throw e})
   },
 
+
+  /**
+   * @param  {String} email
+   * find user details by email
+   */
+  getUserById(userId){
+    return queryHelper(`SELECT (first_name,last_name,
+      ,creation_date,last_succesful_login,is_admin) 
+      FROM USERS WHERE user_id='${userId}';`)
+    .then(response => response)
+    .catch(e => {throw e})
+  },
+
   /**
    * 
    * @param {Object} user 
