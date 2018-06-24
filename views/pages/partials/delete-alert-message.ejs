@@ -1,0 +1,23 @@
+<div class="overlay">
+    <div class="overlay-alert-message alert alert-warning alert-dismissible">
+            <button type="button" class="close close-alert-message"></button>
+        <h4><%= messageTitle %></h4>
+        <% if ( messageTitle === "Delete User") { %> 
+            <p>
+                Are you sure you want to delete <span class="strong"></span> user? 
+            </p>
+        <% } else if (messageTitle === "Delete Page") { %>
+            <p>
+                Are you sure you want to delete <span class="strong"></span> page? 
+            </p>
+        <% } else { %>
+            <p>
+                Are you sure you want to delete <span class="strong"></span> file? 
+            </p>
+        <% } %>
+        <div class="btn-list">
+            <button class="btn btn-secondary close-alert-message" type="button">No, thanks</button>
+            <button class="btn btn-success" type="button">Yes</button>
+        </div>
+    </div>
+</div>

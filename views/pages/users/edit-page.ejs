@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <% include ../partials/head.ejs %>
+    <script src="/ckeditor/ckeditor.js"></script>
+</head>
+
+<body>
+    <% include ../partials/header.ejs %>
+        <% include ../partials/delete-alert-message.ejs %>
+            <div class="my-3 my-md-5">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <form action="/users/edit-page" method="post" class="card">
+                                <div class="card-header">
+                                        <% if (title === "Create Page") { %> 
+                                            <h3 class="card-title">Create Page</h3>
+                                        <% } else { %>
+                                            <h3 class="card-title">Edit Page</h3>
+                                        <% } %> 
+                                </div>
+                                <input type="hidden" class="this_id" value="<%= (typeof page == 'object' && page) ? page.page_id : ''%>" />
+                                <div class="form-group ">
+                                    <label class="form-label">Title</label>
+                                    <input type="text" class="form-control this_name" name="title" placeholder="Title.." value="<%= (typeof page == 'object' && page) ? page.title : 'Hello World' %>" required>
+                                </div>
+                                <div class="form-group ">
+                                    <label class="form-label"></label>
+                                    <textarea class="form-control" name="content" rows="6" placeholder="Content.." required><%= (typeof page == 'object' && page) ? page.ckeditor_html : 'Use CKEditor in this area. I have temporarily removed uploading images as this requires further consideration and more work. This should now upload pages. I will add images soon.' %></textarea>
+                                </div>
+                                <div class="form-group ">
+                                    <label class="form-label">Short description
+                                        <span class="form-label-small">0/120</span>
+                                    </label>
+                                    <textarea class="form-control" name="description" rows="6" placeholder="Description.." max-length="120" required><%= (typeof page == 'object' && page) ? page.page_description : 'Add a description' %></textarea>
+                                </div>
+                                <!-- <div class="form-group form-image">
+                                    <div class="card form-image-preview">
+                                        <img class="card-img-top img-top-preview" src="https://images.unsplash.com/photo-1475563011407-6bf489b1c361?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=9cd5b743b42d8cc767b58af0c51602c6&auto=format&fit=crop&w=1050&q=80"
+                                            alt="And this isn&#39;t my nose. This is a false one.">
+                                    </div>
+                                    <div class="form-image-preview-upload" action="/user/upload-images">
+                                        <div class="form-label">Size: 300 x 300 px</div>
+                                        <div class="custom-file">
+                                            <input type="file" class="custom-file-input" name="image" required>
+                                            <label class="custom-file-label">Upload Image</label>
+                                        </div>
+                                    </div>
+                                </div> -->
+                                <div class="card-footer text-right">
+                                    <% if (title === "Edit Page") { %> 
+                                    <button name="delete_page" type="button" class="btn btn-danger delete-this">Delete Page</button>
+                                    <% } %>
+                                    <button name="save_draft" type="submit" class="btn btn-primary">Save Draft</button>
+                                    <% if (title === "Create Page") { %> 
+                                    <button name="publish_page" type="submit" class="btn btn-primary">Publish</button>
+                                    <% } %>
+                                    <% if (title === "Edit Page") { %> 
+                                    <button name="update_page" type="submit" class="btn btn-primary">Update</button>
+                                    <% } %>
+                                    <label class="custom-control custom-checkbox">
+                                        <input type="checkbox" class="custom-control-input" name="publish_edit_page" value="option1" checked="">
+                                        <span class="custom-control-label">Publish</span>
+                                    </label>
+                                </div>
+
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <% include ../partials/footer.ejs %>
+                <!-- Scripts -->
+                
+                <script src="/js/alert-message.js"></script>
+                <script>
+                    // Replace the <textarea id="editor1"> with a CKEditor
+                    // instance, using default configuration.
+                    CKEDITOR.config.autoGrow_minHeight = 1200;
+                    CKEDITOR.config.autoGrow_maxHeight = 1200;
+                    CKEDITOR.replace( 'content' );
+                </script>
+</body>
+
+</html>

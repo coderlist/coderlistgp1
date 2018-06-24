@@ -48,11 +48,11 @@ const queryUnique = (query) => {
  * returns a user that matches 
  * the email
  */
-const findByUsername = (table, email) => {
-  return queryUnique(`select exists(select\
-     1 from users where email=('${email}'))`).then(res => {
+const findByEmail = (table, email) => {
+  return queryUnique(`SELECT EXISTS(SELECT\
+     1 FROM users WHERE email=('${email}'))`).then(res => {
     if (!res.exists) return false
-    return queryUnique(`select * from users where email = '${email}'`)
+    return queryUnique(`SELECT * FROM users WHERE email = '${email}'`)
       .then(user => user)
   }).catch(e => e.message)
 }
@@ -96,8 +96,7 @@ const insertInTable = (anyObj,table) => {
                 ` VALUES (${valsArray.map(val => `'${val}'`)}) RETURNING *`;
     return queryHelper(query)
      .then(users => users)
-     .catch(e => {throw e})
- 
+     .catch(e => {throw e}) 
 }
 
 
@@ -105,6 +104,6 @@ module.exports = {
   queryHelper,
   queryUnique,
   insertOne,
-  findByUsername,
+  findByEmail,
   insertInTable
 };

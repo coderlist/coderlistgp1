@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <% include ../../partials/head.ejs %>
+</head>
+
+<body>
+  <br />
+  <br />
+  <br />
+  <br />
+  <br />
+  <br />
+  <br />
+  <br />
+    <!-- This page will be used as a template, 
+        all the created pages should go between the main section;
+        This is in order to keep the design the same across all sections.
+    -->
+    <header>
+        <% include ../../partials/header.ejs %>
+    </header>
+    <main>
+        <form enctype="multipart/form-data" method="post">
+          <input type="file" name="image">
+          <input type="submit" value="Upload image">
+        </form>
+    </main>
+    <footer>
+        <% include ../../partials/footer.ejs %>
+    </footer>
+</body>
+
+</html>

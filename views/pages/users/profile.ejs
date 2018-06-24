@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <% include ../partials/head.ejs %>
+</head>
+
+<body>
+    <% include ../partials/header.ejs %>
+        <div class="my-3 my-md-5">
+            <div class="container">
+                <div class="row">
+                    <% include ../partials/profile-nav.ejs %>
+                    <div class="col-lg-9">
+                        <form class="card">
+                            <div class="card-body">
+                                <h3 class="card-title">Profile</h3>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="form-label" for="name">Name</label>
+                                            <input name="first_name" type="text" id="name" class="form-control" placeholder="Name" value="">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="form-label" for="surname">Surname</label>
+                                            <input name="last_name" type="text" id="surname" class="form-control" placeholder="Surname" value="">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="form-label" for="phone">Phone</label>
+                                            <input name="phone_number" type="text" id="phone" class="form-control" placeholder="Number" value="">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="form-label" for="homeAddress">Home Address</label>
+                                            <input name="home_address" type="text" id="homeAddress" class="form-control" placeholder="Address" value="">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-footer text-right">
+                                <button type="reset" class="btn btn-primary">Reset Changes</button>
+                                <button type="submit" class="btn btn-primary">Update Profile</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <% include ../partials/footer.ejs %>
+</body>
+
+</html>

@@ -1,5 +1,5 @@
 const passport = require('passport');
-const {findByUsername} = require('../helperFunctions/query/queryHelper');
+const {findByEmail} = require('../helperFunctions/query/queryHelper');
 
 
 /**
@@ -14,7 +14,7 @@ module.exports = (user) => {
   });
 
   passport.deserializeUser((email, done) => {
-    findByUsername('users',email)
+    findByEmail('users',email)
     .then(user => done(null, user))
     .catch(err => done(err, null))
   });

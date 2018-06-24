@@ -1,33 +1,30 @@
 const routes = require('express').Router();
 const { query, check, body, validationResult } = require('express-validator/check');
-const { matchedData, sanitize } = require('express-validator/filter');
 const Logins = require('../helperFunctions/Logins');
 const logins = new Logins();
 const checkEmailAndToken = require('../helperFunctions/checkEmailAndToken');
-const users = require('../server/models/users');
+const users = require('../server/models/users').user;
 // basic //
 const passport = require('../auth/local');
 const Mail = require('../helperFunctions/verification/MailSender');
 // site //
-const createUser = require('../server/models/users').createUser;
+const { createUser, updateUserEmail, insertOldEmailObject, activateUser, addOneToFailedLogins, getOldPasswordObject, insertOldPasswordObject } = require('../server/models/users').user;
+const changePassword = require('../server/models/users').changePassword;
 const uuid = require('uuid/v1');
 const _ = require('lodash');
+const userRoutes = require('./userRoutes')
 
 
+
+routes.use('/users/', userRoutes);  // all routes in here require authing
 
 routes.get('/', (req, res) => {
   //get menu items from db maybe set this as some middleware
   const menuItems = [ 
     {href:"test me one", name:"item 1"},
     {href:"test me two", name:"item 2"}
-  ];
-  res.status(200).render('pages/public/index', {menuItems: menuItems, messages: req.flash('info')}); //ejs example
-  return;
-});
-
-routes.get('/dashboard', (req, res) => {
-  res.status(200).render('pages/users/dashboard.ejs');
-  return;
+  ]
+  res.status(200).render('pages/public/index', {contentHomePages: "", menuItems: menuItems, messages: req.flash('info')}); //ejs example
 });
 
 
@@ -36,238 +33,56 @@ routes.get('/about', (req, res) => {
   return;
 });
 
-// users //
 
+routes.get('/contact', (req, res) => {
+  res.status(200).render('pages/public/contactus');
+  return;
+});
+
+
+// users //
+///////////////   Login    //////////////////
 
 routes.get('/login', (req, res) => {
-  // **Supply credentials to database
-  // **if invalid user return "Invalid Username or Password" Flash Message
-  // **if failed attempts date > 5 minutes ago. reset failed attempts to 0.
-  // **if failed attempts >= 10  last failure date < 5 minutes ago. respond with "your account has been locked. It will auto unlock soon". 
-  // **on successful login. set successful login to true and date to now. Reset failed login attempts to zero. 
-  // **on failed attempt. if failed attempt date > successful login date, set user (if valid) failed attempts += 1.  Set failure date to now
-  res.status(200).render('pages/login', { messages: req.flash('error')});
-  return;
-});
-
-
-routes.get('/password', (req, res) => { 
-  res.status(200).render('pages/users/resetpassword.ejs');
-  return;
-});
-
-// Test routes for Email and Password Templates to check Design
-// Can delete this after all the templates are done
-// Change Password Template missing -> done at the end of this week
-routes.get('/sign-up', (req, res) => { 
-  res.status(200).render('pages/email/sign-up.ejs');
-  return;
-});
-
-routes.get('/forgot-password', (req, res) => { 
-  res.status(200).render('pages/email/forgot-password.ejs');
-  return;
-});
-
-// New Password Page
-routes.get('/new-password', (req, res) => {
-  res.status(200).render('pages/users/newpassword.ejs');
-  return;
-});
-
-// New Sign Up Page 
-routes.get('/signup', (req, res) => {
-  res.status(200).render('pages/users/signup.ejs');
-  return;
-});
-
-
-// routes.get('/test-flash-start', (req, res) => {
-//   req.flash('info','This is a flash message');
-//   res.status(200).redirect('pages/public/test-flash-finish');
-//   return;
-// });
-// routes.get('/test-flash-finish', (req, res) => {
-//   res.status(200).render('pages/public/test-flash-finish', { messages: req.flash('info') });
-//   return;
-// });
-
-routes.get('/users/logout', logins.isLoggedIn, logins.logUserOut, (req, res) => { //testing isLogged in function. To be implemented on all routes. Might be worth extracting as it's own mini express app route on /users/.
-  res.status(200).redirect('/');
-  return;
-});
-
-const verificationCheck = [
-  query('email', 'invalid email').isEmail().normalizeEmail(),
-  query('token', 'invalid token').isUUID()
-];
-
-const validationCheck = [
-  check('email').isEmail().normalizeEmail(),
-  // password must be at least 5 chars long
-  check('password').isLength({ min: 8 })
-];
-
-
-
-
-
-
-routes.get('/users/verify-email', verificationCheck , (req, res) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      req.flash("info","Invalid token or email", req.query.email, req.query.token, errors.array());
-      res.redirect('/');
-      return;
-    }
-    //**check date(now) minus token date is less than 1 week. If greater than a week send flash message saying "token has expired please contact administrator" and redirect to login or setup an administrator email which sends email of person trying to sign up but failing due to token expiry.
-    //**if token date not expired then redirect to enter password
-    req.session.token = req.query.token;
-    req.session.email = req.query.email; 
-    req.flash("info","Successfully verified email. Please enter a password")
-  res.status(200).redirect('/enter-new-password');
-  return;
-});
-
-
-
-
-////////////////////    Enter new Password           ////////////////////
-
-
-
-routes.get('/enter-new-password',  (req, res) => {
-  res.status(200).render('pages/users/enter-new-password', {email: req.session.email, token: req.session.token});
-  return;
-});
-
-const passwordCheck = [
-  check('password').isLength({min: 8}),
-  // password must be at least 8 chars long
-  check('confirm_password').equals(check('password'))
-];
-
-routes.post('/enter-new-password', passwordCheck, (req, res) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    req.flash("info","Invalid password or passwords do not match", process.env.NODE_ENV === 'development' ? errors.array() : ""); //error.array() for development only
-    res.redirect('/enter-new-password');
-    return;
-  } 
-  // use req.session.email and token to ensure correct user
-  // accept the new passwords if they are the same and look up the user name. Set user to validated and modified date to now() and store hashed password.
-  // destroy session and force user to login again
-  res.status(200).redirect('/login');
-  return;
-});
-
-
-/////////////       Create users           /////////////////////////
-
-routes.get('/users/create-user', (req, res) => { //accessible by authed admin
-  res.status(200).render('pages/users/create-user.ejs');
-});
-
-const createUserCheck = [
-  body('email').isEmail().normalizeEmail(),
-  body('firstName').trim().isAlphanumeric(),
-  body('lastName').trim().isAlphanumeric()
-];
-
-/*
-routes.post('/users/create-user', createUserCheck, (req, res) => { //accessible by authed admin
-  
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    console.log('ERROR',error)
-    const userTemp = {email : req.body.email || "", firstName : req.body.firstName || "", lastName: req.body.lastName || ""}
-    req.flash("info","Invalid user data", process.env.NODE_ENV === 'development' ? errors.array() : ""); //error.array() for development only
-    res.status(200).render('pages/users/create-user.ejs', {messages : req.flash('info'), userTemp});
+  const sess = req.session
+  if (req.isAuthenticated()){
+    res.redirect('./users/dashboard');
     return;
   }
-
-  const generatedToken = uuid();
-  const user = {
-    email : req.body.email,
-    last_failed_login: "",
-    first_name : req.body.firstName,
-    last_name : req.body.lastName,
-    failed_login_attempts : 0,
-    activation_token : generatedToken
-  };
-  createUser(user).then(function(userCreated){ // returns user created true or false
-    if (userCreated) {
-      let mail = new Mail;
-      mail.sendVerificationLink(user);
-      req.flash('info', 'user created and email sent');  // email not currently being sent
-      res.redirect('/users/admin'); 
-      return;
-    }
-    else {
-      console.log("There was a create user error", err)
-      req.flash('info', 'There was an error creating this user. Please try again. If you already have please contact support.')
-      res.status(200).render('pages/users/create-user.ejs', {messages : req.flash('info'), user});
-      return;
-    }
-  }).catch(function(err){
-    const userExistsCode = "23505";
-    if (err.code === userExistsCode) {
-      req.flash("info", "User already exists");
-    }
-    else {
-      console.log("There was a system error", err)
-      req.flash('info', 'There was an system error. Please notify support.')
-    }
-    res.status(200).render('pages/users/create-user.ejs', {messages : req.flash('info'), user});
+  
+  console.log(sess.id)
+  console.log(sess.cookie)
+  
+  res.status(200).render('pages/public/login', { title: 'Login', messages: req.flash('message')} );
+  sess.destroy(function(err){
+    console.log('cannot access session here')
   })
   return;
-});*/
-
-routes.post('/users/email-verification', verificationCheck, (req, res) => {
-  console.log('req.query :', req.query);
-  mail = new Mail();
-  mail.sendVerificationLink(req.body);
-  res.status(200).json({message: "email sent"});
-  return;
 });
 
 
-routes.get('/users/admin', (req,res) => {
-  res.status(200).render('pages/users/admin.ejs', {messages : req.flash("info"), ckeditorData : req.body.ckeditorHTML || ""});
-});
-
-const ckeditorHTMLValidation = [
-  sanitize('ckeditorHTML').escape().trim()
+const loginCheck = [
+  check('email').isEmail().normalizeEmail(),
 ];
 
-routes.post('/users/admin', logins.isLoggedIn,  (req,res) => {
-  console.log('req.body.ckeditorHTML:', req.body.ckeditorHTML);
-  res.status(200).render('pages/users/admin.ejs', {messages : req.flash("info"), ckeditorData : req.body.ckeditorHTML || ""});
-});
-
-
-////////////           Change user ///////////////////////
-
-
-
-routes.get('/users/edit-user', (req, res) => { //accessible by authed admin
-  res.status(200).render('pages/users/edit-user.ejs', {user:req.body.userToDelete});
-  // confirm page for deleting user. only accessible by authenticated admin.
-});
-
-routes.post('/users/delete-user', (req, res) => {
-  // delete user.  only accessible by authenticated admin via delete user route. something in the post body perhaps. Discuss with colleagues if there is a better way to perform this confirmation
+routes.post('/login', 
+  loginCheck, 
+  logins.failedLoginsCheck, 
+  passport.authenticate('local', 
+    { failureRedirect: '/login',
+      failureFlash: true 
+    }
+  ), 
+  function (req, res){
+    req.session.email = req.body.email;
+    res.status(200).redirect("/users/dashboard")
   return;
-});
-
-routes.get('/users/change-password', (req, res) => { 
-  res.status(200).render('pages/users/changePassword.ejs');
-});
-
-
+})
 
 
 ///////////////       Register User      //////////////////
+
+//  This is the page the user has to enter a new password after clicking the activation link from their email
 
 enterPasswordCheck = [
   query('token').exists().isUUID(),
@@ -276,14 +91,14 @@ enterPasswordCheck = [
 
 routes.get('/enter-password', enterPasswordCheck, (req, res) => {
   let errors = validationResult(req);
-  console.log('req.query :', req.query);
-  console.log('errors :', errors.array());
+  //console.log('req.query :', req.query);
+  //console.log('errors :', errors.array());
   if (!errors.isEmpty()){
     req.flash('info', 'Invalid credentials. Please try again or contact your administrator');
-    res.status(200).render('pages/enter-password.ejs', {messages : req.flash('info'), user : {activation_token : req.body.token, email : req.body.email}});
+    res.status(200).render('pages/public/enter-password.ejs', {messages : req.flash('info'), user : {activation_token : req.body.activation_token, email : req.body.email}});
     return;
   }
-  res.status(200).render('pages/enter-password.ejs', {user : {activation_token : req.query.token, email : req.query.email}});
+  res.status(200).render('pages/public/enter-password.ejs', {messages: req.flash('info'), user : {activation_token : req.query.token, email : req.query.email}});
 });
 
 postEnterPasswordCheck = [
@@ -302,125 +117,300 @@ postEnterPasswordCheck = [
 
 routes.post('/enter-password', postEnterPasswordCheck, (req, res) => {
   let errors = validationResult(req);
-  console.log('req.body :', req.body);
-  console.log('errors :', errors.array());
   if (!errors.isEmpty()){
     req.flash('info', 'Invalid credentials. Please try again or contact your administrator');
-    res.status(200).render(`pages/enter-password.ejs`, {messages : req.flash('info'), user : {activation_token : req.body.token, email : req.body.email}});
-    return;
-  }
-  verifyUser(req.body);
-  
-});
-
-
-
-
- /////////////////  Forgot Password //////////////
-
-
-routes.get('/forgot-password', (req, res) => {
-  // **create a page with two fields to enter email addresses
-  // **ensure that emails both match before being able to post
-  res.status(200).render('pages/users/forgot-password');
-});  
-
-forgotPasswordCheck = [
-  check('email').isLength({min: 8}),
-  check('confirm_email').equals(check('email'))
-]
-
-routes.post('/forgot-password', forgotPasswordCheck, (req, res) => {
-  errors = validationResult(req)
-  if (!errors.isEmpty()) {
-    req.flash("info","Invalid email");
-    res.status(200).render('pages/users/forgot-password', {messages : req.flash('info')});
+    res.status(200).render(`pages/public/enter-password.ejs`, {messages : req.flash('info'), user : {activation_token : req.body.token, email : req.body.email}});
     return;
   }
   const user = {
-    activation_token : uuid(),
-    email : req.body.email.trim().normalizeEmail()
+    email : req.body.email,
+    activation_token : req.body.activation_token,
+    password : req.body.password
   }
-  if (checkIfUserExists(user.email) === false) {
-    req.flash("info","Further instructions have now been sent to the email address provided");
-    res.status(200).render('pages/users/forgot-password', {messages : req.flash('info')});
-    return;
-  } // database request
-     
-      // **validate and normalise email addresses
-    // **enter email on this page and send to database and regardless of whether user exists or not send email stating "an email has been sent to your account with further instructions" 
-    // **if the user email exists in db then send an email to the users account. Generate a passwordReset token and time created and then insert into the db and send to email for further verification in the same manner as initial sign-up. (except password reset tokens only last an hour)
-    // **if the user doesn't exist don't do anything
-  else {
-    sendActivationTokenToDb(user);
-    let mail = new Mail()
-    mail.sendPasswordReset(user);
-    req.flash("info","Further instructions have now been sent to your email");
-    res.status(200).render('pages/users/forgot-password', {messages : req.flash('info')});
-    return;
-  }
-});
-  
- 
-  
-
-
-///////////////   Login    //////////////////
-
-routes.post('/login', passport.authenticate('local'), function (req, res){ //// if validatelogin fails. Failure is sent from within this middleware. If this succeeds then this passes to next function.
-  res.status(200).json({message: "success"})
-  return;
+  console.log('USERR',user)
+  console.log("gets here");
+  users.activateUser(user).then(response => {
+    console.log('RESPONSE', response)
+    if (!response) {
+      req.flash("info", "There was an error creating user. Please try again or contact your administrator");
+      res.status(200).render('pages/enter-password.ejs', {messages: req.flash("info"), user : {activation_token : req.query.token, email : req.query.email}});
+      return;
+    } else {
+      req.flash("info", "User created. Please login using your new password");
+      req.logOut();
+      res.status(200).redirect('/login');
+      return;
+    }
+  }).catch(e =>  res.status(500).send(e.stack))   //handle error here
 });
 
-const loginCheck = [
-  check('email').isEmail().normalizeEmail(),
+ /////////////////  reset Password //////////////
+
+
+/// This is the page where a user who has forgotten their password and is not logged in can ask for a reset link.
+
+routes.get('/reset-password-request', (req, res) => {
+  // **create a page with two fields to enter email addresses
+  // **ensure that emails both match before being able to post
+  res.status(200).render('pages/public/reset-password-request', { title: 'Reset Password', messages : req.flash('info')});
+});  
+
+
+requestResetPasswordCheck = [
+  body('confirm_email').isEmail().trim().normalizeEmail(),
+  body("email").isLength({min: 8})
+  .isEmail().trim().normalizeEmail()
+  .custom((value,{req, loc, path}) => {
+    if (value !== req.body.confirm_email) {
+      throw new Error("Emails don't match");
+    } else {
+      return value;
+    }
+  })
+]
+
+routes.post('/reset-password-request', requestResetPasswordCheck, (req, res) => {
+  errors = validationResult(req)
+  
+  if (!errors.isEmpty()) {
+    console.log('first req.body :', req.body, errors.array());
+    req.flash("info","Invalid email");
+    res.status(200).render('pages/public/reset-password-request', {messages : req.flash('info')});
+    return;
+  }
+  const user = {
+    forgot_password_token : uuid(),
+    email : req.body.email
+  }
+  console.log('req.body :', req.body);
+  insertOldPasswordObject(user)
+  .then(data => {
+    if (!data) {
+      req.flash("info","Further instructions have now been sent to the email address provided");
+      res.status(200).render('pages/public/index.ejs', {messages : req.flash('info')});
+      return;
+    } 
+    else {
+      let mail = new Mail();
+      mail.sendPasswordReset(user);
+      req.flash("info","Further instructions have now been sent to your email");
+      res.status(200).redirect('/');
+      return;
+    }
+  });
+})
+
+/////////   Change password with reset link //////////////////////
+
+checkQueryResetPassword = [
+  query('forgot_password_token').isUUID(),
+  query('email').isEmail().normalizeEmail()
 ];
 
-routes.post('/login', passport.authenticate('local', {successRedirect: '/users/admin',
-                                                      failureRedirect: '/login',
-                                                      failureFlash: true}), 
-);
-                                                      // function (req, res){ //// if validatelogin fails. Failure is sent from within this middleware. If this succeeds then this passes to next function.
-  // res.status(200).json({message: "success"})
-//   return;
-// });
 
 
+routes.get('/reset-password', checkQueryResetPassword, (req, res) => {
+  console.log('req.query :', req.query);
+  user = {
+    forgot_password_token : req.query.forgot_password_token,
+    email : req.query.email
+  }
+  insertOldPasswordObject(user).then(response =>{
+    res.status(200).render('pages/public/reset-password', {title: 'Reset Password', messages : req.flash('info'), user : user});
+  }).catch(e => res.status(500).send(e.stack))
+  
+});  
+
+resetPasswordCheck = [
+  body('email').isLength({min: 8}),
+  body('forgot_password_token').isUUID(),
+  body("password", "invalid password")
+  .isLength({ min: 8 })
+  .custom((value,{req, loc, path}) => {
+    if (value !== req.body.confirm_password) {
+      throw new Error("Passwords don't match");
+    } else {
+      return value;
+    }
+  })
+]
+
+routes.post('/reset-password', resetPasswordCheck, (req, res) => {
+  errors = validationResult(req)
+  if (!errors.isEmpty()) {
+    console.log('errors :', errors.array());
+    req.flash("info","Invalid credentials");
+    res.status(200).render('pages/public/reset-password', {messages : req.flash('info'), user : { email : req.body.email, forgot_password_token : req.body.forgot_password_token}});
+    return;
+  }
+  const user = {
+    email : req.body.email,
+    new_password: req.body.password,
+    forgot_password_token : req.body.forgot_password_token
+  }
+  getOldPasswordObject(user)
+  .then(data => {
+  //  console.log('data from getoldpasswordobject :', data);
+    if (data.time_diff_bool) {
+      console.log('expired')
+      req.flash('info', 'Link expired');
+      res.status(200).redirect('/reset-password-request')
+      return;
+    }
+    changePassword(user)
+    .then(() => {
+      console.log('UPDATED')
+      req.flash('info', 'Your password has been changed. Please login');
+        res.status(200).redirect('/login');
+        return;
+    }).catch(e => res.status(500).send(e.stack) )
+  }).catch(e => res.status(500).send(e.stack) )
+})
+  
+  
+ /// Change email ////////////
+
+ verifyEmailCheckQuery = [
+   query('old_email').isEmail().normalizeEmail(),
+  query('email_change_token').isUUID(),
+  query('new_email').isEmail().normalizeEmail()
+];
+
+routes.get('/verify-change-email', verifyEmailCheckQuery, (req, res) => { 
+  errors = validationResult(req)
+  console.log('req.query :', req.query);
+  const user = {old_email : req.query.old_email, new_email : req.query.new_email, email_change_token : req.query.email_change_token}
+  if (!errors.isEmpty()) {
+    req.flash("info","Invalid credentials. Please recheck authorisation link or contact your administrator");
+    res.status(200).render('pages/public/verify-change-email', {title: 'Verify Email', messages : req.flash('info'), user : user});
+    return;
+  }
+  res.status(200).render('pages/public/verify-change-email.ejs', {title: 'Verify Email', messages : req.flash('info'), user : {email_change_token: req.query.email_change_token, old_email: req.query.old_email, new_email : req.query.new_email || "", email_change_token : req.query.email_change_token || ""}});
+});
+  
+verifyEmailCheckBody = [
+  body('email_change_token').isUUID(), // hidden
+  body('new_email').isEmail().normalizeEmail(),  // hidden
+  body('old_email').isEmail().normalizeEmail(),  // hidden
+  body('password').isLength({min:8})
+];
+
+routes.post('/verify-change-email', verifyEmailCheckBody, (req, res) => {
+  errors = validationResult(req)
+  console.log('errors.array() :', errors.array());
+  if (!errors.isEmpty()) {
+    req.flash("info","Invalid email");
+    res.status(200).render('pages/public/verify-change-email.ejs', { messages : req.flash('info'), user : { old_email : req.body.old_email, new_email : req.body.new_email, email_change_token : req.body.email_change_token }});
+    return;
+  } 
+  
+  user = {
+    new_email : req.body.email,
+    old_email : req.body.old_email,
+    password : req.body.password,
+    change_token : req.body.email_change_token
+  }
+  updateUserEmail(user)
+  .then(data => {
+    if (!data) {
+      req.flash("info","Invalid credentials. Please try again.");
+      res.status(200).render('pages/public/verify-change_email.ejs', { messages : req.flash('info'), user : { old_email: req.body.old_email, new_email : req.body.new_email, email_change_token : req.body.email_change_token }});
+      return;
+    }
+    let mail = new Mail();
+    mail.sendToOldEmail(user);
+    mail.sendEmailChangeConfirmation(user);
+    req.logOut();
+    req.flash('info', 'Please now login with your new email');
+    res.status(200).redirect('./login');
+  })
+});
 
 
-// pages //
+// pages // move to pages/content routes
 
 routes.get('/content/manage-page', (req, res) => {
-  res.status(200).render('pages/content/create-edit-page');
+  res.status(200).render('pages/content/create-edit-page', {messages: req.flash('info')});
   return;
 });
 
 routes.get('/content/manage-all-pages', (req, res) => { //accessible by authed admin
-  res.status(200).render('pages/content/manage-all-pages.ejs');
+  res.status(200).render('pages/content/manage-all-pages.ejs', {messages: req.flash('info')});
   return;
 });
 
 // unknown //
 
-routes.all('*', (req, res) => {
-  res.status(200).render('pages/public/unknown.ejs', { url: req.url });
+//// for creating users for test purposes only /// remove on production 
+
+routes.get('/create-user', (req, res) => { //accessible by authed admin
+  res.status(200).render('pages/users/create-user.ejs', {title: 'Create User', active: 'active', username: 'Ginny Bradley', messages: req.flash('info')});
+});
+
+const createUserCheck = [
+  body('email').isEmail().normalizeEmail(),
+  body('first_name').trim().isAlphanumeric(),
+  body('last_name').trim().isAlphanumeric()
+];
+
+
+routes.post('/create-user', createUserCheck, (req, res) => { //accessible by authed admin
+  
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    console.log('ERROR',errors.array())
+    const userTemp = {email : req.body.email || "", firstName : req.body.first_name || "", lastName: req.body.last_name || ""}
+    req.flash("info","Invalid user data", process.env.NODE_ENV === 'development' ? errors.array() : ""); //error.array() for development only
+    res.status(200).render('pages/users/create-user.ejs', {title: 'Create User', active: 'active', username: 'Ginny Bradley', messages : req.flash('info'), userTemp});
+    return;
+  }
+
+  const user = {
+    email : req.body.email,
+    last_failed_login: "",
+    first_name : req.body.first_name,
+    last_name : req.body.last_name,
+    failed_login_attempts : 0,
+    activation_token :  uuid()
+  };
+
+  createUser(user).then(function(userCreated){ // returns user created true or false
+    console.log('userCreated :', userCreated);
+    if (userCreated) {
+      let mail = new Mail;
+      mail.sendVerificationLink(user);
+      req.flash('info', 'user created and email sent');  // email not currently being sent
+      res.redirect('/users/admin'); 
+      return;
+    }
+    else {
+      console.log("There was a create user error", err)
+      req.flash('info', 'There was an error creating this user. Please try again. If you already have please contact support.')
+      res.status(200).render('pages/users/create-user.ejs', {title: 'Create User', active: 'active', username: 'Ginny Bradley', messages : req.flash('info'), user});
+      return;
+    }
+  }).catch(function(err){
+    const userExistsCode = "23505";
+    if (err.code === userExistsCode) {
+      req.flash("info", "User already exists");
+    }
+    else {
+      console.log("There was a system error", err)
+      req.flash('info', 'There was an system error. Please notify support.')
+    }
+    res.status(200).render('pages/users/create-user.ejs', {title: 'Create User', active: 'active', username: 'Ginny Bradley', messages : req.flash('info'), user});
+  })
   return;
 });
 
-// Jide's test route //
 
-routes.post('/signme', (req, res) => {
- //const user = _.pick(req.body,['email','first_name','last_name','activation_token'])
- 
-  createUser(user).then(val => {
-    console.log('CREATED')
-    res.status(200).send({message: 'USER CREATED BUT NOT ACTIVATED'})
-  }).catch(e => {
-    console.log(e.message)
-    res.status(400).send(e.message)
-  })
-  
+
+
+routes.all('*', (req, res) => {
+  res.status(200).render('pages/public/unknown.ejs', { 
+    title: '404 Not Found',
+    url: req.url 
+  });
+  return;
 });
-
-
 module.exports = routes;

@@ -6,6 +6,7 @@ const passport = require('./auth/local');
 const express = require('express');
 const bodyParser = require('body-parser');
 const routes = require('./routes/index');
+
 const logger = require('morgan');
 const {pool} = require('./server/db/database');
 const flash = require('connect-flash');
@@ -15,12 +16,10 @@ const cookieParser = require('cookie-parser');
 const validator = require('express-validator');
 const uuidv1 = require('uuid/v1');
 
+
 const app = express();
-
-
 app.set('view engine', 'ejs');
-
-app.use(cookieParser());
+//app.use(cookieParser());
 app.use(logger('dev'));
 app.use(express.static('assets', {}));
 app.use(bodyParser.urlencoded({ extended :true }));
@@ -29,7 +28,7 @@ app.use(session({
     pool,                
     tableName : 'user_sessions'   
   }),
-  secret: process.env.COOKIE_SECRET || SECRET,
+  secret: process.env.COOKIE_SECRET,
   resave: false,
   saveUninitialized: true,
   cookie: { maxAge: 30 * 24 * 60 * 60 * 1000 } 
@@ -38,7 +37,6 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(flash());
-
 
 app.use('/', routes);
 

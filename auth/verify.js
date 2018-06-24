@@ -10,11 +10,11 @@ const saltRounds = 10;
   * 
   */
  
- const verifyPassword = (userPassword,hash) => {
+ const comparePassword = (userPassword,hash) => {
     return bcrypt.compareSync(userPassword, hash)
  }
 
 
 module.exports = {
-  verifyPassword
+  comparePassword
 };
