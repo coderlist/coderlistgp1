@@ -350,7 +350,7 @@ const checkUserID = [
 userRoutes.get('/edit-user/:user_id', checkUserID, (req, res) => { //accessible by authed admin
   errors = validationResult(req);
   console.log('errors.array() :', errors.array());
-  if (!errors.isEmpty){
+  if (!errors.isEmpty()){
     req.flash('info', 'Invalid user ID');
     res.status(200).redirect('/users/dashboard');
     return;

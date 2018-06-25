@@ -63,25 +63,25 @@ const user = {
       .catch(e => {throw e})
 },
 
-  /**
-   * @param  {String} email
-   * find user details by email
-   */
-  getUserById(userId){
-    return queryHelper(`SELECT first_name,last_name,creation_date,last_succesful_login,is_admin,user_id
-      FROM USERS WHERE user_id='${userId}';`)
-    .then(response => response)
-    .catch(e => {throw e})
-  },
+  // /**
+  //  * @param  {String} email
+  //  * find user details by email
+  //  */
+  // getUserById(userId){
+  //   return queryHelper(`SELECT first_name,last_name,creation_date,last_succesful_login,is_admin,user_id
+  //     FROM USERS WHERE user_id='${userId}';`)
+  //   .then(response => response)
+  //   .catch(e => {throw e})
+  // },
 
   /**
    * @param  {String} id
    * find user details by user_id
    */
-  getUserById(id){
-    return queryHelper(`SELECT (first_name,last_name,
-      ,creation_date,last_succesful_login) 
-      FROM USERS WHERE user_id='${id}';`)
+  getUserById(id){  //at jide. I took out the brackets as it's easier to reference otherwise the object is named row.
+    return queryHelper(`SELECT first_name,last_name,   
+      creation_date,last_succesful_login,is_admin,user_id 
+      FROM users WHERE user_id='${id}';`)
     .then(response => response)
     .catch(e => {throw e})
   },
