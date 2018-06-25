@@ -50,11 +50,67 @@ const user = {
    * find user details by email
    */
   getUserByEmail(email){
-    return queryHelper(`SELECT (first_name,last_name,
-      ,creation_date,last_succesful_login) 
-      FROM USERS WHERE email='${email}';`)
+    return queryHelper(`SELECT first_name,last_name
+      ,creation_date,last_succesful_login,is_admin,user_id 
+      FROM USERS WHERE email='${email}' ORDER BY creation_date FETCH FIRST 1 ROW ONLY;;`)
     .then(response => response)
     .catch(e => {throw e})
+  },
+
+  findEmailById(userId){
+    return queryHelper(`SELECT (email) FROM USERS WHERE user_id='${userId}';`)
+      .then(response => response)
+      .catch(e => {throw e})
+},
+
+  // /**
+  //  * @param  {String} email
+  //  * find user details by email
+  //  */
+  // getUserById(userId){
+  //   return queryHelper(`SELECT first_name,last_name,creation_date,last_succesful_login,is_admin,user_id
+  //     FROM USERS WHERE user_id='${userId}';`)
+  //   .then(response => response)
+  //   .catch(e => {throw e})
+  // },
+
+  /**
+   * @param  {String} id
+   * find user details by user_id
+   */
+  getUserById(id){  //at jide. I took out the brackets as it's easier to reference otherwise the object is named row.
+    return queryHelper(`SELECT first_name,last_name,   
+      creation_date,last_succesful_login,is_admin,user_id 
+      FROM users WHERE user_id='${id}';`)
+    .then(response => response)
+    .catch(e => {throw e})
+  },
+
+  
+  /**
+   * @param  {Object} user
+   * delete user by email
+   * associated pages gets set to null due to CASCADE constraint
+   */
+  deleteUserByEmail(user) {
+    return queryHelper(`DELETE FROM users WHERE email = '${user.email}';`)
+      .then(response => true)
+      .catch(e => {
+        throw e
+      })
+  },
+
+  /**
+   * @param  {Object} body
+   * delete user by user id
+   * associated pages gets gets set to null due to CASCADE constraint
+   */
+  deleteUserById(body){
+    return queryHelper(`DELETE FROM users WHERE user_id = '${body.id}';`)
+      .then(response => true)
+      .catch(e => {
+        throw e
+      })
   },
 
   /**
@@ -120,6 +176,19 @@ const user = {
       })
   },
 
+  /**
+   * @param  {Object} user
+   * This takes an object and returns a boolean
+   * when the update is done or a db error message 
+   * on failure
+   */
+  updateUserName(user) {
+    return queryHelper(`UPDATE users SET first_name = '${user.first_name}', last_name = '${user.last_name}' WHERE user_id=${user.user_id};`)
+    .then(result => true)
+    .catch(e => {
+      throw e
+    })
+  },
 
   /**
    * @param  {Object} user
@@ -259,18 +328,6 @@ const user = {
   },
 
 
-  /**
-   * @param  {Object} user
-   * delete user by email
-   * associated pages gets deleted due to CASCADE constraint
-   */
-  deleteUserByEmail(user) {
-    return queryHelper(`DELETE FROM users WHERE email = '${user.email}';`)
-      .then(response => true)
-      .catch(e => {
-        throw e
-      })
-  },
 
 
   //////////////////// CHANGE PASSWORD  ///////////////////////////////////
