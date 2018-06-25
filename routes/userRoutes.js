@@ -26,7 +26,8 @@ const {
   findEmailById,
   getUserById,
   updateUserName,
-  deleteUserById
+  deleteUserById,
+  getIsUserAdmin
 } = require('../server/models/users').user;
 const {
   createPage,
@@ -433,34 +434,32 @@ userRoutes.post('/delete-user', deleteUserPostCheck, function(req, res){
     req.flash('info','Invalid user id');
     res.status(200).redirect('/users/dashboard');
   }
-  getUserById(req.body.user_id)
-  .then(function(user){
-    getIsUserAdmin(req.session.user_id)
-    .then(function(userAdmin){
-      if (userAdmin.is_admin || user.user_id === req.session.user_id){ //check if user is admin or if user
-        deleteUserById(req.body.user_id).then(function(data){
-          if (data) {
-            if (user.users_id = req.session.user_id){
-              req.session.destroy()
-              .then(() => {
-                req.session.create()
-              .then(() => {
-                req.flash('info','User deleted');
-                res.status(200).redirect('/login');
-                return;
-              })
-              })
-            }
-            req.flash('info','User deleted');
-            res.status(200).redirect('/dashboard');
+  getIsUserAdmin(req.session.user_id)
+  .then(function(userAdmin){
+    console.log('useradmin :', userAdmin[0].is_admin);
+    if (userAdmin[0].is_admin){ //check if user is admin or if user
+      deleteUserById(req.body).then(function(data){
+        console.log('data :', data);
+        if (data) {
+          if (req.body.user_id === req.session.user_id){
+            req.flash('info','You are not authorised to delete yourself');
+            res.status(200).redirect('/users/dashboard');
             return;
           }
-          req.flash('info','There was an error. User not deleted');
-          res.status(200).redirect('/dashboard');
+          req.flash('info','User deleted');
+          res.status(200).redirect('/users/dashboard');
           return;
-        })
-      }
-    })  
+        }
+        req.flash('info','There was an error. User does not exist');
+        res.status(200).redirect('/users/dashboard');
+        return;
+      })
+    }
+    else {
+      req.flash('info','You are not authorised to delete users');
+      res.status(200).redirect('/users/dashboard');
+      return;
+    }
   }).catch(function(err){ throw err})
 })
 
