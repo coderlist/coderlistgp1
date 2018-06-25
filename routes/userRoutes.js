@@ -433,19 +433,23 @@ userRoutes.post('/delete-user', deleteUserPostCheck, function(req, res){
     console.log('invalis :');
     req.flash('info','Invalid user id');
     res.status(200).redirect('/users/dashboard');
+    return;
   }
+  if (req.body.user_id === req.session.user_id){
+    req.flash('info','You are not authorised to delete yourself');
+    res.status(200).redirect('/users/dashboard');
+    return;
+  }
+  console.log('req.session.user_id :', req.session.user_id);
   getIsUserAdmin(req.session.user_id)
   .then(function(userAdmin){
-    console.log('useradmin :', userAdmin[0].is_admin);
-    if (userAdmin[0].is_admin){ //check if user is admin or if user
-      deleteUserById(req.body).then(function(data){
+    console.log('req.session.user_id :', req.session.user_id);
+    console.log('useradmin :', userAdmin);
+    if (userAdmin.is_admin){ //check if user is admin or if user
+      deleteUserById(req.body.user_id)
+      .then(function(data){
         console.log('data :', data);
         if (data) {
-          if (req.body.user_id === req.session.user_id){
-            req.flash('info','You are not authorised to delete yourself');
-            res.status(200).redirect('/users/dashboard');
-            return;
-          }
           req.flash('info','User deleted');
           res.status(200).redirect('/users/dashboard');
           return;
@@ -454,8 +458,6 @@ userRoutes.post('/delete-user', deleteUserPostCheck, function(req, res){
         res.status(200).redirect('/users/dashboard');
         return;
       })
-    }
-    else {
       req.flash('info','You are not authorised to delete users');
       res.status(200).redirect('/users/dashboard');
       return;
