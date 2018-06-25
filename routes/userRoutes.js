@@ -22,7 +22,10 @@ const {
   updatePassword,
   updateUserEmail,
   insertOldEmailObject,
-  listUsers
+  listUsers,
+  findEmailById,
+  getUserById,
+  updateUserName
 } = require('../server/models/users').user;
 const {
   createPage,
@@ -84,16 +87,16 @@ userRoutes.use(userLocalsNavigationStyling.setLocals);
 */
 userRoutes.use(messageTitles.setMessageTitles);
 
-userRoutes.get('/', (req, res) => {
-  res.status(200).render('pages/users/dashboard.ejs', { 
-  messages: req.flash('info')});
-  return;
-});
+// userRoutes.get('/', (req, res) => {
+//   res.status(200).render('pages/users/dashboard.ejs', { 
+//   messages: req.flash('info')});
+//   return;
+// });
 
 userRoutes.get('/dashboard', (req, res) => {
   listUsers(0, 9)
   .then(function(userData){
-  getPages(9) //this need to be thought more about
+  getPages(9) //this need to be thought more about. THis just gets the first 10 pages
   .then(function(pageData){
     res.status(200).render('pages/users/dashboard.ejs', { 
       users : userData,
@@ -166,7 +169,7 @@ userRoutes.get('/edit-page/:page_id', pageIDCheck, function (req, res) {
       return;  
     }
     console.log('getshere');
-    res.status(200).render('pages/users/edit-page.ejs', {page: data[0]});
+    res.status(200).render('pages/users/edit-page.ejs', {page: data[0], messages: req.flash('info')});
     return;
   })
 })
@@ -340,13 +343,79 @@ userRoutes.get('/logout', logins.isLoggedIn, logins.logUserOut, (req, res) => { 
 });
 
 
-userRoutes.get('/edit-user', (req, res) => { //accessible by authed admin
-  res.status(200).render('pages/users/edit-user.ejs', {
-    user: req.body.userToDelete,
-    messages: req.flash('info')
-  });
+const checkUserID = [
+  param('user_id').isInt()
+]
+
+userRoutes.get('/edit-user/:user_id', checkUserID, (req, res) => { //accessible by authed admin
+  errors = validationResult(req);
+  console.log('errors.array() :', errors.array());
+  if (!errors.isEmpty){
+    req.flash('info', 'Invalid user ID');
+    res.status(200).redirect('/users/dashboard');
+    return;
+  }
+
+  // check if user isAdmin ? or is user_id === req.session.userId
+  getUserById(req.params.user_id).then(function(user){
+    if (!user.length > 0) { // handle no user by that id
+      req.flash('info', 'No user by that ID');
+      res.status(200).redirect('/users/dashboard');
+      return;
+    }
+    userRow = user[0];
+    console.log('userRow :', userRow);
+    if (userRow.is_admin || req.session.user_id === userRow.user_id) {
+      console.log('userRow.first_name :', userRow.first_name, userRow.is_admin || req.session.user_id === userRow.user_id);
+      req.flash('info', 'Modifying user(Flash test)');
+      res.status(200).render('pages/users/edit-user.ejs', {
+        messages: req.flash('info'), 
+        user : userRow
+      });
+      return;
+    }
+    req.flash('info', 'You are not authorised to modify user');
+    res.status(200).redirect('/users/dashboard');
+    return;
+  })
   // confirm page for deleting user. only accessible by authenticated admin.
 });
+
+
+editUserPostCheck = [
+  body('user_id').isInt(),
+  body('first_name').trim().isAlphanumeric(),
+  body('last_name').trim().isAlphanumeric()
+]
+
+userRoutes.post('/edit-user',function(req, res){
+  console.log('req.session.user_id :', req.session.user_id);
+  getUserById(req.body.user_id)
+  
+  .then(function(user){
+    user = user[0];
+    console.log('user :', user);
+    if (user.is_admin || user.user_id === req.session.user_id){
+      updateUserName(req.body)
+      .then(function(response){
+        console.log('response :', response);
+        if (response){
+          req.flash('info', 'User updated');
+          res.status(200).redirect('/users/dashboard');
+          return;
+        }
+      }).catch(function(err){
+        console.log('err :', err);
+        req.flash('info','User not updated. There was an error');
+        res.status(200).redirect('/users/dashboard');
+        return;
+      })
+    }
+  })
+})
+
+  
+
 
 userRoutes.post('/delete-user', (req, res) => {
   // delete user.  only accessible by authenticated admin via delete user route. something in the post body perhaps. Discuss with colleagues if there is a better way to perform this confirmation
@@ -404,16 +473,19 @@ userRoutes.post('/change-email-request', changeEmailCheck, (req, res) => {
     return;
   }
 
-
-  user = {
-    password: req.body.password,
-    old_email: req.session.email,
-    new_email: req.body.new_email,
-    email_change_token: uuid()
-  }
-  insertOldEmailObject(user)
+  findEmailById(req.session.user_id)
+  .then(function(user){
+    user = {
+      password: req.body.password,
+      old_email: req.session.email,
+      new_email: req.body.new_email,
+      email_change_token: uuid()
+    }
+  })
+  .then(function(){
+    insertOldEmailObject(user)
     .then(function (data) {
-      if (!data) {
+        if (!data) {
         req.flash('info', 'Invalid credentials')
         res.status(200).redirect('/users/change-email-request.ejs');
         return;
@@ -422,13 +494,14 @@ userRoutes.post('/change-email-request', changeEmailCheck, (req, res) => {
       mail.sendEmailChangeVerificationLink(user);
       req.flash('info', "An email has been sent to your new email with further instructions");
       res.redirect('/users/dashboard');
-    }).catch(function (err) {
-      req.flash('info', "An internal error has occurred. Please contact your administrator");
-      res.redirect('/users/dashboard');
-      return;
-    })
+    });
+  }).catch(function (err) {
+    req.flash('info', "An internal error has occurred. Please contact your administrator");
+    res.redirect('/users/dashboard');
+    return;
+  })
 });
-
+  
 /////////////  Uploads with multer    ///////////////////
 
 

@@ -8,7 +8,7 @@ const users = require('../server/models/users').user;
 const passport = require('../auth/local');
 const Mail = require('../helperFunctions/verification/MailSender');
 // site //
-const { createUser, updateUserEmail, insertOldEmailObject, activateUser, addOneToFailedLogins, getOldPasswordObject, insertOldPasswordObject } = require('../server/models/users').user;
+const { createUser, updateUserEmail, findIdByEmail, insertOldEmailObject, activateUser, addOneToFailedLogins, getOldPasswordObject, insertOldPasswordObject } = require('../server/models/users').user;
 const changePassword = require('../server/models/users').changePassword;
 const uuid = require('uuid/v1');
 const _ = require('lodash');
@@ -52,11 +52,13 @@ routes.get('/login', (req, res) => {
   
   console.log(sess.id)
   console.log(sess.cookie)
-  
-  res.status(200).render('pages/public/login', { title: 'Login', messages: req.flash('message')} );
-  sess.destroy(function(err){
-    console.log('cannot access session here')
-  })
+  messagesInfo = req.flash('info') 
+  messagesError = req.flash('error');
+  messages = messagesInfo + messagesError;
+  res.status(200).render('pages/public/login', { title: 'Login', messages: messages} );
+  // sess.destroy(function(err){
+  //   console.log('cannot access session here')
+  // })
   return;
 });
 
@@ -74,8 +76,12 @@ routes.post('/login',
     }
   ), 
   function (req, res){
-    req.session.email = req.body.email;
-    res.status(200).redirect("/users/dashboard")
+    findIdByEmail(req.body.email).then(function(data){
+      console.log('data :', data);
+      req.session.user_id = data[0].user_id;
+    })
+    
+    res.status(200).redirect("/users/dashboard");
   return;
 })
 
