@@ -86,16 +86,16 @@ userRoutes.use(userLocalsNavigationStyling.setLocals);
 */
 userRoutes.use(messageTitles.setMessageTitles);
 
-userRoutes.get('/', (req, res) => {
-  res.status(200).render('pages/users/dashboard.ejs', { 
-  messages: req.flash('info')});
-  return;
-});
+// userRoutes.get('/', (req, res) => {
+//   res.status(200).render('pages/users/dashboard.ejs', { 
+//   messages: req.flash('info')});
+//   return;
+// });
 
 userRoutes.get('/dashboard', (req, res) => {
   listUsers(0, 9)
   .then(function(userData){
-  getPages(9) //this need to be thought more about
+  getPages(9) //this need to be thought more about. THis just gets the first 10 pages
   .then(function(pageData){
     res.status(200).render('pages/users/dashboard.ejs', { 
       users : userData,
@@ -348,7 +348,7 @@ const checkUserID = [
 
 userRoutes.get('/edit-user/:user_id', checkUserID, (req, res) => { //accessible by authed admin
   errors = validationResult(req);
-  if (!errors){
+  if (errors){
     req.flash('info', 'Invalid user ID');
     res.status(200).redirect('/users/dashboard');
     return;
@@ -356,9 +356,12 @@ userRoutes.get('/edit-user/:user_id', checkUserID, (req, res) => { //accessible 
 
   // check if user isAdmin ? or is user_id === req.session.userId
   getUserById(req.params.user_id).then(function(user){
-     console.log('user :', user[0]);
-     userRow = user[0];
-     
+    if (!user.length > 0) { // handle no user by that id
+      req.flash('info', 'No user by that ID');
+      res.status(200).redirect('/users/dashboard');
+      return;
+    }
+    userRow = user[0];
     if (userRow.is_admin || req.session.user_id === userRow.user_id) {
       console.log('userRow.first_name :', userRow.first_name, userRow.is_admin || req.session.user_id === userRow.user_id);
       req.flash('info', 'Modifying user(Flash test)');
@@ -368,7 +371,7 @@ userRoutes.get('/edit-user/:user_id', checkUserID, (req, res) => { //accessible 
       });
       return;
     }
-    req.flash('info', "You are not authorised to modify this user");
+    req.flash('info', "You are not authorised to modify user <%=user.user_id%>");
     res.status(200).redirect('/users/dashboard');
     return;
   })
