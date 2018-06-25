@@ -12,7 +12,7 @@
                 <div class="container">
                     <div class="row">
                         <div class="col-lg-6 mx-auto">
-                            <form action="/edit-user" method="post" class="card">
+                            <form action="/users/edit-user" method="post" class="card">
                                     <div class="card-body">
                                             <% if (title === "Create User") { %> 
                                                 <h3 class="card-title">Create New User</h3>
@@ -21,7 +21,7 @@
                                             <% } %> 
                                             <div class="row">
                                                 <div class="col-md-12">
-                                                    <input type="hidden" class="this_id" value="1" />
+                                                    <input name="user_id" type="hidden" class="this_id" value="<%= (typeof user == 'object' && user) ? user.user_id : ''%>" />
                                                     <div class="form-group">
                                                         <label class="form-label" for="name">Name</label>
                                                         <input name="first_name" type="text" class="form-control this_name" placeholder="Name" minlength="3" maxlength="64" size="32"  value="<%= (typeof user == 'object' && user) ? user.first_name : '' %>" required>
@@ -44,7 +44,7 @@
                                                                 <% if (typeof user === 'object' && user) {  %>
                                                                   <%= user.is_admin ? "checked" : "" %>
                                                                 <%} %> 
-                                                                 required>
+                                                                 >
                                                             </div>
                                                     </div>
                                             </div>

@@ -24,7 +24,8 @@ const {
   insertOldEmailObject,
   listUsers,
   findEmailById,
-  getUserById
+  getUserById,
+  updateUserName
 } = require('../server/models/users').user;
 const {
   createPage,
@@ -348,7 +349,8 @@ const checkUserID = [
 
 userRoutes.get('/edit-user/:user_id', checkUserID, (req, res) => { //accessible by authed admin
   errors = validationResult(req);
-  if (errors){
+  console.log('errors.array() :', errors.array());
+  if (!errors.isEmpty){
     req.flash('info', 'Invalid user ID');
     res.status(200).redirect('/users/dashboard');
     return;
@@ -362,6 +364,7 @@ userRoutes.get('/edit-user/:user_id', checkUserID, (req, res) => { //accessible 
       return;
     }
     userRow = user[0];
+    console.log('userRow :', userRow);
     if (userRow.is_admin || req.session.user_id === userRow.user_id) {
       console.log('userRow.first_name :', userRow.first_name, userRow.is_admin || req.session.user_id === userRow.user_id);
       req.flash('info', 'Modifying user(Flash test)');
@@ -371,12 +374,45 @@ userRoutes.get('/edit-user/:user_id', checkUserID, (req, res) => { //accessible 
       });
       return;
     }
-    req.flash('info', "You are not authorised to modify user <%=user.user_id%>");
+    req.flash('info', 'You are not authorised to modify user');
     res.status(200).redirect('/users/dashboard');
     return;
   })
   // confirm page for deleting user. only accessible by authenticated admin.
 });
+
+
+editUserPostCheck = [
+  body('user_id').isInt(),
+  body('first_name').trim().isAlphanumeric(),
+  body('last_name').trim().isAlphanumeric()
+]
+
+userRoutes.post('/edit-user',function(req, res){
+  console.log('req.session.user_id :', req.session.user_id);
+  getUserById(req.body.user_id)
+  
+  .then(function(user){
+    user = user[0];
+    console.log('user :', user);
+    if (user.is_admin || user.user_id === req.session.user_id){
+      updateUserName(req.body)
+      .then(function(response){
+        if (response){
+          req.flash('info', 'User updated');
+          res.status(200).redirect('/users/dashboard');
+        }
+      })
+    }
+  }).catch(function(err){
+    console.log('err :', err);
+    req.flash('info','User not updated. There was an error');
+    res.status(200).redirect('/users/dashboard');
+    return;
+
+  })
+})
+
 
 userRoutes.post('/delete-user', (req, res) => {
   // delete user.  only accessible by authenticated admin via delete user route. something in the post body perhaps. Discuss with colleagues if there is a better way to perform this confirmation

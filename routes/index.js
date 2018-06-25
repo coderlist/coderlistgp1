@@ -77,7 +77,8 @@ routes.post('/login',
   ), 
   function (req, res){
     findIdByEmail(req.body.email).then(function(data){
-      req.session.user_id = data.user_id;
+      console.log('data :', data);
+      req.session.user_id = data[0].user_id;
     })
     
     res.status(200).redirect("/users/dashboard");
