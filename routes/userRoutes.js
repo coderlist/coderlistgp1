@@ -25,7 +25,8 @@ const {
   listUsers,
   findEmailById,
   getUserById,
-  updateUserName
+  updateUserName,
+  deleteUserById
 } = require('../server/models/users').user;
 const {
   createPage,
@@ -388,8 +389,12 @@ editUserPostCheck = [
   body('last_name').trim().isAlphanumeric()
 ]
 
-userRoutes.post('/edit-user',function(req, res){
-  console.log('req.session.user_id :', req.session.user_id);
+userRoutes.post('/edit-user', editUserPostCheck , function(req, res){
+  let errors = validationResult(req);
+  if (!errors.isEmpty()){
+    req.flash('info','Invalid credentials');
+    res.status(200).redirect('/users/dashboard');
+  }
   getUserById(req.body.user_id)
   
   .then(function(user){
@@ -412,6 +417,14 @@ userRoutes.post('/edit-user',function(req, res){
       })
     }
   })
+})
+
+deleteUserPostCheck = [
+  body('user_id').isInt()
+]
+
+userRoutes.post('/delete-user', deleteUserPostCheck, function(req, res){
+
 })
 
   
