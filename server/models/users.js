@@ -50,21 +50,25 @@ const user = {
    * find user details by email
    */
   getUserByEmail(email){
-    return queryHelper(`SELECT (first_name,last_name,
-      ,creation_date,last_succesful_login) 
-      FROM USERS WHERE email='${email}';`)
+    return queryHelper(`SELECT first_name,last_name
+      ,creation_date,last_succesful_login,is_admin 
+      FROM USERS WHERE email='${email}' ORDER BY creation_date FETCH FIRST 1 ROW ONLY;;`)
     .then(response => response)
     .catch(e => {throw e})
   },
 
+  findEmailById(userId){
+    return queryHelper(`SELECT (email) FROM USERS WHERE user_id='${userId}';`)
+      .then(response => response)
+      .catch(e => {throw e})
+},
 
   /**
    * @param  {String} email
    * find user details by email
    */
   getUserById(userId){
-    return queryHelper(`SELECT (first_name,last_name,
-      ,creation_date,last_succesful_login,is_admin) 
+    return queryHelper(`SELECT first_name,last_name,creation_date,last_succesful_login,is_admin
       FROM USERS WHERE user_id='${userId}';`)
     .then(response => response)
     .catch(e => {throw e})

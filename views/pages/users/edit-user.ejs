@@ -24,7 +24,7 @@
                                                     <input type="hidden" class="this_id" value="1" />
                                                     <div class="form-group">
                                                         <label class="form-label" for="name">Name</label>
-                                                        <input name="first_name" type="text" class="form-control this_name" placeholder="Name" minlength="3" maxlength="64" size="32"  value="<% (typeof user == 'object' && user) ? user.firstName : '' %>" required>
+                                                        <input name="first_name" type="text" class="form-control this_name" placeholder="Name" minlength="3" maxlength="64" size="32"  value="<%= (typeof user == 'object' && user) ? user.first_name : '' %>" required>
                                                     </div>
                                                 </div>
                                             </div>
@@ -32,7 +32,7 @@
                                                     <div class="col-md-12">
                                                             <div class="form-group">
                                                                 <label class="form-label" for="surname">Surname</label>
-                                                                <input name="last_name" type="text" id="surname" class="form-control" placeholder="Surname" minlength="3" maxlength="64" size="32"  value="<% (typeof user == 'object' && user) ? user.lastName : ''%>" required>
+                                                                <input name="last_name" type="text" id="surname" class="form-control" placeholder="Surname" minlength="3" maxlength="64" size="32"  value="<%= (typeof user == 'object' && user) ? user.last_name : ''%>" required>
                                                             </div>
                                                     </div>
                                             </div>
@@ -41,8 +41,8 @@
                                                             <div class="form-group">
                                                                 <label class="form-label" for="surname">Super Admin?</label>
                                                                 <input name="is_admin" type="checkbox" id="isAdmin" class="form-control" 
-                                                                <% if (typeof user === 'object' && user.length > 0) {  %>
-                                                                  <%= !user.is_admin ? "checked" : "" %>
+                                                                <% if (typeof user === 'object' && user) {  %>
+                                                                  <%= user.is_admin ? "checked" : "" %>
                                                                 <%} %> 
                                                                  required>
                                                             </div>
@@ -72,6 +72,7 @@
                 </div>
             </div>
             <% include ../partials/footer.ejs %>
+            <% include ../partials/flash-message.ejs %>
             <!-- Scripts -->
             <script src="/js/alert-message.js"></script>
 </body>

@@ -22,7 +22,9 @@ const {
   updatePassword,
   updateUserEmail,
   insertOldEmailObject,
-  listUsers
+  listUsers,
+  findEmailById,
+  getUserById
 } = require('../server/models/users').user;
 const {
   createPage,
@@ -351,15 +353,25 @@ userRoutes.get('/edit-user/:user_id', checkUserID, (req, res) => { //accessible 
     res.status(200).redirect('/users/dashboard');
     return;
   }
-  
+
   // check if user isAdmin ? or is user_id === req.session.userId
-
-
-
-  res.status(200).render('pages/users/edit-user.ejs', {
-    messages: req.flash('info'), 
-    user : user
-  });
+  getUserById(req.params.user_id).then(function(user){
+     console.log('user :', user[0]);
+     userRow = user[0];
+     
+    if (userRow.is_admin || req.session.user_id === userRow.user_id) {
+      console.log('userRow.first_name :', userRow.first_name, userRow.is_admin || req.session.user_id === userRow.user_id);
+      req.flash('info', 'Modifying user(Flash test)');
+      res.status(200).render('pages/users/edit-user.ejs', {
+        messages: req.flash('info'), 
+        user : userRow
+      });
+      return;
+    }
+    req.flash('info', "You are not authorised to modify this user");
+    res.status(200).redirect('/users/dashboard');
+    return;
+  })
   // confirm page for deleting user. only accessible by authenticated admin.
 });
 
@@ -419,16 +431,19 @@ userRoutes.post('/change-email-request', changeEmailCheck, (req, res) => {
     return;
   }
 
-
-  user = {
-    password: req.body.password,
-    old_email: req.session.email,
-    new_email: req.body.new_email,
-    email_change_token: uuid()
-  }
-  insertOldEmailObject(user)
+  findEmailById(req.session.user_id)
+  .then(function(user){
+    user = {
+      password: req.body.password,
+      old_email: req.session.email,
+      new_email: req.body.new_email,
+      email_change_token: uuid()
+    }
+  })
+  .then(function(){
+    insertOldEmailObject(user)
     .then(function (data) {
-      if (!data) {
+        if (!data) {
         req.flash('info', 'Invalid credentials')
         res.status(200).redirect('/users/change-email-request.ejs');
         return;
@@ -437,13 +452,14 @@ userRoutes.post('/change-email-request', changeEmailCheck, (req, res) => {
       mail.sendEmailChangeVerificationLink(user);
       req.flash('info', "An email has been sent to your new email with further instructions");
       res.redirect('/users/dashboard');
-    }).catch(function (err) {
-      req.flash('info', "An internal error has occurred. Please contact your administrator");
-      res.redirect('/users/dashboard');
-      return;
-    })
+    });
+  }).catch(function (err) {
+    req.flash('info', "An internal error has occurred. Please contact your administrator");
+    res.redirect('/users/dashboard');
+    return;
+  })
 });
-
+  
 /////////////  Uploads with multer    ///////////////////
 
 

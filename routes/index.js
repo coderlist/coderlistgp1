@@ -8,7 +8,7 @@ const users = require('../server/models/users').user;
 const passport = require('../auth/local');
 const Mail = require('../helperFunctions/verification/MailSender');
 // site //
-const { createUser, updateUserEmail, insertOldEmailObject, activateUser, addOneToFailedLogins, getOldPasswordObject, insertOldPasswordObject } = require('../server/models/users').user;
+const { createUser, updateUserEmail, findIdByEmail, insertOldEmailObject, activateUser, addOneToFailedLogins, getOldPasswordObject, insertOldPasswordObject } = require('../server/models/users').user;
 const changePassword = require('../server/models/users').changePassword;
 const uuid = require('uuid/v1');
 const _ = require('lodash');
@@ -77,10 +77,10 @@ routes.post('/login',
   ), 
   function (req, res){
     findIdByEmail(req.body.email).then(function(data){
-      
+      req.session.user_id = data.user_id;
     })
-    req.session.email = req.body.email;
-    res.status(200).redirect("/users/dashboard")
+    
+    res.status(200).redirect("/users/dashboard");
   return;
 })
 
