@@ -400,40 +400,72 @@ userRoutes.post('/edit-user', editUserPostCheck , function(req, res){
   .then(function(user){
     user = user[0];
     console.log('user :', user);
-    if (user.is_admin || user.user_id === req.session.user_id){
-      updateUserName(req.body)
-      .then(function(response){
-        console.log('response :', response);
-        if (response){
-          req.flash('info', 'User updated');
+    getIsUserAdmin(req.session.user_id)
+    .then(function(userAdmin){
+      if (userAdmin.is_admin || user.user_id === req.session.user_id){ // if user is the same user being edited or user is super admin
+        updateUserName(req.body)
+        .then(function(response){
+          console.log('response :', response);
+          if (response){
+            req.flash('info', 'User updated');
+            res.status(200).redirect('/users/dashboard');
+            return;
+          }
+        }).catch(function(err){
+          console.log('err :', err);
+          req.flash('info','User not updated. There was an error');
           res.status(200).redirect('/users/dashboard');
           return;
-        }
-      }).catch(function(err){
-        console.log('err :', err);
-        req.flash('info','User not updated. There was an error');
-        res.status(200).redirect('/users/dashboard');
-        return;
-      })
-    }
+        })
+      }
+    })
   })
 })
 
 deleteUserPostCheck = [
-  body('user_id').isInt()
+  body('user_id').isInt().exists()
 ]
 
 userRoutes.post('/delete-user', deleteUserPostCheck, function(req, res){
-
+  let errors = validationResult(req);
+  if (!errors.isEmpty()){
+    console.log('invalis :');
+    req.flash('info','Invalid user id');
+    res.status(200).redirect('/users/dashboard');
+  }
+  getUserById(req.body.user_id)
+  .then(function(user){
+    getIsUserAdmin(req.session.user_id)
+    .then(function(userAdmin){
+      if (userAdmin.is_admin || user.user_id === req.session.user_id){ //check if user is admin or if user
+        deleteUserById(req.body.user_id).then(function(data){
+          if (data) {
+            if (user.users_id = req.session.user_id){
+              req.session.destroy()
+              .then(() => {
+                req.session.create()
+              .then(() => {
+                req.flash('info','User deleted');
+                res.status(200).redirect('/login');
+                return;
+              })
+              })
+            }
+            req.flash('info','User deleted');
+            res.status(200).redirect('/dashboard');
+            return;
+          }
+          req.flash('info','There was an error. User not deleted');
+          res.status(200).redirect('/dashboard');
+          return;
+        })
+      }
+    })  
+  }).catch(function(err){ throw err})
 })
 
   
 
-
-userRoutes.post('/delete-user', (req, res) => {
-  // delete user.  only accessible by authenticated admin via delete user route. something in the post body perhaps. Discuss with colleagues if there is a better way to perform this confirmation
-  return;
-});
 
 userRoutes.get('/change-password', (req, res) => {
   res.status(200).render('pages/users/changePassword.ejs', {
