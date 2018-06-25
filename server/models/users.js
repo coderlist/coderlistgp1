@@ -58,6 +58,45 @@ const user = {
   },
 
   /**
+   * @param  {String} id
+   * find user details by user_id
+   */
+  getUserById(id){
+    return queryHelper(`SELECT (first_name,last_name,
+      ,creation_date,last_succesful_login) 
+      FROM USERS WHERE user_id='${id}';`)
+    .then(response => response)
+    .catch(e => {throw e})
+  },
+
+  
+  /**
+   * @param  {Object} user
+   * delete user by email
+   * associated pages gets set to null due to CASCADE constraint
+   */
+  deleteUserByEmail(user) {
+    return queryHelper(`DELETE FROM users WHERE email = '${user.email}';`)
+      .then(response => true)
+      .catch(e => {
+        throw e
+      })
+  },
+
+  /**
+   * @param  {Object} body
+   * delete user by user id
+   * associated pages gets gets set to null due to CASCADE constraint
+   */
+  deleteUserById(body){
+    return queryHelper(`DELETE FROM users WHERE user_id = '${body.id}';`)
+      .then(response => true)
+      .catch(e => {
+        throw e
+      })
+  },
+
+  /**
    * 
    * @param {Object} user 
    * gets token from route in a temporary user object
@@ -259,18 +298,6 @@ const user = {
   },
 
 
-  /**
-   * @param  {Object} user
-   * delete user by email
-   * associated pages gets deleted due to CASCADE constraint
-   */
-  deleteUserByEmail(user) {
-    return queryHelper(`DELETE FROM users WHERE email = '${user.email}';`)
-      .then(response => true)
-      .catch(e => {
-        throw e
-      })
-  },
 
 
   //////////////////// CHANGE PASSWORD  ///////////////////////////////////
