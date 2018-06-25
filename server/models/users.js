@@ -144,9 +144,7 @@ const user = {
    * on failure
    */
   updateUserName(user) {
-    user.user_id = parseInt(user.user_id);
-    console.log('user :', user);
-    return queryHelper(`UPDATE users SET first_name = '$(user.first_name)', last_name = '$(user.last_name)' WHERE user_id = '$(user.user_id)' `)
+    return queryHelper(`UPDATE users SET first_name = '${user.first_name}', last_name = '${user.last_name}' WHERE user_id=${user.user_id};`)
     .then(result => true)
     .catch(e => {
       throw e

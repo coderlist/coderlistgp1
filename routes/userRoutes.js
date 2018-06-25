@@ -398,20 +398,23 @@ userRoutes.post('/edit-user',function(req, res){
     if (user.is_admin || user.user_id === req.session.user_id){
       updateUserName(req.body)
       .then(function(response){
+        console.log('response :', response);
         if (response){
           req.flash('info', 'User updated');
           res.status(200).redirect('/users/dashboard');
+          return;
         }
+      }).catch(function(err){
+        console.log('err :', err);
+        req.flash('info','User not updated. There was an error');
+        res.status(200).redirect('/users/dashboard');
+        return;
       })
     }
-  }).catch(function(err){
-    console.log('err :', err);
-    req.flash('info','User not updated. There was an error');
-    res.status(200).redirect('/users/dashboard');
-    return;
-
   })
 })
+
+  
 
 
 userRoutes.post('/delete-user', (req, res) => {
