@@ -32,7 +32,8 @@ const {
 const {
   createPage,
   getPages,
-  getPagebyID
+  getPagebyID,
+  deletePageById
 } = require('../server/models/pages');
 const uuid = require('uuid/v1');
 const Mail = require('../helperFunctions/verification/MailSender');
@@ -165,7 +166,7 @@ userRoutes.get('/edit-page/:page_id', pageIDCheck, function (req, res) {
       return;
     }
     console.log('(!(req.session.isAdmin || req.session.email === data.created_by)) :', req.session.email, data[0].created_by,(!(req.session.isAdmin || req.session.email === data.created_by)));
-    if (!(req.session.isAdmin || req.session.email === data[0].created_by)) { // Check page ownership or admin
+    if (!(req.session.isAdmin || req.session.user_id === data[0].owner_id)) { // Check page ownership or admin
       req.flash('info', 'This is not your page to modify');
       res.status(200).redirect('/users/edit-page');
       return;  
@@ -682,7 +683,29 @@ userRoutes.post('/delete-page', deletePageCheck, function(req, res){
     res.status(200).redirect('/users/dashboard');
     return;
   }
-  
+  getPageById(req.body.page_id)
+  .then(function(pageData){
+    getUserById(req.session.user)
+    .then(function(userData){
+      if (pageData.created_by === req.session.user_id || userData.is_admin){
+        deletePageById(req.body.page_id)
+        .then(function(data){
+          if (data) {
+            req.flash('info', 'Page deleted');
+            res.redirect('/users/dashboard');
+            return;
+          }
+          req.flash('info', 'Error. Page not deleted. Please contact your administrator');
+          res.redirect('/users/dashboard');
+          return;
+        })
+      }
+      req.flash('info', 'You are not authorised to delete this page');
+          res.redirect('/users/dashboard');
+          return;
+
+    })
+  })
 })
 
 //////////////         end of change email whilst validated ////////////////

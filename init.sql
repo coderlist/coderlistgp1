@@ -47,7 +47,7 @@ CREATE TABLE IF NOT EXISTS images (
 );
 
 
-CREATE TABLE navigations (
+CREATE TABLE IF NOT EXISTS navigations (
   page_id INTEGER REFERENCES pages(page_id) ON DELETE SET NULL,
   created_by TEXT,
   created TIMESTAMP DEFAULT NOW(),
