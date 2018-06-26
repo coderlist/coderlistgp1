@@ -172,6 +172,7 @@ userRoutes.get('/edit-page/:page_id', pageIDCheck, function (req, res) {
       return;  
     }
     console.log('getshere');
+    req.flash('info', 'Page ready for editing');
     res.status(200).render('pages/users/edit-page.ejs', {page: data[0], messages: req.flash('info')});
     return;
   })
