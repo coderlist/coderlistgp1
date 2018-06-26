@@ -670,6 +670,21 @@ userRoutes.post('/edit-page', function(req, res){
   })
 });
 
+
+deletePageCheck = [
+  body('page_id').isInt().exists()
+]
+
+userRoutes.post('/delete-page', deletePageCheck, function(req, res){
+  let errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    req.flash('info', 'Invalid Page ID');
+    res.status(200).redirect('/users/dashboard');
+    return;
+  }
+  
+})
+
 //////////////         end of change email whilst validated ////////////////
 
 userRoutes.all('*', (req, res) => {
