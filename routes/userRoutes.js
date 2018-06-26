@@ -165,16 +165,20 @@ userRoutes.get('/edit-page/:page_id', pageIDCheck, function (req, res) {
       res.status(200).redirect('/users/edit-page');
       return;
     }
-    console.log('(!(req.session.isAdmin || req.session.email === data.created_by)) :', req.session.email, data[0].created_by,(!(req.session.isAdmin || req.session.email === data.created_by)));
-    if (!(req.session.isAdmin || req.session.user_id === data[0].owner_id)) { // Check page ownership or admin
-      req.flash('info', 'This is not your page to modify');
-      res.status(200).redirect('/users/edit-page');
-      return;  
-    }
-    console.log('getshere');
-    req.flash('info', 'Page ready for editing');
-    res.status(200).render('pages/users/edit-page.ejs', {page: data[0], messages: req.flash('info')});
-    return;
+    getUserById(req.session.user_id)
+    .then(function(userData){
+      console.log('userData :', userData);
+      console.log('(!(req.session.isAdmin || req.session.email === data.created_by)) :', req.session.email, data[0].created_by,(!(req.session.isAdmin || req.session.email === data.created_by)));
+      if (!(userData[0].is_admin || req.session.user_id === data[0].owner_id)) { // Check page ownership or admin
+        req.flash('info', 'This is not your page to modify');
+        res.status(200).redirect('/users/edit-page');
+        return;  
+      }
+      console.log('getshere');
+      req.flash('info', 'Page ready for editing');
+      res.status(200).render('pages/users/edit-page.ejs', {page: data[0], messages: req.flash('info')});
+      return;
+    })
   })
 })
 
