@@ -119,12 +119,26 @@ const user = {
    * delete user by user id
    * associated pages gets gets set to null due to CASCADE constraint
    */
-  deleteUserById(body){
-    return queryHelper(`DELETE FROM users WHERE user_id = '${body.user_id}';`)
-      .then(response => true)
-      .catch(e => {
-        throw e
-      })
+  deleteUserById (user_id){
+    return queryHelper(`
+    DO $$
+    BEGIN 
+        IF EXISTS (select 1 from users 
+            where user_id = ${user_id})
+        THEN 
+           DELETE FROM users WHERE user_id= ${user_id};
+        ELSE
+           RAISE EXCEPTION 'user does not exist';
+        END IF;
+    END
+  $$;
+    `).then(response => {
+      console.log('USER DELETED')
+      return true
+    })
+    .catch(e => {
+      throw e
+    })
   },
 
   /**
