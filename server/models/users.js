@@ -86,7 +86,21 @@ const user = {
     .catch(e => {throw e})
   },
 
-  
+
+
+ /**
+   * @param  {String} id
+   * find user admin
+   */
+
+  getIsUserAdmin(user_id) {
+  return queryHelper(`SELECT is_admin
+      FROM users WHERE user_id='${user_id}';`)
+    .then(response => response)
+    .catch(e => {throw e})
+  },
+
+
   /**
    * @param  {Object} user
    * delete user by email
@@ -106,7 +120,7 @@ const user = {
    * associated pages gets gets set to null due to CASCADE constraint
    */
   deleteUserById(body){
-    return queryHelper(`DELETE FROM users WHERE user_id = '${body.id}';`)
+    return queryHelper(`DELETE FROM users WHERE user_id = '${body.user_id}';`)
       .then(response => true)
       .catch(e => {
         throw e
