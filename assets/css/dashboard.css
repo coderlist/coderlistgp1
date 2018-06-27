@@ -90,10 +90,10 @@ h1, h2, h3, h4, h5, h6 {
   margin-bottom: 0.66em;
 }
 
-p {
+/* p {
   margin-top: 0;
   margin-bottom: 1rem;
-}
+} */
 
 abbr[title],
 abbr[data-original-title] {
@@ -14515,9 +14515,9 @@ a.chip:hover {
   max-width: 100%;
 }
 
-.chat-message p {
+/* .chat-message p {
   margin-bottom: 1em;
-}
+} */
 
 .chat-line-friend {
   -ms-flex-direction: row;

@@ -22,12 +22,19 @@ const {
   updatePassword,
   updateUserEmail,
   insertOldEmailObject,
-  listUsers
+  listUsers,
+  findEmailById,
+  getUserById,
+  updateUserName,
+  deleteUserById,
+  getIsUserAdmin
 } = require('../server/models/users').user;
 const {
   createPage,
   getPages,
-  getPagebyID
+  getPagebyID,
+  deletePageById,
+  updatePageContentById
 } = require('../server/models/pages');
 const uuid = require('uuid/v1');
 const Mail = require('../helperFunctions/verification/MailSender');
@@ -84,16 +91,16 @@ userRoutes.use(userLocalsNavigationStyling.setLocals);
 */
 userRoutes.use(messageTitles.setMessageTitles);
 
-userRoutes.get('/', (req, res) => {
-  res.status(200).render('pages/users/dashboard.ejs', { 
-  messages: req.flash('info')});
-  return;
-});
+// userRoutes.get('/', (req, res) => {
+//   res.status(200).render('pages/users/dashboard.ejs', { 
+//   messages: req.flash('info')});
+//   return;
+// });
 
 userRoutes.get('/dashboard', (req, res) => {
   listUsers(0, 9)
   .then(function(userData){
-  getPages(9) //this need to be thought more about
+  getPages(9) //this need to be thought more about. THis just gets the first 10 pages
   .then(function(pageData){
     res.status(200).render('pages/users/dashboard.ejs', { 
       users : userData,
@@ -159,15 +166,20 @@ userRoutes.get('/edit-page/:page_id', pageIDCheck, function (req, res) {
       res.status(200).redirect('/users/edit-page');
       return;
     }
-    console.log('(!(req.session.isAdmin || req.session.email === data.created_by)) :', req.session.email, data[0].created_by,(!(req.session.isAdmin || req.session.email === data.created_by)));
-    if (!(req.session.isAdmin || req.session.email === data[0].created_by)) { // Check page ownership or admin
-      req.flash('info', 'This is not your page to modify');
-      res.status(200).redirect('/users/edit-page');
-      return;  
-    }
-    console.log('getshere');
-    res.status(200).render('pages/users/edit-page.ejs', {page: data[0]});
-    return;
+    getUserById(req.session.user_id)
+    .then(function(userData){
+      console.log('userData :', userData);
+      console.log('(!(req.session.isAdmin || req.session.email === data.created_by)) :', req.session.email, data[0].created_by,(!(req.session.isAdmin || req.session.email === data.created_by)));
+      if (!(userData[0].is_admin || req.session.user_id === data[0].owner_id)) { // Check page ownership or admin
+        req.flash('info', 'This is not your page to modify');
+        res.status(200).redirect('/users/edit-page');
+        return;  
+      }
+      console.log('getshere');
+      req.flash('info', 'Page ready for editing');
+      res.status(200).render('pages/users/edit-page.ejs', {page: data[0], messages: req.flash('info')});
+      return;
+    })
   })
 })
 
@@ -340,18 +352,125 @@ userRoutes.get('/logout', logins.isLoggedIn, logins.logUserOut, (req, res) => { 
 });
 
 
-userRoutes.get('/edit-user', (req, res) => { //accessible by authed admin
-  res.status(200).render('pages/users/edit-user.ejs', {
-    user: req.body.userToDelete,
-    messages: req.flash('info')
-  });
+const checkUserID = [
+  param('user_id').isInt()
+]
+
+userRoutes.get('/edit-user/:user_id', checkUserID, (req, res) => { //accessible by authed admin
+  errors = validationResult(req);
+  console.log('errors.array() :', errors.array());
+  if (!errors.isEmpty()){
+    req.flash('info', 'Invalid user ID');
+    res.status(200).redirect('/users/dashboard');
+    return;
+  }
+
+  // check if user isAdmin ? or is user_id === req.session.userId
+  getUserById(req.params.user_id).then(function(user){
+    if (!user.length > 0) { // handle no user by that id
+      req.flash('info', 'No user by that ID');
+      res.status(200).redirect('/users/dashboard');
+      return;
+    }
+    userRow = user[0];
+    console.log('userRow :', userRow);
+    if (userRow.is_admin || req.session.user_id === userRow.user_id) {
+      console.log('userRow.first_name :', userRow.first_name, userRow.is_admin || req.session.user_id === userRow.user_id);
+      req.flash('info', 'Modifying user(Flash test)');
+      res.status(200).render('pages/users/edit-user.ejs', {
+        messages: req.flash('info'), 
+        user : userRow
+      });
+      return;
+    }
+    req.flash('info', 'You are not authorised to modify user');
+    res.status(200).redirect('/users/dashboard');
+    return;
+  })
   // confirm page for deleting user. only accessible by authenticated admin.
 });
 
-userRoutes.post('/delete-user', (req, res) => {
-  // delete user.  only accessible by authenticated admin via delete user route. something in the post body perhaps. Discuss with colleagues if there is a better way to perform this confirmation
-  return;
-});
+
+editUserPostCheck = [
+  body('user_id').isInt(),
+  body('first_name').trim().isAlphanumeric(),
+  body('last_name').trim().isAlphanumeric()
+]
+
+userRoutes.post('/edit-user', editUserPostCheck , function(req, res){
+  let errors = validationResult(req);
+  if (!errors.isEmpty()){
+    req.flash('info','Invalid credentials');
+    res.status(200).redirect('/users/dashboard');
+  }
+  getUserById(req.body.user_id)
+  
+  .then(function(user){
+    user = user[0];
+    console.log('user :', user);
+    getIsUserAdmin(req.session.user_id)
+    .then(function(userAdmin){
+      if (userAdmin.is_admin || user.user_id === req.session.user_id){ // if user is the same user being edited or user is super admin
+        updateUserName(req.body)
+        .then(function(response){
+          console.log('response :', response);
+          if (response){
+            req.flash('info', 'User updated');
+            res.status(200).redirect('/users/dashboard');
+            return;
+          }
+        }).catch(function(err){
+          console.log('err :', err);
+          req.flash('info','User not updated. There was an error');
+          res.status(200).redirect('/users/dashboard');
+          return;
+        })
+      }
+    })
+  })
+})
+
+deleteUserPostCheck = [
+  body('user_id').isInt().exists()
+]
+
+userRoutes.post('/delete-user', deleteUserPostCheck, function(req, res){
+  let errors = validationResult(req);
+  if (!errors.isEmpty()){
+    console.log('invalis :');
+    req.flash('info','Invalid user id');
+    res.status(200).redirect('/users/dashboard');
+    return;
+  }
+  if (req.body.user_id === req.session.user_id){
+    req.flash('info','You are not authorised to delete yourself');
+    res.status(200).redirect('/users/dashboard');
+    return;
+  }
+  console.log('req.session.user_id :', req.session.user_id);
+  getIsUserAdmin(req.session.user_id)
+  .then(function(userAdmin){
+    console.log('req.session.user_id :', req.session.user_id);
+    console.log('useradmin :', userAdmin);
+    if (userAdmin.is_admin){ //check if user is admin or if user
+      deleteUserById(req.body.user_id)
+      .then(function(data){
+        console.log('data :', data);
+        if (data) {
+          req.flash('info','User deleted');
+          res.status(200).redirect('/users/dashboard');
+          return;
+        }
+        req.flash('info','There was an error. User does not exist');
+        res.status(200).redirect('/users/dashboard');
+        return;
+      })
+      req.flash('info','You are not authorised to delete users');
+      res.status(200).redirect('/users/dashboard');
+      return;
+    }
+  }).catch(function(err){ throw err})
+})
 
 userRoutes.get('/change-password', (req, res) => {
   res.status(200).render('pages/users/changePassword.ejs', {
@@ -404,16 +523,19 @@ userRoutes.post('/change-email-request', changeEmailCheck, (req, res) => {
     return;
   }
 
-
-  user = {
-    password: req.body.password,
-    old_email: req.session.email,
-    new_email: req.body.new_email,
-    email_change_token: uuid()
-  }
-  insertOldEmailObject(user)
+  findEmailById(req.session.user_id)
+  .then(function(user){
+    user = {
+      password: req.body.password,
+      old_email: req.session.email,
+      new_email: req.body.new_email,
+      email_change_token: uuid()
+    }
+  })
+  .then(function(){
+    insertOldEmailObject(user)
     .then(function (data) {
-      if (!data) {
+        if (!data) {
         req.flash('info', 'Invalid credentials')
         res.status(200).redirect('/users/change-email-request.ejs');
         return;
@@ -422,13 +544,14 @@ userRoutes.post('/change-email-request', changeEmailCheck, (req, res) => {
       mail.sendEmailChangeVerificationLink(user);
       req.flash('info', "An email has been sent to your new email with further instructions");
       res.redirect('/users/dashboard');
-    }).catch(function (err) {
-      req.flash('info', "An internal error has occurred. Please contact your administrator");
-      res.redirect('/users/dashboard');
-      return;
-    })
+    });
+  }).catch(function (err) {
+    req.flash('info', "An internal error has occurred. Please contact your administrator");
+    res.redirect('/users/dashboard');
+    return;
+  })
 });
-
+  
 /////////////  Uploads with multer    ///////////////////
 
 
@@ -529,16 +652,28 @@ userRoutes.get('/page-navmenu-request', function (req, res) {
   res.status(200).send(JSON.stringify(pages));
 })
 
+postCreatePageCheck = [
+  body('title').isAlphanumeric(),
+  body('content').exists(), // ensure sanitised in and out of db
+  body('description').isAlphanumeric()
+]
 
-userRoutes.post('/edit-page', function(req, res){
-  pageData = {
-    created_by: req.session.user_id,
+userRoutes.post('/create-page', postCreatePageCheck, function(req, res){
+  let errors = validationResult(req);
+  page = {
+    owner_id: req.session.user_id,
     title: req.body.title,
     ckeditorHTML: req.body.content,
     page_description: req.body.description,
-    email: req.session.email,
-    order_number: 1
+    order_number: 1,
+    banner_location: ""
   }
+  if (!errors.isEmpty) {
+    req.flash('info','Invalid page data');
+    res.status(200).redirect('/users/edit-page', {page : page});
+    return;
+  }
+ 
   
   // i would like page id from the db please
   createPage(pageData).then(function(data){
@@ -550,6 +685,76 @@ userRoutes.post('/edit-page', function(req, res){
     
   })
 });
+postEditPageCheck = [
+  body('title').isAlphanumeric(),
+  body('user_id').isInt(),
+
+]
+
+userRoutes.post('/edit-page', postEditPageCheck, function(req, res){
+  let errors = validationResult(req);
+  page = {
+    owner_id: req.body.owner_id,
+    title: req.body.title,
+    ckeditorHTML: req.body.content,
+    page_description: req.body.description,
+    email: req.session.email,
+    order_number: 1
+  }
+  if (!errors.isEmpty) {
+    req.flash('info','Invalid page data');
+    res.status(200).redirect('/users/edit-page', {page : page});
+    return;
+  }
+ 
+  
+  // i would like page id from the db please
+  updatePageContentById(req.body.owner_id, page).then(function(data){
+    req.flash('info', 'Page updated successfully');
+    res.status(200).redirect('/users/dashboard');
+  }).catch(function(err){
+    req.flash('info', 'There was an error updating the page');
+    res.status(200).render('pages/users/edit-page.ejs', {messages: req.flash('info'), page : pageData[0]});
+    
+  })
+});
+
+
+deletePageCheck = [
+  body('page_id').isInt().exists()
+]
+
+userRoutes.post('/delete-page', deletePageCheck, function(req, res){
+  let errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    req.flash('info', 'Invalid Page ID');
+    res.status(200).redirect('/users/dashboard');
+    return;
+  }
+  getPageById(req.body.page_id)
+  .then(function(pageData){
+    getUserById(req.session.user)
+    .then(function(userData){
+      if (pageData.created_by === req.session.user_id || userData[0].is_admin){
+        deletePageById(req.body.page_id)
+        .then(function(data){
+          if (data) {
+            req.flash('info', 'Page deleted');
+            res.redirect('/users/dashboard');
+            return;
+          }
+          req.flash('info', 'Error. Page not deleted. Please contact your administrator');
+          res.redirect('/users/dashboard');
+          return;
+        })
+      }
+      req.flash('info', 'You are not authorised to delete this page');
+          res.redirect('/users/dashboard');
+          return;
+
+    })
+  })
+})
 
 //////////////         end of change email whilst validated ////////////////
 
