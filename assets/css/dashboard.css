@@ -75,6 +75,53 @@ body {
   background-color: #f5f7fb;
 }
 
+
+.flash-messages {
+  position: absolute;
+  width: 100%;
+  font-size: 1rem;
+  text-align: center;
+  animation-duration: 1s;
+  animation-name: flash-messages;
+  background-color: #467fcf;
+  color: rgb(255, 255, 255);
+}
+
+.flash-messages span {
+  font-weight: 700;
+}
+
+
+/* Animation for Flash Messages */ 
+@keyframes flash-messages {
+  from {
+    top: 0;
+  }
+  to {
+    top: 50%;
+  }
+}
+
+.flash-message {
+  position: absolute;
+  width: 100%;
+  font-size: 1rem;
+  text-align: center;
+  animation-duration: 1s;
+  animation-name: flash-message;
+  background-color: #467fcf;
+  color: rgb(255, 255, 255);
+}
+/* Animation for Flash Message */ 
+@keyframes flash-message {
+  from {
+    top: 0;
+  }
+  to {
+    top: 50%;
+  }
+}
+
 [tabindex="-1"]:focus {
   outline: 0 !important;
 }
@@ -7369,6 +7416,9 @@ button.bg-dark:focus {
   bottom: 0;
   left: 0;
   z-index: 1030;
+}
+.strong {
+  font-weight: 700;
 }
 
 @supports ((position: -webkit-sticky) or (position: sticky)) {
