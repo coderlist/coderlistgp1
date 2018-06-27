@@ -35,8 +35,9 @@ module.exports = {
       .catch(e => {throw e})
   },
 
-  updatePageContentById(id,data){
-     return queryHelper(`UPDATE pages SET ckeditor_html = '${data}' where page_id = ${id};`)
+  updatePageContentById(body){
+     return queryHelper(`UPDATE pages SET title='${body.title}',
+      description =${body.description},banner_location='${body.banner_location}',ckeditor_html = '${body.ckeditor_html}' where page_id = ${id};`)
      .then(response => response)
      .catch(e => {throw e})
   },
