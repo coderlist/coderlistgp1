@@ -1,5 +1,7 @@
+require('dotenv').config();
 const {pool} = require('../../server/db/database');
-
+const bcrypt = require('bcrypt');
+const saltrounds = 10;
 
 
 /**
@@ -75,6 +77,22 @@ const insertOne = (user) => {
          .catch(e => {throw e})
 }
 
+const createSuper = () => {
+    return  findByEmail('users','super').then(user => {
+      if(!user) {
+      return   bcrypt.hash(process.env.SUPER_SECRET,saltrounds)
+          .then(hash => {
+             queryHelper(`
+               INSERT INTO users (email,password,first_name,last_name, verified) VALUES
+               ('super','${hash}','superadmin','user', 'true') RETURNING *
+                `).then(user => true)
+              })
+        }else{
+          return Promise.reject(new Error(' '));
+        }
+     }).catch(e => {throw e})   
+}
+
 /**
  * @param  {Object} anyObj
  * @param  {} table SQL table
@@ -105,5 +123,6 @@ module.exports = {
   queryUnique,
   insertOne,
   findByEmail,
-  insertInTable
+  insertInTable,
+  createSuper
 };
