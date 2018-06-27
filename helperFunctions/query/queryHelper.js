@@ -80,15 +80,15 @@ const insertOne = (user) => {
 const createSuper = () => {
     return  findByEmail('users','super').then(user => {
       if(!user) {
-      return   bcrypt.hash(process.env.SUPER_SECRET,saltrounds)
+      return  bcrypt.hash(process.env.SUPER_SECRET,saltrounds)
           .then(hash => {
-             queryHelper(`
+            return queryHelper(`
                INSERT INTO users (email,password,first_name,last_name, verified) VALUES
                ('super','${hash}','superadmin','user', 'true') RETURNING *
-                `).then(user => true)
+                `).then(user => 'super initialized')
               })
         }else{
-          return Promise.reject(new Error(' '));
+          return Promise.reject(new Error(''));
         }
      }).catch(e => {throw e})   
 }
