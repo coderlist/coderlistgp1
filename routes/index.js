@@ -52,10 +52,11 @@ routes.get('/login', (req, res) => {
   
   console.log(sess.id)
   console.log(sess.cookie)
-  messagesInfo = req.flash('info') 
-  messagesError = req.flash('error');
-  messages = messagesInfo + messagesError;
-  res.status(200).render('pages/public/login', { title: 'Login', messages: messages} );
+  // messagesInfo = req.flash('info') 
+  // messagesError = req.flash('error');
+  // messages = messagesInfo + messagesError;
+  // console.log('messages :', messages,messagesInfo,);
+  res.status(200).render('pages/public/login', { title: 'Login', messages: req.flash('error')} );
   // sess.destroy(function(err){
   //   console.log('cannot access session here')
   // })
@@ -80,7 +81,7 @@ routes.post('/login',
       console.log('data :', data);
       req.session.user_id = data[0].user_id;
     }).catch(function(err){ throw err})
-    
+    req.flash('info','Succesfully logged in');
     res.status(200).redirect("/users/dashboard");
   return;
 })

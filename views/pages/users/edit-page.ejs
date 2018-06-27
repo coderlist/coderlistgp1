@@ -21,7 +21,8 @@
                                             <h3 class="card-title">Edit Page</h3>
                                         <% } %> 
                                 </div>
-                                <input type="hidden" class="this_id" value="<%= (typeof page == 'object' && page) ? page.page_id : ''%>" />
+                                <input name="page_id" type="hidden" class="this_id" value="<%= (typeof page == 'object' && page) ? page.page_id : ''%>" />
+                                <input name="owner_id" type="hidden" value="<%= (typeof page == 'object' && page) ? page.owner_id : ''%>" />
                                 <div class="form-group ">
                                     <label class="form-label">Title</label>
                                     <input type="text" class="form-control this_name" name="title" placeholder="Title.." value="<%= (typeof page == 'object' && page) ? page.title : 'Hello World' %>" required>
@@ -72,6 +73,7 @@
                 </div>
             </div>
             <% include ../partials/footer.ejs %>
+            <% include ../partials/flash-message.ejs %>
                 <!-- Scripts -->
                 
                 <script src="/js/alert-message.js"></script>

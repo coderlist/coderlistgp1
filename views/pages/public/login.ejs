@@ -14,7 +14,6 @@
                         <form class="card" action="" method="post">
                             <div class="card-body p-6">
                                 <div class="card-title">Login into your account</div>
-                                <% include ../partials/flash-message.ejs %>
                                 <%=messages.value%>
                                 <div class="form-group">
                                     <label class="form-label">Email address</label>
@@ -45,5 +44,6 @@
             </div>
         </div>
     </div>
+    <% include ../partials/flash-message.ejs %>
 </body>
 </html>

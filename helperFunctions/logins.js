@@ -9,14 +9,11 @@ class Logins {
     if (req.isAuthenticated()) {
       return next();
     }
-    // if they aren't redirect them to the home page
-    req.flash('info','Please log in');
-    res.redirect('/login');
-    return;
   }
   
   logUserOut(req, res, next) {
     req.logout();
+    res.redirect('/login');
     return next();
   }
 

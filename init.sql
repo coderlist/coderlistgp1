@@ -47,6 +47,21 @@ CREATE TABLE IF NOT EXISTS images (
 );
 
 
+CREATE TABLE IF NOT EXISTS navigations (
+  page_id INTEGER REFERENCES pages(page_id) ON DELETE SET NULL,
+  created_by TEXT,
+  created TIMESTAMP DEFAULT NOW(),
+  name TEXT,
+  title TEXT,
+  link TEXT,
+  order_number INTEGER,
+  content TEXT,
+  navigation_id SERIAL,
+  parent_navigation_id INTEGER REFERENCES navigations(navigation_id),
+  PRIMARY KEY (navigation_id)
+);
+
+
 
 -- creates tables user_sessions 
 CREATE TABLE IF NOT EXISTS user_sessions (

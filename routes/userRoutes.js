@@ -32,7 +32,9 @@ const {
 const {
   createPage,
   getPages,
-  getPagebyID
+  getPagebyID,
+  deletePageById,
+  updatePageContentById
 } = require('../server/models/pages');
 const uuid = require('uuid/v1');
 const Mail = require('../helperFunctions/verification/MailSender');
@@ -164,15 +166,20 @@ userRoutes.get('/edit-page/:page_id', pageIDCheck, function (req, res) {
       res.status(200).redirect('/users/edit-page');
       return;
     }
-    console.log('(!(req.session.isAdmin || req.session.email === data.created_by)) :', req.session.email, data[0].created_by,(!(req.session.isAdmin || req.session.email === data.created_by)));
-    if (!(req.session.isAdmin || req.session.email === data[0].created_by)) { // Check page ownership or admin
-      req.flash('info', 'This is not your page to modify');
-      res.status(200).redirect('/users/edit-page');
-      return;  
-    }
-    console.log('getshere');
-    res.status(200).render('pages/users/edit-page.ejs', {page: data[0], messages: req.flash('info')});
-    return;
+    getUserById(req.session.user_id)
+    .then(function(userData){
+      console.log('userData :', userData);
+      console.log('(!(req.session.isAdmin || req.session.email === data.created_by)) :', req.session.email, data[0].created_by,(!(req.session.isAdmin || req.session.email === data.created_by)));
+      if (!(userData[0].is_admin || req.session.user_id === data[0].owner_id)) { // Check page ownership or admin
+        req.flash('info', 'This is not your page to modify');
+        res.status(200).redirect('/users/edit-page');
+        return;  
+      }
+      console.log('getshere');
+      req.flash('info', 'Page ready for editing');
+      res.status(200).render('pages/users/edit-page.ejs', {page: data[0], messages: req.flash('info')});
+      return;
+    })
   })
 })
 
@@ -465,9 +472,6 @@ userRoutes.post('/delete-user', deleteUserPostCheck, function(req, res){
   }).catch(function(err){ throw err})
 })
 
-  
-
-
 userRoutes.get('/change-password', (req, res) => {
   res.status(200).render('pages/users/changePassword.ejs', {
     messages: req.flash('info')
@@ -648,16 +652,28 @@ userRoutes.get('/page-navmenu-request', function (req, res) {
   res.status(200).send(JSON.stringify(pages));
 })
 
+postCreatePageCheck = [
+  body('title').isAlphanumeric(),
+  body('content').exists(), // ensure sanitised in and out of db
+  body('description').isAlphanumeric()
+]
 
-userRoutes.post('/edit-page', function(req, res){
-  pageData = {
-    created_by: req.session.user_id,
+userRoutes.post('/create-page', postCreatePageCheck, function(req, res){
+  let errors = validationResult(req);
+  page = {
+    owner_id: req.session.user_id,
     title: req.body.title,
     ckeditorHTML: req.body.content,
     page_description: req.body.description,
-    email: req.session.email,
-    order_number: 1
+    order_number: 1,
+    banner_location: ""
   }
+  if (!errors.isEmpty) {
+    req.flash('info','Invalid page data');
+    res.status(200).redirect('/users/edit-page', {page : page});
+    return;
+  }
+ 
   
   // i would like page id from the db please
   createPage(pageData).then(function(data){
@@ -665,6 +681,39 @@ userRoutes.post('/edit-page', function(req, res){
     res.status(200).redirect('/users/dashboard');
   }).catch(function(err){
     req.flash('info', 'There was an error creating the page');
+    res.status(200).render('pages/users/edit-page.ejs', {messages: req.flash('info'), page : pageData[0]});
+    
+  })
+});
+postEditPageCheck = [
+  body('title').isAlphanumeric(),
+  body('user_id').isInt(),
+
+]
+
+userRoutes.post('/edit-page', postEditPageCheck, function(req, res){
+  let errors = validationResult(req);
+  page = {
+    owner_id: req.body.owner_id,
+    title: req.body.title,
+    ckeditorHTML: req.body.content,
+    page_description: req.body.description,
+    email: req.session.email,
+    order_number: 1
+  }
+  if (!errors.isEmpty) {
+    req.flash('info','Invalid page data');
+    res.status(200).redirect('/users/edit-page', {page : page});
+    return;
+  }
+ 
+  
+  // i would like page id from the db please
+  updatePageContentById(req.body.owner_id, page).then(function(data){
+    req.flash('info', 'Page updated successfully');
+    res.status(200).redirect('/users/dashboard');
+  }).catch(function(err){
+    req.flash('info', 'There was an error updating the page');
     res.status(200).render('pages/users/edit-page.ejs', {messages: req.flash('info'), page : pageData[0]});
     
   })
@@ -682,7 +731,29 @@ userRoutes.post('/delete-page', deletePageCheck, function(req, res){
     res.status(200).redirect('/users/dashboard');
     return;
   }
-  
+  getPageById(req.body.page_id)
+  .then(function(pageData){
+    getUserById(req.session.user)
+    .then(function(userData){
+      if (pageData.created_by === req.session.user_id || userData[0].is_admin){
+        deletePageById(req.body.page_id)
+        .then(function(data){
+          if (data) {
+            req.flash('info', 'Page deleted');
+            res.redirect('/users/dashboard');
+            return;
+          }
+          req.flash('info', 'Error. Page not deleted. Please contact your administrator');
+          res.redirect('/users/dashboard');
+          return;
+        })
+      }
+      req.flash('info', 'You are not authorised to delete this page');
+          res.redirect('/users/dashboard');
+          return;
+
+    })
+  })
 })
 
 //////////////         end of change email whilst validated ////////////////
