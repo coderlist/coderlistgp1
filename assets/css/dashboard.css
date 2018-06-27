@@ -7417,6 +7417,9 @@ button.bg-dark:focus {
   left: 0;
   z-index: 1030;
 }
+.strong {
+  font-weight: 700;
+}
 
 @supports ((position: -webkit-sticky) or (position: sticky)) {
   .sticky-top {

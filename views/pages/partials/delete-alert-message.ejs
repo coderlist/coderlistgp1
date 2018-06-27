@@ -4,15 +4,19 @@
         <h4><%= messageTitle %></h4>
         <% if ( messageTitle === "Delete User") { %> 
             <p>
-                Are you sure you want to delete <span class="strong"></span> user? 
+                Are you sure you want to delete the user <span class="strong"></span> ? 
             </p>
         <% } else if (messageTitle === "Delete Page") { %>
             <p>
-                Are you sure you want to delete <span class="strong"></span> page? 
+                Are you sure you want to delete the page <span class="strong"></span> ? 
+            </p>
+        <% } else if (messageTitle === "Delete User") { %>
+            <p>
+                    Are you sure you want to delete the user <span class="strong"></span> ?  
             </p>
         <% } else { %>
             <p>
-                Are you sure you want to delete <span class="strong"></span> file? 
+                Are you sure you want to delete the file <span class="strong"></span> ? 
             </p>
         <% } %>
         <div class="btn-list">

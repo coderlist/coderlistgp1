@@ -22,9 +22,10 @@
                                             <div class="row">
                                                 <div class="col-md-12">
                                                     <input name="user_id" type="hidden" class="this_id" value="<%= (typeof user == 'object' && user) ? user.user_id : ''%>" />
+                                                    <input namne="user_name" type="hidden" class="this_name" value="<%=`${user.first_name} ${user.last_name}` %>" />
                                                     <div class="form-group">
                                                         <label class="form-label" for="name">Name</label>
-                                                        <input name="first_name" type="text" class="form-control this_name" placeholder="Name" minlength="3" maxlength="64" size="32"  value="<%= (typeof user == 'object' && user) ? user.first_name : '' %>" required>
+                                                        <input name="first_name" type="text" class="form-control" placeholder="Name" minlength="3" maxlength="64" size="32"  value="<%= (typeof user == 'object' && user) ? user.first_name : '' %>" required>
                                                     </div>
                                                 </div>
                                             </div>
@@ -36,28 +37,30 @@
                                                             </div>
                                                     </div>
                                             </div>
+                                            <% if (title === "Create User") { %>
+                                                <div class="row">
+                                                    <div class="col-md-12">
+                                                        <div class="form-group">
+                                                            <label class="form-label" for="email">Email address</label>
+                                                            <input name="email" type="email" id="email" class="form-control" placeholder="Email@Example.com" value="<% (typeof user == 'object' && user) ? user.email : ''%>" required>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            <% } %>
                                             <div class="row">
                                                     <div class="col-md-12">
                                                             <div class="form-group">
-                                                                <label class="form-label" for="surname">Super Admin?</label>
-                                                                <input name="is_admin" type="checkbox" id="isAdmin" class="form-control" 
-                                                                <% if (typeof user === 'object' && user) {  %>
-                                                                  <%= user.is_admin ? "checked" : "" %>
-                                                                <%} %> 
-                                                                 >
+                                                                Super Admin
+                                                                <label class="custom-control custom-checkbox custom-control-inline">
+                                                                    <input name="is_admin" type="checkbox" id="isAdmin" class="custom-control-input"
+                                                                    <% if (typeof user === 'object' && user) {  %>
+                                                                        <%= user.is_admin ? "checked" : "" %>
+                                                                    <%} %>>
+                                                                    <span class="custom-control-label"></span>
+                                                                </label>                                                           
                                                             </div>
                                                     </div>
                                             </div>
-                                            <% if (title === "Create User") { %>
-                                            <div class="row">
-                                                <div class="col-md-12">
-                                                    <div class="form-group">
-                                                        <label class="form-label" for="email">Email address</label>
-                                                        <input name="email" type="email" id="email" class="form-control" placeholder="Email@Example.com" value="<% (typeof user == 'object' && user) ? user.email : ''%>" required>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <% } %>
                                         </div>
                                 <div class="card-footer text-right">
                                     <% if (title === "Edit User") { %> 

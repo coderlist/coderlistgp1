@@ -19,7 +19,7 @@ class UserLocalsNavigationStyling {
         if(url.match("\/edit-page\/") == "/edit-page/"){
             id = url.match(/\d+$/);
         } 
-        if(url.match("\/edit-user\/") == "'/edit-user/'"){
+        if(url.match("\/edit-user\/") == "/edit-user/"){
             id = url.match(/\d+$/);
         }
         switch(url){
