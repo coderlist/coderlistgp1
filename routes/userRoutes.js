@@ -134,13 +134,6 @@ userRoutes.get('/profile', function (req, res) {
   })
 })
 
-// userRoutes.get('/:name-page', function (req, res) {
-//   const url = req.url;
-//   res.status(200).render('pages/users/edit-page.ejs', {
-//     messages: url === "/edit-page" ? req.flash('Are you sure you want to delete this PAGE?') : ''
-//   })
-// })
-
 userRoutes.get('/edit-page', function (req, res) { //  with no id number this should just create a page
   res.status(200).render('pages/users/edit-page.ejs', {messages: req.flash('info')})
 })
@@ -279,7 +272,7 @@ userRoutes.post('/create-user', createUserCheck, (req, res) => { //accessible by
       lastName: req.body.last_name || ""
     }
     req.flash("info", "Invalid user data", process.env.NODE_ENV === 'development' ? errors.array() : ""); //error.array() for development only
-    res.status(200).render('pages/users/create-user.ejs', {
+    res.status(200).render('pages/users/edit-user.ejs', {
       messages: req.flash('info'),
       userTemp
     });
@@ -304,7 +297,7 @@ userRoutes.post('/create-user', createUserCheck, (req, res) => { //accessible by
     } else {
       console.log("There was a create user error", err)
       req.flash('info', 'There was an error creating this user. Please try again. If you already have please contact support.')
-      res.status(200).render('pages/users/create-user.ejs', {
+      res.status(200).render('pages/users/edit-user.ejs', {
         messages: req.flash('info'),
         user
       });
@@ -318,7 +311,7 @@ userRoutes.post('/create-user', createUserCheck, (req, res) => { //accessible by
       console.log("There was a system error", err)
       req.flash('info', 'There was an system error. Please notify support.')
     }
-    res.status(200).render('pages/users/create-user.ejs', { 
+    res.status(200).render('pages/users/edit-user.ejs', { 
       messages: req.flash('info'),
       user
     });

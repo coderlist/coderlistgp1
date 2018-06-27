@@ -9,6 +9,13 @@ class MessageTitles {
     constructor(){}
     setMessageTitles(req, res, next){
         const url = req.url;
+        let id = '';
+        if(url.match("\/edit-page\/") == "/edit-page/"){
+            id = url.match(/\d+$/);
+        } 
+        if(url.match("\/edit-user\/") == "/edit-user/"){
+            id = url.match(/\d+$/);
+        }
         switch(url){
             case "/": res.locals.messageTitle = 'Delete User';
                 break;
@@ -16,7 +23,9 @@ class MessageTitles {
                 break;
             case "/manage-pdfs": res.locals.messageTitle = 'Delete PDF';
                 break;
-            case "/edit-page/": res.locals.messageTitle = 'Delete Page';
+            case `/edit-page/${id}`: res.locals.messageTitle = 'Delete Page';
+                break;
+            case `/edit-user/${id}`: res.locals.messageTitle = 'Delete User';
                 break;
             default: res.locals.messageTitle = 'You are about to delete this:';
         }

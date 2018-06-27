@@ -14,6 +14,7 @@ class UserLocalsNavigationStyling {
         res.locals.username =  req.user.first_name ?  req.user.first_name + " " + req.user.last_name : 'Hello User';
         res.locals.active = 'active';  
         const url = req.url;
+        console.log(url);
         let id = '';
         if(url.match("\/edit-page\/") == "/edit-page/"){
             id = url.match(/\d+$/);
