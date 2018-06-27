@@ -12,7 +12,11 @@
                 <div class="container">
                     <div class="row">
                         <div class="col-lg-6 mx-auto">
-                            <form action="/users/edit-user" method="post" class="card">
+                                <% if (title === "Create User") { %> 
+                                    <form action="/users/create-user" method="post" class="card">
+                                <% } else { %>
+                                    <form action="/users/edit-user" method="post" class="card">
+                                <% } %> 
                                     <div class="card-body">
                                             <% if (title === "Create User") { %> 
                                                 <h3 class="card-title">Create New User</h3>
@@ -21,8 +25,10 @@
                                             <% } %> 
                                             <div class="row">
                                                 <div class="col-md-12">
+                                                    <% if (title === "Edit User") { %>
                                                     <input name="user_id" type="hidden" class="this_id" value="<%= (typeof user == 'object' && user) ? user.user_id : ''%>" />
-                                                    <input namne="user_name" type="hidden" class="this_name" value="<%=`${user.first_name} ${user.last_name}` %>" />
+                                                    <input name="user_name" type="hidden" class="this_name" value="<%=`${user.first_name} ${user.last_name}` %>" />
+                                                    <% } %> 
                                                     <div class="form-group">
                                                         <label class="form-label" for="name">Name</label>
                                                         <input name="first_name" type="text" class="form-control" placeholder="Name" minlength="3" maxlength="64" size="32"  value="<%= (typeof user == 'object' && user) ? user.first_name : '' %>" required>
