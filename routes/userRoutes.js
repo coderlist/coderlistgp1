@@ -656,7 +656,7 @@ userRoutes.post('/create-page', postCreatePageCheck, function(req, res){
   page = {
     owner_id: req.session.user_id,
     title: req.body.title,
-    ckeditorHTML: req.body.content,
+    ckeditor_html: req.body.content,
     page_description: req.body.description,
     order_number: 1,
     banner_location: ""
@@ -669,12 +669,12 @@ userRoutes.post('/create-page', postCreatePageCheck, function(req, res){
  
   
   // i would like page id from the db please
-  createPage(pageData).then(function(data){
+  createPage(page).then(function(data){
     req.flash('info', 'Page created successfully');
     res.status(200).redirect('/users/dashboard');
   }).catch(function(err){
     req.flash('info', 'There was an error creating the page');
-    res.status(200).render('pages/users/edit-page.ejs', {messages: req.flash('info'), page : pageData[0]});
+    res.status(200).render('pages/users/edit-page.ejs', {messages: req.flash('info'), page : page});
     
   })
 });
@@ -691,9 +691,8 @@ userRoutes.post('/edit-page', postEditPageCheck, function(req, res){
   page = {
     owner_id: req.body.owner_id,
     title: req.body.title,
-    ckeditorHTML: req.body.content,
+    ckeditor_html: req.body.content,
     page_description: req.body.description,
-    email: req.session.email,
     order_number: 1,
     page_id: req.body.page_id,
     
