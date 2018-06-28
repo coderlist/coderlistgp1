@@ -101,6 +101,7 @@ ALTER TABLE pages ADD COLUMN IF NOT EXISTS ckeditor_html TEXT,
    ADD COLUMN IF NOT EXISTS order_number INTEGER,
    ADD COLUMN IF NOT EXISTS page_description TEXT,
    ADD COLUMN IF NOT EXISTS banner_location TEXT,
+   ADD COLUMN IF NOT EXISTS last_edited_by TEXT,
    ADD COLUMN IF NOT EXISTS owner_id INT;
 
 --ALTER TABLE pages DROP COLUMN IF EXISTS owner_id;
