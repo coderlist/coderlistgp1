@@ -27,7 +27,8 @@ const {
   getUserById,
   updateUserName,
   deleteUserById,
-  getIsUserAdmin
+  getIsUserAdmin,
+  createUser
 } = require('../server/models/users').user;
 const {
   createPage,
@@ -318,7 +319,6 @@ userRoutes.post('/create-user', createUserCheck, (req, res) => { //accessible by
   })
   return;
 });
-
 
 userRoutes.get('/admin', (req, res) => {
   res.status(200).render('pages/users/admin.ejs', {

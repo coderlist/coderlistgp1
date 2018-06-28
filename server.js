@@ -37,8 +37,8 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(flash());
-createSuper().then(res => console.log('DONE'))
-             .catch(e => console.log('Super-error', e.message))
+createSuper().then(res => console.log(res))
+             .catch(e => console.log(e.message))
 app.use('/', routes);
 
 app.listen(process.env.PORT || 3000);

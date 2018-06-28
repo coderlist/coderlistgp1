@@ -366,9 +366,18 @@ routes.post('/create-user', createUserCheck, (req, res) => { //accessible by aut
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     console.log('ERROR',errors.array())
-    const userTemp = {email : req.body.email || "", firstName : req.body.first_name || "", lastName: req.body.last_name || ""}
+    const userTemp = {
+      email : req.body.email || "", 
+      firstName : req.body.first_name || "", 
+      lastName: req.body.last_name || ""
+    }
     req.flash("info","Invalid user data", process.env.NODE_ENV === 'development' ? errors.array() : ""); //error.array() for development only
-    res.status(200).render('pages/users/create-user.ejs', {title: 'Create User', active: 'active', username: 'Ginny Bradley', messages : req.flash('info'), userTemp});
+    res.status(200).render('pages/users/create-user.ejs', {
+      title: 'Create User', 
+      active: 'active', 
+      username: 'Ginny Bradley', 
+      messages : req.flash('info'), 
+      userTemp});
     return;
   }
 
@@ -393,7 +402,12 @@ routes.post('/create-user', createUserCheck, (req, res) => { //accessible by aut
     else {
       console.log("There was a create user error", err)
       req.flash('info', 'There was an error creating this user. Please try again. If you already have please contact support.')
-      res.status(200).render('pages/users/create-user.ejs', {title: 'Create User', active: 'active', username: 'Ginny Bradley', messages : req.flash('info'), user});
+      res.status(200).render('pages/users/create-user.ejs', {
+        title: 'Create User', 
+        active: 'active', 
+        username: 'Ginny Bradley', 
+        messages : req.flash('info'), 
+        user});
       return;
     }
   }).catch(function(err){
@@ -405,7 +419,11 @@ routes.post('/create-user', createUserCheck, (req, res) => { //accessible by aut
       console.log("There was a system error", err)
       req.flash('info', 'There was an system error. Please notify support.')
     }
-    res.status(200).render('pages/users/create-user.ejs', {title: 'Create User', active: 'active', username: 'Ginny Bradley', messages : req.flash('info'), user});
+    res.status(200).render('pages/users/create-user.ejs', {
+      title: 'Create User', 
+      active: 'active', 
+      username: 'Ginny Bradley', 
+      messages : req.flash('info'), user});
   })
   return;
 });
