@@ -13,7 +13,11 @@
                 <div class="container">
                     <div class="row">
                         <div class="col-md-12">
-                            <form action="/users/edit-page" method="post" class="card">
+                                <% if (title === "Create Page") { %> 
+                                    <form action="/users/create-page" method="post" class="card">
+                                <% } else if ( title === "Edit Page") { %>
+                                    <form action="/users/edit-page/<%= page.page_id %>" method="post" class="card">
+                                <% } %> 
                                 <div class="card-header">
                                         <% if (title === "Create Page") { %> 
                                             <h3 class="card-title">Create Page</h3>
@@ -60,11 +64,11 @@
                                     <% } %>
                                     <% if (title === "Edit Page") { %> 
                                     <button name="update_page" type="submit" class="btn btn-primary">Update</button>
-                                    <% } %>
                                     <label class="custom-control custom-checkbox">
                                         <input type="checkbox" class="custom-control-input" name="publish_edit_page" value="option1" checked="">
                                         <span class="custom-control-label">Publish</span>
                                     </label>
+                                    <% } %>
                                 </div>
 
                             </form>
