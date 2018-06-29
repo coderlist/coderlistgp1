@@ -791,12 +791,12 @@ userRoutes.post('/delete-page', deletePageCheck, function(req, res){
   })
 })
 
-userRoutes.post('/users/upload-file', fileUpload.single, function(req, res){
+userRoutes.post('/users/upload-file',  function(req, res){
   console.log('req.file :', req.file);
-    res.status(200).JSON({
+    res.json({
       "uploaded": 1,
-      "fileName": req.file.filename,
-      "url": `/assets/images/${req.file.filename}` //this is the repsonse ckeditor requires
+      "fileName":"testy filename",
+      "url": `/assets/images/testyfilename` //this is the repsonse ckeditor requires
   })
 });
 
