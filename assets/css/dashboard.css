@@ -4945,9 +4945,18 @@ input[type="button"].btn-block {
   height: 100%;
   background-color: rgba(255, 255, 255, 0.5);
   z-index: 9999;
-  display: none;
+  display: none; 
 }
-.overlay-alert-message{
+.flash-overlay{
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(255, 255, 255, 0.5);
+  z-index: 9999;
+}
+.flash-overlay-alert-message, .overlay-alert-message{
   margin: 0 auto;
   top: 30%;
   animation-duration: 1s;
@@ -4975,6 +4984,9 @@ input[type="button"].btn-block {
 }
 .show {
   display: block;
+}
+.hide {
+  display: none;
 }
 @keyframes slideinpassword {
   from {
