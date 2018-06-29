@@ -10,8 +10,8 @@ const {queryHelper} = require('../../helperFunctions/query/queryHelper');
 module.exports = {
   createPage(body) {
     return queryHelper(`INSERT INTO pages (created_by,owner_id,title,page_description,order_number,ckeditor_html)`+
-                       ` VALUES ('${body.email}',(SELECT user_id FROM users WHERE email = '${body.email}'),
-                       '${body.title}','${body.page_description}','${body.order_number}', '${body.ckeditorHTML}')`)
+                       ` VALUES ('${body.owner_id}',(SELECT user_id FROM users WHERE user_id = '${body.owner_id}'),
+                       '${body.title}','${body.page_description}','${body.order_number}', '${body.ckeditor_html}')`)
         .then(response => console.log('PAGE CREATED'))
         .catch(e => {console.log('e :', e); throw e})
   },

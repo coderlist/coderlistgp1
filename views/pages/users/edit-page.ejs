@@ -14,9 +14,9 @@
                     <div class="row">
                         <div class="col-md-12">
                                 <% if (title === "Create Page") { %> 
-                                    <form action="/users/create-page" method="post" class="card">
+                                    <form action="/users/create-page" enctype="multipart/form-data" method="post" class="card">
                                 <% } else if ( title === "Edit Page") { %>
-                                    <form action="/users/edit-page" method="post" class="card">
+                                    <form action="/users/edit-page" enctype="multipart/form-data" method="post" class="card">
                                 <% } %> 
                                 <div class="card-header">
                                         <% if (title === "Create Page") { %> 
@@ -41,19 +41,21 @@
                                     </label>
                                     <textarea class="form-control" name="description" rows="6" placeholder="Description.." max-length="120" required><%= (typeof page == 'object' && page) ? page.page_description : 'Add a description' %></textarea>
                                 </div>
-                                <!-- <div class="form-group form-image">
+                                <% if (title === "Create Page") { %>
+                                <div class="form-group form-image">
                                     <div class="card form-image-preview">
-                                        <img class="card-img-top img-top-preview" src="https://images.unsplash.com/photo-1475563011407-6bf489b1c361?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=9cd5b743b42d8cc767b58af0c51602c6&auto=format&fit=crop&w=1050&q=80"
+                                        <img class="card-img-top img-top-preview" src="<%= (typeof page == 'object' && page) ? page.banner_location : '#' %>"
                                             alt="And this isn&#39;t my nose. This is a false one.">
                                     </div>
                                     <div class="form-image-preview-upload" action="/user/upload-images">
                                         <div class="form-label">Size: 300 x 300 px</div>
-                                        <div class="custom-file">
+                                        <div class="custom-file"> -->
                                             <input type="file" class="custom-file-input" name="image" required>
                                             <label class="custom-file-label">Upload Image</label>
-                                        </div>
-                                    </div>
-                                </div> -->
+                                      </div>
+                                    <!-- </div> -->
+                                </div>
+                                <% } %>
                                 <div class="card-footer text-right">
                                     <% if (title === "Edit Page") { %> 
                                     <button name="delete_page" type="button" class="btn btn-danger delete-this">Delete Page</button>
