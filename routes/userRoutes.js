@@ -116,7 +116,6 @@ userRoutes.get('/dashboard', (req, res) => {
   return;
 });
 
-
 /////////////////////// Admin page routes /////////////////////
 
 userRoutes.get('/manage-nav', function (req, res) {
@@ -450,6 +449,7 @@ userRoutes.post('/delete-user', deleteUserPostCheck, function(req, res){
       .then(function(data){
         console.log('data :', data);
         if (data) {
+          // run sql command orphan pages owned by user
           req.flash('info','User deleted');
           res.status(200).redirect('/users/dashboard');
           return;
@@ -656,7 +656,7 @@ userRoutes.post('/create-page', postCreatePageCheck, function(req, res){
   page = {
     owner_id: req.session.user_id,
     title: req.body.title,
-    ckeditorHTML: req.body.content,
+    ckeditor_html: req.body.content,
     page_description: req.body.description,
     order_number: 1,
     banner_location: ""
@@ -669,19 +669,21 @@ userRoutes.post('/create-page', postCreatePageCheck, function(req, res){
  
   
   // i would like page id from the db please
-  createPage(pageData).then(function(data){
+  createPage(page).then(function(data){
     req.flash('info', 'Page created successfully');
     res.status(200).redirect('/users/dashboard');
   }).catch(function(err){
     req.flash('info', 'There was an error creating the page');
-    res.status(200).render('pages/users/edit-page.ejs', {messages: req.flash('info'), page : pageData[0]});
+    res.status(200).render('pages/users/edit-page.ejs', {messages: req.flash('info'), page : page});
     
   })
 });
 postEditPageCheck = [
   body('title').isAlphanumeric(),
+  body('content').exists(), // ensure sanitised in and out of db
+  body('description').isAlphanumeric(),
   body('user_id').isInt(),
-
+  body('page_id').isInt()
 ]
 
 userRoutes.post('/edit-page', postEditPageCheck, function(req, res){
@@ -689,10 +691,11 @@ userRoutes.post('/edit-page', postEditPageCheck, function(req, res){
   page = {
     owner_id: req.body.owner_id,
     title: req.body.title,
-    ckeditorHTML: req.body.content,
+    ckeditor_html: req.body.content,
     page_description: req.body.description,
-    email: req.session.email,
-    order_number: 1
+    order_number: 1,
+    page_id: req.body.page_id,
+    
   }
   if (!errors.isEmpty) {
     req.flash('info','Invalid page data');
@@ -706,8 +709,9 @@ userRoutes.post('/edit-page', postEditPageCheck, function(req, res){
     req.flash('info', 'Page updated successfully');
     res.status(200).redirect('/users/dashboard');
   }).catch(function(err){
+    console.log('err :', err);
     req.flash('info', 'There was an error updating the page');
-    res.status(200).render('pages/users/edit-page.ejs', {messages: req.flash('info'), page : pageData[0]});
+    res.status(200).render('pages/users/edit-page.ejs', {messages: req.flash('info'), page : page});
     
   })
 });
