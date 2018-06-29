@@ -22,7 +22,7 @@ CREATE TABLE IF NOT EXISTS users (
 -- create table pages 
 CREATE TABLE IF NOT EXISTS pages (
   page_id SERIAL,
-  created_by TEXT  REFERENCES users(email) ON DELETE CASCADE, 
+  created_by TEXT REFERENCES users(email) ON DELETE CASCADE, 
   creation_date TIMESTAMP DEFAULT NOW(),
   owner_id SERIAL REFERENCES users(user_id) ON DELETE CASCADE,  
   title JSON,    
@@ -79,6 +79,8 @@ ALTER TABLE users DROP COLUMN IF EXISTS activated;
 
 ALTER TABLE users DROP COLUMN IF EXISTS old_pasword;
 
+ALTER TABLE pages DROP COLUMN IF EXISTS owner_id;
+
 ALTER TABLE users ALTER COLUMN password DROP NOT NULL;
 
 ALTER TABLE users ALTER COLUMN creation_date SET DEFAULT now();
@@ -101,8 +103,8 @@ ALTER TABLE pages ADD COLUMN IF NOT EXISTS ckeditor_html TEXT,
    ADD COLUMN IF NOT EXISTS order_number INTEGER,
    ADD COLUMN IF NOT EXISTS page_description TEXT,
    ADD COLUMN IF NOT EXISTS banner_location TEXT,
-   ADD COLUMN IF NOT EXISTS last_edited_by TEXT,
-   ADD COLUMN IF NOT EXISTS owner_id INT;
+   ADD COLUMN IF NOT EXISTS last_edited_by TEXT;
+ --  ADD COLUMN IF NOT EXISTS owner_id INT REFERENCES users(user_id) ON DELETE SET NULL;
 
 --ALTER TABLE pages DROP COLUMN IF EXISTS owner_id;
 ALTER TABLE pages ALTER COLUMN title SET NOT NULL;
@@ -199,6 +201,18 @@ BEGIN
      ALTER TABLE pages DROP CONSTRAINT pages_created_by_fkey;
      ALTER TABLE pages ADD CONSTRAINT pages_created_by_fkey FOREIGN KEY 
      (created_by) REFERENCES users(email) ON DELETE SET NULL;
+  END IF;
+END $$;
+
+------ alter pages foreign constraint on created_by
+
+DO $$
+BEGIN
+  IF ( select udt_name from information_schema.columns 
+  where table_name = 'pages' and column_name='created_by') = 'text'
+  THEN
+     ALTER TABLE pages DROP COLUMN created_by;
+     ALTER TABLE pages ADD COLUMN created_by INTEGER REFERENCES users(user_id) ON DELETE SET NULL;
   END IF;
 END $$;
 
