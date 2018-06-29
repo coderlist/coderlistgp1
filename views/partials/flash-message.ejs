@@ -1,10 +1,17 @@
 <% if (typeof messages === "object" && messages.length > 0) { %>
-  <div class="flash-messages">
-    <span><%=messages %></span>
+  <div class="flash-overlay">
+    <div class="flash-overlay-alert-message alert alert-success alert-dismissible">
+        <button type="button" class="close close-flash-message"></button>
+        <span><%=messages %></span>
+    </div>
   </div>
-<% } %>
-<% if (typeof message === 'object' && message.length > 0) { %>
-  <div class="flash-message">
-    <span><%=message %></span>
-  </div>
-<% } %>
+  <% } %>
+
+  <% if (typeof messagesError === "object" && messagesError.length > 0) { %>
+    <div class="flash-overlay">
+      <div class="flash-overlay-alert-message alert alert-warning alert-dismissible">
+          <button type="button" class="close close-flash-message"></button>
+          <span><%=messageError %></span>
+      </div>
+    </div>
+  <% } %>
