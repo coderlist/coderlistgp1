@@ -22,7 +22,10 @@
                                                 <h3 class="card-title">Create New User</h3>
                                             <% } else { %>
                                                 <h3 class="card-title">Edit User</h3>
-                                            <% } %> 
+                                            <% } %>
+                                            <div class="form-group">
+                                                <% include ../partials/flash-message.ejs %>
+                                            </div>
                                             <div class="row">
                                                 <div class="col-md-12">
                                                     <% if (title === "Edit User") { %>
@@ -83,7 +86,6 @@
                 </div>
             </div>
             <% include ../partials/footer.ejs %>
-            <% include ../partials/flash-message.ejs %>
             <!-- Scripts -->
             <script src="/js/notification-message.js"></script>
             <script src="/js/alert-message.js"></script>

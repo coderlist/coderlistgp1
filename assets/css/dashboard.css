@@ -4947,20 +4947,38 @@ input[type="button"].btn-block {
   z-index: 9999;
   display: none; 
 }
-.flash-overlay{
-  position: fixed;
-  top: 0;
-  left: 0;
+.overlay-alert-message{
+  position: absolute;
   width: 100%;
-  height: 100%;
-  background-color: rgba(255, 255, 255, 0.5);
-  z-index: 9999;
-}
-.flash-overlay-alert-message, .overlay-alert-message{
-  margin: 0 auto;
   top: 30%;
+  margin: 0 auto;
   animation-duration: 1s;
   animation-name: slidein;
+}
+.flash-overlay{
+  overflow: hidden;
+  width: 100%;
+}
+.flash-overlay-alert-message{
+  position: relative;
+  height: auto;
+  padding: 0.75rem 1.25rem;
+  border: 1px solid transparent;
+  border-radius: 3px;
+  width: 100%;
+  top: 0;
+  animation-duration: 1s;
+  animation-name: flashin;
+}
+
+/* Animation for Flash Alert Message */
+@keyframes flashin {
+  from {
+    top: -30vh;
+  }
+  to {
+    top: 0;
+  }
 }
 
 /* Animation for Overlay Alert Message */ 
@@ -10197,7 +10215,7 @@ img {
 }
 
 .col-login {
-  max-width: 24rem;
+  max-width: 30rem;
 }
 
 .gutters-0 {

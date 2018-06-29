@@ -27,6 +27,9 @@
                                 </div>
                                 <input name="page_id" type="hidden" class="this_id" value="<%= (typeof page == 'object' && page) ? page.page_id : ''%>" />
                                 <input name="owner_id" type="hidden" value="<%= (typeof page == 'object' && page) ? page.owner_id : ''%>" />
+                                <div class="form-group">
+                                        <% include ../partials/flash-message.ejs %>
+                                    </div>
                                 <div class="form-group ">
                                     <label class="form-label">Title</label>
                                     <input type="text" class="form-control this_name" name="title" placeholder="Title.." value="<%= (typeof page == 'object' && page) ? page.title : 'Hello World' %>" required>
@@ -79,7 +82,6 @@
                 </div>
             </div>
             <% include ../partials/footer.ejs %>
-            <% include ../partials/flash-message.ejs %>
                 <!-- Scripts -->
                 <script src="/js/notification-message.js"></script>
                 <script src="/js/alert-message.js"></script>
@@ -91,5 +93,4 @@
                     CKEDITOR.replace( 'content' );
                 </script>
 </body>
-
 </html>
