@@ -1,37 +1,28 @@
-const closeAlertMessageButtons = document.querySelectorAll('.close-alert-message');
-const deleteThisButtons = document.querySelectorAll('.delete-this');
-const overlay = document.querySelector('.overlay');
 const flashOverlay = document.querySelector('.flash-overlay');
-const title = document.querySelector('.overlay-alert-message h4').textContent;
-console.log(title);
-/* Toggle Warning Message */
-const toggleAlertMessage = function () {
-    if(flashOverlay !== null) {
-        if(!flashOverlay.classList.contains("hide")){
-            flashOverlay.classList.toggle("hide");
-            return;
-        }
+const closeFlashMessagesButtons = document.querySelectorAll('.close-flash-message');
+let flashTimeOut;
+
+if(flashOverlay !== null){
+    if(!flashOverlay.classList.contains("hide")){
+        // setTimeOut to call the toggleFlashMessage function after three seconds -> Can be increased up to five seconds.
+        flashTimeOut = setTimeout(toggleFlashMessage, 3000);
     }
-    overlay.classList.toggle("show");
-    return;
-};
-const getDataFromInputFields = function (index){
-        const placeholder = document.querySelector('.strong');
-        let name = document.querySelectorAll('.this_name')[index].value;
-        let id = document.querySelectorAll('.this_id')[index].value;
-        console.log(name);
-        console.log(id);
-        placeholder.textContent = name;
-};
-/* Attach Event Listeners to Buttons */
-closeAlertMessageButtons.forEach(button => {
+}
+function toggleFlashMessage() {
+    // toggle flashOverlay
+    // If it is displayed, hide it
+    // Otherwise, display it
+    flashOverlay.classList.toggle("hide");
+    // If the time out is not undefined
+    // It means it has a defined value
+    // clearTimeOut, will clear the setTimeOut method from the call stack 
+    if(flashTimeOut !== undefined){
+        clearTimeout(flashTimeOut);
+    }
+}
+// Add event listeners
+closeFlashMessagesButtons.forEach(button => {
     button.addEventListener('click', function () {
-        toggleAlertMessage();
+        toggleFlashMessage();
     });
-});
-deleteThisButtons.forEach((button, index) => {
-    button.addEventListener('click', function () {
-        toggleAlertMessage();
-        getDataFromInputFields(index);  
-    }, index);
 });
