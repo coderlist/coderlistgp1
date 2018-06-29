@@ -68,6 +68,34 @@ let storage = multer.diskStorage({
   }
 });
 
+let storage2 = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, imageUploadLocation)
+  },
+  filename: function (req, file, next) {
+    console.log(file);
+    const ext = file.mimetype.split('/')[1];
+    req.fileLocation = file.fieldname + '-' + Date.now() + '.' + ext
+    next(null, req.fileLocation);
+  },
+  fileFilter: function (req, file, next) {
+    if (!file) {
+      next();
+    }
+    console.log('req.file in multer :', file);
+    const image = file.mimetype.startsWith('image/');
+    const pdf = file.mimeype.startsWith('application/pdf')
+    if (image || pdf) {
+      console.log('photo uploaded');
+      next(null, true);
+    } else {
+      console.log("file not supported");
+      //TODO:  A better message response to user on failure.
+      return next();
+    }
+  }
+});
+
 const crypto = require('crypto');
 // crypto.pseudoRandomBytes(16, function(err, raw) {
 //   if (err) return callback(err);
@@ -78,6 +106,10 @@ const crypto = require('crypto');
 const upload = multer({
   storage: storage
 });
+
+const fileUpload = multer({
+  storage: storage2
+})
 
 userRoutes.use(logins.isLoggedIn);
 
@@ -651,23 +683,29 @@ postCreatePageCheck = [
   body('description').isAlphanumeric()
 ]
 
-userRoutes.post('/create-page', postCreatePageCheck, function(req, res){
+userRoutes.post('/create-page', postCreatePageCheck, upload.single('image'), function(req, res){
   let errors = validationResult(req);
+  console.log('req.session.user_id :', req.session.user_id);
   page = {
+    created_by: req.session.user_id,
     owner_id: req.session.user_id,
     title: req.body.title,
     ckeditor_html: req.body.content,
     page_description: req.body.description,
     order_number: 1,
-    banner_location: ""
+    
   }
   if (!errors.isEmpty) {
     req.flash('info','Invalid page data');
     res.status(200).redirect('/users/edit-page', {page : page});
     return;
   }
- 
   
+  console.log('req.file :', req.file);
+  
+  page.banner_location = `/images/${req.file.filename}`
+  // console.log('req.file :', req.file);
+  console.log('page :', page);
   // i would like page id from the db please
   createPage(page).then(function(data){
     req.flash('info', 'Page created successfully');
@@ -746,12 +784,23 @@ userRoutes.post('/delete-page', deletePageCheck, function(req, res){
         })
       }
       req.flash('info', 'You are not authorised to delete this page');
-          res.redirect('/users/dashboard');
-          return;
-
+      res.redirect('/users/dashboard');
+      return;
+      
     })
   })
 })
+
+userRoutes.post('/users/upload-file',  function(req, res){
+  console.log('req.file :', req.file);
+    res.json({
+      "uploaded": 1,
+      "fileName":"testy filename",
+      "url": `/assets/images/testyfilename` //this is the repsonse ckeditor requires
+  })
+});
+
+
 
 //////////////         end of change email whilst validated ////////////////
 

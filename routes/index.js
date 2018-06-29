@@ -423,12 +423,20 @@ routes.post('/create-user', createUserCheck, (req, res) => { //accessible by aut
       title: 'Create User', 
       active: 'active', 
       username: 'Ginny Bradley', 
-      messages : req.flash('info'), user});
+      messages : req.flash('info'), 
+      user});
   })
   return;
 });
 
-
+routes.post('/upload-file',  function(req, res){
+  // console.log('req.file :', req.file);
+    res.json({
+      "uploaded": 1,
+      "fileName": "testy filename",
+      "url": `/assets/images/testy` //this is the repsonse ckeditor requires
+  })
+}); //test to see if auth is working on ckeditor upload authed routes
 
 
 routes.all('*', (req, res) => {
