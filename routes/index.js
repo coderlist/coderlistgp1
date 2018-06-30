@@ -395,7 +395,7 @@ routes.post('/create-user', createUserCheck, (req, res) => { //accessible by aut
     if (userCreated) {
       let mail = new Mail;
       mail.sendVerificationLink(user);
-      req.flash('info', 'user created and email sent');  // email not currently being sent
+      req.flash('info', 'user created and email sent'); 
       res.redirect('/users/admin'); 
       return;
     }
@@ -429,14 +429,14 @@ routes.post('/create-user', createUserCheck, (req, res) => { //accessible by aut
   return;
 });
 
-routes.post('/upload-file',  function(req, res){
-  // console.log('req.file :', req.file);
-    res.json({
-      "uploaded": 1,
-      "fileName": "testy filename",
-      "url": `/assets/images/testy` //this is the repsonse ckeditor requires
-  })
-}); //test to see if auth is working on ckeditor upload authed routes
+// routes.post('/upload-file',  function(req, res){
+//   // console.log('req.file :', req.file);
+//     res.json({
+//       "uploaded": 1,
+//       "fileName": "testy filename",
+//       "url": `/assets/images/testy` //this is the repsonse ckeditor requires
+//   })
+// }); //test to see if auth is working on ckeditor upload authed routes
 
 
 routes.all('*', (req, res) => {

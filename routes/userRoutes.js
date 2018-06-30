@@ -370,8 +370,8 @@ userRoutes.post('/admin', (req, res) => {
   });
 });
 
-userRoutes.get('/logout', logins.isLoggedIn, logins.logUserOut, (req, res) => { //testing isLogged in function. To be implemented on all routes. Might be worth extracting as it's own mini express app route on /users/.
-  res.status(200).redirect('/');
+userRoutes.get('/logout', logins.logUserOut, (req, res) => { 
+  res.status(200).redirect('/login');
   return;
 });
 
@@ -724,7 +724,7 @@ postEditPageCheck = [
   body('page_id').isInt()
 ]
 
-userRoutes.post('/edit-page', postEditPageCheck, upload.single('image'), function(req, res){
+userRoutes.post('/edit-page', postEditPageCheck, function(req, res){
   let errors = validationResult(req);
   page = {
     created_by: req.body.created_by,
