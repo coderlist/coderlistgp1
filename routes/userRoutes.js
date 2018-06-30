@@ -193,8 +193,8 @@ userRoutes.get('/edit-page/:page_id', pageIDCheck, function (req, res) {
     }
     getUserById(req.session.user_id)
     .then(function(userData){
-      console.log('userData :', userData);
-      console.log('(!(req.session.isAdmin || req.session.email === data.created_by)) :', req.session.email, data[0].created_by,(!(req.session.isAdmin || req.session.email === data.created_by)));
+      // console.log('userData :', userData);
+      // console.log('(!(req.session.isAdmin || req.session.email === data.created_by)) :', req.session.email, data[0].created_by,(!(req.session.isAdmin || req.session.email === data.created_by)));
       if (!(userData[0].is_admin || req.session.user_id === data[0].owner_id)) { // Check page ownership or admin
         req.flash('info', 'This is not your page to modify');
         res.status(200).redirect('/users/edit-page');
