@@ -37,6 +37,9 @@ const {
   deletePageById,
   updatePageContentById
 } = require('../server/models/pages');
+const {
+  insertBannerImage
+} = require('../server/models/images');
 const uuid = require('uuid/v1');
 const Mail = require('../helperFunctions/verification/MailSender');
 const multer = require('multer');
@@ -188,7 +191,7 @@ userRoutes.get('/edit-page/:page_id', pageIDCheck, function (req, res) {
     console.log('data :', data);
     if (data.length === 0) { // Check to make sure page data exists
       req.flash('info', 'No such page exists');
-      res.status(200).redirect('/users/edit-page');
+      res.status(200).redirect('/users/dashboard');
       return;
     }
     getUserById(req.session.user_id)
@@ -197,7 +200,7 @@ userRoutes.get('/edit-page/:page_id', pageIDCheck, function (req, res) {
       // console.log('(!(req.session.isAdmin || req.session.email === data.created_by)) :', req.session.email, data[0].created_by,(!(req.session.isAdmin || req.session.email === data.created_by)));
       if (!(userData[0].is_admin || req.session.user_id === data[0].owner_id)) { // Check page ownership or admin
         req.flash('info', 'This is not your page to modify');
-        res.status(200).redirect('/users/edit-page');
+        res.status(200).redirect('/users/dashboard');
         return;  
       }
       console.log('getshere');
@@ -686,7 +689,7 @@ postCreatePageCheck = [
 userRoutes.post('/create-page', postCreatePageCheck, upload.single('image'), function(req, res){
   let errors = validationResult(req);
   console.log('req.session.user_id :', req.session.user_id);
-  page = {
+  let page = {
     created_by: req.session.user_id,
     last_edited_by: req.session.user_id,
     title: req.body.title,
@@ -704,10 +707,26 @@ userRoutes.post('/create-page', postCreatePageCheck, upload.single('image'), fun
   console.log('req.file :', req.file);
   
   page.banner_location = `/images/${req.file.filename}`
-  // console.log('req.file :', req.file);
+  let image = {
+    banner_location: `/images/${req.file.filename}`,
+    filename: req.file.filename,
+    page_id: req.body.page_id || 0,
+    banner_image: true,
+    uploaded_images: true,
+    page_image: false
+  }
+  insertBannerImage(image)
+  .then(function(){
+    req.flash('info', 'Image data inserted into db')
+  }).catch(function(err){
+    console.log('err :', err);
+    req.flash('info', 'Failure adding image to db')
+  })
+  console.log('req.file :', req.file);
   console.log('page :', page);
   // i would like page id from the db please
   createPage(page).then(function(data){
+    console.log('data :', data);
     req.flash('info', 'Page created successfully');
     res.status(200).redirect('/users/dashboard');
   }).catch(function(err){
@@ -794,12 +813,12 @@ userRoutes.post('/delete-page', deletePageCheck, function(req, res){
   })
 })
 
-userRoutes.post('/upload-file', fileUpload.single('image'), function(req, res){
-  console.log('req.file :', req.file);
+userRoutes.post('/upload-file', fileUpload.single('content'), function(req, res){
+  console.log('req.file :', req);
     res.json({
       "uploaded": 1,
       "fileName": req.file.filename,
-      "url": `/assets/images/${req.file.filename}` //this is the repsonse ckeditor requires
+      "url": `/assets/images/${req.file.filename}` //this is the response ckeditor requires
   })
 });
 
