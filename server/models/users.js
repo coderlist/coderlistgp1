@@ -185,7 +185,7 @@ const user = {
         `last_failed_login FROM users WHERE` +
         ` email = '${user.email}'`)
       .then(response => response)
-      .catch(e => e)
+      .catch(e =>{throw e})
   },
 
   /**
