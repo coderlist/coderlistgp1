@@ -4957,19 +4957,23 @@ input[type="button"].btn-block {
 }
 .flash-overlay{
   position: fixed;
-  top: 0;
+  top: 20vh;
   left: 50%;
   transform: translateX(-50%);
   width: 500px;
+  height: auto;
   overflow: hidden;
   z-index: 9999;
 }
 .flash-overlay-alert-message{
   position: absolute;
-  width: 100%;
+  width: 90%;
+  margin: 0 auto;
+  height: auto;
   top: 0;
   animation-duration: 1s;
   animation-name: flashin;
+  box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.2);
 }
 
 /* Animation for Flash Alert Message */
