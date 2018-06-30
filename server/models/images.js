@@ -46,5 +46,12 @@ module.exports = {
     DELETE FROM images where image_id=${id}
   `).then(response => response)
   .catch(e =>{throw e})
+  },
+
+  updateImageObjectByImageId(bodyReq){
+    return queryHelper(`
+    UPDATE images set image_name='${bodyReq.imageName}',location='${bodyReq.location}' WHERE image_id=${bodyReq.Id}
+  `).then(response => response)
+  .catch(e =>{throw e})
   }
 }
