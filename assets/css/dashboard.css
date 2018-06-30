@@ -4956,15 +4956,16 @@ input[type="button"].btn-block {
   animation-name: slidein;
 }
 .flash-overlay{
+  position: fixed;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 500px;
   overflow: hidden;
-  width: 100%;
+  z-index: 9999;
 }
 .flash-overlay-alert-message{
-  position: relative;
-  height: auto;
-  padding: 0.75rem 1.25rem;
-  border: 1px solid transparent;
-  border-radius: 3px;
+  position: absolute;
   width: 100%;
   top: 0;
   animation-duration: 1s;
@@ -10215,7 +10216,7 @@ img {
 }
 
 .col-login {
-  max-width: 30rem;
+  max-width: 24rem;
 }
 
 .gutters-0 {
