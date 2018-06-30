@@ -698,8 +698,8 @@ userRoutes.post('/create-page', postCreatePageCheck, upload.single('image'), fun
     order_number: 1,
     
   }
-  if (!errors.isEmpty) {
-    req.flash('info','Invalid page data');
+  if (!errors.isEmpty || !req.file) { // check that a file has been uploaded
+    req.flash('info','Invalid page data. Are you missing an image?');
     res.status(200).redirect('/users/edit-page', {page : page});
     return;
   }
