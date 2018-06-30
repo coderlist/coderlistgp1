@@ -16,6 +16,9 @@
                         <form class="card" action="/users/change-email-request" method="post">
                             <div class="card-body">
                                 <h3 class="card-title">Change Email Address</h3>
+                                <div class="form-group">
+                                        <% include ../partials/flash-message.ejs %>
+                                    </div>
                                     <div class="row">
                                         <div class="col-md-12">
                                             <div class="form-group">
@@ -51,7 +54,7 @@
             
         </div>
         <% include ../partials/footer.ejs %>
-        <% include ../partials/flash-message.ejs %>
+        
         <script src="/js/alert-message.js"></script>
 </body>
 

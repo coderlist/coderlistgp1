@@ -18,6 +18,9 @@
                     </div>
                     <div class="row row-cards row-deck">
                         <div class="form-group col-md-12">
+                            <% include ../partials/flash-message.ejs %>
+                        </div>
+                        <div class="form-group col-md-12">
                             <label class="form-label" for="callToAction">Call to Action Text</label>
                             <textarea class="form-control" id="callToAction" name="content" rows="2" placeholder="Content.." required>Don't use ckeditor here. Use it in edit-page</textarea>
                         </div>
@@ -145,7 +148,6 @@
                 </div>
             </div>
             <% include ../partials/footer.ejs %>
-            <% include ../partials/flash-message.ejs %>
                 <!-- Scripts -->
                 <script src="/js/notification-message.js"></script>
                 <script src="/js/alert-message.js"></script>

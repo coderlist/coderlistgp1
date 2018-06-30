@@ -688,7 +688,7 @@ userRoutes.post('/create-page', postCreatePageCheck, upload.single('image'), fun
   console.log('req.session.user_id :', req.session.user_id);
   page = {
     created_by: req.session.user_id,
-    owner_id: req.session.user_id,
+    last_edited_by: req.session.user_id,
     title: req.body.title,
     ckeditor_html: req.body.content,
     page_description: req.body.description,
@@ -724,17 +724,20 @@ postEditPageCheck = [
   body('page_id').isInt()
 ]
 
-userRoutes.post('/edit-page', postEditPageCheck, function(req, res){
+userRoutes.post('/edit-page', postEditPageCheck, upload.single('image'), function(req, res){
   let errors = validationResult(req);
   page = {
-    owner_id: req.body.owner_id,
+    created_by: req.body.created_by,
     title: req.body.title,
     ckeditor_html: req.body.content,
     page_description: req.body.description,
     order_number: 1,
     page_id: req.body.page_id,
-    
+    last_edited_by: req.session.user_id,
+    last_edited_date: Date.now()
   }
+  console.log('page :', page);
+  console.log('req.body :', req.body);
   if (!errors.isEmpty) {
     req.flash('info','Invalid page data');
     res.status(200).redirect('/users/edit-page', {page : page});
@@ -743,7 +746,7 @@ userRoutes.post('/edit-page', postEditPageCheck, function(req, res){
  
   
   // i would like page id from the db please
-  updatePageContentById(req.body.owner_id, page).then(function(data){
+  updatePageContentById(page).then(function(data){
     req.flash('info', 'Page updated successfully');
     res.status(200).redirect('/users/dashboard');
   }).catch(function(err){

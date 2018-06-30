@@ -8,6 +8,7 @@ if(flashOverlay !== null){
         flashTimeOut = setTimeout(toggleFlashMessage, 3000);
     }
 }
+
 function toggleFlashMessage() {
     // toggle flashOverlay
     // If it is displayed, hide it
