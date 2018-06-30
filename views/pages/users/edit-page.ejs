@@ -42,23 +42,24 @@
                             <label class="form-label">Short description
                                 <span class="form-label-small">0/120</span>
                             </label>
-                            <textarea class="form-control" name="description" rows="6" placeholder="Description.." max-length="120" required><%= (typeof page == 'object' && page) ? page.page_description : 'Add a description' %></textarea>
+                            <textarea class="form-control" name="description" rows="6" placeholder="Description.." max-length="120" required><%= (typeof page == 'object' && page) ?page.page_description : 'Add a description' %></textarea>
                         </div>
-                        
-                        <div class="form-group form-image">
-                            <div class="card form-image-preview">
-                                <img class="card-img-top img-top-preview" src="<%= (typeof page == 'object' && page) ? page.banner_location : '#' %>"
-                                    alt="And this isn&#39;t my nose. This is a false one.">
+                        <% if (title === "Create Page") { %>
+                          <div class="form-group form-image">
+                              <div class="card form-image-preview">
+                                  <img class="card-img-top img-top-preview" src="<%= (typeof page == 'object' && page) ? page.banner_location : '#' %>"
+                                      alt="And this isn&#39;t my nose. This is a false one.">
+                              </div>
+                              <div class="form-image-preview-upload" action="/user/upload-images">
+                                  <div class="form-label">Size: 300 x 300 px</div>
+                                  <div class="custom-file"> -->
+                                      <input type="file" class="custom-file-input" name="image" required>
+                                      <label class="custom-file-label">Upload Image</label>
+                                  </div>
                             </div>
-                            <div class="form-image-preview-upload" action="/user/upload-images">
-                                <div class="form-label">Size: 300 x 300 px</div>
-                                <div class="custom-file"> -->
-                                    <input type="file" class="custom-file-input" name="image" required>
-                                    <label class="custom-file-label">Upload Image</label>
-                                </div>
                           </div>
-                        </div>
-                       
+                        <% } %>
+                    
                         <div class="card-footer text-right">
                             <% if (title === "Edit Page") { %> 
                             <button name="delete_page" type="button" class="btn btn-danger delete-this">Delete Page</button>
@@ -76,21 +77,27 @@
                             <% } %>
                         </div>
                     </form>
+                    <% if (title === "Edit Page") { %>
+                      <form method="post" action="/users/update-banner" enctype="multipart/form-data">
+                        <div class="form-group form-image">
+                          <div class="card form-image-preview">
+                            <img class="card-img-top img-top-preview" src="<%= (typeof page == 'object' && page) ? page.banner_location : '#' %>"
+                            alt="And this isn&#39;t my nose. This is a false one.">
+                          </div>
+                          <div class="form-image-preview-upload" action="/user/upload-images">
+                            <input class="form-control" name="page_id" type="hidden" class="this_id" value="<%= (typeof page == 'object' && page) ? page.page_id : ''%>" />
+                            <div class="form-label">Size: 300 x 300 px</div>
+                            <div class="custom-file"> -->
+                              <input type="file" class="custom-file-input" name="image" required>
+                                <label class="custom-file-label">Upload Image</label>
+                            </div>
+                              <button name="delete_page" type="button" class="btn btn-info delete-this">Update Banner Image</button>
+                            </div>
+                        </div>
+                      </form>
+                    <% } %>
                 </div>
             </div>
-<<<<<<< HEAD
-            <% include ../partials/footer.ejs %>
-                <!-- Scripts -->
-                <script src="/js/notification-message.js"></script>
-                <script src="/js/alert-message.js"></script>
-                <script>
-                    // Replace the <textarea id="editor1"> with a CKEditor
-                    // instance, using default configuration.
-                    CKEDITOR.config.autoGrow_minHeight = 1200;
-                    CKEDITOR.config.autoGrow_maxHeight = 1200;
-                    CKEDITOR.replace( 'content' );
-                </script>
-=======
         </div>
     </div>
     <% include ../partials/footer.ejs %>
@@ -105,6 +112,5 @@
         CKEDITOR.config.autoGrow_maxHeight = 1200;
         CKEDITOR.replace( 'content' );
     </script>
->>>>>>> 2fa85cc53f2c43e21e3c8a6a8ece6deaff9d70a0
 </body>
 </html>
