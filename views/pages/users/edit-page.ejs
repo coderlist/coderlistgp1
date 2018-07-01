@@ -27,7 +27,7 @@
                             <% } %> 
                         </div>
                         <div class="form-group ">
-                            <input class="form-control" name="page_id" type="hidden" class="this_id" value="<%= (typeof page == 'object' && page) ? page.page_id : ''%>" />
+                            <input class="form-control this_id" name="page_id" type="hidden" value="<%= (typeof page == 'object' && page) ? page.page_id : ''%>" />
                             <input class="form-control" name="created_by" type="hidden" value="<%= (typeof page == 'object' && page) ? page.created_by : ''%>" />
                             <label class="form-label">Title</label>
                             <input type="text" class="form-control this_name" name="title" placeholder="Title.." value="<%= (typeof page == 'object' && page) ? page.title : 'Hello World' %>" required>
@@ -89,7 +89,7 @@
                               <input type="file" class="custom-file-input" name="image" required>
                                 <label class="custom-file-label">Upload Image</label>
                             </div>
-                              <button name="delete_page" type="button" class="btn btn-info delete-this">Update Banner Image</button>
+                              <button name="delete_page" type="button" class="btn btn-info">Update Banner Image</button>
                             </div>
                         </div>
                       </form>

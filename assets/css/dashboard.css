@@ -5019,7 +5019,11 @@ input[type="button"].btn-block {
     top: 0;
   }
 }
-
+.image_thumbnail {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+}
 .alert {
   position: relative;
   max-width: 500px;
