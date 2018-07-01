@@ -465,12 +465,12 @@ userRoutes.post('/delete-user', deleteUserPostCheck, function(req, res){
   let errors = validationResult(req);
   if (!errors.isEmpty()){
     console.log('invalis :');
-    req.flash('info','Invalid user id');
+    req.flash('error','Invalid user id');
     res.status(200).redirect('/users/dashboard');
     return;
   }
   if (req.body.user_id === req.session.user_id){
-    req.flash('info','You are not authorised to delete yourself');
+    req.flash('error','You are not authorised to delete yourself');
     res.status(200).redirect('/users/dashboard');
     return;
   }
@@ -489,11 +489,11 @@ userRoutes.post('/delete-user', deleteUserPostCheck, function(req, res){
           res.status(200).redirect('/users/dashboard');
           return;
         }
-        req.flash('info','There was an error. User does not exist');
+        req.flash('error','There was an error. User does not exist');
         res.status(200).redirect('/users/dashboard');
         return;
       })
-      req.flash('info','You are not authorised to delete users');
+      req.flash('error','You are not authorised to delete users');
       res.status(200).redirect('/users/dashboard');
       return;
     }
@@ -823,7 +823,7 @@ userRoutes.post('/upload-file', fileUpload.single('content'), function(req, res)
 });
 
 pageOrderPostCheck = [
-  body('page_id').isInt(),
+  body('page_id').isInt().exists,
   body('is_published').isBoolean(),
   body('is_nav_menu').isBoolean(),
   body('is_homepage_grid').isBoolean(),
@@ -831,8 +831,30 @@ pageOrderPostCheck = [
 ]
 
 userRoutes.post('/page-order', pageOrderPostCheck, function(req,res){
-  // post data to page id.
-})
+  let errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    req.flash('error', 'Invalid Page Data');
+    res.status(200).redirect('/users/dashboard');
+    return;
+  }
+  const page = {
+    page_id: req.body.page_id,
+    is_published: req.body.is_published,
+    is_nav_menu: req.body.is_nav_menu,
+    order_number: req.body.page_order_number,
+    is_homepage_grid: req.body.is_homepage_grid
+  }
+  
+  updatePageContentById(page)
+  .then(function(data){
+    console.log('data :', data);
+  }).catch(function(err){
+    req.flash('error', 'There was an error');
+    res.status(200).redirect('/users/dashboard');
+    return;
+  })
+ })
+
 
 //////////////         end of change email whilst validated ////////////////
 

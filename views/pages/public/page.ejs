@@ -13,10 +13,13 @@
     <header>
         <% include ../../partials/header.ejs %>
     </header>
-    <h1><%= page.title%></h1>
+    <h1><%= (typeof page == 'object' && page) ? page.title : ''%></h1>
     <main>
-        <%=page.ckeditor_html =>
+        <%= (typeof page == 'object' && page) ? page.ckeditor_html : ''%>
         This is where we are gonna include all new pages.
+        <div>
+          Author <%= (typeof page == 'object' && page) ? page.created_by : ''%>
+        </div>
     </main>
     <footer>
         <% include ../../partials/footer.ejs %>

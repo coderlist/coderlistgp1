@@ -1,5 +1,5 @@
 const routes = require('express').Router();
-const { query, check, body, validationResult } = require('express-validator/check');
+const { query, check, body, validationResult, param } = require('express-validator/check');
 const Logins = require('../helperFunctions/Logins');
 const logins = new Logins();
 const checkEmailAndToken = require('../helperFunctions/checkEmailAndToken');
@@ -10,6 +10,8 @@ const Mail = require('../helperFunctions/verification/MailSender');
 // site //
 const { createUser, updateUserEmail, findIdByEmail, insertOldEmailObject, activateUser, addOneToFailedLogins, getOldPasswordObject, insertOldPasswordObject } = require('../server/models/users').user;
 const changePassword = require('../server/models/users').changePassword;
+const { getPagesByHomePageGrid } = require('../server/models/pages');
+
 const uuid = require('uuid/v1');
 const _ = require('lodash');
 const userRoutes = require('./userRoutes')
@@ -25,7 +27,26 @@ routes.get('/', (req, res) => {
     {href:"test me one", name:"item 1"},
     {href:"test me two", name:"item 2"}
   ]
-  res.status(200).render('pages/public/index', {contentHomePages: "", menuItems: menuItems, messages: req.flash('info')}); //ejs example
+  getPagesByHomePageGrid()
+  .then(function(pages){
+    console.log('data from pages homepgrid:', pages);
+    res.status(200).render('pages/public/page', {
+      contentHomePages: "", 
+      menuItems: menuItems,
+      pages: pages,
+      messages: req.flash('info'),
+      messagesError: req.flash('error') 
+    });
+    return;
+  }).catch(function(err){
+    console.log('err :', err);
+    req.flash('error', 'There was an error');
+    res.status(200).render('pages/public/broken', {
+      messages: req.flash('info'),
+      messagesError: req.flash('error') 
+    });
+    return;
+  })
 });
 
 
@@ -81,11 +102,16 @@ routes.post('/login',
     findIdByEmail(req.body.email).then(function(data){
       console.log('data :', data);
       req.session.user_id = data[0].user_id;
-    }).catch(function(err){ throw err})
-    req.flash('info','Succesfully logged in');
-    res.status(200).redirect("/users/dashboard");
-  return;
-})
+      req.flash('info','Succesfully logged in');
+      res.status(200).redirect("/users/dashboard");
+      return;
+    }).catch(function(err){ 
+      req.flash('error','There was an error logging in. Please try again or contact your administrator');
+      res.status(200).redirect("/login");
+    return;
+    })
+
+  })
 
 
 ///////////////       Register User      //////////////////
@@ -438,6 +464,24 @@ routes.post('/create-user', createUserCheck, (req, res) => { //accessible by aut
 //       "url": `/assets/images/testy` //this is the repsonse ckeditor requires
 //   })
 // }); //test to see if auth is working on ckeditor upload authed routes
+
+getPageParamCheck = [
+  param('page_id').isInt().exists()
+]
+
+routes.get('/pages/:page_id', getPageParamCheck, function(req,res){
+  errors = validationResult(req)
+  console.log('errors.array() :', errors.array());
+  if (!errors.isEmpty()) {
+    req.flash('error','Invalid page id parameters');
+    res.status(200).redirect('/');
+    return;
+  }
+  getPageById(page_id)
+  .then(function(data){
+    console.log('data :', data);
+  })
+})
 
 
 routes.all('*', (req, res) => {
