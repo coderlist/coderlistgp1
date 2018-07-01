@@ -6,6 +6,8 @@
 </head>
 
 <body>
+    <% include ../partials/flash-message.ejs %>
+    <%=messages.value%>
     <div class="page">
         <div class="page-single">
             <div class="container">
@@ -14,10 +16,6 @@
                         <form class="card" action="" method="post">
                             <div class="card-body p-6">
                                 <div class="card-title">Login into your account</div>
-                                <div class="form-group">
-                                    <% include ../partials/flash-message.ejs %>
-                                </div>
-                                <%=messages.value%>
                                 <div class="form-group">
                                     <label class="form-label">Email address</label>
                                     <input name="email" type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter email" minlength="3" maxlength="64" size="32"  value="" required>

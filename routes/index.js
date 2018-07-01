@@ -397,7 +397,7 @@ routes.post('/create-user', createUserCheck, (req, res) => { //accessible by aut
       let mail = new Mail;
       mail.sendVerificationLink(user);
       req.flash('info', 'user created and email sent'); 
-      res.redirect('/login'); 
+      res.redirect('./login'); 
       return;
     }
     else {
