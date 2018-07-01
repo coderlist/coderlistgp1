@@ -40,7 +40,6 @@
                                             <%= console.log(users)%>
                                                 <tbody>
                                                     <% users.map(function(user) {%>
-                                                        
                                                         <tr>
                                                             <input type="hidden" class="this_name" value="<%=`${user.first_name} ${user.last_name}` %>" />
                                                             <input type="hidden" class="this_id" value="<%=user.user_id %>" />
@@ -86,7 +85,7 @@
                                     <table class="table card-table table-vcenter text-nowrap">
                                         <thead>
                                             <tr>
-                                                <th class="w-1">Id</th>
+                                                <th></th>
                                                 <th>Name</th>
                                                 <th>Published</th>
                                                 <th>Home Page Grid</th>
@@ -99,10 +98,11 @@
                                         <% if (typeof pages === 'object') { %>
                                             <tbody>
                                               <% pages.map(function(page){%>
+                                                <form action="/users/page-order" method="post">
                                                 <tr>
                                                     <input type="hidden" class="page_id" value="<%=page.page_id %>" />
                                                     <td>
-                                                        <span class="text-muted"><%=page.page_id%></span>
+                                                        <img src="<%=page.banner_location%>" alt="Page image" width="2em" height="2em">
                                                     </td>
                                                     <td>
                                                         <a href="invoice.html" class="text-inherit"><%=page.title%></a>
@@ -132,15 +132,13 @@
                                                         <input type="text" class="form-control page-order" name="page_order" placeholder="1">
                                                     </td>
                                                     <td>
-                                                        <a href="javascript:void(0)" class="btn btn-secondary btn-sm">Save Order</a>
+                                                        <button name="update_changes" type="button" class="btn btn-secondary btn-sm">Save</button>
                                                     </td>
+                                                    </form>
                                                     <td>
                                                         <a href="/users/edit-page/<%=page.page_id %>" class="btn btn-secondary btn-sm">Edit Page</a>
                                                     </td>
                                                 </tr>
-                                                <td>
-                                                    <img src="<%=page.banner_location%>" alt="Page image" width="2em" height="2em">
-                                                  </td>
                                                 <%})%>
                                             </tbody>
                                             <% } %>

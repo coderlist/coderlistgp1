@@ -18,6 +18,7 @@ const userRoutes = require('./userRoutes')
 
 routes.use('/users/', userRoutes);  // all routes in here require authing
 
+
 routes.get('/', (req, res) => {
   //get menu items from db maybe set this as some middleware
   const menuItems = [ 
@@ -102,10 +103,10 @@ routes.get('/enter-password', enterPasswordCheck, (req, res) => {
   //console.log('errors :', errors.array());
   if (!errors.isEmpty()){
     req.flash('info', 'Invalid credentials. Please try again or contact your administrator');
-    res.status(200).render('pages/public/enter-password.ejs', {messages : req.flash('info'), user : {activation_token : req.body.activation_token, email : req.body.email}});
+    res.status(200).render('pages/public/enter-password.ejs', {messages : req.flash('info'), title: "Enter Password" , user : {activation_token : req.body.activation_token, email : req.body.email}});
     return;
   }
-  res.status(200).render('pages/public/enter-password.ejs', {messages: req.flash('info'), user : {activation_token : req.query.token, email : req.query.email}});
+  res.status(200).render('pages/public/enter-password.ejs', {messages: req.flash('info'), title: "Enter Password", user : {activation_token : req.query.token, email : req.query.email}});
 });
 
 postEnterPasswordCheck = [
@@ -396,7 +397,7 @@ routes.post('/create-user', createUserCheck, (req, res) => { //accessible by aut
       let mail = new Mail;
       mail.sendVerificationLink(user);
       req.flash('info', 'user created and email sent'); 
-      res.redirect('/users/admin'); 
+      res.redirect('/login'); 
       return;
     }
     else {
