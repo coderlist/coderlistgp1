@@ -43,9 +43,23 @@ module.exports = {
      .catch(e => {throw e})
   },
 
+  updatePageLocationsById(body){
+     return queryHelper(`UPDATE pages SET is_homepage_grid='${body.is_homepage_grid}',
+      is_published ='${body.is_published}', is_nav_menu='${body.is_nav_menu}', where page_id = ${body.page_id};`)
+     .then(response => response)
+     .catch(e => {throw e})
+  },
+
   deletePageById(id){
     return queryHelper(`DELETE FROM pages WHERE page_id= ${id};`)
     .then(response => true)
     .catch(e => {throw e})
-  }
+  },
+
+  getPagesByHomePageGrid(){
+    return queryHelper(`SELECT * FROM pages WHERE is_homepage_grid = true;`)
+      .then(response => response)
+      .catch(e => {throw e})
+  },
+
 }
