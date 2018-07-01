@@ -7,9 +7,8 @@ module.exports = {
                        '${body.page_id}', '${body.page_image}', '${body.banner_image}', '${body.uploaded_images}')`)
         .then(response => console.log('Image Inserted'))
         .catch(e => {console.log('e :', e); throw e})
-const {queryHelper} = require('../../helperFunctions/query/queryHelper')
-module.exports = {
-  
+    const {queryHelper} = require('../../helperFunctions/query/queryHelper')
+  },
   /**
    * @param  {Object} bodyReq
    * This assumes that the body req comes with a page_id
