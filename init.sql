@@ -81,6 +81,8 @@ ALTER TABLE users DROP COLUMN IF EXISTS old_pasword;
 
 ALTER TABLE pages DROP COLUMN IF EXISTS owner_id;
 
+ALTER TABLE navigations DROP COLUMN IF EXISTS order_number;
+
 ALTER TABLE users ALTER COLUMN password DROP NOT NULL;
 
 ALTER TABLE users ALTER COLUMN creation_date SET DEFAULT now();
@@ -114,6 +116,9 @@ ALTER TABLE pages ADD COLUMN IF NOT EXISTS ckeditor_html TEXT,
 
 --ALTER TABLE pages DROP COLUMN IF EXISTS owner_id;
 ALTER TABLE pages ALTER COLUMN title SET NOT NULL;
+
+ALTER TABLE navigations ADD COLUMN IF NOT EXISTS nav_order_number INTEGER,
+  ADD COLUMN IF NOT EXISTS grid_order_number INTEGER;
 
 
  -- adds constraint to email column does
