@@ -711,7 +711,6 @@ userRoutes.post('/create-page', postCreatePageCheck, upload.single('image'), fun
   let image = {
     banner_location: `/images/${req.file.filename}`,
     filename: req.file.filename,
-    page_id: req.body.page_id || 0,
     banner_image: true,
     uploaded_images: true,
     page_image: false
@@ -845,11 +844,12 @@ userRoutes.post('/page-order', pageOrderPostCheck, function(req,res){
     order_number: req.body.page_order_number,
     is_homepage_grid: req.body.is_homepage_grid
   }
-  
+
   updatePageContentById(page)
   .then(function(data){
     console.log('data :', data);
   }).catch(function(err){
+    console.log('err :', err);
     req.flash('error', 'There was an error');
     res.status(200).redirect('/users/dashboard');
     return;

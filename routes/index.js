@@ -10,7 +10,7 @@ const Mail = require('../helperFunctions/verification/MailSender');
 // site //
 const { createUser, updateUserEmail, findIdByEmail, insertOldEmailObject, activateUser, addOneToFailedLogins, getOldPasswordObject, insertOldPasswordObject } = require('../server/models/users').user;
 const changePassword = require('../server/models/users').changePassword;
-const { getPagesByHomePageGrid } = require('../server/models/pages');
+const { getPagesByHomePageGrid, getPagebyID } = require('../server/models/pages');
 
 const uuid = require('uuid/v1');
 const _ = require('lodash');
@@ -30,7 +30,7 @@ routes.get('/', (req, res) => {
   getPagesByHomePageGrid()
   .then(function(pages){
     console.log('data from pages homepgrid:', pages);
-    res.status(200).render('pages/public/page', {
+    res.status(200).render('pages/public/index', {
       contentHomePages: "", 
       menuItems: menuItems,
       pages: pages,
@@ -471,15 +471,18 @@ getPageParamCheck = [
 
 routes.get('/pages/:page_id', getPageParamCheck, function(req,res){
   errors = validationResult(req)
-  console.log('errors.array() :', errors.array());
   if (!errors.isEmpty()) {
     req.flash('error','Invalid page id parameters');
     res.status(200).redirect('/');
     return;
   }
-  getPageById(page_id)
+  getPagebyID(req.params.page_id)
   .then(function(data){
     console.log('data :', data);
+    res.status(200).render('pages/public/page', {
+      page: data[0],
+      messages : req.flash('info'), 
+    })
   })
 })
 
