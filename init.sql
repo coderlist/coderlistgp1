@@ -120,6 +120,7 @@ ALTER TABLE pages ALTER COLUMN title SET NOT NULL;
 ALTER TABLE navigations ADD COLUMN IF NOT EXISTS nav_order_number INTEGER,
   ADD COLUMN IF NOT EXISTS grid_order_number INTEGER;
 
+ALTER TABLE images DROP COLUMN IF EXISTS page_id;
 
  -- adds constraint to email column does
  --  not recieve empty string
