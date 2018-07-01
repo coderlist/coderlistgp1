@@ -822,7 +822,17 @@ userRoutes.post('/upload-file', fileUpload.single('content'), function(req, res)
   })
 });
 
+pageOrderPostCheck = [
+  body('page_id').isInt(),
+  body('is_published').isBoolean(),
+  body('is_nav').isBoolean(),
+  body('home_page_grid').isBoolean(),
+  body('page_order_number').isInt()
+]
 
+userRoutes.post('/page-order', pageOrderPostCheck, function(req,res){
+  // post data to page id.
+})
 
 //////////////         end of change email whilst validated ////////////////
 
