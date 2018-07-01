@@ -462,6 +462,7 @@ deleteUserPostCheck = [
 ]
 
 userRoutes.post('/delete-user', deleteUserPostCheck, function(req, res){
+  
   let errors = validationResult(req);
   if (!errors.isEmpty()){
     console.log('invalis :');
