@@ -10,10 +10,10 @@ module.exports = {
    */
   createParentNavItem(bodyReq){
       return  queryHelper(`
-        INSERT INTO navigations(name,title,link,nav_order_number,
-          ,content) VALUES ('${bodyReq.name}','${bodyReq.title}',
-          '${bodyReq.link}',${bodyReq.navOrderNumber},
-          '${bodyReq.content}')
+        INSERT INTO navigations(name,title,link,nav_order_number
+          ) VALUES ('${bodyReq.name}','${bodyReq.title}',
+          '${bodyReq.link}',${bodyReq.nav_order_number}
+          )
        `).then(response => response)
         .catch(e =>{throw e})
   },
@@ -24,10 +24,10 @@ module.exports = {
    */
   createChildNavItem(bodyReq){
     return queryHelper(`
-        INSERT INTO navigations(name,title,link,
-          grid_order_number,content,parent_navigation_id) VALUES ('${bodyReq.name}','${bodyReq.title}',
-          '${bodyReq.link}',${bodyReq.navOrderNumber},${bodyReq.gridOrderNumber},
-          '${bodyReq.content}',(SELECT navigation_id FROM navigations WHERE title=${bodyReq.parentTitle}))
+        INSERT INTO navigations(name,link,
+          grid_order_number,parent_navigation_id) VALUES ('${bodyReq.name}',
+          '${bodyReq.link}',${bodyReq.grid_order_number},(SELECT navigation_id FROM 
+            navigations WHERE name='${bodyReq.parent_name}'))
        `).then(response => response)
         .catch(e =>{throw e})
   },
