@@ -50,6 +50,7 @@ const uuid = require('uuid/v1');
 const Mail = require('../helperFunctions/verification/MailSender');
 const multer = require('multer');
 const imageUploadLocation = './assets/images/';
+const PDFUploadLocation = './assets/pdfs/';
 const path = require('path');
 let storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -104,18 +105,20 @@ let storage2 = multer.diskStorage({
 
 let storagePDF = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, imageUploadLocation)
+    cb(null, PDFUploadLocation)
   },
   filename: function (req, file, next) {
     const ext = file.mimetype.split('/')[1];
+    file.fieldname = `${req.body.title}-${file.fieldname}`;
     req.fileLocation = file.fieldname + '-' + Date.now() + '.' + ext
     next(null, req.fileLocation);
   },
   fileFilter: function (req, file, next) {
     if (!file) {
+      console.log('nofile :');
       next();
     }
-    const pdf = file.mimeype.startsWith('application/pdf')
+    // const pdf = file.mimetype.startsWith('application/pdf')
 
     if (pdf) {
       console.log('PDF uploaded');
@@ -141,11 +144,11 @@ const upload = multer({
 
 const fileUpload = multer({
   storage: storage2
-})
+});
 
 const PDFUpload = multer({
   storage: storagePDF
-})
+});
 
 userRoutes.use(logins.isLoggedIn);
 
@@ -192,6 +195,7 @@ userRoutes.get('/manage-nav', function (req, res) {
   })
 })
 
+
 userRoutes.post('/manage-nav', function(req,res){
   if (!req.body.parent_page){
      //req is for parent nav if it does not contain
@@ -225,28 +229,58 @@ userRoutes.post('/manage-nav', function(req,res){
 
 
 userRoutes.get('/manage-pdfs', function (req, res) {
-    // messages: req.flash('Are you sure you want to delete this PDF?') // This will not work
-    let pdfList = [];
-    fs.readdir('H:/nex documents/Coderlist/projectPages/assets/pdfs', (err, pdfs) => {
-      if (err) {
-        console.log('err :', err);
-      }
-        pdfs.map(function(pdf) {
-        console.log('pdfs :', pdf);
-        pdfList.push(pdf)
-      })
-      
+  // messages: req.flash('Are you sure you want to delete this PDF?') // This will not work. Flash messages are in the form req.flash('flashtype', 'Message')
+  let pdfList = [];
+  fs.readdir('H:/nex documents/Coderlist/projectPages/assets/pdfs', (err, pdfs) => {
+    if (err) {
+      console.log('err :', err);
+    }
+      pdfs.map(function(pdf) {
+      console.log('pdfs :', pdf);
+      pdfList.push({name: pdf, location: `/pdfs/${pdf}`})
     })
+    console.log('pdfList :', pdfList);
     res.status(200).render('pages/users/manage-pdfs.ejs', { 
-      pdfList
+      messages: req.flash('info'),
+      messagesError: req.flash('error'),
+      pdfList: pdfList
+    })
   })
 })
 
-userRoutes.post('/manage-pdfs', PDFUpload.single('pdf'), function (req, res) {
+PDFPostTitleCheck = [
+  body('title').isAlphanumeric()
+]
 
-  res.status(200).render('pages/users/manage-pdfs.ejs', { 
+userRoutes.post('/manage-pdfs', PDFPostTitleCheck, PDFUpload.single('pdf'), function (req, res) {
+  let errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    req.flash('info', 'Invalid Title');
+    res.status(200).redirect('/users/manage-pdfs');
+    return;
+  }
+  console.log('req.file :', req.file);
+  req.flash('info', 'PDF Uploaded')
+  res.status(200).redirect('users/manage-pdfs.ejs', { 
+}).catch(function(err){
+  req.flash('error', 'There was an error uploading this pdf. PLease try again or contact your administrator')
+  res.status(200).redirect('/users/manage-pdfs');
 })
 })
+
+PDFDeleteCheck = [
+  param('photo_name').isAlphanumeric()
+]
+
+userRoutes.delete('/users/manage-pdfs/:id', PDFDeleteCheck, function(req, res){
+  let errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    req.flash('info', 'Invalid PDF Name');
+    res.status(200).redirect('/users/manage-pdfs');
+    return;
+  }
+
+});
 
 
 userRoutes.get('/profile', function (req, res) {
