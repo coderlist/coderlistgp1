@@ -1,3 +1,4 @@
+const fs = require('fs');
 const express = require('express');
 const userRoutes = new express.Router();
 const passport = require('../auth/local');
@@ -38,7 +39,8 @@ const {
   updatePageContentById
 } = require('../server/models/pages');
 const {
-  insertBannerImage
+  insertBannerImage,
+  getAllImages
 } = require('../server/models/images');
 const uuid = require('uuid/v1');
 const Mail = require('../helperFunctions/verification/MailSender');
@@ -50,7 +52,6 @@ let storage = multer.diskStorage({
     cb(null, imageUploadLocation)
   },
   filename: function (req, file, next) {
-    console.log(file);
     const ext = file.mimetype.split('/')[1];
     req.fileLocation = file.fieldname + '-' + Date.now() + '.' + ext
     next(null, req.fileLocation);
@@ -76,7 +77,6 @@ let storage2 = multer.diskStorage({
     cb(null, imageUploadLocation)
   },
   filename: function (req, file, next) {
-    console.log(file);
     const ext = file.mimetype.split('/')[1];
     req.fileLocation = file.fieldname + '-' + Date.now() + '.' + ext
     next(null, req.fileLocation);
@@ -85,7 +85,6 @@ let storage2 = multer.diskStorage({
     if (!file) {
       next();
     }
-    console.log('req.file in multer :', file);
     const image = file.mimetype.startsWith('image/');
     const pdf = file.mimeype.startsWith('application/pdf')
     if (image || pdf) {
@@ -813,14 +812,52 @@ userRoutes.post('/delete-page', deletePageCheck, function(req, res){
   })
 })
 
-userRoutes.post('/upload-file', fileUpload.single('content'), function(req, res){
-  console.log('req.file :', req);
+userRoutes.post('/upload-file', fileUpload.single('upload'), function(req, res){
+  console.log('req.file :', req.file);
     res.json({
       "uploaded": 1,
       "fileName": req.file.filename,
-      "url": `/assets/images/${req.file.filename}` //this is the response ckeditor requires
+      "url": `/images/${req.file.filename}` //this is the response ckeditor requires to immediately load the image and provide a positive message
   })
 });
+
+
+userRoutes.get('/get-server-images', function(req, res){
+  
+  let geoffTest = (JSON.stringify([
+    {
+      "image": "/images/upload-1530483591164.jpeg",
+      "thumb": "/images/upload-1530483591164.jpeg",
+      "folder": "Small"
+    },
+    {
+      "image": "/images/upload-1530483769166.jpeg",
+      "thumb": "/images/upload-1530483769166.jpeg",
+      "folder": "Small"
+    },
+  
+    {
+      "image": "/images/upload-1530483947610.jpeg",
+      "thumb": "/images/upload-1530483947610.jpeg",
+      "folder": "Large"
+    },
+    {
+      "image": "/image2_full.jpg",
+      "thumb": "/image2_thumb.jpg",
+      "folder": "Large"
+    }
+  ]))
+  fs.readdir('H:/nex documents/Coderlist/projectPages/assets/images', (err, images) => {
+    let imagesJSON = [];
+    images.map(function(image) {
+      console.log('images :', image);
+      imagesJSON.push({image: "/images/" + image, thumb: "/images/" + image, folder: "Large"})
+    })
+    imagesJSON = JSON.stringify(imagesJSON);
+    console.log('imagesJSON :', imagesJSON);
+    res.send(imagesJSON);
+  })
+})
 
 pageOrderPostCheck = [
   body('page_id').isInt().exists,
