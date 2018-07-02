@@ -40,7 +40,8 @@ const {
 } = require('../server/models/pages');
 const {
   insertBannerImage,
-  getAllImages
+  getAllImages,
+  deleteImageObjectByImageId
 } = require('../server/models/images');
 const {
   createParentNavItem,
@@ -284,6 +285,33 @@ userRoutes.delete('/manage-pdfs', PDFDeleteCheck, function(req, res){
   .then(function(){
     req.flash('info', 'PDF Deleted');
     res.redirect('/users/manage-pdfs');
+  }).catch(function(err){
+    req.flash('info', 'There was an error deleting the PDF file');
+    res.redirect('/users/manage-pdfs');
+  })
+});
+
+imageDeleteCheck = [
+  body('image_id').isAlphanumeric()
+]
+
+userRoutes.delete('/manage-images', imageDeleteCheck, function(req, res){
+  let errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    req.flash('info', 'Invalid image Name');
+    res.status(200).redirect('/users/manage-images');
+    return;
+  }
+  deleteImageObjectByImageId(req.body.image_id)
+  .then(function(data){    
+    fs.unlink(`/assets/pdfs/${req.body.pdf_name}`)
+    .then(function(){
+      req.flash('info', 'Image Deleted');
+      res.redirect('/users/manage-images');
+    })
+  }).catch(function(err){
+    req.flash('error', 'There was an error deleting the image');
+    res.redirect('/users/manage-images');
   })
 });
 
