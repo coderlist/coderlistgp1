@@ -42,6 +42,10 @@ const {
   insertBannerImage,
   getAllImages
 } = require('../server/models/images');
+const {
+  createParentNavItem,
+  createChildNavItem
+} = require('../server/models/navigations')
 const uuid = require('uuid/v1');
 const Mail = require('../helperFunctions/verification/MailSender');
 const multer = require('multer');
@@ -187,6 +191,39 @@ userRoutes.get('/manage-nav', function (req, res) {
     messages: req.flash('info')
   })
 })
+
+userRoutes.post('/manage-nav', function(req,res){
+  if (!req.body.parent_page){
+     //req is for parent nav if it does not contain
+     //a parent_page value
+  nav = {
+    name:req.body.page_name,
+    link:req.body.menu_page,
+    nav_order_number:req.body.page_order
+  }
+  createParentNavItem(nav).then(response => {
+    res.status(200).send('parent nav created')
+  }).catch(e => {
+    res.status(400).send(e.stack)
+  })
+}else{
+  nav = {
+    name:req.body.page_name,
+    link:req.body.menu_page,
+    grid_order_number:req.body.page_order,
+    parent_name: req.body.parent_page
+  }
+  createChildNavItem(nav).then(response => {
+    res.status(200).send('child nav created')
+  }).catch(e => {
+    res.status(400).send(e.stack)
+  })
+}
+  
+})
+
+
+
 userRoutes.get('/manage-pdfs', function (req, res) {
     // messages: req.flash('Are you sure you want to delete this PDF?') // This will not work
     let pdfList = [];
@@ -726,8 +763,8 @@ userRoutes.get('/page-navmenu-request', function (req, res) {
       ]
     }
   ]
-  console.log('JSON.stringify :', JSON.stringify(pages));
-  res.status(200).send(JSON.stringify(pages));
+  console.log('JSON.stringify :', JSON.stringify(pages,undefined,2));
+  res.status(200).send(JSON.stringify(pages,undefined,2));
 })
 
 postCreatePageCheck = [
