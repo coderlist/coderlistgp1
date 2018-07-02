@@ -262,24 +262,29 @@ userRoutes.post('/manage-pdfs', PDFPostTitleCheck, PDFUpload.single('pdf'), func
   console.log('req.file :', req.file);
   req.flash('info', 'PDF Uploaded')
   res.status(200).redirect('users/manage-pdfs.ejs', { 
-}).catch(function(err){
-  req.flash('error', 'There was an error uploading this pdf. PLease try again or contact your administrator')
-  res.status(200).redirect('/users/manage-pdfs');
-})
+  })
+  .catch(function(err){
+    req.flash('error', 'There was an error uploading this pdf. Please try again or contact your administrator')
+    res.status(200).redirect('/users/manage-pdfs');
+  })
 })
 
 PDFDeleteCheck = [
-  param('photo_name').isAlphanumeric()
+  body('pdf_name').isAlphanumeric()
 ]
 
-userRoutes.delete('/users/manage-pdfs/:id', PDFDeleteCheck, function(req, res){
+userRoutes.delete('/manage-pdfs', PDFDeleteCheck, function(req, res){
   let errors = validationResult(req);
   if (!errors.isEmpty()) {
     req.flash('info', 'Invalid PDF Name');
     res.status(200).redirect('/users/manage-pdfs');
     return;
   }
-
+  fs.unlink(`/assets/pdfs/${req.body.pdf_name}`)
+  .then(function(){
+    req.flash('info', 'PDF Deleted');
+    res.redirect('/users/manage-pdfs');
+  })
 });
 
 
