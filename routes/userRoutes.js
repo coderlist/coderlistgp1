@@ -86,9 +86,35 @@ let storage2 = multer.diskStorage({
       next();
     }
     const image = file.mimetype.startsWith('image/');
-    const pdf = file.mimeype.startsWith('application/pdf')
-    if (image || pdf) {
+
+    if (image) {
       console.log('photo uploaded');
+      next(null, true);
+    } else {
+      console.log("file not supported");
+      //TODO:  A better message response to user on failure.
+      return next();
+    }
+  }
+});
+
+let storagePDF = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, imageUploadLocation)
+  },
+  filename: function (req, file, next) {
+    const ext = file.mimetype.split('/')[1];
+    req.fileLocation = file.fieldname + '-' + Date.now() + '.' + ext
+    next(null, req.fileLocation);
+  },
+  fileFilter: function (req, file, next) {
+    if (!file) {
+      next();
+    }
+    const pdf = file.mimeype.startsWith('application/pdf')
+
+    if (pdf) {
+      console.log('PDF uploaded');
       next(null, true);
     } else {
       console.log("file not supported");
@@ -111,6 +137,10 @@ const upload = multer({
 
 const fileUpload = multer({
   storage: storage2
+})
+
+const PDFUpload = multer({
+  storage: storagePDF
 })
 
 userRoutes.use(logins.isLoggedIn);
@@ -158,10 +188,30 @@ userRoutes.get('/manage-nav', function (req, res) {
   })
 })
 userRoutes.get('/manage-pdfs', function (req, res) {
-  res.status(200).render('pages/users/manage-pdfs.ejs', { 
-    messages: req.flash('Are you sure you want to delete this PDF?')
+    // messages: req.flash('Are you sure you want to delete this PDF?') // This will not work
+    let pdfList = [];
+    fs.readdir('H:/nex documents/Coderlist/projectPages/assets/pdfs', (err, pdfs) => {
+      if (err) {
+        console.log('err :', err);
+      }
+        pdfs.map(function(pdf) {
+        console.log('pdfs :', pdf);
+        pdfList.push(pdf)
+      })
+      
+    })
+    res.status(200).render('pages/users/manage-pdfs.ejs', { 
+      pdfList
   })
 })
+
+userRoutes.post('/manage-pdfs', PDFUpload.single('pdf'), function (req, res) {
+
+  res.status(200).render('pages/users/manage-pdfs.ejs', { 
+})
+})
+
+
 userRoutes.get('/profile', function (req, res) {
   res.status(200).render('pages/users/profile.ejs', { 
     messages: req.flash('info')
@@ -823,30 +873,6 @@ userRoutes.post('/upload-file', fileUpload.single('upload'), function(req, res){
 
 
 userRoutes.get('/get-server-images', function(req, res){
-  
-  let geoffTest = (JSON.stringify([
-    {
-      "image": "/images/upload-1530483591164.jpeg",
-      "thumb": "/images/upload-1530483591164.jpeg",
-      "folder": "Small"
-    },
-    {
-      "image": "/images/upload-1530483769166.jpeg",
-      "thumb": "/images/upload-1530483769166.jpeg",
-      "folder": "Small"
-    },
-  
-    {
-      "image": "/images/upload-1530483947610.jpeg",
-      "thumb": "/images/upload-1530483947610.jpeg",
-      "folder": "Large"
-    },
-    {
-      "image": "/image2_full.jpg",
-      "thumb": "/image2_thumb.jpg",
-      "folder": "Large"
-    }
-  ]))
   fs.readdir('H:/nex documents/Coderlist/projectPages/assets/images', (err, images) => {
     let imagesJSON = [];
     images.map(function(image) {
