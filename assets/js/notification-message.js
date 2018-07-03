@@ -38,12 +38,13 @@ function deleteThisPage(url, page_id){
     })
     .catch(error => console.log(`There was an error: ${error}`));
 }
-function deleteThisPDF(url, pdf_id){
-    console.log("PDF Id:", pdf_id);
+function deleteThisPDF(url, pdf_name){
+    console.log("PDF Id:", pdf_name);
     fetch(url, {
-        method: 'POST',
-        body: pdf_id,
-        headers: {'Content-Type' : 'application/x-www-form-urlencoded'},
+        method: 'delete',
+        body: pdf_name,
+        headers: {
+            'Access-Control-Allow-Methods': 'delete'},
         credentials: 'include',
         mode: 'same-origin'
     }).then(response => {
@@ -68,22 +69,25 @@ const getDataFromInputFields = function (index){
         inputIdField.value = id;
         placeholder.textContent = name;
 };
-const confirmDeleteMessage = function (event){
+const confirmDeleteMessage = function (event, index){
     event.preventDefault();
     const inputIdField = document.querySelector('.inputFieldId');
+    const name = document.querySelectorAll('.this_name')[index].value;
     let id = inputIdField.value;
     switch(title){
         case "Delete User": deleteThisUser('/users/delete-user', id);
             break;
         case "Delete Page": deleteThisPage('/users/delete-page', id);
             break;
-        case "Delete PDF": deleteThisPDF('/users/delete-pdf', id);
+        case "Delete PDF": deleteThisPDF('/manage-pdfs', name);
             break;
     }
 }
 /* Attach Event Listeners to Buttons */
-confirmDeleteButton.addEventListener('click', function(event) {
-    confirmDeleteMessage(event);
+confirmDeleteButton.forEach(button => {
+    button.addEventListener('click', function (event) {
+        confirmDeleteMessage(event, index);
+    }, index);
 });
 closeAlertMessageButtons.forEach(button => {
     button.addEventListener('click', function () {

@@ -29,70 +29,11 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <tr>
-                                                <input type="hidden" class="this_name" value="Private Sessions" />
-                                                <input type="hidden" class="this_id" value="1" />
-                                                <td>
-                                                    <div>Elizabeth Martin</div>
-                                                </td>
-                                                <td>
-                                                    <div>Private Sessions PDF</div>
-                                                </td>
-                                                <td>
-                                                    11/06/2018
-                                                </td>
-                                                <td class="text-center">
-                                                    <div class="item-action dropdown">
-                                                        <a href="javascript:void(0)" data-toggle="dropdown" class="icon" aria-expanded="false">
-                                                            <i class="fe fe-more-vertical"></i>
-                                                        </a>
-                                                        <div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; transform: translate3d(15px, 20px, 0px); top: 0px; left: 0px; will-change: transform;">
-                                                            <a href="javascript:void(0)" target="_blank" class="dropdown-item">
-                                                                <i class="dropdown-icon fe fe-book-open"></i> Open PDF </a>
-                                                            <a href="javascript:void(0)" class="dropdown-item">
-                                                                <i class="dropdown-icon fe fe-edit-2"></i> Copy Link </a>
-                                                            <div class="dropdown-divider"></div>
-                                                            <a href="javascript:void(0)" class="dropdown-item delete-this">
-                                                                <i class="dropdown-icon fe fe-trash"></i> Delete PDF</a>
-                                                        </div>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <input type="hidden" class="this_name" value="Nursery Classes" />
-                                                <input type="hidden" class="this_id" value="2" />
-                                                <td>
-                                                    <div>Elizabeth Martin</div>
-                                                </td>
-                                                <td>
-                                                    <div>Nursery Classes PDF</div>
-                                                </td>
-                                                <td>
-                                                    11/06/2018
-                                                </td>
-                                                <td class="text-center">
-                                                    <div class="item-action dropdown">
-                                                        <a href="javascript:void(0)" data-toggle="dropdown" class="icon" aria-expanded="false">
-                                                            <i class="fe fe-more-vertical"></i>
-                                                        </a>
-                                                        <div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; transform: translate3d(15px, 20px, 0px); top: 0px; left: 0px; will-change: transform;">
-                                                            <a href="javascript:void(0)" class="dropdown-item">
-                                                                <i class="dropdown-icon fe fe-book-open"></i> Open PDF </a>
-                                                            <a href="javascript:void(0)" class="dropdown-item">
-                                                                <i class="dropdown-icon fe fe-edit-2"></i> Copy Link </a>
-                                                            <div class="dropdown-divider"></div>
-                                                            <a href="javascript:void(0)" class="dropdown-item delete-this">
-                                                                <i class="dropdown-icon fe fe-trash"></i> Delete PDF</a>
-                                                        </div>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                            <%=pdfList%>
                                             <% if (typeof pdfList === 'object' && pdfList) { %>
                                               <% pdfList.map(function(pdf){ %>
                                                 <tr>
-                                                    <input type="hidden" class="this_name" value="<%=pdf.location%>" />
-                                                    <input type="hidden" class="this_id" value="2" />
+                                                    <input type="hidden" name="pdf_name" class="this_name" value="<%=pdf.location%>" />
+                                                    <input type="hidden" name="pdf_id" class="this_id" value="<%= pdf.id%>" />
                                                     <td>
                                                         <div></div>
                                                     </td>
