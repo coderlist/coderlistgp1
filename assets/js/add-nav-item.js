@@ -15,7 +15,7 @@ const init = {
 }
 fetch('/users/page-navmenu-request', init)
         .then(function(response) {
-            return response.json();
+           return response.json();
         }).then(function(data){
             data.forEach(page => {
                 console.log(page.page);
