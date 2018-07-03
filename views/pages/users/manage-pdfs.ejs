@@ -87,13 +87,47 @@
                                                     </div>
                                                 </td>
                                             </tr>
+                                            <%=pdfList%>
+                                            <% if (typeof pdfList === 'object' && pdfList) { %>
+                                              <% pdfList.map(function(pdf){ %>
+                                                <tr>
+                                                    <input type="hidden" class="this_name" value="<%=pdf.location%>" />
+                                                    <input type="hidden" class="this_id" value="2" />
+                                                    <td>
+                                                        <div></div>
+                                                    </td>
+                                                    <td>
+                                                        <a href="<%=pdf.location%>"><div><%=pdf.name%></div></a>
+                                                    </td>
+                                                    <td>
+                                                        11/06/2018
+                                                    </td>
+                                                    <td class="text-center">
+                                                        <div class="item-action dropdown">
+                                                            <a href="javascript:void(0)" data-toggle="dropdown" class="icon" aria-expanded="false">
+                                                                <i class="fe fe-more-vertical"></i>
+                                                            </a>
+                                                            <div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; transform: translate3d(15px, 20px, 0px); top: 0px; left: 0px; will-change: transform;">
+                                                                <a href="javascript:void(0)" class="dropdown-item">
+                                                                    <i class="dropdown-icon fe fe-book-open"></i> Open PDF </a>
+                                                                <a href="javascript:void(0)" class="dropdown-item">
+                                                                    <i class="dropdown-icon fe fe-edit-2"></i> Copy Link </a>
+                                                                <div class="dropdown-divider"></div>
+                                                                <a href="javascript:void(0)" class="dropdown-item delete-this">
+                                                                    <i class="dropdown-icon fe fe-trash"></i> Delete PDF</a>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                              <% }) %>
+                                            <% } %>
                                         </tbody>
                                     </table>
                                 </div>
                             </div>
                         </div>
                         <div class="col-md-4">
-                            <form action="https://httpbin.org/post" method="post" class="card form-upload-pdf-height">
+                            <form  method="post" enctype="multipart/form-data" class="card form-upload-pdf-height">
                                 <div class="card-header">
                                     <h3 class="card-title">Upload New PDF</h3>
                                 </div>
@@ -104,7 +138,7 @@
                                 <div class="form-group">
                                     <div class="form-label">Choose file</div>
                                     <div class="custom-file">
-                                        <input type="file" class="custom-file-input" name="example-file-input-custom">
+                                        <input type="file" class="custom-file-input" name="pdf">
                                         <label class="custom-file-label"></label>
                                     </div>
                                 </div>

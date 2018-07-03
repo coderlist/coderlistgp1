@@ -61,6 +61,19 @@ CREATE TABLE IF NOT EXISTS navigations (
   PRIMARY KEY (navigation_id)
 );
 
+CREATE TABLE IF NOT EXISTS sub_navigations (
+  sub_nav_id SERIAL,
+  page_id INTEGER REFERENCES pages(page_id) ON DELETE SET NULL,
+  created TIMESTAMP DEFAULT NOW(),
+  name TEXT,
+  link TEXT,
+  grid_order_number INTEGER,
+  content TEXT,
+  parent_navigation_id INTEGER REFERENCES navigations(navigation_id),
+  PRIMARY KEY (sub_nav_id)
+);
+
+
 
 
 -- creates tables user_sessions 
@@ -82,6 +95,10 @@ ALTER TABLE users DROP COLUMN IF EXISTS old_pasword;
 ALTER TABLE pages DROP COLUMN IF EXISTS owner_id;
 
 ALTER TABLE navigations DROP COLUMN IF EXISTS order_number;
+
+ALTER TABLE navigations DROP COLUMN IF EXISTS parent_navigation_id;
+
+ALTER TABLE navigations DROP COLUMN IF EXISTS grid_order_numer;
 
 ALTER TABLE users ALTER COLUMN password DROP NOT NULL;
 
@@ -117,10 +134,23 @@ ALTER TABLE pages ADD COLUMN IF NOT EXISTS ckeditor_html TEXT,
 --ALTER TABLE pages DROP COLUMN IF EXISTS owner_id;
 ALTER TABLE pages ALTER COLUMN title SET NOT NULL;
 
-ALTER TABLE navigations ADD COLUMN IF NOT EXISTS nav_order_number INTEGER,
-  ADD COLUMN IF NOT EXISTS grid_order_number INTEGER;
+ALTER TABLE navigations ADD COLUMN IF NOT EXISTS nav_order_number INTEGER;
+--  ADD COLUMN IF NOT EXISTS grid_order_number INTEGER;
 
 ALTER TABLE images DROP COLUMN IF EXISTS page_id;
+
+
+
+
+DO $$
+BEGIN
+    IF NOT EXISTS ( SELECT  conname
+                FROM    pg_constraint 
+                WHERE   conname = 'nav_name_const')
+    THEN
+        ALTER TABLE navigations ADD CONSTRAINT nav_name_const UNIQUE (name);
+    END IF;
+END$$;
 
  -- adds constraint to email column does
  --  not recieve empty string
@@ -227,6 +257,9 @@ BEGIN
      ALTER TABLE pages ADD COLUMN created_by INTEGER REFERENCES users(user_id) ON DELETE SET NULL;
   END IF;
 END $$;
+
+
+
 
 
 

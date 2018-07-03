@@ -1,3 +1,4 @@
+const fs = require('fs');
 const express = require('express');
 const userRoutes = new express.Router();
 const passport = require('../auth/local');
@@ -38,19 +39,27 @@ const {
   updatePageContentById
 } = require('../server/models/pages');
 const {
-  insertBannerImage
+  insertBannerImage,
+  getAllImages,
+  deleteImageObjectByImageId
 } = require('../server/models/images');
+const {
+  createParentNavItem,
+  createChildNavItem,
+  getParentNavIdByName,
+  getAllNavs
+} = require('../server/models/navigations')
 const uuid = require('uuid/v1');
 const Mail = require('../helperFunctions/verification/MailSender');
 const multer = require('multer');
 const imageUploadLocation = './assets/images/';
+const PDFUploadLocation = './assets/pdfs/';
 const path = require('path');
 let storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, imageUploadLocation)
   },
   filename: function (req, file, next) {
-    console.log(file);
     const ext = file.mimetype.split('/')[1];
     req.fileLocation = file.fieldname + '-' + Date.now() + '.' + ext
     next(null, req.fileLocation);
@@ -76,7 +85,6 @@ let storage2 = multer.diskStorage({
     cb(null, imageUploadLocation)
   },
   filename: function (req, file, next) {
-    console.log(file);
     const ext = file.mimetype.split('/')[1];
     req.fileLocation = file.fieldname + '-' + Date.now() + '.' + ext
     next(null, req.fileLocation);
@@ -85,11 +93,38 @@ let storage2 = multer.diskStorage({
     if (!file) {
       next();
     }
-    console.log('req.file in multer :', file);
     const image = file.mimetype.startsWith('image/');
-    const pdf = file.mimeype.startsWith('application/pdf')
-    if (image || pdf) {
+
+    if (image) {
       console.log('photo uploaded');
+      next(null, true);
+    } else {
+      console.log("file not supported");
+      //TODO:  A better message response to user on failure.
+      return next();
+    }
+  }
+});
+
+let storagePDF = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, PDFUploadLocation)
+  },
+  filename: function (req, file, next) {
+    const ext = file.mimetype.split('/')[1];
+    file.fieldname = `${req.body.title}-${file.fieldname}`;
+    req.fileLocation = file.fieldname + '-' + Date.now() + '.' + ext
+    next(null, req.fileLocation);
+  },
+  fileFilter: function (req, file, next) {
+    if (!file) {
+      console.log('nofile :');
+      next();
+    }
+    // const pdf = file.mimetype.startsWith('application/pdf')
+
+    if (pdf) {
+      console.log('PDF uploaded');
       next(null, true);
     } else {
       console.log("file not supported");
@@ -112,7 +147,11 @@ const upload = multer({
 
 const fileUpload = multer({
   storage: storage2
-})
+});
+
+const PDFUpload = multer({
+  storage: storagePDF
+});
 
 userRoutes.use(logins.isLoggedIn);
 
@@ -158,11 +197,101 @@ userRoutes.get('/manage-nav', function (req, res) {
     messages: req.flash('info')
   })
 })
+
+
+userRoutes.post('/manage-nav', function(req,res){
+  
+})
+
+
+
 userRoutes.get('/manage-pdfs', function (req, res) {
-  res.status(200).render('pages/users/manage-pdfs.ejs', { 
-    messages: req.flash('Are you sure you want to delete this PDF?')
+  // messages: req.flash('Are you sure you want to delete this PDF?') // This will not work. Flash messages are in the form req.flash('flashtype', 'Message')
+  let pdfList = [];
+  fs.readdir('H:/nex documents/Coderlist/projectPages/assets/pdfs', (err, pdfs) => {
+    if (err) {
+      console.log('err :', err);
+    }
+      pdfs.map(function(pdf) {
+      console.log('pdfs :', pdf);
+      pdfList.push({name: pdf, location: `/pdfs/${pdf}`})
+    })
+    console.log('pdfList :', pdfList);
+    res.status(200).render('pages/users/manage-pdfs.ejs', { 
+      messages: req.flash('info'),
+      messagesError: req.flash('error'),
+      pdfList: pdfList
+    })
   })
 })
+
+PDFPostTitleCheck = [
+  body('title').isAlphanumeric()
+]
+
+userRoutes.post('/manage-pdfs', PDFPostTitleCheck, PDFUpload.single('pdf'), function (req, res) {
+  let errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    req.flash('info', 'Invalid Title');
+    res.status(200).redirect('/users/manage-pdfs');
+    return;
+  }
+  console.log('req.file :', req.file);
+  req.flash('info', 'PDF Uploaded')
+  res.status(200).redirect('users/manage-pdfs.ejs', { 
+  })
+  .catch(function(err){
+    req.flash('error', 'There was an error uploading this pdf. Please try again or contact your administrator')
+    res.status(200).redirect('/users/manage-pdfs');
+  })
+})
+
+PDFDeleteCheck = [
+  body('pdf_name').isAlphanumeric()
+]
+
+userRoutes.delete('/manage-pdfs', PDFDeleteCheck, function(req, res){
+  let errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    req.flash('info', 'Invalid PDF Name');
+    res.status(200).redirect('/users/manage-pdfs');
+    return;
+  }
+  fs.unlink(`/assets/pdfs/${req.body.pdf_name}`)
+  .then(function(){
+    req.flash('info', 'PDF Deleted');
+    res.redirect('/users/manage-pdfs');
+  }).catch(function(err){
+    req.flash('info', 'There was an error deleting the PDF file');
+    res.redirect('/users/manage-pdfs');
+  })
+});
+
+imageDeleteCheck = [
+  body('image_id').isAlphanumeric()
+]
+
+userRoutes.delete('/manage-images', imageDeleteCheck, function(req, res){
+  let errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    req.flash('info', 'Invalid image Name');
+    res.status(200).redirect('/users/manage-images');
+    return;
+  }
+  deleteImageObjectByImageId(req.body.image_id)
+  .then(function(data){    
+    fs.unlink(`/assets/pdfs/${req.body.pdf_name}`)
+    .then(function(){
+      req.flash('info', 'Image Deleted');
+      res.redirect('/users/manage-images');
+    })
+  }).catch(function(err){
+    req.flash('error', 'There was an error deleting the image');
+    res.redirect('/users/manage-images');
+  })
+});
+
+
 userRoutes.get('/profile', function (req, res) {
   res.status(200).render('pages/users/profile.ejs', { 
     messages: req.flash('info')
@@ -606,6 +735,7 @@ userRoutes.post('/upload-images', upload.single('image'), (req, res) => {
 
 
 userRoutes.get('/page-navmenu-request', function (req, res) {
+ 
   const pages = [{
       page: "Home",
       link: "Home",
@@ -679,6 +809,50 @@ userRoutes.get('/page-navmenu-request', function (req, res) {
   ]
   console.log('JSON.stringify :', JSON.stringify(pages));
   res.status(200).send(JSON.stringify(pages));
+
+//work on getAllNavs to return page as above
+
+//   getAllNavs().then(response => {
+//     console.log('ALL PAGES', response)
+//     res.status(200).send(response)
+//   }).catch(e => {
+//    res.status(400).send(e.stack)
+//  })
+})
+
+userRoutes.post('/page-navmenu-request', function(req,res){
+  
+  if (!req.body.parent_page){
+     //req is for parent nav if it does not contain
+     //a parent_page value
+  nav = {
+    name:req.body.page_name,
+    link:req.body.menu_page,
+    nav_order_number:req.body.page_order
+  }
+  
+  createParentNavItem(nav).then(response => {
+    res.status(200).send('parent nav created')
+  }).catch(e => {
+    res.status(400).send(e.stack)
+  })
+}else{
+  nav = {
+    name:req.body.page_name,
+    link:req.body.menu_page,
+    grid_order_number:req.body.page_order,
+    parent_name: req.body.parent_page
+  }
+  getParentNavIdByName(nav.parent_name).then(response => {
+    createChildNavItem(nav, response[0].navigation_id).then(response => {
+      res.status(200).send('child nav created')
+    }).catch(e => {
+      res.status(400).send(e.stack)
+    })
+  })
+  
+}
+  
 })
 
 postCreatePageCheck = [
@@ -813,14 +987,28 @@ userRoutes.post('/delete-page', deletePageCheck, function(req, res){
   })
 })
 
-userRoutes.post('/upload-file', fileUpload.single('content'), function(req, res){
-  console.log('req.file :', req);
+userRoutes.post('/upload-file', fileUpload.single('upload'), function(req, res){
+  console.log('req.file :', req.file);
     res.json({
       "uploaded": 1,
       "fileName": req.file.filename,
-      "url": `/assets/images/${req.file.filename}` //this is the response ckeditor requires
+      "url": `/images/${req.file.filename}` //this is the response ckeditor requires to immediately load the image and provide a positive message
   })
 });
+
+
+userRoutes.get('/get-server-images', function(req, res){
+  fs.readdir('H:/nex documents/Coderlist/projectPages/assets/images', (err, images) => {
+    let imagesJSON = [];
+    images.map(function(image) {
+      console.log('images :', image);
+      imagesJSON.push({image: "/images/" + image, thumb: "/images/" + image, folder: "Large"})
+    })
+    imagesJSON = JSON.stringify(imagesJSON);
+    console.log('imagesJSON :', imagesJSON);
+    res.send(imagesJSON);
+  })
+})
 
 pageOrderPostCheck = [
   body('page_id').isInt().exists,
