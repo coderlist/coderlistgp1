@@ -75,75 +75,75 @@
                             </div>
                         </div>
                         <div class="col-12">
-                            <div class="card">
-                                <div class="card-header">
-                                    <h3 class="card-title">Current Pages</h3>
-                                </div>
-                                <div class="table-responsive">
-                                    <table class="table card-table table-vcenter text-nowrap">
-                                        <thead>
-                                            <tr>
-                                                <th></th>
-                                                <th>Name</th>
-                                                <th>Published</th>
-                                                <th>Home Page Grid</th>
-                                                <th>Navigation</th>
-                                                <th>Page Grid Order</th>
-                                                <th>Options</th>
-                                                <th></th>
-                                            </tr>
-                                        </thead>
-                                        <% if (typeof pages === 'object') { %>
-                                            <tbody>
-                                              <% pages.map(function(page){%>
-                                                <form action="/users/page-order" method="post">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h3 class="card-title">Current Pages</h3>
+                                    </div>
+                                    <div class="table-responsive">
+                                        <table class="table card-table table-vcenter text-nowrap">
+                                            <thead>
                                                 <tr>
-                                                    <input type="hidden" class="page_id" value="<%=page.page_id %>" />
-                                                    <td>
-                                                        <img class="image_thumbnail" src="<%=page.banner_location%>" alt="Page image">
-                                                    </td>
-                                                    <td>
-                                                        <a href="invoice.html" class="text-inherit"><%=page.title%></a>
-                                                    </td>
-                                                    <td>
-                                                        <label class="custom-control custom-checkbox custom-control-inline">
-                                                            <input type="checkbox" class="custom-control-input" name="published" value="option1"
-                                                            <%= page.is_published ? "checked" : ""%>>
-                                                            <span class="custom-control-label"></span>
-                                                        </label>
-                                                    </td>
-                                                    <td>
-                                                        <label class="custom-control custom-checkbox custom-control-inline">
-                                                            <input type="checkbox" class="custom-control-input" name="page_grid" value="option1"
-                                                            <%= page.is_homepage_grid ? "checked" : ""%>>
-                                                            <span class="custom-control-label"></span>
-                                                        </label>
-                                                    </td>
-                                                    <td>
-                                                        <label class="custom-control custom-checkbox custom-control-inline">
-                                                            <input type="checkbox" class="custom-control-input" name="navigation_bar" value="option1"
-                                                            <%= page.is_nav_menu ? "checked" : ""%>>
-                                                            <span class="custom-control-label"></span>
-                                                        </label>
-                                                    </td>
-                                                    <td>
-                                                        <input type="text" class="form-control page-order" name="page_order" placeholder="1">
-                                                    </td>
-                                                    <td>
-                                                        <button name="update_changes" type="button" class="btn btn-secondary btn-sm">Save</button>
-                                                    </td>
-                                                    </form>
-                                                    <td>
-                                                        <a href="/users/edit-page/<%=page.page_id %>" class="btn btn-secondary btn-sm">Edit Page</a>
-                                                    </td>
+                                                    <th></th>
+                                                    <th>Name</th>
+                                                    <th>Published</th>
+                                                    <th>Home Page Grid</th>
+                                                    <th>Navigation</th>
+                                                    <th>Page Grid Order</th>
+                                                    <th>Options</th>
+                                                    <th></th>
                                                 </tr>
-                                                <%})%>
-                                            </tbody>
-                                            <% } %>
-                                    </table>
+                                            </thead>
+                                            <% if (typeof pages === 'object') { %>
+                                                <tbody>
+                                                  <% pages.map(function(page){%>
+                                                    <form action="/users/page-order" method="post">
+                                                    <tr>
+                                                        <input type="hidden" class="page_id" value="<%=page.page_id %>" />
+                                                        <td>
+                                                            <img class="image_thumbnail" src="<%=page.banner_location%>" alt="Page image">
+                                                        </td>
+                                                        <td>
+                                                            <a href="invoice.html" class="text-inherit"><%=page.title%></a>
+                                                        </td>
+                                                        <td>
+                                                            <label class="custom-control custom-checkbox custom-control-inline">
+                                                                <input type="checkbox" class="custom-control-input" name="published" value="option1"
+                                                                <%= page.is_published ? "checked" : ""%>>
+                                                                <span class="custom-control-label"></span>
+                                                            </label>
+                                                        </td>
+                                                        <td>
+                                                            <label class="custom-control custom-checkbox custom-control-inline">
+                                                                <input type="checkbox" class="custom-control-input" name="page_grid" value="option1"
+                                                                <%= page.is_homepage_grid ? "checked" : ""%>>
+                                                                <span class="custom-control-label"></span>
+                                                            </label>
+                                                        </td>
+                                                        <td>
+                                                            <label class="custom-control custom-checkbox custom-control-inline">
+                                                                <input type="checkbox" class="custom-control-input" name="navigation_bar" value="option1"
+                                                                <%= page.is_nav_menu ? "checked" : ""%>>
+                                                                <span class="custom-control-label"></span>
+                                                            </label>
+                                                        </td>
+                                                        <td>
+                                                            <input type="text" class="form-control page-order" name="page_order" placeholder="1">
+                                                        </td>
+                                                        <td>
+                                                            <button name="update_changes" type="button" class="btn btn-secondary btn-sm">Save</button>
+                                                        </td>
+                                                        </form>
+                                                        <td>
+                                                            <a href="/users/edit-page/<%=page.page_id %>" class="btn btn-secondary btn-sm">Edit Page</a>
+                                                        </td>
+                                                    </tr>
+                                                    <%})%>
+                                                </tbody>
+                                                <% } %>
+                                        </table>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
                     </div>
                 </div>
             </div>
