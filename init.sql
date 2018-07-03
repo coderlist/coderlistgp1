@@ -77,7 +77,7 @@ CREATE TABLE IF NOT EXISTS call_to_actions (
   action_id SERIAL,
   decription TEXT,
   PRIMARY KEY (action_id)
-)
+);
 
 
 
