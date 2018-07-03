@@ -1566,6 +1566,54 @@ pre code {
   }
 }
 
+.div-table-responsive {
+  width: 100%;
+  max-width: 100%;
+  margin-bottom: 1rem;
+  background-color: transparent;
+}
+.div-table-responsive .div-table-header {
+  display: table-header-group;
+}
+.div-table-responsive .div-table-body {
+  display: table-row-group;
+}
+.div-table-responsive .div-table-cell {
+  display: table-cell;
+}
+.div-table-header .div-table-row .div-table-cell {
+  border-bottom-width: 1px;
+}
+.div-table-header .div-table-row:first-child {
+  border-bottom: 1px solid #dee2e6;
+}
+.div-table-body .div-table-row:first-child {
+  border-top: none;
+}
+
+.div-table-body .div-table-row {
+  justify-content: space-between;
+  border-top: 1px solid #dee2e6;
+}
+
+.div-table-body .div-table-row .div-table-cell {
+  padding: 0.75rem;
+}
+
+.div-table-header .div-table-row .div-table-title:first-child {
+  padding-left: 1.5rem;
+}
+.div-table-header .div-table-row .div-table-title {
+    border-bottom-width: 1px;
+    padding-top: .5rem;
+    padding-bottom: .5rem;
+    color: #9aa0ac;
+    text-transform: uppercase;
+    font-size: 0.875rem;
+    font-weight: 400;
+    
+}
+
 .table, .text-wrap table {
   width: 100%;
   max-width: 100%;

@@ -5,43 +5,54 @@ const overlay = document.querySelector('.overlay');
 const title = document.querySelector('.overlay-alert-message h4').textContent;
 
 function deleteThisUser(url, user_id){
+    console.log("User Id:", user_id);
     fetch(url, {
-        method: 'post',
+        method: 'POST',
+        body: user_id,
+        headers: {'Content-Type' : 'application/x-www-form-urlencoded'},
         credentials: 'include',
-        headers: {
-            'Content-Type' : 'application/json'
-        },
-        body: JSON.stringify({
-            user_id: parseInt(user_id)
-        })
-    }).then(response => console.log(response.body))
+        mode: 'same-origin'
+    }).then(response => {
+        console.log(response.status);
+        console.log(response.statusText);
+        console.log(response.url);
+        console.log(response.headers);
+        response.text();
+    })
     .catch(error => console.log(`There was an error: ${error}`));
 }
 function deleteThisPage(url, page_id){
+    console.log("Page Id:", page_id);
     fetch(url, {
-        method: 'post',
+        method: 'POST',
+        body: page_id,
+        headers: {'Content-Type' : 'application/x-www-form-urlencoded'},
         credentials: 'include',
-        headers: {
-            'Content-Type' : 'application/json'
-        },
-        body: JSON.stringify({
-            page_id: parseInt(page_id)
-        })
-        
-    }).then(response => console.log(response.body))
+        mode: 'same-origin'
+    }).then(response => {
+        console.log(response.status);
+        console.log(response.statusText);
+        console.log(response.url);
+        console.log(response.headers);
+        response.text();
+    })
     .catch(error => console.log(`There was an error: ${error}`));
 }
 function deleteThisPDF(url, pdf_id){
+    console.log("PDF Id:", pdf_id);
     fetch(url, {
-        method: 'post',
+        method: 'POST',
+        body: pdf_id,
+        headers: {'Content-Type' : 'application/x-www-form-urlencoded'},
         credentials: 'include',
-        headers: {
-            'Content-Type' : 'application/json'
-        },
-        body: JSON.stringify({
-            user_id: parseInt(pdf_id)
-        })
-    }).then(response => response)
+        mode: 'same-origin'
+    }).then(response => {
+        console.log(response.status);
+        console.log(response.statusText);
+        console.log(response.url);
+        console.log(response.headers);
+        response.text();
+    })
     .catch(error => console.log(`There was an error: ${error}`));
 }
 
@@ -61,7 +72,6 @@ const confirmDeleteMessage = function (event){
     event.preventDefault();
     const inputIdField = document.querySelector('.inputFieldId');
     let id = inputIdField.value;
-    console.log(id);
     switch(title){
         case "Delete User": deleteThisUser('/users/delete-user', id);
             break;
