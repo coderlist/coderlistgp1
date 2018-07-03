@@ -34,6 +34,13 @@ module.exports = {
     }
   },
   
+
+  getAllImages(){
+       return queryHelper(`
+         SELECT image_name FROM images`)
+      .then(response => response)
+       .catch(e =>{throw e})
+  },
   getImageObjectByImageId(id){
        return queryHelper(`
          SELECT * FROM images where image_id=${id}
