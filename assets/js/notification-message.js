@@ -4,12 +4,16 @@ const confirmDeleteButton = document.querySelector('.confirm-delete');
 const overlay = document.querySelector('.overlay');
 const title = document.querySelector('.overlay-alert-message h4').textContent;
 
+
 function deleteThisUser(url, user_id){
-    console.log("User Id:", user_id);
+    console.log("USER ID:", user_id);
     fetch(url, {
         method: 'POST',
         body: user_id,
-        headers: {'Content-Type' : 'application/x-www-form-urlencoded'},
+        headers: {
+            'Access-Control-Allow-Headers': 'Access-Control-Allow-Methods',
+            'Content-Type' : 'application/x-www-form-urlencoded'
+        },
         credentials: 'include',
         mode: 'same-origin'
     }).then(response => {
@@ -22,11 +26,14 @@ function deleteThisUser(url, user_id){
     .catch(error => console.log(`There was an error: ${error}`));
 }
 function deleteThisPage(url, page_id){
-    console.log("Page Id:", page_id);
+    console.log("PAGE ID:", page_id);
     fetch(url, {
         method: 'POST',
         body: page_id,
-        headers: {'Content-Type' : 'application/x-www-form-urlencoded'},
+        headers: {
+            'Access-Control-Allow-Headers': 'Access-Control-Allow-Methods',
+            'Content-Type' : 'application/x-www-form-urlencoded'
+        },
         credentials: 'include',
         mode: 'same-origin'
     }).then(response => {
@@ -39,12 +46,14 @@ function deleteThisPage(url, page_id){
     .catch(error => console.log(`There was an error: ${error}`));
 }
 function deleteThisPDF(url, pdf_name){
-    console.log("PDF Id:", pdf_name);
+    console.log("PDF NAME:", pdf_name);
     fetch(url, {
-        method: 'delete',
+        method: 'DELETE',
         body: pdf_name,
         headers: {
-            'Access-Control-Allow-Methods': 'delete'},
+            'Access-Control-Allow-Headers': 'Access-Control-Allow-Methods',
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
         credentials: 'include',
         mode: 'same-origin'
     }).then(response => {
@@ -61,33 +70,44 @@ function deleteThisPDF(url, pdf_name){
 const toggleAlertMessage = function () {
     overlay.classList.toggle("show");
 };
-const getDataFromInputFields = function (index){
+
+
+/* Necessary Variables for scalability */
+let inputFieldId = '';
+let inputFieldName = '';
+const populateNotificationMessageContentWithName = function (index){
         const placeholder = document.querySelector('.strong');
         const inputIdField = document.querySelector('.inputFieldId');
+        const inputFieldName = document.querySelector('.inputFieldName');
         let name = document.querySelectorAll('.this_name')[index].value;
         let id = document.querySelectorAll('.this_id')[index].value;
         inputIdField.value = id;
+        inputFieldName.value = name;
         placeholder.textContent = name;
+        setVariablesDataFromHiddenInputFields(id, name);
 };
-const confirmDeleteMessage = function (event, index){
+/* This function sets above variables with data from hidden input fields */
+const setVariablesDataFromHiddenInputFields = function(id, name){
+    /* We just need either the id for pages and users or the name for the pdf files */
+    inputFieldId = id,
+    inputFieldName = name;
+    console.log(inputFieldId, inputFieldName);
+};
+/* Uses the above variables to delete an item */
+const confirmDeleteMessage = function (event){
     event.preventDefault();
-    const inputIdField = document.querySelector('.inputFieldId');
-    const name = document.querySelectorAll('.this_name')[index].value;
-    let id = inputIdField.value;
     switch(title){
-        case "Delete User": deleteThisUser('/users/delete-user', id);
+        case "Delete User": deleteThisUser('/users/delete-user', inputFieldId);
             break;
-        case "Delete Page": deleteThisPage('/users/delete-page', id);
+        case "Delete Page": deleteThisPage('/users/delete-page', inputFieldId);
             break;
-        case "Delete PDF": deleteThisPDF('/manage-pdfs', name);
+        case "Delete PDF": deleteThisPDF('/manage-pdfs', inputFieldName);
             break;
     }
 }
 /* Attach Event Listeners to Buttons */
-confirmDeleteButton.forEach(button => {
-    button.addEventListener('click', function (event) {
-        confirmDeleteMessage(event, index);
-    }, index);
+confirmDeleteButton.addEventListener('click', function(event) {
+    confirmDeleteMessage(event);
 });
 closeAlertMessageButtons.forEach(button => {
     button.addEventListener('click', function () {
@@ -97,6 +117,6 @@ closeAlertMessageButtons.forEach(button => {
 deleteThisButtons.forEach((button, index) => {
     button.addEventListener('click', function () {
         toggleAlertMessage();
-        getDataFromInputFields(index);  
+        populateNotificationMessageContentWithName(index);  
     }, index);
 });

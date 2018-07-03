@@ -208,11 +208,7 @@ userRoutes.post('/manage-nav', function(req,res){
 userRoutes.get('/manage-pdfs', function (req, res) {
   // messages: req.flash('Are you sure you want to delete this PDF?') // This will not work. Flash messages are in the form req.flash('flashtype', 'Message')
   let pdfList = [];
-<<<<<<< HEAD
-  fs.readdir('assets/pdfs',  (err, pdfs) => {
-=======
   fs.readdir('assets/pdfs', (err, pdfs) => {
->>>>>>> b1636bbd51e402db133327e6848a1049d0ff84c4
     if (err) {
       console.log('err :', err);
     }
@@ -598,7 +594,7 @@ deleteUserPostCheck = [
 ]
 
 userRoutes.post('/delete-user', deleteUserPostCheck, function(req, res){
-  
+  console.log(req.body.user_id);
   let errors = validationResult(req);
   if (!errors.isEmpty()){
     console.log('invalis :');

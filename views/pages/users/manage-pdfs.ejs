@@ -22,7 +22,6 @@
                                     <table class="table table-hover table-outline table-vcenter text-nowrap card-table">
                                         <thead>
                                             <tr>
-                                                <th>Username</th>
                                                 <th>PDF Name</th>
                                                 <th>Upload Date</th>
                                                 <th></th>
@@ -34,9 +33,6 @@
                                                 <tr>
                                                     <input type="hidden" name="pdf_name" class="this_name" value="<%=pdf.location%>" />
                                                     <input type="hidden" name="pdf_id" class="this_id" value="<%= pdf.id%>" />
-                                                    <td>
-                                                        <div></div>
-                                                    </td>
                                                     <td>
                                                         <a href="<%=pdf.location%>" data-name="<%=pdf.name%>"><div><%=pdf.short%></div></a>
                                                     </td>
