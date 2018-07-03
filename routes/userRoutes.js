@@ -232,7 +232,7 @@ userRoutes.post('/manage-nav', function(req,res){
 userRoutes.get('/manage-pdfs', function (req, res) {
   // messages: req.flash('Are you sure you want to delete this PDF?') // This will not work. Flash messages are in the form req.flash('flashtype', 'Message')
   let pdfList = [];
-  fs.readdir('H:/nex documents/Coderlist/projectPages/assets/pdfs', (err, pdfs) => {
+  fs.readdir('assets/pdfs', (err, pdfs) => {
     if (err) {
       console.log('err :', err);
     }
@@ -977,7 +977,7 @@ userRoutes.post('/upload-file', fileUpload.single('upload'), function(req, res){
 
 
 userRoutes.get('/get-server-images', function(req, res){
-  fs.readdir('H:/nex documents/Coderlist/projectPages/assets/images', (err, images) => {
+  fs.readdir('assets/images', (err, images) => {
     let imagesJSON = [];
     images.map(function(image) {
       console.log('images :', image);
