@@ -49,6 +49,9 @@ const {
   getParentNavIdByName,
   getAllNavs
 } = require('../server/models/navigations')
+const { 
+  insertCallToAction
+} = require('../server/models/callActions');
 const uuid = require('uuid/v1');
 const Mail = require('../helperFunctions/verification/MailSender');
 const multer = require('multer');
@@ -182,6 +185,7 @@ userRoutes.get('/dashboard', (req, res) => {
       pages : pageData,
       messages: req.flash('info')
   })
+  
 }).catch(function(err){
   console.log('err :', err);
 })
@@ -189,6 +193,28 @@ userRoutes.get('/dashboard', (req, res) => {
 });
   return;
 });
+
+ckeditorPostCheck = [
+  body('content').exists()  //this needs a more robust check. Script tags. SQL injection
+]
+userRoutes.post('/dashboard', ckeditorPostCheck, (req, res) => {
+  let errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    req.flash('info', 'Invalid ckeditor data');
+    res.status(200).render('pages/users/dashboard.ejs', { 
+      users : userData,
+      pages : pageData,
+      content : req.body.content,
+      messages: req.flash('info')
+  })
+    return;
+  }
+  insertCallToAction(req.body.content)
+  .then(function(){
+    req.flash('info', 'Call to action text saved');
+    res.status(200).redirect('/users/dashboard');
+  })
+})
 
 /////////////////////// Admin page routes /////////////////////
 
@@ -198,15 +224,12 @@ userRoutes.get('/manage-nav', function (req, res) {
   })
 })
 
-
 userRoutes.post('/manage-nav', function(req,res){
   
 })
 
-
-
 userRoutes.get('/manage-pdfs', function (req, res) {
-  // messages: req.flash('Are you sure you want to delete this PDF?') // This will not work. Flash messages are in the form req.flash('flashtype', 'Message')
+  // messages: req.flash('Are you sure you want to delete this PDF?') // This will not work. Flash messages are in the form req.flash('flashtype', 'Message') "Kristian"
   let pdfList = [];
   fs.readdir('assets/pdfs', (err, pdfs) => {
     if (err) {
