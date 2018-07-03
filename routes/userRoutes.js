@@ -42,7 +42,9 @@ const {
 } = require('../server/models/images');
 const {
   createParentNavItem,
-  createChildNavItem
+  createChildNavItem,
+  getParentNavIdByName,
+  getAllNavs
 } = require('../server/models/navigations')
 const uuid = require('uuid/v1');
 const Mail = require('../helperFunctions/verification/MailSender');
@@ -164,32 +166,6 @@ userRoutes.get('/manage-nav', function (req, res) {
 })
 
 userRoutes.post('/manage-nav', function(req,res){
-  if (!req.body.parent_page){
-     //req is for parent nav if it does not contain
-     //a parent_page value
-  nav = {
-    name:req.body.page_name,
-    link:req.body.menu_page,
-    nav_order_number:req.body.page_order
-  }
-  createParentNavItem(nav).then(response => {
-    res.status(200).send('parent nav created')
-  }).catch(e => {
-    res.status(400).send(e.stack)
-  })
-}else{
-  nav = {
-    name:req.body.page_name,
-    link:req.body.menu_page,
-    grid_order_number:req.body.page_order,
-    parent_name: req.body.parent_page
-  }
-  createChildNavItem(nav).then(response => {
-    res.status(200).send('child nav created')
-  }).catch(e => {
-    res.status(400).send(e.stack)
-  })
-}
   
 })
 
@@ -643,6 +619,7 @@ userRoutes.post('/upload-images', upload.single('image'), (req, res) => {
 
 
 userRoutes.get('/page-navmenu-request', function (req, res) {
+ 
   const pages = [{
       page: "Home",
       link: "Home",
@@ -714,8 +691,52 @@ userRoutes.get('/page-navmenu-request', function (req, res) {
       ]
     }
   ]
-  console.log('JSON.stringify :', JSON.stringify(pages,undefined,2));
-  res.status(200).send(JSON.stringify(pages,undefined,2));
+  console.log('JSON.stringify :', JSON.stringify(pages));
+  res.status(200).send(JSON.stringify(pages));
+
+//work on getAllNavs to return page as above
+
+//   getAllNavs().then(response => {
+//     console.log('ALL PAGES', response)
+//     res.status(200).send(response)
+//   }).catch(e => {
+//    res.status(400).send(e.stack)
+//  })
+})
+
+userRoutes.post('/page-navmenu-request', function(req,res){
+  
+  if (!req.body.parent_page){
+     //req is for parent nav if it does not contain
+     //a parent_page value
+  nav = {
+    name:req.body.page_name,
+    link:req.body.menu_page,
+    nav_order_number:req.body.page_order
+  }
+  
+  createParentNavItem(nav).then(response => {
+    res.status(200).send('parent nav created')
+  }).catch(e => {
+    res.status(400).send(e.stack)
+  })
+}else{
+  nav = {
+    name:req.body.page_name,
+    link:req.body.menu_page,
+    grid_order_number:req.body.page_order,
+    parent_name: req.body.parent_page
+  }
+  getParentNavIdByName(nav.parent_name).then(response => {
+    createChildNavItem(nav, response[0].navigation_id).then(response => {
+      res.status(200).send('child nav created')
+    }).catch(e => {
+      res.status(400).send(e.stack)
+    })
+  })
+  
+}
+  
 })
 
 postCreatePageCheck = [
