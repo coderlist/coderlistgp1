@@ -73,6 +73,12 @@ CREATE TABLE IF NOT EXISTS sub_navigations (
   PRIMARY KEY (sub_nav_id)
 );
 
+CREATE TABLE IF NOT EXISTS call_to_actions (
+  action_id SERIAL,
+  decription TEXT,
+  PRIMARY KEY (action_id)
+)
+
 
 
 
