@@ -77,7 +77,7 @@ CREATE TABLE IF NOT EXISTS call_to_actions (
   action_id SERIAL,
   decription TEXT,
   PRIMARY KEY (action_id)
-)
+);
 
 
 
@@ -136,6 +136,8 @@ ALTER TABLE pages ADD COLUMN IF NOT EXISTS ckeditor_html TEXT,
    ADD COLUMN IF NOT EXISTS banner_location TEXT,
    ADD COLUMN IF NOT EXISTS last_edited_by TEXT;
  --  ADD COLUMN IF NOT EXISTS owner_id INT REFERENCES users(user_id) ON DELETE SET NULL;
+
+ ALTER TABLE call_to_actions ADD COLUMN created TIMESTAMP DEFAULT NOW();
 
 --ALTER TABLE pages DROP COLUMN IF EXISTS owner_id;
 ALTER TABLE pages ALTER COLUMN title SET NOT NULL;
