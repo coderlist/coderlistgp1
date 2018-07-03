@@ -214,7 +214,10 @@ userRoutes.get('/manage-pdfs', function (req, res) {
     }
       pdfs.map(function(pdf) {
       console.log('pdfs :', pdf);
-      pdfList.push({name: pdf, location: `/pdfs/${pdf}`})
+      const shortName = pdf.match(/([\w\s]*)/)[0];
+      console.log('shortName :', shortName + ".pdf");
+
+      pdfList.push({name: pdf, short: shortName, location: `/pdfs/${pdf}`})
     })
     console.log('pdfList :', pdfList);
     res.status(200).render('pages/users/manage-pdfs.ejs', { 
