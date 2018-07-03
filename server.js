@@ -16,6 +16,7 @@ const cookieParser = require('cookie-parser');
 const validator = require('express-validator');
 const uuidv1 = require('uuid/v1');
 const {createSuper} = require('./helperFunctions/query/queryHelper')
+let compression = require('compression');
 
 const app = express();
 app.set('view engine', 'ejs');
@@ -33,7 +34,7 @@ app.use(session({
   saveUninitialized: true,
   cookie: { maxAge: 30 * 24 * 60 * 60 * 1000 } 
 }));
-
+app.use(compression());
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(flash());
