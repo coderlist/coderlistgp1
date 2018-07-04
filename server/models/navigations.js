@@ -48,8 +48,8 @@ createChildNavItem(bodyReq, parentId){
         n.nav_order_number,s.name AS child_name,s.link AS child_link,
         s.grid_order_number FROM navigations AS n 
         FULL JOIN sub_navigations AS s ON n.navigation_id = s.parent_navigation_id) 
-        SELECT navigation_id,name,link,nav_order_number AS order, 
-        json_build_object('name', child_name, 'link', child_link, 'order', grid_order_number) AS 
+        SELECT navigation_id,name as page,link,nav_order_number AS order, 
+        json_build_object('page', child_name, 'link', child_link, 'order', grid_order_number) AS 
         children FROM page;
      `
    ).then(response => response)

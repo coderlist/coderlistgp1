@@ -49,6 +49,7 @@ const {
   getParentNavIdByName,
   getAllNavs
 } = require('../server/models/navigations')
+const {toNavJSON} = require('../helperFunctions/query/navJson')
 const uuid = require('uuid/v1');
 const Mail = require('../helperFunctions/verification/MailSender');
 const multer = require('multer');
@@ -737,88 +738,88 @@ userRoutes.post('/upload-images', upload.single('image'), (req, res) => {
 
 userRoutes.get('/page-navmenu-request', function (req, res) {
  
-  const pages = [{
-      page: "Home",
-      link: "Home",
-      order: "1",
-      children: null
-    },
-    {
-      page: "About",
-      link: "About",
-      order: "2",
-      children: null
-    },
-    {
-      page: "Workshops",
-      link: "no-link",
-      order: "3",
-      children: [{
-          page: "Private Sessions",
-          link: "Private sessions",
-          order: "1"
-        },
-        {
-          page: "Nursery Level",
-          link: "Nursery level",
-          order: "2"
-        },
-        {
-          page: "Small Groups",
-          link: "Small groups",
-          order: "3"
-        },
-        {
-          page: "Weekly Classes",
-          link: "Weekly classes",
-          order: "4"
-        }
-      ]
-    },
-    {
-      page: "Contact",
-      link: "Contact",
-      order: "4",
-      children: null
-    },
-    {
-      page: "Another Page",
-      link: "no-link",
-      order: "3",
-      children: [{
-          page: "New Sessions",
-          link: "New sessions",
-          order: "1"
-        },
-        {
-          page: "New Level",
-          link: "New level",
-          order: "2"
-        },
-        {
-          page: "New Groups",
-          link: "New groups",
-          order: "3"
-        },
-        {
-          page: "New Classes",
-          link: "New classes",
-          order: "4"
-        }
-      ]
-    }
-  ]
-  console.log('JSON.stringify :', JSON.stringify(pages));
-  res.status(200).send(JSON.stringify(pages));
+  // const pages = [{
+  //     page: "Home",
+  //     link: "Home",
+  //     order: "1",
+  //     children: null
+  //   },
+  //   {
+  //     page: "About",
+  //     link: "About",
+  //     order: "2",
+  //     children: null
+  //   },
+  //   {
+  //     page: "Workshops",
+  //     link: "no-link",
+  //     order: "3",
+  //     children: [{
+  //         page: "Private Sessions",
+  //         link: "Private sessions",
+  //         order: "1"
+  //       },
+  //       {
+  //         page: "Nursery Level",
+  //         link: "Nursery level",
+  //         order: "2"
+  //       },
+  //       {
+  //         page: "Small Groups",
+  //         link: "Small groups",
+  //         order: "3"
+  //       },
+  //       {
+  //         page: "Weekly Classes",
+  //         link: "Weekly classes",
+  //         order: "4"
+  //       }
+  //     ]
+  //   },
+  //   {
+  //     page: "Contact",
+  //     link: "Contact",
+  //     order: "4",
+  //     children: null
+  //   },
+  //   {
+  //     page: "Another Page",
+  //     link: "no-link",
+  //     order: "3",
+  //     children: [{
+  //         page: "New Sessions",
+  //         link: "New sessions",
+  //         order: "1"
+  //       },
+  //       {
+  //         page: "New Level",
+  //         link: "New level",
+  //         order: "2"
+  //       },
+  //       {
+  //         page: "New Groups",
+  //         link: "New groups",
+  //         order: "3"
+  //       },
+  //       {
+  //         page: "New Classes",
+  //         link: "New classes",
+  //         order: "4"
+  //       }
+  //     ]
+  //   }
+  // ]
+  // console.log('JSON.stringify :', JSON.stringify(pages));
+  // res.status(200).send(JSON.stringify(pages));
 
 //work on getAllNavs to return page as above
 
-//   getAllNavs().then(response => {
-//     console.log('ALL PAGES', response)
-//     res.status(200).send(response)
-//   }).catch(e => {
-//    res.status(400).send(e.stack)
-//  })
+  getAllNavs().then(response => {
+    const pages = toNavJSON(response)
+    res.status(200).send(pages)
+  }).catch(e => {
+   res.status(400).send(e.stack)
+ })
 })
 
 userRoutes.post('/page-navmenu-request', function(req,res){
