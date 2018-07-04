@@ -9,6 +9,9 @@ const passport = require('../auth/local');
 const Mail = require('../helperFunctions/verification/MailSender');
 // site //
 const { createUser, updateUserEmail, findIdByEmail, insertOldEmailObject, activateUser, addOneToFailedLogins, getOldPasswordObject, insertOldPasswordObject } = require('../server/models/users').user;
+const {  
+  getLatestCall 
+} = require('../server/models/callActions');
 const changePassword = require('../server/models/users').changePassword;
 const { getPagesByHomePageGrid, getPagebyID } = require('../server/models/pages');
 
@@ -29,13 +32,19 @@ routes.get('/', (req, res) => {
   ]
   getPagesByHomePageGrid()
   .then(function(pages){
-    console.log('data from pages homepgrid:', pages);
+    getLatestCall()
+    .then(function(callToAction){
+      console.log('callToAction :', callToAction);
+    console.log('data from pages homegrid:', pages);
     res.status(200).render('pages/public/index', {
-      contentHomePages: "", 
+      callToAction: callToAction[0], 
       menuItems: menuItems,
       pages: pages,
       messages: req.flash('info'),
       messagesError: req.flash('error') 
+    })
+    
+      
     });
     return;
   }).catch(function(err){
