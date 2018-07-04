@@ -49,13 +49,10 @@ const {
   getParentNavIdByName,
   getAllNavs
 } = require('../server/models/navigations')
-<<<<<<< HEAD
 const {toNavJSON} = require('../helperFunctions/query/navJson')
-=======
 const { 
   insertCallToAction
 } = require('../server/models/callActions');
->>>>>>> aa0a395df7274e86443a939ad3522ab0fe2952b6
 const uuid = require('uuid/v1');
 const Mail = require('../helperFunctions/verification/MailSender');
 const multer = require('multer');
