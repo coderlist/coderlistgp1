@@ -310,19 +310,19 @@ userRoutes.delete('/manage-pdfs/:pdf_name', PDFDeleteCheck, function(req, res){
   if (!errors.isEmpty()) {
     // req.flash('info', 'Invalid PDF Name');
     // res.status(200).redirect('/users/manage-pdfs');
-    res.json({ message: 'Invalid PDF name' });
+    res.json({ status: "FAILURE", message: 'Invalid PDF name', location: "/users/mangae-pdfs" });
     return;
   }
   fs.unlink(`/assets/pdfs/${req.params.pdf_name}`)
   .then(function(){
     // req.flash('info', 'PDF Deleted');
     // res.redirect('/users/manage-pdfs');
+    res.json({ status: "SUCCESS", message: 'PDF successfully deleted', location: "/users/manage-pdfs" });
     return;
-    res.json({ message: 'PDF successfully deleted' });
   }).catch(function(err){
     // req.flash('info', 'There was an error deleting the PDF file');
     // res.redirect('/users/manage-pdfs');
-    res.json({ message: 'There was an error deleting the PDF file' });
+    res.json({ status: "FAILURE", message: 'There was an error deleting the PDF file', location: "/users/manage-pdfs" });
     return;
   })
 });
@@ -658,13 +658,13 @@ userRoutes.delete('/delete-user/:user_id', deleteUserPostCheck, function(req, re
     console.log('invalis :');
     // req.flash('error','Invalid user id');
     // res.status(200).redirect('/users/dashboard');
-    res.json({ message: 'Invalid user id' });
+    res.json({ status: "FAILURE", message: 'Invalid user id', location: "/users/dashboard"});
     return;
   }
   if (req.params.user_id === req.session.user_id){
     // req.flash('error','You are not authorised to delete yourself');
     // res.status(200).redirect('/users/dashboard');
-    res.json({ message: 'You are not authorised to delete yourself' });
+    res.json({ status: "FAILURE", message: 'You are not authorised to delete yourself', location: "/users/dashboard" });
     return;
   }
   console.log('req.session.user_id :', req.session.user_id);
@@ -680,24 +680,24 @@ userRoutes.delete('/delete-user/:user_id', deleteUserPostCheck, function(req, re
           // run sql command orphan pages owned by user
           // req.flash('info','User deleted');
           // res.status(200).redirect('/users/dashboard');
-          res.json({ message: 'User successfully deleted' });
+          res.json({ status: "SUCCESS", message: 'User successfully deleted', location: "/users/dashboard" });
           return;
         }
         // req.flash('error','There was an error. User does not exist');
         // res.status(200).redirect('/users/dashboard');
-        res.json({ message: 'There was an error. User does not exist' });
+        res.json({ status: "FAILURE", message: 'There was an error. User does not exist', location: "/users/dashboard" });
         return;
       })
       // req.flash('error','You are not authorised to delete users');
       // res.status(200).redirect('/users/dashboard');
-      res.json({ message: 'You are not authorised to delete users' });
+      res.json({ status: "FAILURE", message: 'You are not authorised to delete users', location: "/users/dashboard" });
       return;
     }
   }).catch(function(err){
     console.log('err :', err);
       // req.flash('error','There was a system error');
       // res.status(200).redirect('/users/dashboard');
-      res.json({ message: 'There was a system error. Please contact your administrator' });
+      res.json({ status: "FAILURE", message: 'There was a system error. Please contact your administrator', location: "/users/dashboard" });
       return
   })
 })
@@ -1001,7 +1001,7 @@ userRoutes.delete('/delete-page/:page_id', deletePageCheck, function(req, res){
   if (!errors.isEmpty()) {
     // req.flash('info', 'Invalid Page ID');
     // res.status(200).redirect('/users/dashboard');
-    res.json({ message: 'Invalid page id' });
+    res.json({ status: "FAILURE", message: 'Invalid page id', location: "/users/dashboard" });
     return;
   }
   console.log(req.params.page_id)
@@ -1020,7 +1020,7 @@ userRoutes.delete('/delete-page/:page_id', deletePageCheck, function(req, res){
             // req.flash('info', 'Page deleted');
             // req.method = "GET";
             // res.status(301).redirect('/users/dashboard');
-            res.json({ message: 'Page successfully deleted' });
+            res.json({ status: "SUCCESS", message: 'Page successfully deleted', location: "/users/dashboard" });
             return;
           } else {
             // req.flash('info', 'Error. Page not deleted. Please contact your administrator');
@@ -1034,13 +1034,13 @@ userRoutes.delete('/delete-page/:page_id', deletePageCheck, function(req, res){
         // req.flash('info', 'You are not authorised to delete this page');
         // req.method = "GET";
         // res.status(301).redirect('/users/dashboard');
-        res.json({ message: 'You are not authorised to delete this page.'});
+        res.json({ status: "FAILURE", message: 'You are not authorised to delete this page.', location: "/users/dashboard"});
         return;
       }
     })
   }).catch(function(err){
     console.log('err :', err);
-    res.json({ message: 'There was a system error. Please contact your administrator.' });
+    res.json({ status: "FAILURE", message: 'There was a system error. Please contact your administrator.', location: "/users/dashboard" });
   })
 })
 
