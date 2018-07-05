@@ -49,6 +49,10 @@ const {
   getParentNavIdByName,
   getAllNavs
 } = require('../server/models/navigations')
+const {toNavJSON} = require('../helperFunctions/query/navJson')
+const { 
+  insertCallToAction
+} = require('../server/models/callActions');
 const uuid = require('uuid/v1');
 const Mail = require('../helperFunctions/verification/MailSender');
 const multer = require('multer');
@@ -183,6 +187,7 @@ userRoutes.get('/dashboard', (req, res) => {
       pages : pageData,
       messages: req.flash('info')
   })
+  
 }).catch(function(err){
   console.log('err :', err);
 })
@@ -190,6 +195,28 @@ userRoutes.get('/dashboard', (req, res) => {
 });
   return;
 });
+
+ckeditorPostCheck = [
+  body('content').exists()  //this needs a more robust check. Script tags. SQL injection
+]
+userRoutes.post('/dashboard', ckeditorPostCheck, (req, res) => {
+  let errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    req.flash('info', 'Invalid ckeditor data');
+    res.status(200).render('pages/users/dashboard.ejs', { 
+      users : userData,
+      pages : pageData,
+      content : req.body.content,
+      messages: req.flash('info')
+  })
+    return;
+  }
+  insertCallToAction(req.body.content)
+  .then(function(){
+    req.flash('info', 'Call to action text saved');
+    res.status(200).redirect('/users/dashboard');
+  })
+})
 
 /////////////////////// Admin page routes /////////////////////
 
@@ -199,15 +226,48 @@ userRoutes.get('/manage-nav', function (req, res) {
   })
 })
 
+<<<<<<< HEAD
 
 /*userRoutes.post('/manage-nav', function(req,res){
   
 })*/
-
-
+=======
+userRoutes.post('/manage-nav', function(req,res){
+  if (!req.body.parent_page){
+    //req is for parent nav if it does not contain
+    //a parent_page value
+ nav = {
+   name:req.body.page_name,
+   link:req.body.menu_page,
+   nav_order_number:req.body.page_order
+ }
+ 
+ createParentNavItem(nav).then(response => {
+   res.status(200).send('parent nav created')
+ }).catch(e => {
+   res.status(400).send(e.stack)
+ })
+}else{
+ nav = {
+   name:req.body.page_name,
+   link:req.body.menu_page,
+   grid_order_number:req.body.page_order,
+   parent_name: req.body.parent_page
+ }
+ getParentNavIdByName(nav.parent_name).then(response => {
+   createChildNavItem(nav, response[0].navigation_id).then(response => {
+     res.status(200).send('child nav created')
+   }).catch(e => {
+     res.status(400).send(e.stack)
+   })
+ })
+ 
+}
+})
+>>>>>>> 40820c191611c6a6717f07483c46503ecf345a36
 
 userRoutes.get('/manage-pdfs', function (req, res) {
-  // messages: req.flash('Are you sure you want to delete this PDF?') // This will not work. Flash messages are in the form req.flash('flashtype', 'Message')
+  // messages: req.flash('Are you sure you want to delete this PDF?') // This will not work. Flash messages are in the form req.flash('flashtype', 'Message') "Kristian"
   let pdfList = [];
   fs.readdir('assets/pdfs', (err, pdfs) => {
     if (err) {
@@ -591,11 +651,11 @@ userRoutes.post('/edit-user', editUserPostCheck , function(req, res){
 })
 
 deleteUserPostCheck = [
-  body('user_id').isInt().exists()
+  param('user_id').isInt().exists()
 ]
 
-userRoutes.post('/delete-user', deleteUserPostCheck, function(req, res){
-  console.log(req.body.user_id);
+userRoutes.delete('/delete-user', deleteUserPostCheck, function(req, res){
+  console.log(req.params.user_id);
   let errors = validationResult(req);
   if (!errors.isEmpty()){
     console.log('invalis :');
@@ -603,7 +663,7 @@ userRoutes.post('/delete-user', deleteUserPostCheck, function(req, res){
     res.status(200).redirect('/users/dashboard');
     return;
   }
-  if (req.body.user_id === req.session.user_id){
+  if (req.params.user_id === req.session.user_id){
     req.flash('error','You are not authorised to delete yourself');
     res.status(200).redirect('/users/dashboard');
     return;
@@ -631,7 +691,12 @@ userRoutes.post('/delete-user', deleteUserPostCheck, function(req, res){
       res.status(200).redirect('/users/dashboard');
       return;
     }
-  }).catch(function(err){ throw err})
+  }).catch(function(err){
+    console.log('err :', err);
+      req.flash('error','There was a system error');
+      res.status(200).redirect('/users/dashboard');
+      return
+  })
 })
 
 userRoutes.get('/change-password', (req, res) => {
@@ -740,123 +805,92 @@ userRoutes.post('/upload-images', upload.single('image'), (req, res) => {
 
 userRoutes.get('/page-navmenu-request', function (req, res) {
  
-  const pages = [{
-      page: "Home",
-      link: "Home",
-      order: "1",
-      children: null
-    },
-    {
-      page: "About",
-      link: "About",
-      order: "2",
-      children: null
-    },
-    {
-      page: "Workshops",
-      link: "no-link",
-      order: "3",
-      children: [{
-          page: "Private Sessions",
-          link: "Private sessions",
-          order: "1"
-        },
-        {
-          page: "Nursery Level",
-          link: "Nursery level",
-          order: "2"
-        },
-        {
-          page: "Small Groups",
-          link: "Small groups",
-          order: "3"
-        },
-        {
-          page: "Weekly Classes",
-          link: "Weekly classes",
-          order: "4"
-        }
-      ]
-    },
-    {
-      page: "Contact",
-      link: "Contact",
-      order: "4",
-      children: null
-    },
-    {
-      page: "Another Page",
-      link: "no-link",
-      order: "3",
-      children: [{
-          page: "New Sessions",
-          link: "New sessions",
-          order: "1"
-        },
-        {
-          page: "New Level",
-          link: "New level",
-          order: "2"
-        },
-        {
-          page: "New Groups",
-          link: "New groups",
-          order: "3"
-        },
-        {
-          page: "New Classes",
-          link: "New classes",
-          order: "4"
-        }
-      ]
-    }
-  ]
-  console.log('JSON.stringify :', JSON.stringify(pages));
-  res.status(200).send(JSON.stringify(pages));
+  // const pages = [{
+  //     page: "Home",
+  //     link: "Home",
+  //     order: "1",
+  //     children: null
+  //   },
+  //   {
+  //     page: "About",
+  //     link: "About",
+  //     order: "2",
+  //     children: null
+  //   },
+  //   {
+  //     page: "Workshops",
+  //     link: "no-link",
+  //     order: "3",
+  //     children: [{
+  //         page: "Private Sessions",
+  //         link: "Private sessions",
+  //         order: "1"
+  //       },
+  //       {
+  //         page: "Nursery Level",
+  //         link: "Nursery level",
+  //         order: "2"
+  //       },
+  //       {
+  //         page: "Small Groups",
+  //         link: "Small groups",
+  //         order: "3"
+  //       },
+  //       {
+  //         page: "Weekly Classes",
+  //         link: "Weekly classes",
+  //         order: "4"
+  //       }
+  //     ]
+  //   },
+  //   {
+  //     page: "Contact",
+  //     link: "Contact",
+  //     order: "4",
+  //     children: null
+  //   },
+  //   {
+  //     page: "Another Page",
+  //     link: "no-link",
+  //     order: "3",
+  //     children: [{
+  //         page: "New Sessions",
+  //         link: "New sessions",
+  //         order: "1"
+  //       },
+  //       {
+  //         page: "New Level",
+  //         link: "New level",
+  //         order: "2"
+  //       },
+  //       {
+  //         page: "New Groups",
+  //         link: "New groups",
+  //         order: "3"
+  //       },
+  //       {
+  //         page: "New Classes",
+  //         link: "New classes",
+  //         order: "4"
+  //       }
+  //     ]
+  //   }
+  // ]
+  // console.log('JSON.stringify :', JSON.stringify(pages));
+  // res.status(200).send(JSON.stringify(pages));
 
 //work on getAllNavs to return page as above
 
-//   getAllNavs().then(response => {
-//     console.log('ALL PAGES', response)
-//     res.status(200).send(response)
-//   }).catch(e => {
-//    res.status(400).send(e.stack)
-//  })
+  getAllNavs().then(response => {
+    const pages = toNavJSON(response)
+    res.status(200).send(pages)
+  }).catch(e => {
+   res.status(400).send(e.stack)
+ })
 })
 
 userRoutes.post('/page-navmenu-request', function(req,res){
-  
-  if (!req.body.parent_page){
-     //req is for parent nav if it does not contain
-     //a parent_page value
-  nav = {
-    name:req.body.page_name,
-    link:req.body.menu_page,
-    nav_order_number:req.body.page_order
-  }
-  
-  createParentNavItem(nav).then(response => {
-    res.status(200).send('parent nav created')
-  }).catch(e => {
-    res.status(400).send(e.stack)
-  })
-}else{
-  nav = {
-    name:req.body.page_name,
-    link:req.body.menu_page,
-    grid_order_number:req.body.page_order,
-    parent_name: req.body.parent_page
-  }
-  getParentNavIdByName(nav.parent_name).then(response => {
-    createChildNavItem(nav, response[0].navigation_id).then(response => {
-      res.status(200).send('child nav created')
-    }).catch(e => {
-      res.status(400).send(e.stack)
-    })
-  })
-  
-}
-  
+    
 })
 
 postCreatePageCheck = [
@@ -956,17 +990,17 @@ userRoutes.post('/edit-page', postEditPageCheck, function(req, res){
 
 
 deletePageCheck = [
-  body('page_id').isInt().exists()
+  param('page_id').isInt().exists()
 ]
 
-userRoutes.post('/delete-page', deletePageCheck, function(req, res){
+userRoutes.delete('/delete-page', deletePageCheck, function(req, res){
   let errors = validationResult(req);
   if (!errors.isEmpty()) {
     req.flash('info', 'Invalid Page ID');
     res.status(200).redirect('/users/dashboard');
     return;
   }
-  getPageById(req.body.page_id)
+  getPageById(req.params.page_id)
   .then(function(pageData){
     getUserById(req.session.user)
     .then(function(userData){
