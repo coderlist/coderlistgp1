@@ -173,6 +173,7 @@ userRoutes.use(messageTitles.setMessageTitles);
 // });
 
 userRoutes.get('/dashboard', (req, res) => {
+  console.log(req);
   listUsers(0, 9)
   .then(function(userData){
   getPages(9) //this need to be thought more about. THis just gets the first 10 pages
@@ -199,9 +200,9 @@ userRoutes.get('/manage-nav', function (req, res) {
 })
 
 
-userRoutes.post('/manage-nav', function(req,res){
+/*userRoutes.post('/manage-nav', function(req,res){
   
-})
+})*/
 
 
 
@@ -252,6 +253,8 @@ PDFDeleteCheck = [
 ]
 
 userRoutes.delete('/manage-pdfs', PDFDeleteCheck, function(req, res){
+  console.log("Hello Nathan!");
+  console.log(req.body);
   let errors = validationResult(req);
   if (!errors.isEmpty()) {
     req.flash('info', 'Invalid PDF Name');
@@ -1045,14 +1048,13 @@ userRoutes.post('/page-order', pageOrderPostCheck, function(req,res){
   })
  })
 
-
 //////////////         end of change email whilst validated ////////////////
 
-userRoutes.all('*', (req, res) => {
+/* userRoutes.all('*', (req, res) => {
   res.status(200).render('pages/public/unknown.ejs', {
     url: req.url
   });
   return;
-});
+});*/
 
 module.exports = userRoutes;

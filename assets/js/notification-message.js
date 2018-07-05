@@ -9,10 +9,9 @@ function deleteThisUser(url, user_id){
     console.log("USER ID:", user_id);
     fetch(url, {
         method: 'POST',
-        body: user_id,
+        body: {user_id: user_id},
         headers: {
-            'Access-Control-Allow-Headers': 'Access-Control-Allow-Methods',
-            'Content-Type' : 'application/x-www-form-urlencoded'
+            'Content-Type' : 'application/json'
         },
         credentials: 'include',
         mode: 'same-origin'
@@ -27,12 +26,11 @@ function deleteThisUser(url, user_id){
 }
 function deleteThisPage(url, page_id){
     console.log("PAGE ID:", page_id);
-    fetch(url, {
+    fetch(`${url}/${page_id}`, {
         method: 'POST',
-        body: page_id,
+        body: {page_id: page_id},
         headers: {
-            'Access-Control-Allow-Headers': 'Access-Control-Allow-Methods',
-            'Content-Type' : 'application/x-www-form-urlencoded'
+            'Content-Type' : 'application/json'
         },
         credentials: 'include',
         mode: 'same-origin'
@@ -47,13 +45,8 @@ function deleteThisPage(url, page_id){
 }
 function deleteThisPDF(url, pdf_name){
     console.log("PDF NAME:", pdf_name);
-    fetch(url, {
+    fetch(`${url}/${pdf_name}`, {
         method: 'DELETE',
-        body: pdf_name,
-        headers: {
-            'Access-Control-Allow-Headers': 'Access-Control-Allow-Methods',
-            'Content-Type': 'application/x-www-form-urlencoded'
-        },
         credentials: 'include',
         mode: 'same-origin'
     }).then(response => {
@@ -97,11 +90,11 @@ const setVariablesDataFromHiddenInputFields = function(id, name){
 const confirmDeleteMessage = function (event){
     event.preventDefault();
     switch(title){
-        case "Delete User": deleteThisUser('/users/delete-user', inputFieldId);
+        case "Delete User": deleteThisUser('users/delete-user', inputFieldId);
             break;
-        case "Delete Page": deleteThisPage('/users/delete-page', inputFieldId);
+        case "Delete Page": deleteThisPage('users/delete-page', inputFieldId);
             break;
-        case "Delete PDF": deleteThisPDF('/manage-pdfs', inputFieldName);
+        case "Delete PDF": deleteThisPDF('users/delete-somestuff/some_name', inputFieldName);
             break;
     }
 }
