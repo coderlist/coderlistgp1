@@ -95,7 +95,7 @@ const confirmDeleteMessage = function (event){
             break;
         case "Delete Page": deleteThisPage('users/delete-page', inputFieldId);
             break;
-        case "Delete PDF": deleteThisPDF('users/delete-somestuff/some_name', inputFieldName);
+        case "Delete PDF": deleteThisPDF('users/manage-pdfs/', inputFieldName);
             break;
     }
 }

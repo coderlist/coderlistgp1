@@ -305,9 +305,7 @@ PDFDeleteCheck = [
   param('pdf_name').isAlphanumeric()
 ]
 
-userRoutes.delete('/manage-pdfs', PDFDeleteCheck, function(req, res){
-  console.log("Hello Nathan!");
-  console.log(req.body);
+userRoutes.delete('/manage-pdfs/:pdf_name', PDFDeleteCheck, function(req, res){
   let errors = validationResult(req);
   if (!errors.isEmpty()) {
     req.flash('info', 'Invalid PDF Name');
@@ -325,19 +323,19 @@ userRoutes.delete('/manage-pdfs', PDFDeleteCheck, function(req, res){
 });
 
 imageDeleteCheck = [
-  body('image_id').isAlphanumeric()
+  param('image_id').isAlphanumeric()
 ]
 
-userRoutes.delete('/manage-images', imageDeleteCheck, function(req, res){
+userRoutes.delete('/manage-images/:image_id', imageDeleteCheck, function(req, res){
   let errors = validationResult(req);
   if (!errors.isEmpty()) {
     req.flash('info', 'Invalid image Name');
     res.status(200).redirect('/users/manage-images');
     return;
   }
-  deleteImageObjectByImageId(req.body.image_id)
+  deleteImageObjectByImageId(req.params.image_id)
   .then(function(data){    
-    fs.unlink(`/assets/pdfs/${req.body.pdf_name}`)
+    fs.unlink(`/assets/pdfs/${data.image_name}`)
     .then(function(){
       req.flash('info', 'Image Deleted');
       res.redirect('/users/manage-images');
@@ -647,7 +645,8 @@ deleteUserPostCheck = [
   param('user_id').isInt().exists()
 ]
 
-userRoutes.delete('/delete-user', deleteUserPostCheck, function(req, res){
+userRoutes.delete('/delete-user/:user_id', deleteUserPostCheck, function(req, res){
+  console.log("Hello World");
   console.log(req.params.user_id);
   let errors = validationResult(req);
   if (!errors.isEmpty()){
@@ -986,7 +985,7 @@ deletePageCheck = [
   param('page_id').isInt().exists()
 ]
 
-userRoutes.delete('/delete-page', deletePageCheck, function(req, res){
+userRoutes.delete('/delete-page/:page_id', deletePageCheck, function(req, res){
   let errors = validationResult(req);
   if (!errors.isEmpty()) {
     req.flash('info', 'Invalid Page ID');
