@@ -7,9 +7,8 @@ const title = document.querySelector('.overlay-alert-message h4').textContent;
 
 function deleteThisUser(url, user_id){
     console.log("USER ID:", user_id);
-    fetch(url, {
-        method: 'POST',
-        body: {user_id: user_id},
+    fetch(`${url}/${user_id}`, {
+        method: 'DELETE',
         headers: {
             'Content-Type' : 'application/json'
         },
@@ -27,8 +26,7 @@ function deleteThisUser(url, user_id){
 function deleteThisPage(url, page_id){
     console.log("PAGE ID:", page_id);
     fetch(`${url}/${page_id}`, {
-        method: 'POST',
-        body: {page_id: page_id},
+        method: 'DELETE',
         headers: {
             'Content-Type' : 'application/json'
         },
@@ -47,6 +45,9 @@ function deleteThisPDF(url, pdf_name){
     console.log("PDF NAME:", pdf_name);
     fetch(`${url}/${pdf_name}`, {
         method: 'DELETE',
+        headers: {
+            'Content-Type' : 'application/json'
+        },
         credentials: 'include',
         mode: 'same-origin'
     }).then(response => {

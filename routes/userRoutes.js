@@ -226,12 +226,6 @@ userRoutes.get('/manage-nav', function (req, res) {
   })
 })
 
-<<<<<<< HEAD
-
-/*userRoutes.post('/manage-nav', function(req,res){
-  
-})*/
-=======
 userRoutes.post('/manage-nav', function(req,res){
   if (!req.body.parent_page){
     //req is for parent nav if it does not contain
@@ -264,7 +258,6 @@ userRoutes.post('/manage-nav', function(req,res){
  
 }
 })
->>>>>>> 40820c191611c6a6717f07483c46503ecf345a36
 
 userRoutes.get('/manage-pdfs', function (req, res) {
   // messages: req.flash('Are you sure you want to delete this PDF?') // This will not work. Flash messages are in the form req.flash('flashtype', 'Message') "Kristian"
