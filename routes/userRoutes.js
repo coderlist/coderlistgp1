@@ -308,17 +308,22 @@ PDFDeleteCheck = [
 userRoutes.delete('/manage-pdfs/:pdf_name', PDFDeleteCheck, function(req, res){
   let errors = validationResult(req);
   if (!errors.isEmpty()) {
-    req.flash('info', 'Invalid PDF Name');
-    res.status(200).redirect('/users/manage-pdfs');
+    // req.flash('info', 'Invalid PDF Name');
+    // res.status(200).redirect('/users/manage-pdfs');
+    res.json({ message: 'Invalid PDF name' });
     return;
   }
   fs.unlink(`/assets/pdfs/${req.params.pdf_name}`)
   .then(function(){
-    req.flash('info', 'PDF Deleted');
-    res.redirect('/users/manage-pdfs');
+    // req.flash('info', 'PDF Deleted');
+    // res.redirect('/users/manage-pdfs');
+    return;
+    res.json({ message: 'PDF successfully deleted' });
   }).catch(function(err){
-    req.flash('info', 'There was an error deleting the PDF file');
-    res.redirect('/users/manage-pdfs');
+    // req.flash('info', 'There was an error deleting the PDF file');
+    // res.redirect('/users/manage-pdfs');
+    res.json({ message: 'There was an error deleting the PDF file' });
+    return;
   })
 });
 
