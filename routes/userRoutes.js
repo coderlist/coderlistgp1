@@ -309,7 +309,7 @@ userRoutes.post('/manage-pdfs', PDFPostTitleCheck, PDFUpload.single('pdf'), func
 })
 
 PDFDeleteCheck = [
-  body('pdf_name').isAlphanumeric()
+  param('pdf_name').isAlphanumeric()
 ]
 
 userRoutes.delete('/manage-pdfs', PDFDeleteCheck, function(req, res){
@@ -321,7 +321,7 @@ userRoutes.delete('/manage-pdfs', PDFDeleteCheck, function(req, res){
     res.status(200).redirect('/users/manage-pdfs');
     return;
   }
-  fs.unlink(`/assets/pdfs/${req.body.pdf_name}`)
+  fs.unlink(`/assets/pdfs/${req.params.pdf_name}`)
   .then(function(){
     req.flash('info', 'PDF Deleted');
     res.redirect('/users/manage-pdfs');
