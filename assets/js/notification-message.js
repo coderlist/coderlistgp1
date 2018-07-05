@@ -25,7 +25,7 @@ function deleteThisUser(url, user_id){
 }
 function deleteThisPage(url, page_id){
     console.log("PAGE ID:", page_id);
-    fetch(`${url}/${page_id}`, {
+    fetch(`/${url}/${page_id}`, {
         method: 'DELETE',
         headers: {
             'Content-Type' : 'application/json'
