@@ -641,11 +641,11 @@ userRoutes.post('/edit-user', editUserPostCheck , function(req, res){
 })
 
 deleteUserPostCheck = [
-  body('user_id').isInt().exists()
+  param('user_id').isInt().exists()
 ]
 
-userRoutes.post('/delete-user', deleteUserPostCheck, function(req, res){
-  console.log(req.body.user_id);
+userRoutes.delete('/delete-user', deleteUserPostCheck, function(req, res){
+  console.log(req.params.user_id);
   let errors = validationResult(req);
   if (!errors.isEmpty()){
     console.log('invalis :');
@@ -653,7 +653,7 @@ userRoutes.post('/delete-user', deleteUserPostCheck, function(req, res){
     res.status(200).redirect('/users/dashboard');
     return;
   }
-  if (req.body.user_id === req.session.user_id){
+  if (req.params.user_id === req.session.user_id){
     req.flash('error','You are not authorised to delete yourself');
     res.status(200).redirect('/users/dashboard');
     return;
@@ -681,7 +681,12 @@ userRoutes.post('/delete-user', deleteUserPostCheck, function(req, res){
       res.status(200).redirect('/users/dashboard');
       return;
     }
-  }).catch(function(err){ throw err})
+  }).catch(function(err){
+    console.log('err :', err);
+      req.flash('error','There was a system error');
+      res.status(200).redirect('/users/dashboard');
+      return
+  })
 })
 
 userRoutes.get('/change-password', (req, res) => {
@@ -975,17 +980,17 @@ userRoutes.post('/edit-page', postEditPageCheck, function(req, res){
 
 
 deletePageCheck = [
-  body('page_id').isInt().exists()
+  param('page_id').isInt().exists()
 ]
 
-userRoutes.post('/delete-page', deletePageCheck, function(req, res){
+userRoutes.delete('/delete-page', deletePageCheck, function(req, res){
   let errors = validationResult(req);
   if (!errors.isEmpty()) {
     req.flash('info', 'Invalid Page ID');
     res.status(200).redirect('/users/dashboard');
     return;
   }
-  getPageById(req.body.page_id)
+  getPageById(req.params.page_id)
   .then(function(pageData){
     getUserById(req.session.user)
     .then(function(userData){
