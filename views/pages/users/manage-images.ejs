@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <% include ../../partials/head.ejs %>
+    <style>
+        .flexParent{
+          display: flex;
+          flex-direction: row;
+          justify-content: space-between;   
+          align-items: stretch;
+        }
+      
+        .imageId{
+          width: 1fr;
+        }
+      
+        .imageName {
+          width: 2fr;
+        }
+      
+        .imageCreated {
+          width: 3fr
+        }
+      
+        .imageLocation {
+          width: 3fr;
+        }
+      
+        .imagePage {
+          width: 3fr
+        }
+      
+        .imageBanner {
+          width: 1fr
+        }
+      
+        .imageUploadedImages {
+          width: 1fr;
+        }
+
+        .btn-delete {
+          background-color: red;
+          border-radius: 1em;
+          border: 0.5em;
+        }
+      </style>
+</head>
+
+<body>
+    <!-- This page will be used as a template, 
+        all the created pages should go between the main section;
+        This is in order to keep the design the same across all sections.
+    -->
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <header>
+        <% include ../../partials/header.ejs %>
+    </header>
+    <h1> Image List </h1>
+      <% if (typeof imageList == 'object' && imageList) { %>
+    <main>
+      <!-- <form> -->
+      <% imageList.map(function(image){ %>
+        <div class="flexParent">
+          <div class="imageId"><%= (typeof image == 'object' && image) ? image.image_id : ''%></div>
+          <div class="imageName"><%= (typeof image == 'object' && image) ? image.image_name : ''%></div>
+          <div class="imageCreated"><%= (typeof image == 'object' && image) ? image.created : ''%></div>
+          <div class="imageLocation"><%= (typeof image == 'object' && image) ? image.location : ''%></div>
+          <div class="imagePage"><%= (typeof image == 'object' && image) ? image.page_image : ''%></div>
+          <div class="imageBanner"><%= (typeof image == 'object' && image) ? image.banner_image : ''%></div>
+          <div class="imageUploadedImages"><%= (typeof image == 'object' && image) ? image.uploaded_images : ''%></div>
+          <button class="btn-delete" type="submit" formaction="/delete-image/:<%=image.image_id%>">Delete Image</button>
+        </div>
+        <br />
+      <% }) %>
+    <!-- </form> -->
+        
+    </main>
+    <% } %>
+    <footer>
+        <% include ../../partials/footer.ejs %>
+    </footer>
+</body>
+
+</html> 

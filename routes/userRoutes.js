@@ -41,7 +41,8 @@ const {
 const {
   insertBannerImage,
   getAllImages,
-  deleteImageObjectByImageId
+  deleteImageObjectByImageId,
+  getAllImagesData
 } = require('../server/models/images');
 const {
   createParentNavItem,
@@ -327,6 +328,27 @@ userRoutes.delete('/manage-pdfs/:pdf_name', PDFDeleteCheck, function(req, res){
   })
 });
 
+
+userRoutes.get('/manage-images', function(req, res){
+  getAllImagesData(req.params.image_id)
+  .then(function(data){
+    console.log('data :', data);
+    if(!data || data.length === 0) {
+      req.flash('info', 'No images');
+      res.render('pages/users/manage-images', { message: req.flash('info'), messagesError: req.flash('error') } );
+      return;
+    }
+    req.flash('info', 'No images');
+      res.render('pages/users/manage-images', { imageList: data, message: req.flash('info'), messagesError: req.flash('error') } );
+      return;
+  }).catch(function(err){
+    console.log('err :', err);
+    req.flash('error', 'There was an error loading the images');
+    res.redirect('/users/manage-images');
+    return;
+  })
+});
+
 imageDeleteCheck = [
   param('image_id').isAlphanumeric()
 ]
@@ -340,7 +362,7 @@ userRoutes.delete('/manage-images/:image_id', imageDeleteCheck, function(req, re
   }
   deleteImageObjectByImageId(req.params.image_id)
   .then(function(data){    
-    fs.unlink(`/assets/pdfs/${data.image_name}`)
+    fs.unlink(`/assets/images/${data.image_name}`)
     .then(function(){
       req.flash('info', 'Image Deleted');
       res.redirect('/users/manage-images');
