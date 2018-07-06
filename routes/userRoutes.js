@@ -292,7 +292,7 @@ userRoutes.post('/manage-pdfs', PDFPostTitleCheck, PDFUpload.single('pdf'), func
     res.status(200).redirect('/users/manage-pdfs');
     return;
   }
-  console.log('req.file :', req.file);
+  // console.log('req.file :', req.file);
   req.flash('info', 'PDF Uploaded')
   res.status(200).redirect('users/manage-pdfs.ejs', { 
   })
@@ -399,7 +399,6 @@ userRoutes.get('/edit-page/:page_id', pageIDCheck, function (req, res) {
   }
   let pageID = parseInt(req.params.page_id);
   console.log('page_id :', pageID);
-  console.log('errors :', errors.array());
   getPagebyID(pageID)
   .then(function(data){
     console.log('data :', data);
@@ -944,7 +943,7 @@ userRoutes.post('/create-page', postCreatePageCheck, upload.single('image'), fun
     return;
   }
   
-  console.log('req.file :', req.file);
+  // console.log('req.file :', req.file);
   
   page.banner_location = `/images/${req.file.filename}`
   let image = {
@@ -961,7 +960,7 @@ userRoutes.post('/create-page', postCreatePageCheck, upload.single('image'), fun
     console.log('err :', err);
     req.flash('info', 'Failure adding image to db')
   })
-  console.log('req.file :', req.file);
+  // console.log('req.file :', req.file);
   console.log('page :', page);
   // i would like page id from the db please
   createPage(page).then(function(data){
@@ -995,7 +994,7 @@ userRoutes.post('/edit-page', postEditPageCheck, function(req, res){
     last_edited_date: Date.now()
   }
   console.log('page :', page);
-  console.log('req.body :', req.body);
+  // console.log('req.body :', req.body);
   if (!errors.isEmpty) {
     req.flash('info','Invalid page data');
     res.status(200).redirect('/users/edit-page', {page : page});

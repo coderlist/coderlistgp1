@@ -225,7 +225,7 @@ routes.post('/reset-password-request', requestResetPasswordCheck, (req, res) => 
     forgot_password_token : uuid(),
     email : req.body.email
   }
-  console.log('req.body :', req.body);
+  // console.log('req.body :', req.body);
   insertOldPasswordObject(user)
   .then(data => {
     if (!data) {
@@ -253,7 +253,7 @@ checkQueryResetPassword = [
 
 
 routes.get('/reset-password', checkQueryResetPassword, (req, res) => {
-  console.log('req.query :', req.query);
+  // console.log('req.query :', req.query);
   user = {
     forgot_password_token : req.query.forgot_password_token,
     email : req.query.email
@@ -321,7 +321,7 @@ routes.post('/reset-password', resetPasswordCheck, (req, res) => {
 
 routes.get('/verify-change-email', verifyEmailCheckQuery, (req, res) => { 
   errors = validationResult(req)
-  console.log('req.query :', req.query);
+  // console.log('req.query :', req.query);
   const user = {old_email : req.query.old_email, new_email : req.query.new_email, email_change_token : req.query.email_change_token}
   if (!errors.isEmpty()) {
     req.flash("info","Invalid credentials. Please recheck authorisation link or contact your administrator");
