@@ -43,6 +43,13 @@ module.exports = {
      .catch(e => {throw e})
   },
 
+  updatePageContentByIdNoBanner(body){
+     return queryHelper(`UPDATE pages SET title='${body.title}',
+      page_description ='${body.page_description}', last_edited_by='${body.last_edited_by}', ckeditor_html = '${body.ckeditor_html}' where page_id = ${body.page_id};`)
+     .then(response => response)
+     .catch(e => {throw e})
+  },
+
   updatePageLocationsById(body){
      return queryHelper(`UPDATE pages SET is_homepage_grid='${body.is_homepage_grid}',
       is_published ='${body.is_published}', is_nav_menu='${body.is_nav_menu}', where page_id = ${body.page_id};`)

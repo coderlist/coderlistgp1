@@ -1001,9 +1001,8 @@ userRoutes.post('/edit-page', postEditPageCheck, function(req, res){
     return;
   }
  
-  
-  // i would like page id from the db please
-  updatePageContentById(page).then(function(data){
+   // i would like page id from the db please
+  updatePageContentByIdNoBanner(page).then(function(data){
     req.flash('info', 'Page updated successfully');
     res.status(200).redirect('/users/dashboard');
   }).catch(function(err){
