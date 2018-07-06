@@ -41,6 +41,14 @@ module.exports = {
       .then(response => response)
        .catch(e =>{throw e})
   },
+
+  getAllImagesData(){ // for users/manage-images page
+       return queryHelper(`
+         SELECT * FROM images`)
+      .then(response => response)
+       .catch(e =>{throw e})
+  },
+
   getImageObjectByImageId(id){
        return queryHelper(`
          SELECT * FROM images where image_id=${id}
