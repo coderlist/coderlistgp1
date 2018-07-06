@@ -7,7 +7,7 @@ const title = document.querySelector('.overlay-alert-message h4').textContent;
 // All the delete messages are returning undefined due to not being able to reach the .delete routes
 function deleteThisUser(url, user_id){  //hello filipe Hi kristian :D
     console.log("USER ID:", user_id);
-    fetch(`${url}/${user_id}`, {
+    fetch(`/${url}/${user_id}`, {
         method: 'DELETE',
         headers: {
             'Content-Type' : 'application/json'
@@ -24,7 +24,7 @@ function deleteThisUser(url, user_id){  //hello filipe Hi kristian :D
 }
 function deleteThisPage(url, page_id){
     console.log("PAGE ID:", page_id);
-    fetch(`${url}/${page_id}`, {
+    fetch(`/${url}/${page_id}`, {
         method: 'DELETE',
         headers: {
             'Content-Type' : 'application/json'
@@ -41,7 +41,7 @@ function deleteThisPage(url, page_id){
 }
 function deleteThisPDF(url, pdf_name){
     console.log("PDF NAME:", pdf_name);
-    fetch(`${url}/${pdf_name}`, {
+    fetch(`/${url}/${pdf_name}`, {
         method: 'DELETE',
         headers: {
             'Content-Type' : 'application/json'
