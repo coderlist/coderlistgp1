@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <% include ../partials/head.ejs %>
+</head>
+
+<body>
+    <% include ../partials/header.ejs %>
+        <% include ../partials/delete-alert-message.ejs %>
+            <div class="my-3 my-md-5">
+                <div class="container">
+                    <div class="page-header">
+                        <h1 class="page-title">
+                            Manage Image Files
+                        </h1>
+                    </div>
+                    <div class="row row-cards row-deck">
+                        <div class="form-group col-lg-8">
+                            <div class="card">
+                                <div class="table-responsive">
+                                    <table class="table table-hover table-outline table-vcenter text-nowrap card-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Image Name</th>
+                                                <th>Upload Date</th>
+                                                <th></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <% if (typeof pdfList === 'object' && pdfList) { %>
+                                              <% pdfList.map(function(pdf){ %>
+                                                <tr>
+                                                    <input type="hidden" name="image_name" class="this_name" value="<%=pdf.location%>" />
+                                                    <input type="hidden" name="image_name" class="this_id" value="<%= pdf.id%>" />
+                                                    <td>
+                                                        <a href="<%=pdf.location%>" data-name="<%=pdf.name%>"><div><%=pdf.short%></div></a>
+                                                    </td>
+                                                    <td>
+                                                        11/06/2018
+                                                    </td>
+                                                    <td class="text-center">
+                                                        <div class="item-action dropdown">
+                                                            <a href="javascript:void(0)" data-toggle="dropdown" class="icon" aria-expanded="false">
+                                                                <i class="fe fe-more-vertical"></i>
+                                                            </a>
+                                                            <div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; transform: translate3d(15px, 20px, 0px); top: 0px; left: 0px; will-change: transform;">
+                                                                <a href="javascript:void(0)" class="dropdown-item">
+                                                                    <i class="dropdown-icon fe fe-book-open"></i> Open Image </a>
+                                                                <a href="javascript:void(0)" class="dropdown-item">
+                                                                    <i class="dropdown-icon fe fe-edit-2"></i> Copy Link </a>
+                                                                <div class="dropdown-divider"></div>
+                                                                <a href="javascript:void(0)" class="dropdown-item delete-this">
+                                                                    <i class="dropdown-icon fe fe-trash"></i> Delete Image</a>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                              <% }) %>
+                                            <% } %>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <form  method="post" enctype="multipart/form-data" class="card form-upload-pdf-height">
+                                <div class="card-header">
+                                    <h3 class="card-title">Upload New Image</h3>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Title</label>
+                                    <input name="title" type="text" class="form-control" name="title" placeholder="PDF title..." required>
+                                </div>
+                                <div class="form-group">
+                                    <div class="form-label">Choose file</div>
+                                    <div class="custom-file">
+                                        <input type="file" class="custom-file-input" name="pdf">
+                                        <label class="custom-file-label"></label>
+                                    </div>
+                                </div>
+                                <div class="card-footer text-right">
+                                    <button type="submit" class="btn btn-primary ml-auto">Upload File</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <% include ../partials/footer.ejs %>
+        <!-- Scripts -->
+        <script src="/js/notification-message.js"></script>
+        <script src="/js/alert-message.js"></script>
+</body>
+
+</html>
