@@ -10,8 +10,9 @@ function deleteThisUser(url, user_id){
     fetch(`${url}/${user_id}`, {
         method: 'DELETE',
         headers: {
-            'Access-Control-Allow-Methods': 'DELETE'
+            'Content-Type' : 'application/json'
         },
+        credentials: 'include',
         mode: 'cors'
     }).then(response => {
         console.log(response.status);
@@ -24,11 +25,12 @@ function deleteThisUser(url, user_id){
 }
 function deleteThisPage(url, page_id){
     console.log("PAGE ID:", page_id);
-    fetch(`/${url}/${page_id}`, {
+    fetch(`${url}/${page_id}`, {
         method: 'DELETE',
         headers: {
-            'Access-Control-Allow-Methods': 'DELETE'
+            'Content-Type' : 'application/json'
         },
+        credentials: 'include',
         mode: 'cors'
     }).then(response => {
         console.log(response.status);
@@ -44,8 +46,9 @@ function deleteThisPDF(url, pdf_name){
     fetch(`${url}/${pdf_name}`, {
         method: 'DELETE',
         headers: {
-            'Access-Control-Allow-Methods': 'DELETE'
+            'Content-Type' : 'application/json'
         },
+        credentials: 'include',
         mode: 'cors'
     }).then(response => {
         console.log(response.status);
@@ -92,7 +95,7 @@ const confirmDeleteMessage = function (event){
             break;
         case "Delete Page": deleteThisPage('/delete-page', inputFieldId);
             break;
-        case "Delete PDF": deleteThisPDF('/manage-pdfs/', inputFieldName);
+        case "Delete PDF": deleteThisPDF('/manage-pdfs', inputFieldName);
             break;
     }
 }
