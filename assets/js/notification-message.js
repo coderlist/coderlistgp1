@@ -4,8 +4,8 @@ const confirmDeleteButton = document.querySelector('.confirm-delete');
 const overlay = document.querySelector('.overlay');
 const title = document.querySelector('.overlay-alert-message h4').textContent;
 
-
-function deleteThisUser(url, user_id){
+// All the delete messages are returning undefined due to not being able to reach the .delete routes
+function deleteThisUser(url, user_id){  //hello filipe Hi kristian :D
     console.log("USER ID:", user_id);
     fetch(`${url}/${user_id}`, {
         method: 'DELETE',
@@ -15,11 +15,10 @@ function deleteThisUser(url, user_id){
         credentials: 'include',
         mode: 'cors'
     }).then(response => {
-        console.log(response.status);
-        console.log(response.statusText);
-        console.log(response.url);
-        console.log(response.headers);
-        response.text();
+        return response;
+    })
+    .then(message => {
+        console.log(message.status);
     })
     .catch(error => console.log(`There was an error: ${error}`));
 }
@@ -33,11 +32,10 @@ function deleteThisPage(url, page_id){
         credentials: 'include',
         mode: 'cors'
     }).then(response => {
-        console.log(response.status);
-        console.log(response.statusText);
-        console.log(response.url);
-        console.log(response.headers);
-        response.text();
+        return response;
+    })
+    .then(message => {
+        console.log(message.status);
     })
     .catch(error => console.log(`There was an error: ${error}`));
 }
@@ -51,11 +49,10 @@ function deleteThisPDF(url, pdf_name){
         credentials: 'include',
         mode: 'cors'
     }).then(response => {
-        console.log(response.status);
-        console.log(response.statusText);
-        console.log(response.url);
-        console.log(response.headers);
-        response.text();
+        return response;
+    })
+    .then(message => {
+        console.log(message.status);
     })
     .catch(error => console.log(`There was an error: ${error}`));
 }
