@@ -5,7 +5,7 @@ const overlay = document.querySelector('.overlay');
 const title = document.querySelector('.overlay-alert-message h4').textContent;
 
 // All the delete messages are returning undefined due to not being able to reach the .delete routes
-function deleteThisUser(url, user_id){  //hello filipe Hi kristian :D
+function deleteThisUser(url, user_id){  
     console.log("USER ID:", user_id);
     fetch(`/${url}/${user_id}`, {
         method: 'DELETE',

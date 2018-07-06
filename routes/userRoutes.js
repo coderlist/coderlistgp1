@@ -36,7 +36,8 @@ const {
   getPages,
   getPagebyID,
   deletePageById,
-  updatePageContentById
+  updatePageContentById,
+  updatePageContentByIdNoBanner
 } = require('../server/models/pages');
 const {
   insertBannerImage,
@@ -178,22 +179,19 @@ userRoutes.use(messageTitles.setMessageTitles);
 // });
 
 userRoutes.get('/dashboard', (req, res) => {
-  console.log(req);
   listUsers(0, 9)
   .then(function(userData){
-  getPages(9) //this need to be thought more about. THis just gets the first 10 pages
-  .then(function(pageData){
-    res.status(200).render('pages/users/dashboard.ejs', { 
-      users : userData,
-      pages : pageData,
-      messages: req.flash('info')
-  })
-  
-}).catch(function(err){
-  console.log('err :', err);
-})
-  
-});
+    getPages(9) //this need to be thought more about. THis just gets the first 10 pages
+    .then(function(pageData){
+      res.status(200).render('pages/users/dashboard.ejs', { 
+        users : userData,
+        pages : pageData,
+        messages: req.flash('info')
+      })
+    }).catch(function(err){
+      console.log('err :', err);
+    })
+  });
   return;
 });
 
