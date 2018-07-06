@@ -353,23 +353,26 @@ imageDeleteCheck = [
   param('image_id').isAlphanumeric()
 ]
 
-userRoutes.delete('/manage-images/:image_id', imageDeleteCheck, function(req, res){
+userRoutes.post('/manage-images/:image_id', imageDeleteCheck, function(req, res){  // needs to be converted to delete route
   let errors = validationResult(req);
   if (!errors.isEmpty()) {
     req.flash('info', 'Invalid image Name');
     res.status(200).redirect('/users/manage-images');
     return;
   }
+  console.log('req.params.image_id :', req.params.image_id);
   deleteImageObjectByImageId(req.params.image_id)
   .then(function(data){    
-    fs.unlink(`/assets/images/${data.image_name}`)
-    .then(function(){
+    fs.unlink(`assets/images/${data.image_name}`, (err) => {
+      if (err) { console.log('err :', err); }
       req.flash('info', 'Image Deleted');
-      res.redirect('/users/manage-images');
+      res.status(200).redirect('/users/manage-images');
+      return;
     })
   }).catch(function(err){
     req.flash('error', 'There was an error deleting the image');
-    res.redirect('/users/manage-images');
+    res.status(200).redirect('/users/manage-images');
+    return;
   })
 });
 
