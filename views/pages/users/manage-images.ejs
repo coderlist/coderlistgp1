@@ -64,7 +64,7 @@
     <h1> Image List </h1>
       <% if (typeof imageList == 'object' && imageList) { %>
     <main>
-      <!-- <form> -->
+      <form>
       <% imageList.map(function(image){ %>
         <div class="flexParent">
           <div class="imageId"><%= (typeof image == 'object' && image) ? image.image_id : ''%></div>
@@ -74,11 +74,11 @@
           <div class="imagePage"><%= (typeof image == 'object' && image) ? image.page_image : ''%></div>
           <div class="imageBanner"><%= (typeof image == 'object' && image) ? image.banner_image : ''%></div>
           <div class="imageUploadedImages"><%= (typeof image == 'object' && image) ? image.uploaded_images : ''%></div>
-          <button class="btn-delete" type="submit" formaction="/delete-image/:<%=image.image_id%>">Delete Image</button>
+          <button class="btn-delete" type="submit" formmethod="post" formaction="/users/manage-images/<%=image.image_id%>">Delete Image</button>      
         </div>
         <br />
       <% }) %>
-    <!-- </form> -->
+    </form>
         
     </main>
     <% } %>
