@@ -5,16 +5,13 @@ const overlay = document.querySelector('.overlay');
 const title = document.querySelector('.overlay-alert-message h4').textContent;
 
 // All the delete messages are returning undefined due to not being able to reach the .delete routes
-function deleteThisUser(url, user_id){  //hello filipe Hi kristian :D
+function deleteThisUser(user_id){  //hello filipe Hi kristian :D
     console.log("USER ID:", user_id);
-    fetch(`/${url}/${user_id}`, {
+    return fetch('users/delete-user/' + user_id, {
         method: 'DELETE',
-        headers: {
-            'Content-Type' : 'application/json'
-        },
-        credentials: 'include',
         mode: 'cors'
     }).then(response => {
+        console.log(response.ok);
         return response;
     })
     .then(message => {
@@ -22,16 +19,13 @@ function deleteThisUser(url, user_id){  //hello filipe Hi kristian :D
     })
     .catch(error => console.log(`There was an error: ${error}`));
 }
-function deleteThisPage(url, page_id){
+function deleteThisPage(page_id){
     console.log("PAGE ID:", page_id);
-    fetch(`/${url}/${page_id}`, {
+    return fetch('users/delete-page/' + page_id, {
         method: 'DELETE',
-        headers: {
-            'Content-Type' : 'application/json'
-        },
-        credentials: 'include',
         mode: 'cors'
     }).then(response => {
+        console.log(response.ok);
         return response;
     })
     .then(message => {
@@ -39,16 +33,13 @@ function deleteThisPage(url, page_id){
     })
     .catch(error => console.log(`There was an error: ${error}`));
 }
-function deleteThisPDF(url, pdf_name){
+function deleteThisPDF(pdf_name){
     console.log("PDF NAME:", pdf_name);
-    fetch(`/${url}/${pdf_name}`, {
+    return fetch('users/manage-pdfs/' + pdf_name, {
         method: 'DELETE',
-        headers: {
-            'Content-Type' : 'application/json'
-        },
-        credentials: 'include',
         mode: 'cors'
     }).then(response => {
+        console.log(response.ok);
         return response;
     })
     .then(message => {
@@ -88,11 +79,11 @@ const setVariablesDataFromHiddenInputFields = function(id, name){
 const confirmDeleteMessage = function (event){
     event.preventDefault();
     switch(title){
-        case "Delete User": deleteThisUser('/delete-user', inputFieldId);
+        case "Delete User": deleteThisUser(inputFieldId);
             break;
-        case "Delete Page": deleteThisPage('/delete-page', inputFieldId);
+        case "Delete Page": deleteThisPage(inputFieldId);
             break;
-        case "Delete PDF": deleteThisPDF('/manage-pdfs', inputFieldName);
+        case "Delete PDF": deleteThisPDF(inputFieldName);
             break;
     }
 }
