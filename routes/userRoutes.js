@@ -36,13 +36,15 @@ const {
   getPages,
   getPagebyID,
   deletePageById,
-  updatePageContentById
+  updatePageContentById,
+  updatePageContentByIdNoBanner
 } = require('../server/models/pages');
 const {
   insertBannerImage,
   getAllImages,
   deleteImageObjectByImageId,
-  getAllImagesData
+  getAllImagesData,
+  createImageObjComplete
 } = require('../server/models/images');
 const {
   createParentNavItem,
@@ -66,7 +68,7 @@ let storage = multer.diskStorage({
   },
   filename: function (req, file, next) {
     const ext = file.mimetype.split('/')[1];
-    req.fileLocation = file.fieldname + '-' + Date.now() + '.' + ext
+    req.fileLocation = 'image' + '-' + Date.now() + '.' + ext
     next(null, req.fileLocation);
   },
   fileFilter: function (req, file, next) {
@@ -91,7 +93,7 @@ let storage2 = multer.diskStorage({
   },
   filename: function (req, file, next) {
     const ext = file.mimetype.split('/')[1];
-    req.fileLocation = file.fieldname + '-' + Date.now() + '.' + ext
+    req.fileLocation = 'image' + '-' + Date.now() + '.' + ext
     next(null, req.fileLocation);
   },
   fileFilter: function (req, file, next) {
@@ -178,22 +180,19 @@ userRoutes.use(messageTitles.setMessageTitles);
 // });
 
 userRoutes.get('/dashboard', (req, res) => {
-  console.log(req);
   listUsers(0, 9)
   .then(function(userData){
-  getPages(9) //this need to be thought more about. THis just gets the first 10 pages
-  .then(function(pageData){
-    res.status(200).render('pages/users/dashboard.ejs', { 
-      users : userData,
-      pages : pageData,
-      messages: req.flash('info')
+    getPages(9) //this need to be thought more about. THis just gets the first 10 pages
+    .then(function(pageData){
+      res.status(200).render('pages/users/dashboard.ejs', { 
+        users : userData,
+        pages : pageData,
+        messages: req.flash('info')
+      })
+    })
+  }).catch(function(err){
+    console.log('err :', err);
   })
-  
-}).catch(function(err){
-  console.log('err :', err);
-})
-  
-});
   return;
 });
 
@@ -292,7 +291,7 @@ userRoutes.post('/manage-pdfs', PDFPostTitleCheck, PDFUpload.single('pdf'), func
     res.status(200).redirect('/users/manage-pdfs');
     return;
   }
-  console.log('req.file :', req.file);
+  // console.log('req.file :', req.file);
   req.flash('info', 'PDF Uploaded')
   res.status(200).redirect('users/manage-pdfs.ejs', { 
   })
@@ -393,13 +392,14 @@ const pageIDCheck = [
 
 userRoutes.get('/edit-page/:page_id', pageIDCheck, function (req, res) {
   let errors = validationResult(req);
-  if (!errors) {
+  if (!errors.isEmpty()) {
     req.flash('info', 'invalid pageID');
-    res.status(200).redirect('/users/edit-page');
+    res.status(200).redirect('/users/dashboard');
+    return;
   }
+  console.log('req.params.page_id :', req.params);
   let pageID = parseInt(req.params.page_id);
   console.log('page_id :', pageID);
-  console.log('errors :', errors.array());
   getPagebyID(pageID)
   .then(function(data){
     console.log('data :', data);
@@ -422,7 +422,12 @@ userRoutes.get('/edit-page/:page_id', pageIDCheck, function (req, res) {
       res.status(200).render('pages/users/edit-page.ejs', {page: data[0], messages: req.flash('info')});
       return;
     })
-  })
+  }).catch(function(err){
+    console.log('err :', err);
+    req.flash('error', 'There was a system error. Please contact your administrator');
+    res.status(200).render('pages/users/edit-page.ejs', {messages: req.flash('info')});
+    return;
+  });
 })
 
 ////////////////////    Change password while authenticated ////////////////////
@@ -495,6 +500,30 @@ userRoutes.post('/change-password', passwordCheck, (req, res) => {
 
 
 /////////////       Create users           /////////////////////////
+
+userRoutes.post('/update-banner', upload.single('image'), function(req, res){
+  //send updated banner to banner_location  pages table
+  console.log('req.body :', req.body);
+  page.banner_location = `/images/${req.file.filename}`
+  let image = {
+    banner_location: `/images/${req.file.filename}`,
+    filename: req.file.filename,
+    banner_image: true,
+    uploaded_images: true,
+    page_image: false
+  }
+  createImageObjComplete(image)
+  .then(function(){
+    req.flash('info','Banner updated');
+    res.status(200).redirect('/users/dashboard');
+    return;
+  }).catch(function(err){
+    req.flash('error','There was a system error. Please contact your administrator');
+    res.status(200).redirect('/users/dashboard');
+    return;
+  })
+})
+
 
 userRoutes.get('/:name-user', function (req, res) {  /// this user parameter is not sanitised...?
   const url = req.url;
@@ -824,6 +853,7 @@ userRoutes.post('/upload-images', upload.single('image'), (req, res) => {
   } else {
     req.flash('info', 'File received');
     res.status(200).redirect('/users/upload-images')
+    return;
   }
 })
 
@@ -944,7 +974,7 @@ userRoutes.post('/create-page', postCreatePageCheck, upload.single('image'), fun
     return;
   }
   
-  console.log('req.file :', req.file);
+  // console.log('req.file :', req.file);
   
   page.banner_location = `/images/${req.file.filename}`
   let image = {
@@ -961,7 +991,7 @@ userRoutes.post('/create-page', postCreatePageCheck, upload.single('image'), fun
     console.log('err :', err);
     req.flash('info', 'Failure adding image to db')
   })
-  console.log('req.file :', req.file);
+  // console.log('req.file :', req.file);
   console.log('page :', page);
   // i would like page id from the db please
   createPage(page).then(function(data){
@@ -995,16 +1025,15 @@ userRoutes.post('/edit-page', postEditPageCheck, function(req, res){
     last_edited_date: Date.now()
   }
   console.log('page :', page);
-  console.log('req.body :', req.body);
+  // console.log('req.body :', req.body);
   if (!errors.isEmpty) {
     req.flash('info','Invalid page data');
     res.status(200).redirect('/users/edit-page', {page : page});
     return;
   }
  
-  
-  // i would like page id from the db please
-  updatePageContentById(page).then(function(data){
+   // i would like page id from the db please
+  updatePageContentByIdNoBanner(page).then(function(data){
     req.flash('info', 'Page updated successfully');
     res.status(200).redirect('/users/dashboard');
   }).catch(function(err){
@@ -1023,6 +1052,7 @@ deletePageCheck = [
 userRoutes.delete('/delete-page/:page_id', deletePageCheck, function(req, res){
   let errors = validationResult(req);
   if (!errors.isEmpty()) {
+    console.log('req.params.page_id :', req.params.page_id);
     // req.flash('info', 'Invalid Page ID');
     // res.status(200).redirect('/users/dashboard');
     res.json({ status: "FAILURE", message: 'Invalid page id', location: "/users/dashboard" });
@@ -1070,10 +1100,27 @@ userRoutes.delete('/delete-page/:page_id', deletePageCheck, function(req, res){
 
 userRoutes.post('/upload-file', fileUpload.single('upload'), function(req, res){
   console.log('req.file :', req.file);
+  let image = {
+    banner_location: `/images/${req.file.filename}`,
+    filename: req.file.filename,
+    banner_image: false,
+    uploaded_images: true,
+    page_image: true
+  }
+  createImageObjComplete(image)
+  .then(function(){
     res.json({
       "uploaded": 1,
       "fileName": req.file.filename,
       "url": `/images/${req.file.filename}` //this is the response ckeditor requires to immediately load the image and provide a positive message
+    })
+  }).catch(function(err) {
+    res.json({
+      "uploaded": 0,
+      "error": {
+        "message": `There was an error uploading the file, err: ${err}`
+      }
+    })
   })
 });
 

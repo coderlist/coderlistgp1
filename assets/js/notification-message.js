@@ -5,9 +5,9 @@ const overlay = document.querySelector('.overlay');
 const title = document.querySelector('.overlay-alert-message h4').textContent;
 
 // All the delete messages are returning undefined due to not being able to reach the .delete routes
-function deleteThisUser(user_id){  //hello filipe Hi kristian :D
+function deleteThisUser(url, user_id){  
     console.log("USER ID:", user_id);
-    return fetch('users/delete-user/' + user_id, {
+    fetch(`${url}/${user_id}`, {
         method: 'DELETE',
         mode: 'cors'
     }).then(response => {
@@ -21,7 +21,7 @@ function deleteThisUser(user_id){  //hello filipe Hi kristian :D
 }
 function deleteThisPage(page_id){
     console.log("PAGE ID:", page_id);
-    return fetch('users/delete-page/' + page_id, {
+    fetch(`${url}/${page_id}`, {
         method: 'DELETE',
         mode: 'cors'
     }).then(response => {
@@ -35,7 +35,7 @@ function deleteThisPage(page_id){
 }
 function deleteThisPDF(pdf_name){
     console.log("PDF NAME:", pdf_name);
-    return fetch('users/manage-pdfs/' + pdf_name, {
+    fetch(`${url}/${pdf_name}`, {
         method: 'DELETE',
         mode: 'cors'
     }).then(response => {
@@ -79,11 +79,11 @@ const setVariablesDataFromHiddenInputFields = function(id, name){
 const confirmDeleteMessage = function (event){
     event.preventDefault();
     switch(title){
-        case "Delete User": deleteThisUser(inputFieldId);
+        case "Delete User": deleteThisUser('/users/delete-user', inputFieldId);
             break;
-        case "Delete Page": deleteThisPage(inputFieldId);
+        case "Delete Page": deleteThisPage('/users/delete-page', inputFieldId);
             break;
-        case "Delete PDF": deleteThisPDF(inputFieldName);
+        case "Delete PDF": deleteThisPDF('/users/manage-pdfs', inputFieldName);
             break;
     }
 }
