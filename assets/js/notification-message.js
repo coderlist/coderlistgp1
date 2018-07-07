@@ -7,11 +7,11 @@ const title = document.querySelector('.overlay-alert-message h4').textContent;
 // All the delete messages are returning undefined due to not being able to reach the .delete routes
 function deleteThisUser(url, user_id){  
     console.log("USER ID:", user_id);
-    fetch(`${url}/${user_id}`, {
+    return fetch(`${url}/${user_id}`, {
         method: 'DELETE',
         mode: 'cors'
     }).then(response => {
-        console.log(response.ok);
+        console.log(response);
         return response;
     })
     .then(message => {
@@ -19,27 +19,30 @@ function deleteThisUser(url, user_id){
     })
     .catch(error => console.log(`There was an error: ${error}`));
 }
-function deleteThisPage(page_id){
+function deleteThisPage(url, page_id){
     console.log("PAGE ID:", page_id);
-    fetch(`${url}/${page_id}`, {
+    return fetch(`${url}/${page_id}`, {
         method: 'DELETE',
         mode: 'cors'
     }).then(response => {
-        console.log(response.ok);
+        console.log(response);
         return response;
     })
     .then(message => {
+        if(message.ok == 200 ){
+            window.location.href = '/dashboard';
+        }
         console.log(message.status);
     })
     .catch(error => console.log(`There was an error: ${error}`));
 }
-function deleteThisPDF(pdf_name){
+function deleteThisPDF(url, pdf_name){
     console.log("PDF NAME:", pdf_name);
-    fetch(`${url}/${pdf_name}`, {
+    return fetch(`${url}/${pdf_name}`, {
         method: 'DELETE',
-        mode: 'cors'
+        mode: 'same-origin'
     }).then(response => {
-        console.log(response.ok);
+        
         return response;
     })
     .then(message => {
