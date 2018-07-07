@@ -188,10 +188,10 @@ userRoutes.get('/dashboard', (req, res) => {
         pages : pageData,
         messages: req.flash('info')
       })
-    }).catch(function(err){
-      console.log('err :', err);
     })
-  });
+  }).catch(function(err){
+    console.log('err :', err);
+  })
   return;
 });
 
@@ -391,10 +391,12 @@ const pageIDCheck = [
 
 userRoutes.get('/edit-page/:page_id', pageIDCheck, function (req, res) {
   let errors = validationResult(req);
-  if (!errors) {
+  if (!errors.isEmpty()) {
     req.flash('info', 'invalid pageID');
-    res.status(200).redirect('/users/edit-page');
+    res.status(200).redirect('/users/dashboard');
+    return;
   }
+  console.log('req.params.page_id :', req.params);
   let pageID = parseInt(req.params.page_id);
   console.log('page_id :', pageID);
   getPagebyID(pageID)
@@ -419,7 +421,12 @@ userRoutes.get('/edit-page/:page_id', pageIDCheck, function (req, res) {
       res.status(200).render('pages/users/edit-page.ejs', {page: data[0], messages: req.flash('info')});
       return;
     })
-  })
+  }).catch(function(err){
+    console.log('err :', err);
+    req.flash('error', 'There was a system error. Please contact your administrator');
+    res.status(200).render('pages/users/edit-page.ejs', {messages: req.flash('info')});
+    return;
+  });
 })
 
 ////////////////////    Change password while authenticated ////////////////////
@@ -492,6 +499,20 @@ userRoutes.post('/change-password', passwordCheck, (req, res) => {
 
 
 /////////////       Create users           /////////////////////////
+
+userRoutes.post('/update-banner', upload.single('image'), function(req, res){
+  //send updated banner to banner_location  pages table
+  page.banner_location = `/images/${req.file.filename}`
+  let image = {
+    banner_location: `/images/${req.file.filename}`,
+    filename: req.file.filename,
+    banner_image: true,
+    uploaded_images: true,
+    page_image: false
+  }
+  //insert image details into image table
+})
+
 
 userRoutes.get('/:name-user', function (req, res) {  /// this user parameter is not sanitised...?
   const url = req.url;
@@ -821,6 +842,7 @@ userRoutes.post('/upload-images', upload.single('image'), (req, res) => {
   } else {
     req.flash('info', 'File received');
     res.status(200).redirect('/users/upload-images')
+    return;
   }
 })
 
@@ -1066,10 +1088,27 @@ userRoutes.delete('/delete-page/:page_id', deletePageCheck, function(req, res){
 
 userRoutes.post('/upload-file', fileUpload.single('upload'), function(req, res){
   console.log('req.file :', req.file);
+  let image = {
+    banner_location: `/images/${req.file.filename}`,
+    filename: req.file.filename,
+    banner_image: false,
+    uploaded_images: true,
+    page_image: true
+  }
+  createImageObj(image)
+  .then(function(){
     res.json({
       "uploaded": 1,
       "fileName": req.file.filename,
       "url": `/images/${req.file.filename}` //this is the response ckeditor requires to immediately load the image and provide a positive message
+    })
+  }).catch(function(err) {
+    res.json({
+      "uploaded": 0,
+      "error": {
+        "message": "There was an error uploading the file"
+      }
+    })
   })
 });
 
