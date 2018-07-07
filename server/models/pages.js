@@ -70,7 +70,7 @@ module.exports = {
   },
 
   getPagesByHomePageGrid(){
-    return queryHelper(`SELECT * FROM pages WHERE is_homepage_grid = true;`)
+    return queryHelper(`SELECT * FROM pages WHERE is_homepage_grid = true AND is_published = true;`)
       .then(response => response)
       .catch(e => {throw e})
   },
