@@ -503,6 +503,7 @@ userRoutes.post('/change-password', passwordCheck, (req, res) => {
 
 userRoutes.post('/update-banner', upload.single('image'), function(req, res){
   //send updated banner to banner_location  pages table
+  console.log('req.body :', req.body);
   page.banner_location = `/images/${req.file.filename}`
   let image = {
     banner_location: `/images/${req.file.filename}`,
@@ -511,7 +512,16 @@ userRoutes.post('/update-banner', upload.single('image'), function(req, res){
     uploaded_images: true,
     page_image: false
   }
-  //insert image details into image table
+  createImageObjComplete(image)
+  .then(function(){
+    req.flash('info','Banner updated');
+    res.status(200).redirect('/users/dashboard');
+    return;
+  }).catch(function(err){
+    req.flash('error','There was a system error. Please contact your administrator');
+    res.status(200).redirect('/users/dashboard');
+    return;
+  })
 })
 
 
@@ -1042,6 +1052,7 @@ deletePageCheck = [
 userRoutes.delete('/delete-page/:page_id', deletePageCheck, function(req, res){
   let errors = validationResult(req);
   if (!errors.isEmpty()) {
+    console.log('req.params.page_id :', req.params.page_id);
     // req.flash('info', 'Invalid Page ID');
     // res.status(200).redirect('/users/dashboard');
     res.json({ status: "FAILURE", message: 'Invalid page id', location: "/users/dashboard" });
