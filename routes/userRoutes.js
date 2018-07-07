@@ -37,7 +37,8 @@ const {
   getPagebyID,
   deletePageById,
   updatePageContentById,
-  updatePageContentByIdNoBanner
+  updatePageContentByIdNoBanner,
+  updateBannerLocationById
 } = require('../server/models/pages');
 const {
   insertBannerImage,
@@ -500,11 +501,20 @@ userRoutes.post('/change-password', passwordCheck, (req, res) => {
 
 
 /////////////       Create users           /////////////////////////
+const pageIDPostCheck = [
+  body('page_id').isInt()
+]
+
 
 userRoutes.post('/update-banner', upload.single('image'), function(req, res){
+  let errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    req.flash('info', 'invalid pageID');
+    res.status(200).redirect(`/users/edit-page/${req.body.page_id}`);
+    return;
+  }
   //send updated banner to banner_location  pages table
   console.log('req.body :', req.body);
-  page.banner_location = `/images/${req.file.filename}`
   let image = {
     banner_location: `/images/${req.file.filename}`,
     filename: req.file.filename,
@@ -512,16 +522,25 @@ userRoutes.post('/update-banner', upload.single('image'), function(req, res){
     uploaded_images: true,
     page_image: false
   }
+  const page = {
+    banner_location: `/images/${req.file.filename}`,
+    page_id: req.body.page_id
+  }
   createImageObjComplete(image)
   .then(function(){
-    req.flash('info','Banner updated');
-    res.status(200).redirect('/users/dashboard');
-    return;
+    console.log('page1 :', page);
+    updateBannerLocationById(page)  
+    .then(function(){
+      console.log('page2 :', page);
+      req.flash('info','Banner updated');
+      res.status(200).redirect('/users/dashboard');
+      return;
+    })
   }).catch(function(err){
     req.flash('error','There was a system error. Please contact your administrator');
     res.status(200).redirect('/users/dashboard');
     return;
-  })
+  });
 })
 
 
@@ -1074,7 +1093,7 @@ userRoutes.delete('/delete-page/:page_id', deletePageCheck, function(req, res){
             // req.flash('info', 'Page deleted');
             // req.method = "GET";
             // res.status(301).redirect('/users/dashboard');
-            res.json({ status: "SUCCESS", message: 'Page successfully deleted', location: "/users/dashboard" });
+            res.status(200).json({ status: "SUCCESS", message: 'Page successfully deleted', location: "/users/dashboard" });
             return;
           } else {
             // req.flash('info', 'Error. Page not deleted. Please contact your administrator');
@@ -1088,7 +1107,7 @@ userRoutes.delete('/delete-page/:page_id', deletePageCheck, function(req, res){
         // req.flash('info', 'You are not authorised to delete this page');
         // req.method = "GET";
         // res.status(301).redirect('/users/dashboard');
-        res.json({ status: "FAILURE", message: 'You are not authorised to delete this page.', location: "/users/dashboard"});
+        res.status(400).json({ status: "FAILURE", message: 'You are not authorised to delete this page.', location: "/users/dashboard"});
         return;
       }
     })
