@@ -43,7 +43,8 @@ const {
   insertBannerImage,
   getAllImages,
   deleteImageObjectByImageId,
-  getAllImagesData
+  getAllImagesData,
+  createImageObjComplete
 } = require('../server/models/images');
 const {
   createParentNavItem,
@@ -67,7 +68,7 @@ let storage = multer.diskStorage({
   },
   filename: function (req, file, next) {
     const ext = file.mimetype.split('/')[1];
-    req.fileLocation = file.fieldname + '-' + Date.now() + '.' + ext
+    req.fileLocation = 'image' + '-' + Date.now() + '.' + ext
     next(null, req.fileLocation);
   },
   fileFilter: function (req, file, next) {
@@ -92,7 +93,7 @@ let storage2 = multer.diskStorage({
   },
   filename: function (req, file, next) {
     const ext = file.mimetype.split('/')[1];
-    req.fileLocation = file.fieldname + '-' + Date.now() + '.' + ext
+    req.fileLocation = 'image' + '-' + Date.now() + '.' + ext
     next(null, req.fileLocation);
   },
   fileFilter: function (req, file, next) {
@@ -1095,7 +1096,7 @@ userRoutes.post('/upload-file', fileUpload.single('upload'), function(req, res){
     uploaded_images: true,
     page_image: true
   }
-  createImageObj(image)
+  createImageObjComplete(image)
   .then(function(){
     res.json({
       "uploaded": 1,
@@ -1106,7 +1107,7 @@ userRoutes.post('/upload-file', fileUpload.single('upload'), function(req, res){
     res.json({
       "uploaded": 0,
       "error": {
-        "message": "There was an error uploading the file"
+        "message": `There was an error uploading the file, err: ${err}`
       }
     })
   })
