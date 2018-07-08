@@ -10,6 +10,7 @@
     <% include ../partials/header.ejs %>
     <% include ../partials/delete-alert-message.ejs %>
     <% include ../partials/flash-message.ejs %>
+    <% include ../partials/drawer-pdfs.ejs %>
         <div class="my-3 my-md-5">
             <div class="container">
                 <div class="row">
@@ -45,7 +46,7 @@
                         <% if (title === "Create Page") { %>
                           <div class="form-group form-image">
                               <div class="card form-image-preview">
-                                  <img class="card-img-top img-top-preview" src="<%= (typeof page == 'object' && page) ? page.banner_location : '#' %>"
+                                  <img class="card-img-top img-top-preview" src="http://via.placeholder.com/300x300"
                                       alt="And this isn&#39;t my nose. This is a false one.">
                               </div>
                               <div class="form-image-preview-upload" action="/user/upload-images">
@@ -59,6 +60,7 @@
                         <% } %>
                     
                         <div class="card-footer text-right">
+                            <button name="drawer_pdfs" type="button" class="btn btn-success open-pdf-drawer">Get PDFs Links</button>
                             <% if (title === "Edit Page") { %> 
                             <button name="delete_page" type="button" class="btn btn-danger delete-this">Delete Page</button>
                             <% } %>
@@ -100,6 +102,7 @@
     </div>
     <% include ../partials/footer.ejs %>
     <!-- Scripts -->
+    <script src="/js/toggle-drawer.js"></script>
     <script src="/js/image-preview.js"></script>
     <script src="/js/alert-message.js"></script>
     <script src="/js/notification-message.js"></script>
