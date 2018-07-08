@@ -60,6 +60,22 @@ function deleteThisPDF(url, pdf_name){
     })
     .catch(error => console.log(`There was an error: ${error}`));
 }
+function deleteThisImage(url, image_name){
+    console.log("PDF NAME:", image_name);
+    return fetch(`${url}/${image_name}`, {
+        method: 'DELETE',
+        credentials: 'include',
+        mode: 'cors'
+    }).then(response => {
+        return response;
+    })
+    .then(message => {
+        if(message.status == 200 ){
+            window.location.href = '/users/manage-images';
+        }
+    })
+    .catch(error => console.log(`There was an error: ${error}`));
+}
 
 /* Toggle Warning Message */
 const toggleAlertMessage = function () {
@@ -84,7 +100,7 @@ const populateNotificationMessageContentWithName = function (index){
 /* This function sets above variables with data from hidden input fields */
 const setVariablesDataFromHiddenInputFields = function(id, name){
     /* We just need either the id for pages and users or the name for the pdf files */
-    inputFieldId = id,
+    inputFieldId = id;
     inputFieldName = name;
     console.log(inputFieldId, inputFieldName);
 };
@@ -97,6 +113,8 @@ const confirmDeleteMessage = function (event){
         case "Delete Page": deleteThisPage('/users/delete-page', inputFieldId);
             break;
         case "Delete PDF": deleteThisPDF('/users/manage-pdfs', inputFieldName);
+            break;
+        case "Delete Image": deleteThisPDF('/users/manage-images', inputFieldName);
             break;
     }
 }

@@ -1,0 +1,74 @@
+.main-layout {
+    font-size: 1rem;
+    padding-top: 2rem;
+    display: block;
+}
+.main-layout .row {
+    overflow: hidden;
+    height: 100%;
+    width: 100%;
+    clear: both;
+    margin-bottom: 1rem;
+}
+
+.main-layout hr {
+    border: 1px solid rgba( 000, 000, 000, 0.3);
+    width: 100%;
+} 
+.main-layout h1 , .main-layout h2, .main-layout h3 {
+    margin-bottom: 0.5rem;
+}
+.main-layout h1 {
+    font-weight: 700;
+    font-size: 1.5rem;
+}
+.main-layout h2 {
+    font-weight: 700;
+    font-size: 1rem;
+}
+.main-layout h3 {
+    font-weight: 700;
+    font-size: 0.8rem;
+}
+.main-layout p {
+    padding: 1rem 0;
+    line-height: 1.5rem;
+}
+.main-layout em {
+    font-style: italic;
+}
+.main-layout strong {
+    font-weight: 700;
+}
+.main-layout img {
+    height: auto;
+    width: 100%;
+}
+.main-layout ul, .main-layout ol {
+    padding: 0.5rem;
+}
+.main-layout ul li, .main-layout ol li {
+    margin-bottom: 0.5rem;
+}
+.main-layout ul li ul, .main-layout ol li ol,  .main-layout ul li ol, .main-layout ol li ul {
+    margin-bottom: 0.5rem;
+}
+.main-layout blockquote {
+    padding: 0.5rem 0;
+}
+.main-layout img.right
+{   
+    float: right;
+}
+.main-layout img.left
+{
+    float: left;
+}
+.main-layout span.right
+{
+    float: right;
+}
+.main-layout span.left
+{
+    float: left;
+}
