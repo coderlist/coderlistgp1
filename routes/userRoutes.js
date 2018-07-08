@@ -23,7 +23,7 @@ const {
   updatePassword,
   updateUserEmail,
   insertOldEmailObject,
-  listUsers,
+  listAllUsers,
   findEmailById,
   getUserById,
   updateUserName,
@@ -33,7 +33,7 @@ const {
 } = require('../server/models/users').user;
 const {
   createPage,
-  getPages,
+  getAllPages,
   getPagebyID,
   deletePageById,
   updatePageContentById,
@@ -181,9 +181,9 @@ userRoutes.use(messageTitles.setMessageTitles);
 // });
 
 userRoutes.get('/dashboard', (req, res) => {
-  listUsers(0, 9)
+  listAllUsers()
   .then(function(userData){
-    getPages(9) //this need to be thought more about. THis just gets the first 10 pages
+    getAllPages() //this need to be thought more about. THis just gets the first 10 pages
     .then(function(pageData){
       res.status(200).render('pages/users/dashboard.ejs', { 
         users : userData,
