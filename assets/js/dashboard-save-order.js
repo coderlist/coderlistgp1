@@ -11,7 +11,7 @@ function getThisTableItemData(index){
 }
 function saveThisTableItemInDB(data){
     console.log("DATA", data);
-    return fetch(``, {
+    return fetch(`/users/save-order:${thisTableItemData.pageId}`, {
         method: "POST",
         mode: "cors",
         credentials: "include",
@@ -24,7 +24,7 @@ function saveThisTableItemInDB(data){
     })
     .then(message => {
         if(message.status == 200){
-            window.location.href = '/users/manage-pdfs';
+            window.location.href = '/users/dashboard';
         }
         console.log(message);
     })

@@ -183,7 +183,7 @@ userRoutes.use(messageTitles.setMessageTitles);
 userRoutes.get('/dashboard', (req, res) => {
   listAllUsers()
   .then(function(userData){
-    getAllPages() //this need to be thought more about. THis just gets the first 10 pages
+    getAllPages() 
     .then(function(pageData){
       res.status(200).render('pages/users/dashboard.ejs', { 
         users : userData,
@@ -204,12 +204,7 @@ userRoutes.post('/dashboard', ckeditorPostCheck, (req, res) => {
   let errors = validationResult(req);
   if (!errors.isEmpty()) {
     req.flash('info', 'Invalid ckeditor data');
-    res.status(200).render('pages/users/dashboard.ejs', { 
-      users : userData,
-      pages : pageData,
-      content : req.body.content,
-      messages: req.flash('info')
-  })
+    res.status(200).redirect('users/dashboard.ejs') 
     return;
   }
   insertCallToAction(req.body.content)
@@ -269,7 +264,7 @@ userRoutes.get('/manage-pdfs', function (req, res) {
     }
       pdfs.map(function(pdf) {
       console.log('pdfs :', pdf);
-      const shortName = pdf.match(/([\w\s]*)/)[0] + ".pdf";
+      const shortName = pdf.match(/([\w\s]*)/)[0] + ".pdf";  //remove the random number to make displaying prettier
       pdfList.push({name: pdf, short: shortName, location: `/pdfs/${pdf}`})
     })
     console.log('pdfList :', pdfList);
