@@ -18,59 +18,24 @@
                     <div class="row row-cards row-deck">
                         <div class="col-lg-8">
                             <div class="row row-cards row-deck">
-                                <div class="card-column">
+                                <div class="card-column mx-4">
+                                    <input type="hidden" name="image_name" class="this_name" value="SOME NAME" />
+                                    <input type="hidden" name="image_id" class="this_id" value="Some ID" />
                                     <div class="card">
                                         <img class="card-img-top" src="http://via.placeholder.com/300x300" alt="Placeholder image">
                                         <div class="card-body d-flex flex-column">
+                                            <h4><a href="#">Image name with a link</a></h4>
                                             <div class="d-flex align-items-center pt-5 mt-auto">
                                                 <div class="card-options">
-                                                    <a href="#" class="btn btn-danger delete-this">Delete Image</a>
-                                                    <a href="#" class="btn btn-primary ml-2 copy-link">Copy Link</a>
+                                                    <button class="btn btn-danger delete-this">Delete Image</button>
+                                                    <button class="btn btn-primary ml-2 copy-link">Copy Link</button>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
-                                <div class="card-column">
-                                        <div class="card">
-                                            <img class="card-img-top" src="http://via.placeholder.com/300x300" alt="Placeholder image">
-                                            <div class="card-body d-flex flex-column">
-                                                <div class="d-flex align-items-center pt-5 mt-auto">
-                                                    <div class="card-options">
-                                                        <a href="#" class="btn btn-danger delete-this">Delete Image</a>
-                                                        <a href="#" class="btn btn-primary ml-2 copy-link">Copy Link</a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                <div class="card-column">
-                                            <div class="card">
-                                                <img class="card-img-top" src="http://via.placeholder.com/300x300" alt="Placeholder image">
-                                                <div class="card-body d-flex flex-column">
-                                                    <div class="d-flex align-items-center pt-5 mt-auto">
-                                                        <div class="card-options">
-                                                            <a href="#" class="btn btn-danger delete-this">Delete Image</a>
-                                                            <a href="#" class="btn btn-primary ml-2 copy-link">Copy Link</a>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                </div>
-                                <div class="card-column">
-                                        <div class="card">
-                                            <img class="card-img-top" src="http://via.placeholder.com/300x300" alt="Placeholder image">
-                                            <div class="card-body d-flex flex-column">
-                                                <div class="d-flex align-items-center pt-5 mt-auto">
-                                                    <div class="card-options">
-                                                        <a href="#" class="btn btn-danger delete-this">Delete Image</a>
-                                                        <a href="#" class="btn btn-primary ml-2 copy-link">Copy Link</a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
                                 </div>
                             </div>
+
                         </div>
                         <div class="col-md-3">
                             <div class="form-group form-image fixed-image-size">
@@ -90,7 +55,7 @@
                                 <div class="form-group">
                                     <div class="form-label">Choose file</div>
                                     <div class="custom-file">
-                                        <input type="file" class="custom-file-input img-button-upload" name="pdf">
+                                        <input type="file" class="custom-file-input img-button-upload" name="image_name">
                                         <label class="custom-file-label">Choose File</label>
                                     </div>
                                 </div>
