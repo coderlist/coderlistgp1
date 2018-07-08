@@ -9,10 +9,14 @@ function deleteThisUser(url, user_id){
     console.log("USER ID:", user_id);
     return fetch(`${url}/${user_id}`, {
         method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        credentials: 'include',
         mode: 'cors'
     }).then(response => {
         console.log(response);
-        return response;
+        return response.json();
     })
     .then(message => {
         console.log(message.status);
@@ -23,16 +27,20 @@ function deleteThisPage(url, page_id){
     console.log("PAGE ID:", page_id);
     return fetch(`${url}/${page_id}`, {
         method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        credentials: 'include',
         mode: 'cors'
     }).then(response => {
         console.log(response);
         return response;
     })
     .then(message => {
-        if(message.ok == 200 ){
-            window.location.href = '/dashboard';
-        }
         console.log(message.status);
+        if(message.status == 200 ){
+            window.location.href = '/users/dashboard';
+        }
     })
     .catch(error => console.log(`There was an error: ${error}`));
 }
@@ -40,13 +48,15 @@ function deleteThisPDF(url, pdf_name){
     console.log("PDF NAME:", pdf_name);
     return fetch(`${url}/${pdf_name}`, {
         method: 'DELETE',
-        mode: 'same-origin'
+        credentials: 'include',
+        mode: 'cors'
     }).then(response => {
-        
         return response;
     })
     .then(message => {
-        console.log(message.status);
+        if(message.status == 200 ){
+            window.location.href = '/users/manage-pdfs';
+        }
     })
     .catch(error => console.log(`There was an error: ${error}`));
 }

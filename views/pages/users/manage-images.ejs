@@ -1,90 +1,103 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 
 <head>
-    <% include ../../partials/head.ejs %>
-    <style>
-        .flexParent{
-          display: flex;
-          flex-direction: row;
-          justify-content: space-between;   
-          align-items: stretch;
-        }
-      
-        .imageId{
-          width: 1fr;
-        }
-      
-        .imageName {
-          width: 2fr;
-        }
-      
-        .imageCreated {
-          width: 3fr
-        }
-      
-        .imageLocation {
-          width: 3fr;
-        }
-      
-        .imagePage {
-          width: 3fr
-        }
-      
-        .imageBanner {
-          width: 1fr
-        }
-      
-        .imageUploadedImages {
-          width: 1fr;
-        }
-
-        .btn-delete {
-          background-color: red;
-          border-radius: 1em;
-          border: 0.5em;
-        }
-      </style>
+    <% include ../partials/head.ejs %>
 </head>
 
 <body>
-    <!-- This page will be used as a template, 
-        all the created pages should go between the main section;
-        This is in order to keep the design the same across all sections.
-    -->
-    <br />
-    <br />
-    <br />
-    <br />
-    <br />
-    <br />
-    <header>
-        <% include ../../partials/header.ejs %>
-    </header>
-    <h1> Image List </h1>
-      <% if (typeof imageList == 'object' && imageList) { %>
-    <main>
-      <form>
-      <% imageList.map(function(image){ %>
-        <div class="flexParent">
-          <div class="imageId"><%= (typeof image == 'object' && image) ? image.image_id : ''%></div>
-          <div class="imageName"><%= (typeof image == 'object' && image) ? image.image_name : ''%></div>
-          <div class="imageCreated"><%= (typeof image == 'object' && image) ? image.created : ''%></div>
-          <div class="imageLocation"><%= (typeof image == 'object' && image) ? image.location : ''%></div>
-          <div class="imagePage"><%= (typeof image == 'object' && image) ? image.page_image : ''%></div>
-          <div class="imageBanner"><%= (typeof image == 'object' && image) ? image.banner_image : ''%></div>
-          <div class="imageUploadedImages"><%= (typeof image == 'object' && image) ? image.uploaded_images : ''%></div>
-          <button class="btn-delete" type="submit" formmethod="post" formaction="/users/manage-images/<%=image.image_id%>">Delete Image</button>      
-        </div>
-        <br />
-      <% }) %>
-    </form>
-        
-    </main>
-    <% } %>
-    <footer>
-        <% include ../../partials/footer.ejs %>
-    </footer>
+    <% include ../partials/header.ejs %>
+        <% include ../partials/delete-alert-message.ejs %>
+            <div class="my-3 my-md-5">
+                <div class="container">
+                    <div class="page-header">
+                        <h1 class="page-title">
+                            Manage Image Files
+                        </h1>
+                    </div>
+                    <div class="row row-cards row-deck">
+                        <div class="row col-lg-9">
+                            <div class="card-column">
+                                <div class="card">
+                                    <a href="#">
+                                        <img class="card-img-top" src="http://via.placeholder.com/300x300" alt="Placeholder image">
+                                    </a>
+                                    <div class="card-body d-flex flex-column">
+                                        <div class="d-flex align-items-center pt-5 mt-auto">
+                                            <div class="card-options">
+                                                <a href="#" class="btn btn-danger delete-this">Delete Image</a>
+                                                <a href="#" class="btn btn-primary ml-2 copy-link">Copy Link</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-column">
+                                <div class="card">
+                                    <a href="#">
+                                        <img class="card-img-top" src="http://via.placeholder.com/300x300" alt="Placeholder image">
+                                    </a>
+                                    <div class="card-body d-flex flex-column">
+                                        <div class="d-flex align-items-center pt-5 mt-auto">
+                                            <div class="card-options">
+                                                <a href="#" class="btn btn-danger delete-this">Delete Image</a>
+                                                <a href="#" class="btn btn-primary ml-2 copy-link">Copy Link</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-column">
+                                <div class="card">
+                                    <a href="#">
+                                        <img class="card-img-top" src="http://via.placeholder.com/300x300" alt="Placeholder image">
+                                    </a>
+                                    <div class="card-body d-flex flex-column">
+                                        <div class="d-flex align-items-center pt-5 mt-auto">
+                                            <div class="card-options">
+                                                <a href="#" class="btn btn-danger delete-this">Delete Image</a>
+                                                <a href="#" class="btn btn-primary ml-2 copy-link">Copy Link</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group form-image fixed-image-size">
+                                <div class=" form-image-preview">
+                                    <img class="card-img-top img-top-preview" src="http://via.placeholder.com/300x300" alt="Placeholder image">
+                                </div>
+                            </div>
+                            <form method="post" enctype="multipart/form-data" class="card card-fixed-size form-upload-image-height">
+                                <div class="card-header">
+                                    <h3 class="card-title">Upload New Image</h3>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label">Title</label>
+                                    <input name="title" type="text" class="form-control" name="title" placeholder="Name" required>
+                                </div>
+                                <div class="form-group">
+                                    <div class="form-label">Choose file</div>
+                                    <div class="custom-file">
+                                        <input type="file" class="custom-file-input img-button-upload" name="pdf">
+                                        <label class="custom-file-label">Choose File</label>
+                                    </div>
+                                </div>
+                                <div class="card-footer text-right">
+                                    <button type="submit" class="btn btn-primary ml-auto">Upload Image</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <% include ../partials/footer.ejs %>
+                <!-- Scripts -->
+                <script src="/js/image-preview.js"></script>
+                <script src="/js/notification-message.js"></script>
+                <script src="/js/alert-message.js"></script>
 </body>
 
-</html> 
+</html>

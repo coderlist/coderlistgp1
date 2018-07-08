@@ -25,22 +25,87 @@ main {
     /* 960px / 16px = 60 */
     margin: 64px 1rem 1rem 1rem;
 }
-/* Heading styles */
-h1 {
-    font-size: 3rem;
+/*
+*
+*   Layout Styles
+*   For pages
+*
+*/
+.main-layout {
+    font-size: 1rem;
+    padding-top: 2rem;
+    display: block;
 }
-h2 {
-    font-size: 2.5rem;
+.main-layout .row {
+    overflow: hidden;
+    height: 100%;
+    width: 100%;
+    clear: both;
+    margin-bottom: 1rem;
 }
-h3 {
-    font-size: 2rem;
+
+.main-layout hr {
+    border: 1px solid rgba( 000, 000, 000, 0.3);
+    width: 100%;
+} 
+.main-layout h1 , .main-layout h2, .main-layout h3 {
+    margin-bottom: 0.5rem;
 }
-h4 {
+.main-layout h1 {
+    font-weight: 700;
     font-size: 1.5rem;
 }
-h5 {
+.main-layout h2 {
+    font-weight: 700;
     font-size: 1rem;
 }
+.main-layout h3 {
+    font-weight: 700;
+    font-size: 0.8rem;
+}
+.main-layout p {
+    padding: 1rem 0;
+    line-height: 1.5rem;
+}
+.main-layout em {
+    font-style: italic;
+}
+.main-layout strong {
+    font-weight: 700;
+}
+.main-layout img {
+    height: auto;
+    width: 100%;
+}
+.main-layout ul, .main-layout ol {
+    padding: 0.5rem;
+}
+.main-layout ul li, .main-layout ol li {
+    margin-bottom: 0.5rem;
+}
+.main-layout ul li ul, .main-layout ol li ol,  .main-layout ul li ol, .main-layout ol li ul {
+    margin-bottom: 0.5rem;
+}
+.main-layout blockquote {
+    padding: 0.5rem 0;
+}
+.main-layout img.right
+{   
+    float: right;
+}
+.main-layout img.left
+{
+    float: left;
+}
+.main-layout span.right
+{
+    float: right;
+}
+.main-layout span.left
+{
+    float: left;
+}
+
 /* header */
 
 header {
@@ -82,7 +147,9 @@ header {
 }
 
 /*  Mobile */
-
+.navbar ul, .navbar ol, .navbar li {
+    list-style: none;
+}
 .navbar .navbar-toggler-icon {
     width: 27px;
     cursor: pointer;
@@ -403,7 +470,7 @@ textarea {
         width: 100%;
     }
     main {
-        margin: 84px 1rem 1rem 1rem;
+        margin: 84px 1rem 2rem 1rem;
     }
     .navbar-brand {
         flex: 1;
@@ -425,7 +492,7 @@ textarea {
 
 @media screen and (min-width: 900px) {
     main {
-        margin: 84px auto 0 auto;
+        margin: 84px auto 2rem auto;
     }
     .form {
         width: 960px;

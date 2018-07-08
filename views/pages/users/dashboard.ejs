@@ -22,7 +22,7 @@
           <form method="post">
             <label class="form-label" for="callToAction">Call to Action Text</label>
             <textarea class="form-control" id="callToAction" name="content" rows="2" placeholder="Content.." required></textarea>
-            <button type="submit" class="btn btn-secondary">Submit Call to Action Text</button>
+            <button type="submit" class="btn btn-secondary mt-2">Create Call to Action Text</button>
           </form>
         </div>
         <div class="col-lg-12">
@@ -98,7 +98,6 @@
                 <% if (typeof pages === 'object') { %>
                   <tbody>
                     <% pages.map(function(page){%>
-                      <form action="/users/page-order" method="post">
                         <tr>
                           <input type="hidden" class="page_id" value="<%=page.page_id %>" />
                           <td>
@@ -109,20 +108,20 @@
                           </td>
                           <td>
                             <label class="custom-control custom-checkbox custom-control-inline">
-                              <input type="checkbox" class="custom-control-input" name="published" value="option1" <%= page.is_published ? "checked" : ""%>>
+                              <input type="checkbox" class="custom-control-input is-published" name="published" value="option1" <%= page.is_published ? "checked" : ""%>>
                               <span class="custom-control-label"></span>
                             </label>
                           </td>
                           <td>
                             <label class="custom-control custom-checkbox custom-control-inline">
-                              <input type="checkbox" class="custom-control-input" name="page_grid" value="option1"
+                              <input type="checkbox" class="custom-control-input is-homepage-grid" name="page_grid" value="option1"
                               <%= page.is_homepage_grid ? "checked" : ""%>>
                               <span class="custom-control-label"></span>
                             </label>
                           </td>
                           <td>
                             <label class="custom-control custom-checkbox custom-control-inline">
-                              <input type="checkbox" class="custom-control-input" name="navigation_bar" value="option1"
+                              <input type="checkbox" class="custom-control-input is-nav-menu" name="navigation_bar" value="option1"
                               <%= page.is_nav_menu ? "checked" : ""%>>
                               <span class="custom-control-label"></span>
                             </label>
@@ -131,9 +130,8 @@
                             <input type="text" class="form-control page-order" name="page_order" placeholder="1">
                           </td>
                           <td>
-                            <button name="update_changes" type="button" class="btn btn-secondary btn-sm">Save</button>
+                            <button name="update_changes" type="button" class="btn btn-secondary btn-sm save-this">Save</button>
                           </td>
-                        </form>
                         <td>
                           <a href="/users/edit-page/<%=page.page_id %>" class="btn btn-secondary btn-sm">Edit Page</a>
                         </td>
@@ -150,6 +148,7 @@
   </div>
   <% include ../partials/footer.ejs %>
   <!-- Scripts -->
+  <script src="/js/dashboard-save-order.js"></script>
   <script src="/js/notification-message.js"></script>
   <script src="/js/alert-message.js"></script>
   <script>
