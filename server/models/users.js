@@ -35,6 +35,15 @@ const user = {
       })
   },
 
+  listAllUsers() {
+    return queryHelper(`SELECT user_id, email, first_name, last_name, last_failed_login, last_succesful_login, 
+    creation_date FROM users ORDER BY user_id;`)
+      .then(response => response)
+      .catch(e => {
+        throw e
+      })
+  },
+
   /**
    * @param  {String} email
    * find user_id by email

@@ -23,7 +23,7 @@ const {
   updatePassword,
   updateUserEmail,
   insertOldEmailObject,
-  listUsers,
+  listAllUsers,
   findEmailById,
   getUserById,
   updateUserName,
@@ -33,7 +33,7 @@ const {
 } = require('../server/models/users').user;
 const {
   createPage,
-  getPages,
+  getAllPages,
   getPagebyID,
   deletePageById,
   updatePageContentById,
@@ -181,9 +181,9 @@ userRoutes.use(messageTitles.setMessageTitles);
 // });
 
 userRoutes.get('/dashboard', (req, res) => {
-  listUsers(0, 9)
+  listAllUsers()
   .then(function(userData){
-    getPages(9) //this need to be thought more about. THis just gets the first 10 pages
+    getAllPages() //this need to be thought more about. THis just gets the first 10 pages
     .then(function(pageData){
       res.status(200).render('pages/users/dashboard.ejs', { 
         users : userData,
@@ -309,21 +309,15 @@ PDFDeleteCheck = [
 userRoutes.delete('/manage-pdfs/:pdf_name', PDFDeleteCheck, function(req, res){
   let errors = validationResult(req);
   if (!errors.isEmpty()) {
-    // req.flash('info', 'Invalid PDF Name');
-    // res.status(200).redirect('/users/manage-pdfs');
-    res.json({ status: "FAILURE", message: 'Invalid PDF name', location: "/users/mangae-pdfs" });
+    res.status(200).json({ status: "FAILURE", message: 'Invalid PDF name', location: "/users/manage-pdfs" });
     return;
   }
   fs.unlink(`/assets/pdfs/${req.params.pdf_name}`)
   .then(function(){
-    // req.flash('info', 'PDF Deleted');
-    // res.redirect('/users/manage-pdfs');
-    res.json({ status: "SUCCESS", message: 'PDF successfully deleted', location: "/users/manage-pdfs" });
+    res.status(200).json({ status: "SUCCESS", message: 'PDF successfully deleted', location: "/users/manage-pdfs" });
     return;
   }).catch(function(err){
-    // req.flash('info', 'There was an error deleting the PDF file');
-    // res.redirect('/users/manage-pdfs');
-    res.json({ status: "FAILURE", message: 'There was an error deleting the PDF file', location: "/users/manage-pdfs" });
+    res.status(200).json({ status: "FAILURE", message: 'There was an error deleting the PDF file', location: "/users/manage-pdfs" });
     return;
   })
 });
@@ -335,16 +329,39 @@ userRoutes.get('/manage-images', function(req, res){
     console.log('data :', data);
     if(!data || data.length === 0) {
       req.flash('info', 'No images');
-      res.render('pages/users/manage-images', { message: req.flash('info'), messagesError: req.flash('error') } );
+      res.status(200).render('pages/users/manage-images', { message: req.flash('info'), messagesError: req.flash('error') } );
       return;
     }
     req.flash('info', 'No images');
-      res.render('pages/users/manage-images', { imageList: data, message: req.flash('info'), messagesError: req.flash('error') } );
+      res.status(200).render('pages/users/manage-images', { imageList: data, message: req.flash('info'), messagesError: req.flash('error') } );
       return;
   }).catch(function(err){
     console.log('err :', err);
     req.flash('error', 'There was an error loading the images');
-    res.redirect('/users/manage-images');
+    res.status(200).redirect('/users/manage-images');
+    return;
+  })
+});
+
+
+userRoutes.post('/manage-images/', upload.single('image'), function(req, res){  // needs to be converted to delete route
+  let errors = validationResult(req);
+
+  const image = {
+    banner_location: `/images/${req.file.filename}`,
+    filename: req.file.filename,
+    banner_image: false,
+    uploaded_images: true,
+    page_image: true
+  }
+  createImageObjComplete(image)
+  .then(function(data){    
+    req.flash('info', 'Image added');
+    res.status(200).redirect('/users/manage-images');
+    return;
+  }).catch(function(err){
+    req.flash('error', 'There was an error adding the image');
+    res.status(200).redirect('/users/manage-images');
     return;
   })
 });
@@ -353,7 +370,7 @@ imageDeleteCheck = [
   param('image_id').isAlphanumeric()
 ]
 
-userRoutes.post('/manage-images/:image_id', imageDeleteCheck, function(req, res){  // needs to be converted to delete route
+userRoutes.delete('/manage-images/:image_id', imageDeleteCheck, function(req, res){  // needs to be converted to delete route
   let errors = validationResult(req);
   if (!errors.isEmpty()) {
     req.flash('info', 'Invalid image Name');
@@ -1144,7 +1161,7 @@ userRoutes.post('/upload-file', fileUpload.single('upload'), function(req, res){
 });
 
 
-userRoutes.get('/get-server-images', function(req, res){
+userRoutes.get('/get-server-images', function(req, res){  // This supplies ckeditor with public images on the server in the form of json
   fs.readdir('assets/images', (err, images) => {
     let imagesJSON = [];
     images.map(function(image) {
