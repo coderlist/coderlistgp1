@@ -10,13 +10,12 @@
                         <th></th>
                     </tr>
                 </thead>
-                <% if ( typeof pdfList == 'object' && pdfList) { %> 
+                <% if ( typeof pdfs == 'object' && pdfs) { %> 
                 <tbody>
-                      <% pdfList.map(function(pdf){%>
+                      <% pdfs.map(function(pdf){%>
                         <tr>
                                 <td>
-                                    <a href="" data-name="">
-                                    </a>
+                                    <p><%= pdf.short%></p>
                                 </td>
                                 <td>
                                     <a href="<%= pdf.location%>" class="btn btn-secondary btn-sm">Open PDF</a>
