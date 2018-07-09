@@ -1202,7 +1202,7 @@ const pageSavePostCheck = [
 ]
 
 userRoutes.post('/save-order', function(req,res){
-  console.log('req.body :', req.body);
+  console.log('req.body :', req.body.pageId);
   let errors = validationResult(req);
   console.log('err :', errors.array());
   if (!errors.isEmpty()) {
