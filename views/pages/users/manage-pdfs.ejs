@@ -31,7 +31,7 @@
                                             <% if (typeof pdfList === 'object' && pdfList) { %>
                                               <% pdfList.map(function(pdf){ %>
                                                 <tr>
-                                                    <input type="hidden" name="pdf_name" class="this_name" value="<%=pdf.location%>" />
+                                                    <input type="hidden" name="pdf_name" class="this_name" value="<%=pdf.name%>" />
                                                     <input type="hidden" name="pdf_id" class="this_id" value="<%= pdf.id%>" />
                                                     <td>
                                                         <a href="<%=pdf.location%>" data-name="<%=pdf.name%>"><div><%=pdf.short%></div></a>
