@@ -36,8 +36,9 @@
                                         <tbody class="table-menu-items">
                                             <% for(var i = 0; i < 2; i++){ %> 
                                             <tr>
+                                                <input type="hidden" class="main-nav-item-id" value="null"/>
                                                 <td>
-                                                    <input type="text" class="form-control" name="page_name" placeholder="Workshops" >
+                                                    <input type="text" class="form-control" name="page_name" placeholder="Workshops">
                                                 </td>
                                                 <td>
                                                     <select name="menu_page" class="form-control custom-select">
@@ -47,10 +48,10 @@
                                                     </select>
                                                 </td>
                                                 <td>
-                                                    <input type="text" class="form-control page-order" name="page_order" placeholder="1" >
+                                                    <input type="text" class="form-control page-order" name="page_order" placeholder="1" value="">
                                                 </td>
                                                 <td>
-                                                    <a href="javascript:void(0)" class="btn btn-secondary btn-sm" >Save</a>  
+                                                    <button href="javascript:void(0)" class="btn btn-secondary btn-sm save-menu-item">Save</button>  
                                                 </td>
                                             </tr>
                                             <% }%>
@@ -68,7 +69,7 @@
                                     </div>
                                 </div>
                                 <div class="table-responsive">
-                                    <table class="table card-table table-vcenter text-nowrap ">
+                                    <table class="table card-table table-vcenter text-nowrap">
                                         <thead>
                                             <tr>
                                                 <th>Title</th>
@@ -81,6 +82,7 @@
                                         <tbody class="table-sub-menu-items">
                                             <% for(var i = 0; i < 2; i++){ %> 
                                             <tr>
+                                                <input type="hidden" class="sub-nav-item-id" value="null"/>
                                                 <td>
                                                     <input type="text" class="form-control" name="page_name" placeholder="Nursery Classes">
                                                 </td>
@@ -99,10 +101,10 @@
                                                     </select>
                                                 </td>
                                                 <td>
-                                                    <input type="text" class="form-control page-order" name="page_order" placeholder="1">
+                                                    <input type="text" class="form-control page-order" name="page_order" placeholder="1" value="">
                                                 </td>
                                                 <td>
-                                                    <a href="javascript:void(0)" class="btn btn-secondary btn-sm">Save</a>
+                                                    <button href="javascript:void(0)" class="btn btn-secondary btn-sm save-sub-menu-item">Save</button>
                                                 </td>
                                             </tr>
                                             <% }%>
