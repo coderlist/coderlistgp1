@@ -410,9 +410,8 @@ userRoutes.get('/edit-page/:page_id', pageIDCheck, function (req, res) {
     res.status(200).redirect('/users/dashboard');
     return;
   }
-  console.log('req.params.page_id :', req.params);
+
   let pageID = parseInt(req.params.page_id);
-  console.log('page_id :', pageID);
   getPagebyID(pageID)
   .then(function(data){
     console.log('data :', data);
@@ -421,19 +420,27 @@ userRoutes.get('/edit-page/:page_id', pageIDCheck, function (req, res) {
       res.status(200).redirect('/users/dashboard');
       return;
     }
-    getUserById(req.session.user_id)
+    getUserById(req.session.user_id) /// Would probably be better with promise.all
     .then(function(userData){
-      // console.log('userData :', userData);
-      // console.log('(!(req.session.isAdmin || req.session.email === data.created_by)) :', req.session.email, data[0].created_by,(!(req.session.isAdmin || req.session.email === data.created_by)));
       if (!(userData[0].is_admin || req.session.user_id === data[0].owner_id)) { // Check page ownership or admin
         req.flash('info', 'This is not your page to modify');
         res.status(200).redirect('/users/dashboard');
         return;  
       }
-      console.log('getshere');
-      req.flash('info', 'Page ready for editing');
-      res.status(200).render('pages/users/edit-page.ejs', {page: data[0], messages: req.flash('info')});
-      return;
+      let pdfList = [];
+      fs.readdir('assets/pdfs', (err, pdfs) => {
+        if (err) {
+          console.log('err :', err);
+        }
+        pdfs.map(function(pdf) {
+          console.log('pdfs :', pdf);
+          const shortName = pdf.match(/([\w\s]*)/)[0] + ".pdf";  //remove the random number to make displaying prettier
+          pdfList.push({name: pdf, short: shortName, location: `/pdfs/${pdf}`})
+          req.flash('info', 'Page ready for editing');
+          res.status(200).render('pages/users/edit-page.ejs', {page: data[0], messages: req.flash('info'), pdfs : pdfList});
+          return;
+        })
+      })
     })
   }).catch(function(err){
     console.log('err :', err);
