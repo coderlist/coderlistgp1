@@ -5036,6 +5036,32 @@ input[type="button"].btn-block {
   box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.2);
 }
 
+.drawer-pdfs-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 9999;
+  display: none; 
+}
+.drawer-pdfs-body {
+  position: absolute;
+  width: 500px;
+  background-color: rgb(255, 255, 255);
+  top: 30%;
+  left: 50%;
+  padding: 1rem;
+  transform: translateX(-50%);
+  animation-duration: 1s;
+  animation-name: slidein;
+}
+
+.close-drawer-pdfs {
+  padding: 1rem;
+}
+
 /* Animation for Flash Alert Message */
 @keyframes flashin {
   from {

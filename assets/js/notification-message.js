@@ -60,9 +60,9 @@ function deleteThisPDF(url, pdf_name){
     })
     .catch(error => console.log(`There was an error: ${error}`));
 }
-function deleteThisImage(url, image_name){
-    console.log("PDF NAME:", image_name);
-    return fetch(`${url}/${image_name}`, {
+function deleteThisImage(url, id){
+    console.log("Image NAME:", id);
+    return fetch(`${url}/${id}`, {
         method: 'DELETE',
         credentials: 'include',
         mode: 'cors'
@@ -81,8 +81,6 @@ function deleteThisImage(url, image_name){
 const toggleAlertMessage = function () {
     overlay.classList.toggle("show");
 };
-
-
 /* Necessary Variables for scalability */
 let inputFieldId = '';
 let inputFieldName = '';
@@ -114,7 +112,7 @@ const confirmDeleteMessage = function (event){
             break;
         case "Delete PDF": deleteThisPDF('/users/manage-pdfs', inputFieldName);
             break;
-        case "Delete Image": deleteThisPDF('/users/manage-images', inputFieldName);
+        case "Delete Image": deleteThisImage('/users/manage-images', inputFieldId);
             break;
     }
 }
