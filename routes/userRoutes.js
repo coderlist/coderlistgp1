@@ -29,7 +29,8 @@ const {
   updateUserName,
   deleteUserById,
   getIsUserAdmin,
-  createUser
+  createUser,
+  getUnverifiedUsers
 } = require('../server/models/users').user;
 const {
   createPage,
@@ -1203,7 +1204,7 @@ const pageSavePostCheck = [
 
 userRoutes.post('/save-order', function(req,res){
 
-  if (!Number.isInteger(parseInt(req.body.pageId)) || typeof req.body.isPublished != 'boolean' || typeof req.body.isNavMenuItem != 'boolean' || typeof req.body.isHomePageGrid != 'boolean' || !Number.isInteger(parseInt(req.body.pageOrderNumber))) {
+  if (!Number.isInteger(parseInt(req.body.pageId)) || typeof req.body.isPublished != 'boolean' || typeof req.body.isNavMenuItem != 'boolean' || typeof req.body.isHomePageGrid != 'boolean' || !Number.isInteger(parseInt(req.body.pageOrderNumber))) { // cannot get the json body to work with express validator 5
     console.log('failed :');
     req.flash('error', 'Invalid Page Data');
     res.status(200).redirect('/users/dashboard');
@@ -1228,8 +1229,20 @@ userRoutes.post('/save-order', function(req,res){
   })
  })
 
-userRoutes.get('unverified-users', function(req, res){
-
+userRoutes.get('/manage-users', function(req, res){
+  getIsUserAdmin(req.session.user_id)
+  .then(function(isAdmin){
+    if (!isAdmin) {
+      req.flash('error', 'You are not authorised to access the manage users page')
+      res.status(200).redirect('/users/dashboard')
+      return;
+    }
+    getUnverifiedUsers()
+    .then(function(users){
+      console.log(users)
+      res.status(200).render('pages/users/manage-users', { unverifiedUsers: users})
+    });
+  });
 })
 
 

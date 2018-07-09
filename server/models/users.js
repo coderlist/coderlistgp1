@@ -180,6 +180,11 @@ const user = {
       throw e
     })
   },
+  getUnverifiedUsers() {
+    return queryHelper('SELECT user_id, first_name, last_name, email FROM users WHERE verified = false')
+      .then(response => response)
+      .catch(e =>{throw e})
+  },
 
   /**
    * @param  {Object} user
