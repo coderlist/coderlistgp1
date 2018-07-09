@@ -1202,20 +1202,18 @@ const pageSavePostCheck = [
 ]
 
 userRoutes.post('/save-order', function(req,res){
-  console.log('req.body :', req.body.pageId);
-  let errors = validationResult(req);
-  console.log('err :', errors.array());
-  if (!errors.isEmpty()) {
-    console.log('err :', err);
+
+  if (!Number.isInteger(parseInt(req.body.pageId)) || typeof req.body.isPublished != 'boolean' || typeof req.body.isNavMenuItem != 'boolean' || typeof req.body.isHomePageGrid != 'boolean' || !Number.isInteger(parseInt(req.body.pageOrderNumber))) {
+    console.log('failed :');
     req.flash('error', 'Invalid Page Data');
     res.status(200).redirect('/users/dashboard');
     return;
   }
   const page = {
-    page_id: req.body.pageId,
+    page_id: parseInt(req.body.pageId),
     is_published: req.body.isPublished,
     is_nav_menu: req.body.isNavMenuItem,
-    order_number: req.body.pageOrderNumber,
+    order_number: parseInt(req.body.pageOrderNumber),
     is_homepage_grid: req.body.isHomePageGrid
   }
 
@@ -1230,13 +1228,16 @@ userRoutes.post('/save-order', function(req,res){
   })
  })
 
-//////////////         end of change email whilst validated ////////////////
+userRoutes.get('unverified-users', function(req, res){
 
-/* userRoutes.all('*', (req, res) => {
+})
+
+
+ userRoutes.all('*', (req, res) => {
   res.status(200).render('pages/public/unknown.ejs', {
     url: req.url
   });
   return;
-});*/
+});
 
 module.exports = userRoutes;
