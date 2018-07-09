@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <% include ../../partials/head.ejs %>
+    <style>
+        .flexParent{
+          display: flex;
+          flex-direction: row;
+          justify-content: space-between;   
+          align-items: stretch;
+        }
+      
+        .userId{
+          width: 1fr;
+        }
+      
+        .userName {
+          width: 2fr;
+        }
+      
+        .userCreated {
+          width: 3fr
+        }
+      
+        .userLocation {
+          width: 3fr;
+        }
+      
+        .userPage {
+          width: 3fr
+        }
+      
+        .userBanner {
+          width: 1fr
+        }
+      
+        .userUploadedusers {
+          width: 1fr;
+        }
+
+        .btn-delete {
+          background-color: red;
+          border-radius: 1em;
+          border: 0.5em;
+        }
+      </style>
+</head>
+
+<body>
+    <!-- This page will be used as a template, 
+        all the created pages should go between the main section;
+        This is in order to keep the design the same across all sections.
+    -->
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <header>
+        <% include ../../partials/header.ejs %>
+    </header>
+    <h1> user List </h1>
+      <% if (typeof unverifiedUsers == 'object' && unverifiedUsers) { %>
+    <main>
+      <form method="post">
+      <% unverifiedUsers.map(function(user){ %>
+        <div class="flexParent">
+          <div class="userId"><%= (typeof user == 'object' && user) ? user.user_id : ''%></div>
+          <div class="firstName"><%= (typeof user == 'object' && user) ? user.first_name : ''%></div>
+          <div class="lastName"><%= (typeof user == 'object' && user) ? user.last_name : ''%></div>
+          <div class="email"><%= (typeof user == 'object' && user) ? user.email : ''%></div>
+          <button class="btn-info" type="submit" formmethod="post">Resend Veriffication Link</button>      
+          <!-- <button class="btn-delete" type="submit" formmethod="post" formaction="/users/delete-user">Delete User</button>       -->
+        </div>
+        <br />
+      <% }) %>
+    </form>
+        
+    </main>
+    <% } %>
+    <footer>
+        <% include ../../partials/footer.ejs %>
+    </footer>
+</body>
+
+</html> 
