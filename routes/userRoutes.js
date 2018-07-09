@@ -38,7 +38,8 @@ const {
   deletePageById,
   updatePageContentById,
   updatePageContentByIdNoBanner,
-  updateBannerLocationById
+  updateBannerLocationById,
+  updatePageLocationsById
 } = require('../server/models/pages');
 const {
   insertBannerImage,
@@ -1192,32 +1193,35 @@ userRoutes.get('/get-server-images', function(req, res){  // This supplies ckedi
   })
 })
 
-pageOrderPostCheck = [
-  body('page_id').isInt().exists,
-  body('is_published').isBoolean(),
-  body('is_nav_menu').isBoolean(),
-  body('is_homepage_grid').isBoolean(),
-  body('page_order_number').isInt()
+const pageSavePostCheck = [
+  check('pageId').isInt().exists,
+  check('isPublished').isBoolean(),
+  check('isNavMenuItem').isBoolean(),
+  check('isHomePageGrid').isBoolean(),
+  check('pageOrderNumber').isInt()
 ]
 
-userRoutes.post('/page-order', pageOrderPostCheck, function(req,res){
+userRoutes.post('/save-order', function(req,res){
+  console.log('req.body :', req.body.pageId);
   let errors = validationResult(req);
+  console.log('err :', errors.array());
   if (!errors.isEmpty()) {
+    console.log('err :', err);
     req.flash('error', 'Invalid Page Data');
     res.status(200).redirect('/users/dashboard');
     return;
   }
   const page = {
-    page_id: req.body.page_id,
-    is_published: req.body.is_published,
-    is_nav_menu: req.body.is_nav_menu,
-    order_number: req.body.page_order_number,
-    is_homepage_grid: req.body.is_homepage_grid
+    page_id: req.body.pageId,
+    is_published: req.body.isPublished,
+    is_nav_menu: req.body.isNavMenuItem,
+    order_number: req.body.pageOrderNumber,
+    is_homepage_grid: req.body.isHomePageGrid
   }
 
-  updatePageContentById(page)
+  updatePageLocationsById(page)
   .then(function(data){
-    console.log('data :', data);
+    res.status(200).redirect('/users/dashboard');
   }).catch(function(err){
     console.log('err :', err);
     req.flash('error', 'There was an error');

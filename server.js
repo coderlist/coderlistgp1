@@ -5,6 +5,7 @@ if(!process.env.NODE_ENV) {
 const passport = require('./auth/local');
 const express = require('express');
 const bodyParser = require('body-parser');
+
 const routes = require('./routes/index');
 
 const logger = require('morgan');
@@ -24,6 +25,8 @@ app.set('view engine', 'ejs');
 app.use(logger('dev'));
 app.use(express.static('assets', {}));
 app.use(bodyParser.urlencoded({ extended :true }));
+app.use(express.json());
+// app.use(bodyParser.json());
 app.use(session({
   store: new pgSession({
     pool,                
