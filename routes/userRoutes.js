@@ -328,7 +328,7 @@ userRoutes.get('/manage-images', function(req, res){
       return;
     }
     req.flash('info', 'No images');
-      res.status(200).render('pages/users/manage-images', { imageList: data, message: req.flash('info'), messagesError: req.flash('error') } );
+      res.status(200).render('pages/users/manage-images', { images: data, message: req.flash('info'), messagesError: req.flash('error') } );
       return;
   }).catch(function(err){
     console.log('err :', err);
@@ -374,8 +374,8 @@ userRoutes.delete('/manage-images/:image_id', imageDeleteCheck, function(req, re
   }
   console.log('req.params.image_id :', req.params.image_id);
   deleteImageObjectByImageId(req.params.image_id)
-  .then(function(data){    
-    fs.unlink(`assets/images/${data.image_name}`, (err) => {
+  .then(function(data){  
+    fs.unlink(`assets/images/${data[0].image_name}`, (err) => {
       if (err) { console.log('err :', err); }
       req.flash('info', 'Image Deleted');
       res.status(200).redirect('/users/manage-images');
@@ -396,7 +396,20 @@ userRoutes.get('/profile', function (req, res) {
 })
 
 userRoutes.get('/edit-page', function (req, res) { //  with no id number this should just create a page
-  res.status(200).render('pages/users/edit-page.ejs', {messages: req.flash('info')})
+  let pdfList = [];
+  fs.readdir('assets/pdfs', (err, pdfs) => {
+    if (err) {
+      console.log('err :', err);
+    }
+    pdfs.map(function(pdf) { //refactor two of these now
+      console.log('pdfs :', pdf);
+      const shortName = pdf.match(/([\w\s]*)/)[0] + ".pdf";  //remove the random number to make displaying prettier
+      pdfList.push({name: pdf, short: shortName, location: `/pdfs/${pdf}`})
+    })
+    req.flash('info', 'Page ready for editing');
+    res.status(200).render('pages/users/edit-page.ejs', {messages: req.flash('info'), pdfs : pdfList});
+    return;
+  })
 })
 
 const pageIDCheck = [
@@ -432,14 +445,14 @@ userRoutes.get('/edit-page/:page_id', pageIDCheck, function (req, res) {
         if (err) {
           console.log('err :', err);
         }
-        pdfs.map(function(pdf) {
+        pdfs.map(function(pdf) { //refactor two of these now
           console.log('pdfs :', pdf);
           const shortName = pdf.match(/([\w\s]*)/)[0] + ".pdf";  //remove the random number to make displaying prettier
           pdfList.push({name: pdf, short: shortName, location: `/pdfs/${pdf}`})
-          req.flash('info', 'Page ready for editing');
-          res.status(200).render('pages/users/edit-page.ejs', {page: data[0], messages: req.flash('info'), pdfs : pdfList});
-          return;
         })
+        req.flash('info', 'Page ready for editing');
+        res.status(200).render('pages/users/edit-page.ejs', {page: data[0], messages: req.flash('info'), pdfs : pdfList});
+        return;
       })
     })
   }).catch(function(err){

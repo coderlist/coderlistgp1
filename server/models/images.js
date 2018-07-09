@@ -71,7 +71,7 @@ module.exports = {
 
   deleteImageObjectByImageId(id){
     return queryHelper(`
-    DELETE FROM images where image_id=${id}
+    DELETE FROM images where image_id=${id} RETURNING *
   `).then(response => response)
   .catch(e =>{throw e})
   },
