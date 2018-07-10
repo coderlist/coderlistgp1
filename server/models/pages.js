@@ -9,9 +9,9 @@ const {queryHelper} = require('../../helperFunctions/query/queryHelper');
 
 module.exports = {
   createPage(body) {
-    return queryHelper(`INSERT INTO pages (created_by,banner_location,title,page_description,order_number,ckeditor_html)
+    return queryHelper(`INSERT INTO pages (created_by,banner_location,title,page_description,order_number,ckeditor_html, is_published)
                        VALUES (${body.created_by},'${body.banner_location}','${body.title}',
-                       '${body.page_description}','${body.order_number}', '${body.ckeditor_html}')`)
+                       '${body.page_description}','${body.order_number}', '${body.ckeditor_html}', '${body.is_published}')`)
         .then(response => console.log('PAGE CREATED'))
         .catch(e => {console.log('e :', e); throw e})
   },

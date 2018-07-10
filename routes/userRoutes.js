@@ -222,8 +222,7 @@ userRoutes.post('/dashboard', ckeditorPostCheck, (req, res) => {
     res.status(200).redirect('users/dashboard.ejs') 
     return;
   }
-  req.body.content = sanitizeHtml(req.body.content, allowedCkeditorItems)
-  req.body.content = escape(req.body.content);
+  req.body.content = sanitizeHtml(req.body.content, allowedCkeditorItems);
   insertCallToAction(req.body.content)
   .then(function(){
     req.flash('info', 'Call to action text saved');
@@ -676,12 +675,8 @@ userRoutes.get('/admin', (req, res) => {
   });
 });
 
-const ckeditorHTMLValidation = [
-  sanitize('ckeditorHTML').escape().trim()
-];
 
 userRoutes.post('/admin', (req, res) => {
-  console.log('req.body.ckeditorHTML:', req.body.ckeditorHTML);
   res.status(200).render('pages/users/admin.ejs', {
     messages: req.flash("info"),
     ckeditorData: req.body.ckeditorHTML || ""
@@ -1024,7 +1019,7 @@ userRoutes.post('/page-navmenu-request', function(req,res){
 
 postCreatePageCheck = [
   body('title').isAlphanumeric(),
-  body('content').exists().escape(), // ensure sanitised in and out of db
+  body('content').exists(), // ensure sanitised in and out of db
   body('description').isAlphanumeric(),
   body('publish_page').isBoolean()
 ]
@@ -1036,7 +1031,7 @@ userRoutes.post('/create-page', postCreatePageCheck, upload.single('image'), fun
     created_by: req.session.user_id,
     last_edited_by: req.session.user_id,
     title: req.body.title,
-    ckeditor_html: escape(req.body.content),
+    ckeditor_html: req.body.content,
     page_description: req.body.description,
     order_number: 1,
     is_published: req.body.publish_page
