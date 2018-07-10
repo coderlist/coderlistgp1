@@ -42,7 +42,7 @@ CKEDITOR.editorConfig = function( config ) {
   config.uploadUrl = '/users/upload-file';
   config.imageBrowser_listUrl = '/users/get-server-images';
   config.contentsCss = '/ckeditor/page-styles.css';
-  config.stylesSet = [];
+  // config.stylesSet = [];
   // config.simpleImageBrowserURL = '/users/get-server-images';
   // filebrowserBrowseUrl = 'images';
 };
