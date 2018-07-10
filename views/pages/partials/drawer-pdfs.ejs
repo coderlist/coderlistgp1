@@ -10,21 +10,24 @@
                         <th></th>
                     </tr>
                 </thead>
+                <% if ( typeof pdfs == 'object' && pdfs) { %> 
                 <tbody>
+                      <% pdfs.map(function(pdf){%>
                         <tr>
                                 <td>
-                                    <a href="" data-name="">
-                                    </a>
+                                    <p><%= pdf.short%></p>
                                 </td>
                                 <td>
-                                    <a href="/users/edit-page/" class="btn btn-secondary btn-sm">Open PDF</a>
-                                    <a href="/users/edit-page/" class="btn btn-secondary btn-sm ml-2">Copy Link</a>
+                                    <a href="<%= pdf.location%>" class="btn btn-secondary btn-sm">Open PDF</a>
+                                    <a href="<%= pdf.location%>" class="btn btn-secondary btn-sm ml-2">Copy Link</a>
                                  </td>
                                  <td>
 
                                  </td>
-                            </tr>
+                        </tr>
+                         <% }) %>
                 </tbody>
+              <% } %>
             </table>
         </div>
     </div>
