@@ -144,11 +144,15 @@ const addNewMenuItem = function (event) {
         const html = `<tr>${subMenuItemList()}</tr>`;
         /* Insert item before the first child */
         tableSubMenuItem.insertAdjacentHTML('afterbegin', html);
+        /* Remove Event Listeners */
+        removeEventListenersFromSubMenuItems();
     } else {
         /* Append the result of createTableData */
         const html = `<tr>${menuItemList()}</tr>`;
         /* Insert item before the first child */
         tableMenuItem.insertAdjacentHTML('afterbegin', html);
+        /* Remove Event Listeners */
+        removeEventListenersFromMenuItems();
     }
 };
 
@@ -175,10 +179,11 @@ let saveNewMenuItemButton = document.querySelectorAll(".save-menu-item");
 let saveNewSubMenuItemButton = document.querySelectorAll(".save-sub-menu-item");
 
 /* Save New Items into DB */
-function saveNewMenuItem(ev){
+function saveNewMenuItem(event, index){
+    console.log(index);
 };
-function saveNewSubMenuItem(ev){
-
+function saveNewSubMenuItem(event, index){
+    console.log(index);
 };
 
 /* 
@@ -187,19 +192,13 @@ function saveNewSubMenuItem(ev){
 *
 */
 function removeEventListenersFromMenuItems(){
-    saveNewMenuItemButton.forEach( (button, index) => {
-        button.removeEventListener('click', (event) => {
-            saveNewSubMenuItem(index);
-            event.preventDefault();
-        }, index);
+    saveNewMenuItemButton.forEach( (button) => {
+        button.removeEventListener('click', saveNewMenuItem.bind(0), true);
     });
 }
 function removeEventListenersFromSubMenuItems(){
-    saveNewMenuItemButton.forEach( (button, index) => {
-        button.removeEventListener('click', (event) => {
-            saveNewSubMenuItem(index);
-            event.preventDefault();
-        }, index);
+    saveNewMenuItemButton.forEach( (button) => {
+        button.removeEventListener('click', saveNewMenuItem.bind(0), true);
     });
 }
 
@@ -216,16 +215,14 @@ function removeEventListenersFromSubMenuItems(){
 *
 */
 
-saveNewMenuItemButton.forEach( (button) => {
+saveNewMenuItemButton.forEach( (button, index) => {
     button.addEventListener('click', (event) => {
-        saveNewMenuItem(event);
-        event.preventDefault();
-    });
+        saveNewMenuItem();
+    }, true);
 });
 
-saveNewSubMenuItemButton.forEach( (button) => {
+saveNewSubMenuItemButton.forEach( (button, index) => {
     button.addEventListener('click', (event) => {
-        saveNewSubMenuItem(event);
-        event.preventDefault();
-    });
+        saveNewSubMenuItem();
+    }, true);
 });
