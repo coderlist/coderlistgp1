@@ -73,7 +73,7 @@ const createInputFieldPageName = function (inputFieldName) {
             input = `<input type="text" class="form-control" name="page_name" placeholder="Page Name">`;
             break;
         case "inputFieldOrderNumber":
-            input = `<input type="text" class="form-control page-order" name="page_order" placeholder="1">`;
+            input = `<input type="text" class="form-control page-order" name="page_order" placeholder="">`;
             break;
     }
     return `<td>${input}</td>`;
@@ -109,9 +109,9 @@ const createSelectionMenu = function (pageName) {
     }
     return select;
 };
-/* Creates an Anchor Element */
+/* Creates a Button Element */
 const createButtonElement = function (className) {
-    const button = `<button href="javascript:void(0)" class="btn btn-secondary btn-sm ${className}">Save</button>`;
+    const button = `<button class="btn btn-secondary btn-sm ${className}">Save</button>`;
     return `<td>${button}</td>`;
 };
 
@@ -165,101 +165,186 @@ addNewMenuItemButton.forEach(button => {
 
 
 
-/* Save New Items into DB */
-function saveNewMenuItem(index) {
-    console.log(index);
-};
-
-function saveNewSubMenuItem(index) {
-    console.log(index);
-};
-
 /**
  * Get the tbody
  */
 let menuTable = document.querySelector('.table-menu-items');
 let subMenuTable = document.querySelector('.table-sub-menu-items');
 
+
 /**
- * 
- * Gets the index of the respective row 
- * Where the button is located at
- * 
+ * Gets the Index of clicked element
  */
-
-
-function getMenuIndex(buttonTarget) {
+function getMenuIndex(buttonTarget, event) {
+    event.stopPropagation();
     /* Get updated state of the nodes */
-    menuTable = document.querySelector('.table-menu-items');
-    console.log(menuTable);
+    let currentMenuTable = document.querySelector('.table-menu-items');
     let buttonMenuIndex;
-    let rowIndex = buttonMenuIndex;
     let found = false;
-    for (let i = 0, rows = menuTable.rows; i < rows.length; i++) {
+    for (let i = 0, rows = currentMenuTable.rows; i < rows.length; i++) {
         const row = rows[i];
         for (let j = 0, cells = row.cells; j < cells.length; j++) {
             const cell = cells[j];
-            if (buttonTarget.classList.contains('save-menu-item')) {
-                console.log("Found it at index: ", i)
-                buttonMenuIndex = i;
-                found = !found;
-                break;
-            } else {
-                return;
+            if (buttonTarget === cell.children[0]) {
+                if(buttonTarget.classList.contains('save-menu-item')){
+                    found = !found;
+                    break;
+                }
             }
         }
         if(found === true){
+            buttonMenuIndex = i;
+            break;
+        }
+    }
+    if(buttonMenuIndex === undefined || buttonMenuIndex === null){
+        return;
+    }
+    found = !found;
+    getMenuItemData(buttonMenuIndex);
+}
+/**
+ * 
+ * Gets the data of the elements
+ * Necessary to be sent to the DB
+ * 
+ */
+function getMenuItemData(index){
+    const thisMenuItemData = {
+        pageId: document.querySelectorAll('.page_id')[index].value,
+        isPublished: document.querySelectorAll('.is-published')[index].checked == true ? true : false,
+        isHomePageGrid: document.querySelectorAll('.is-homepage-grid')[index].checked == true ? true : false,
+        isNavMenuItem: document.querySelectorAll('.is-nav-menu')[index].checked == true ? true : false,
+        pageOrderNumber: document.querySelectorAll('.page-order')[index].value 
+    };
+    console.log(thisMenuItemData.pageId);
+    console.log(thisMenuItemData.pageId);
+    //postMenuItemData(thisTableItemData);
+}
+/**
+ * 
+ * Posts data of this item to the DB
+ * 
+ */
+function postMenuItemData(data){
+    return fetch(`/users/save-order`, {
+        method: "POST",
+        mode: "cors",
+        credentials: "include",
+        headers: {
+            "Content-Type": "application/json; charset=utf-8",
+        },
+        body: JSON.stringify(data) // body data type must match "Content-Type" header
+    }).then(response => {
+        return response;
+    })
+    .then(message => {
+        if(message.status == 200){
+            window.location.href = '/users/dashboard';
+        }
+        console.log(message);
+    })
+    .catch(error => console.log(`There was an error: ${error}`));
+}
+
+
+
+
+
+
+
+
+
+
+/**
+ * Gets the Index of clicked element
+ */
+function getSubMenuIndex(buttonTarget, event) {
+    event.stopPropagation();
+    /* Get updated state of the nodes */
+    let currentSubMenuTable = document.querySelector('.table-sub-menu-items');
+    let buttonSubMenuIndex = 0;
+    let found = false;
+    for (let i = 0, rows = currentSubMenuTable.rows; i < rows.length; i++) {
+        const row = rows[i];
+        for (let j = 0, cells = row.cells; j < cells.length; j++) {
+            const cell = cells[j];
+            if (buttonTarget === cell.children[0]) {
+                if(buttonTarget.classList.contains('save-sub-menu-item')){
+                    found = !found;
+                    break;
+                }
+            }
+        }
+        if(found === true){
+            buttonSubMenuIndex = i;
             break;
         }
     }
     found = !found;
-    console.log(buttonMenuIndex);
+    if(buttonSubMenuIndex === undefined || buttonSubMenuIndex === null){
+        return;
+    }
+    // getSubMenuItemData(buttonSubMenuIndex);
 }
 
+/**
+ * 
+ * Gets the data of the elements
+ * Necessary to be sent to the DB
+ * 
+ */
+function getSubMenuItemData(index){
+    const thisSubMenuItemData = {
+        pageId: document.querySelectorAll('.page_id')[index].value,
+        isPublished: document.querySelectorAll('.is-published')[index].checked == true ? true : false,
+        isHomePageGrid: document.querySelectorAll('.is-homepage-grid')[index].checked == true ? true : false,
+        isNavMenuItem: document.querySelectorAll('.is-nav-menu')[index].checked == true ? true : false,
+        pageOrderNumber: document.querySelectorAll('.page-order')[index].value 
+    };
+    console.log(index);
+    //saveSubMenuItemData(thisTableItemData);
+}
 
-function getSubMenuIndex(buttonTarget) {
-    /* Get updated state of the nodes */
-    subMenuTable = document.querySelector('.table-sub-menu-items');
-    console.log(subMenuTable);
-    let buttonSubMenuIndex = 0;
-    let found = false;
-    for (let i = 0, rows = subMenuTable.rows; i < rows.length; i++) {
-        const row = rows[i];
-        for (let j = 0, cells = row.cells; j < cells.length; j++) {
-            const cell = cells[j];
-            if (buttonTarget.classList.contains('save-sub-menu-item')) {
-                console.log("Found it at index: ", i)
-                buttonSubMenuIndex = i;
-                found = !found;
-                break;
-            } else {
-                return;
-            }
+/**
+ * 
+ * Posts data of this item to the DB
+ * 
+ */
+function saveSubMenuItemData(data){
+    return fetch(`/users/save-order`, {
+        method: "POST",
+        mode: "cors",
+        credentials: "include",
+        headers: {
+            "Content-Type": "application/json; charset=utf-8",
+        },
+        body: JSON.stringify(data) // body data type must match "Content-Type" header
+    }).then(response => {
+        return response;
+    })
+    .then(message => {
+        if(message.status == 200){
+            window.location.href = '/users/dashboard';
         }
-        if(found === true){
-            break;
-        }
-    }
-    found = false;
-    console.log(buttonSubMenuIndex);
+        console.log(message);
+    })
+    .catch(error => console.log(`There was an error: ${error}`));
 }
 
 /*
  *
- * Event delegation to help with dynamically created items:
- * Not working yet, for some unknown reason
- *
+ * Event delegation to help with dynamically created items
+ * Working as intended
  */
 
 menuTable.addEventListener('click', event => {
     const buttonTarget = event.target;
-    event.stopPropagation();
-    getMenuIndex(buttonTarget);
+    getMenuIndex(buttonTarget, event);
 });
 
 subMenuTable.addEventListener('click', event => {
     const buttonTarget = event.target;
-    event.stopPropagation();
-    getSubMenuIndex(buttonTarget);
+    getSubMenuIndex(buttonTarget, event);
 });
 
