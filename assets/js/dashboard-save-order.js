@@ -11,11 +11,6 @@ function getThisTableItemData(index){
     saveThisTableItemInDB(thisTableItemData);
 }
 function saveThisTableItemInDB(data){
-    console.log("DATA", data.pageId);
-    console.log("DATA", data.isPublished);
-    console.log("DATA", data.isHomePageGrid);
-    console.log("DATA", data.isNavMenuItem);
-    console.log("DATA", data.pageOrderNumber);
     return fetch(`/users/save-order`, {
         method: "POST",
         mode: "cors",
