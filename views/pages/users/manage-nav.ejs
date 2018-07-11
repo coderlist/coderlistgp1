@@ -33,9 +33,16 @@
                                                 <th></th>
                                             </tr>
                                         </thead>
+                                        <%if (typeof 'subMenuItems' == 'object' && subMenuItems) {%>
                                         <tbody class="table-menu-items">
-                                            
+                                          <tr>
+                                            <th><%=subMenuItem.title%></th>
+                                            <th><%=subMenuItem.page%></th>
+                                            <th><%=subMenuItem.order%></th>
+                                        
+                                          </tr>
                                         </tbody>
+                                        <% }%>
                                     </table>
                                 </div>
                             </div>
