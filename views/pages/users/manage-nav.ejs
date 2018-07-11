@@ -34,27 +34,7 @@
                                             </tr>
                                         </thead>
                                         <tbody class="table-menu-items">
-                                            <% for(var i = 0; i < 2; i++){ %> 
-                                            <tr>
-                                                <input type="hidden" class="main-nav-item-id" value="null"/>
-                                                <td>
-                                                    <input type="text" class="form-control" name="page_name" placeholder="Workshops">
-                                                </td>
-                                                <td>
-                                                    <select name="menu_page" class="form-control custom-select">
-                                                        <option value="1">no-link</option>
-                                                        <option value="2">about</option>
-                                                        <option value="3">workshops</option>
-                                                    </select>
-                                                </td>
-                                                <td>
-                                                    <input type="text" class="form-control page-order" name="page_order" placeholder="1" value="">
-                                                </td>
-                                                <td>
-                                                    <button href="javascript:void(0)" class="btn btn-secondary btn-sm save-menu-item">Save</button>  
-                                                </td>
-                                            </tr>
-                                            <% }%>
+                                            
                                         </tbody>
                                     </table>
                                 </div>
@@ -80,34 +60,6 @@
                                             </tr>
                                         </thead>
                                         <tbody class="table-sub-menu-items">
-                                            <% for(var i = 0; i < 2; i++){ %> 
-                                            <tr>
-                                                <input type="hidden" class="sub-nav-item-id" value="null"/>
-                                                <td>
-                                                    <input type="text" class="form-control" name="page_name" placeholder="Nursery Classes">
-                                                </td>
-                                                <td>
-                                                    <select name="parent_page" class=" custom-select">
-                                                        <option value="1">Workshops</option>
-                                                        <option value="2">about</option>
-                                                        <option value="3">workshops</option>
-                                                    </select>
-                                                </td>
-                                                <td>
-                                                    <select name="child_page" class="form-control custom-select">
-                                                        <option value="1">Nursery Classes</option>
-                                                        <option value="2">about</option>
-                                                        <option value="3">workshops</option>
-                                                    </select>
-                                                </td>
-                                                <td>
-                                                    <input type="text" class="form-control page-order" name="page_order" placeholder="1" value="">
-                                                </td>
-                                                <td>
-                                                    <button href="javascript:void(0)" class="btn btn-secondary btn-sm save-sub-menu-item">Save</button>
-                                                </td>
-                                            </tr>
-                                            <% }%>
                                         </tbody>
                                     </table>
                                 </div>
