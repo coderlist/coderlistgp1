@@ -91,10 +91,12 @@
                                                 </select>
                                             </td>
                                             <td>
-                                                <select name="child_page" class="form-control custom-select child-item-select">
-                                                    <option value="1" >Nursery Classes</option>
-                                                    <option value="2">about</option>
-                                                    <option value="3" selected>workshops</option>
+                                                <select name="child_page" class="form-control custom-select">
+                                                  <% if (typeof subMenuList == 'object' && subMenuList) { %>
+                                                    <% subMenuList.map(function(page, index){ %>
+                                                      <option value="<%=page.title%>"><%=page.title%></option>
+                                                    <% }) %>
+                                                    <% } %>
                                                 </select>
                                             </td>
                                             <td>
