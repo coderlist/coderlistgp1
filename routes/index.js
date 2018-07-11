@@ -34,8 +34,6 @@ routes.get('/', (req, res) => {
   .then(function(pages){
     getLatestCall()
     .then(function(callToAction){
-      console.log('callToAction :', callToAction);
-    console.log('data from pages homegrid:', pages);
     res.status(200).render('pages/public/index', {
       callToAction: callToAction[0], 
       menuItems: menuItems,
