@@ -37,17 +37,17 @@
                                         <tr>
                                             <input type="hidden" class="main-nav-item-id" value="null" />
                                             <td>
-                                                <input type="text" class="form-control" name="page_name" placeholder="Workshops">
+                                                <input type="text" class="form-control menu-page-name" name="page_name" value="">
                                             </td>
                                             <td>
-                                                <select name="menu_page" class="form-control custom-select">
+                                                <select name="menu_page" class="form-control custom-select menu-items-select">
                                                     <option value="1">no-link</option>
                                                     <option value="2">about</option>
                                                     <option value="3">workshops</option>
                                                 </select>
                                             </td>
                                             <td>
-                                                <input type="text" class="form-control page-order" name="page_order" placeholder="1" value="">
+                                                <input type="text" class="form-control page-order menu-page-order" name="menu_page_order" value="0">
                                             </td>
                                             <td>
                                                 <button class="btn btn-secondary btn-sm save-menu-item">Save</button>
@@ -81,27 +81,27 @@
                                         <tr>
                                             <input type="hidden" class="sub-nav-item-id" value="null" />
                                             <td>
-                                                <input type="text" class="form-control" name="page_name" placeholder="Nursery Classes">
+                                                <input type="text" class="form-control sub-menu-page-name" name="page_name" placeholder="Nursery Classes">
                                             </td>
                                             <td>
-                                                <select name="parent_page" class=" custom-select">
+                                                <select name="parent_page" class="custom-select parent-item-select">
                                                     <option value="1">Workshops</option>
                                                     <option value="2">about</option>
                                                     <option value="3">workshops</option>
                                                 </select>
                                             </td>
                                             <td>
-                                                <select name="child_page" class="form-control custom-select">
+                                                <select name="child_page" class="form-control custom-select child-item-select">
                                                     <option value="1" >Nursery Classes</option>
                                                     <option value="2">about</option>
                                                     <option value="3" selected>workshops</option>
                                                 </select>
                                             </td>
                                             <td>
-                                                <input type="text" class="form-control page-order" name="page_order" placeholder="1" value="">
+                                                <input type="text" class="form-control page-order sub-menu-page-order" name="page_order" value="0">
                                             </td>
                                             <td>
-                                                <button href="javascript:void(0)" class="btn btn-secondary btn-sm save-sub-menu-item">Save</button>
+                                                <button class="btn btn-secondary btn-sm save-sub-menu-item">Save</button>
                                             </td>
                                         </tr>
                                     </tbody>

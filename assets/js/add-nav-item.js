@@ -69,11 +69,18 @@ const createSubNavItemHiddenInputIDField = function () {
 const createInputFieldPageName = function (inputFieldName) {
     let input = "";
     switch (inputFieldName) {
-        case "inputFieldName":
-            input = `<input type="text" class="form-control" name="page_name" placeholder="Page Name">`;
+        case "menuInputFieldName":
+            input = `<input type="text" class="form-control menu-page-name" name="page_name" placeholder="Page Name">`;
             break;
-        case "inputFieldOrderNumber":
-            input = `<input type="text" class="form-control page-order" name="page_order" placeholder="">`;
+        case "menuInputFieldOrderNumber":
+            input = `<input type="text" class="form-control page-order menu-page-order" name="page_order" placeholder="">`;
+            break;
+        case "subMenuInputFieldName":
+            input = `<input type="text" class="form-control sub-menu-page-name" name="page_name" placeholder="Page Name">`;
+            break;
+        
+        case "subMenuInputFieldOrderNumber":
+            input = `<input type="text" class="form-control page-order sub-menu-page-order" name="page_order" placeholder="">`;
             break;
     }
     return `<td>${input}</td>`;
@@ -84,26 +91,26 @@ const createSelectionMenu = function (pageName) {
     let select = ``;
     switch (pageName) {
         case "parentMenuItemPage":
-            options = parentPageName.map((option, index) => {
-                return `<option value="${index}">${option}</option>`
+            options = parentPageName.map((option) => {
+                return `<option value="${option}">${option}</option>`
             });
-            select = `<td><select name="parent_page" class="form-control custom-select">
+            select = `<td><select name="parent_page" class="form-control custom-select parent-item-select">
             ${options}
             </select></td>`;
             break;
         case "childMenuItemPage":
-            options = childPageName.map((option, index) => {
-                return `<option value="${index}">${option}</option>`
+            options = childPageName.map((option) => {
+                return `<option value="${option}">${option}</option>`
             });
-            select = `<td><select name="child_page" class="form-control custom-select">
+            select = `<td><select name="child_page" class="form-control custom-select child-item-select">
             ${options}
             </select></td>`;
             break;
         default:
-            options = pageNames.map((option, index) => {
-                return `<option value="${index}">${option}</option>`
+            options = pageNames.map((option) => {
+                return `<option value="${option}">${option}</option>`
             });
-            select = `<td><select name="menu_page" class="form-control custom-select">
+            select = `<td><select name="menu_page" class="form-control custom-select menu-items-select">
             ${options}
             </select></td>`;
     }
@@ -120,9 +127,9 @@ const menuItemList = function () {
     /* Append all elements to the html variable */
     let html = '';
     html = createMainNavItemHiddenInputIDField() +
-        createInputFieldPageName(inputFieldName) +
+        createInputFieldPageName("menuInputFieldName") +
         createSelectionMenu() +
-        createInputFieldPageName(inputFieldOrderNumber) +
+        createInputFieldPageName("menuInputFieldOrderNumber") +
         createButtonElement("save-menu-item");
     return html;
 };
@@ -130,11 +137,11 @@ const menuItemList = function () {
 const subMenuItemList = function () {
     let html = '';
     html = createSubNavItemHiddenInputIDField() +
-        createInputFieldPageName(inputFieldName) +
-        createSelectionMenu(parentMenuItemPage) +
-        createSelectionMenu(childMenuItemPage) +
-        createInputFieldPageName(inputFieldOrderNumber) +
-        createButtonElement("save-sub-menu-item");
+        createInputFieldPageName("subMenuInputFieldName") +
+        createSelectionMenu("parentMenuItemPage") +
+        createSelectionMenu("childMenuItemPage") +
+        createInputFieldPageName("subMenuInputFieldOrderNumber") +
+        createButtonElement("save-submenu-item");
     return html;
 };
 /* Function to prepend the new item */
@@ -159,6 +166,8 @@ const addNewMenuItem = function (event) {
  */
 addNewMenuItemButton.forEach(button => {
     button.addEventListener('click', (event) => {
+        event.stopPropagation();
+        event.preventDefault();
         addNewMenuItem(event);
     });
 });
@@ -170,15 +179,22 @@ addNewMenuItemButton.forEach(button => {
  */
 let menuTable = document.querySelector('.table-menu-items');
 let subMenuTable = document.querySelector('.table-sub-menu-items');
-
-
 /**
  * Gets the Index of clicked element
  */
-function getMenuIndex(buttonTarget, event) {
-    event.stopPropagation();
+function getMenuIndex(buttonTarget) {
+    /* If the target doesn't contain this class just return 
+    *  This will prevent unnecessary side effects that
+    *  Where event propagation doesn't work
+    */
+    if(!buttonTarget.classList.contains('save-menu-item')){
+        return;
+    }
     /* Get updated state of the nodes */
     let currentMenuTable = document.querySelector('.table-menu-items');
+    if(!buttonTarget.classList.contains('save-menu-item')){
+        return;
+    }
     let buttonMenuIndex;
     let found = false;
     for (let i = 0, rows = currentMenuTable.rows; i < rows.length; i++) {
@@ -211,15 +227,16 @@ function getMenuIndex(buttonTarget, event) {
  */
 function getMenuItemData(index){
     const thisMenuItemData = {
-        pageId: document.querySelectorAll('.page_id')[index].value,
-        isPublished: document.querySelectorAll('.is-published')[index].checked == true ? true : false,
-        isHomePageGrid: document.querySelectorAll('.is-homepage-grid')[index].checked == true ? true : false,
-        isNavMenuItem: document.querySelectorAll('.is-nav-menu')[index].checked == true ? true : false,
-        pageOrderNumber: document.querySelectorAll('.page-order')[index].value 
+        menuItemId: document.querySelectorAll('.main-nav-item-id')[index].value,
+        menuInputField: document.querySelectorAll('.menu-page-name')[index].value,
+        menuItemSelectedOption: document.querySelectorAll('.menu-items-select')[index].value,
+        menuItemOrderNumber: document.querySelectorAll('.menu-page-order')[index].value,
     };
-    console.log(thisMenuItemData.pageId);
-    console.log(thisMenuItemData.pageId);
-    //postMenuItemData(thisTableItemData);
+    console.log("Item ID:", thisMenuItemData.menuItemId);
+    console.log("Item Name:",thisMenuItemData.menuInputField);
+    console.log("Item SelectedOption:",thisMenuItemData.menuItemSelectedOption);
+    console.log("Item OrderNumber:",thisMenuItemData.menuItemOrderNumber);
+    postMenuItemData(thisTableItemData);
 }
 /**
  * 
@@ -240,27 +257,24 @@ function postMenuItemData(data){
     })
     .then(message => {
         if(message.status == 200){
-            window.location.href = '/users/dashboard';
+            window.location.href = '/users/manage-navs';
         }
         console.log(message);
     })
     .catch(error => console.log(`There was an error: ${error}`));
 }
 
-
-
-
-
-
-
-
-
-
 /**
  * Gets the Index of clicked element
  */
-function getSubMenuIndex(buttonTarget, event) {
-    event.stopPropagation();
+function getSubMenuIndex(buttonTarget) {
+    /* If the target doesn't contain this class just return 
+    *  This will prevent unnecessary side effects that
+    *  Where event propagation doesn't work
+    */
+    if(!buttonTarget.classList.contains('save-submenu-item')){
+        return;
+    }
     /* Get updated state of the nodes */
     let currentSubMenuTable = document.querySelector('.table-sub-menu-items');
     let buttonSubMenuIndex = 0;
@@ -270,7 +284,7 @@ function getSubMenuIndex(buttonTarget, event) {
         for (let j = 0, cells = row.cells; j < cells.length; j++) {
             const cell = cells[j];
             if (buttonTarget === cell.children[0]) {
-                if(buttonTarget.classList.contains('save-sub-menu-item')){
+                if(buttonTarget.classList.contains('save-submenu-item')){
                     found = !found;
                     break;
                 }
@@ -285,7 +299,7 @@ function getSubMenuIndex(buttonTarget, event) {
     if(buttonSubMenuIndex === undefined || buttonSubMenuIndex === null){
         return;
     }
-    // getSubMenuItemData(buttonSubMenuIndex);
+    getSubMenuItemData(buttonSubMenuIndex);
 }
 
 /**
@@ -295,23 +309,26 @@ function getSubMenuIndex(buttonTarget, event) {
  * 
  */
 function getSubMenuItemData(index){
-    const thisSubMenuItemData = {
-        pageId: document.querySelectorAll('.page_id')[index].value,
-        isPublished: document.querySelectorAll('.is-published')[index].checked == true ? true : false,
-        isHomePageGrid: document.querySelectorAll('.is-homepage-grid')[index].checked == true ? true : false,
-        isNavMenuItem: document.querySelectorAll('.is-nav-menu')[index].checked == true ? true : false,
-        pageOrderNumber: document.querySelectorAll('.page-order')[index].value 
+    const thisMenuItemData = {
+        subMenuItemId: document.querySelectorAll('.sub-nav-item-id')[index].value,
+        subMenuInputField: document.querySelectorAll('.sub-menu-page-name')[index].value,
+        subMenuParentItemSelectedOption: document.querySelectorAll('.parent-item-select')[index].value,
+        subMenuChildItemSelectedOption: document.querySelectorAll('.child-item-select')[index].value,
+        subMenuItemOrderNumber: document.querySelectorAll('.sub-menu-page-order')[index].value,
     };
-    console.log(index);
-    //saveSubMenuItemData(thisTableItemData);
+    console.log("Item ID:", thisMenuItemData.subMenuItemId);
+    console.log("Item Name:",thisMenuItemData.subMenuInputField);
+    console.log("Item SelectedOption:",thisMenuItemData.subMenuParentItemSelectedOption);
+    console.log("Item SelectedOption:",thisMenuItemData.subMenuChildItemSelectedOption);
+    console.log("Item OrderNumber:",thisMenuItemData.subMenuItemOrderNumber);
+    postSubMenuItemData(thisTableItemData);
 }
-
 /**
  * 
  * Posts data of this item to the DB
  * 
  */
-function saveSubMenuItemData(data){
+function postSubMenuItemData(data){
     return fetch(`/users/save-order`, {
         method: "POST",
         mode: "cors",
@@ -325,26 +342,28 @@ function saveSubMenuItemData(data){
     })
     .then(message => {
         if(message.status == 200){
-            window.location.href = '/users/dashboard';
+            window.location.href = '/users/manage-navs';
         }
         console.log(message);
     })
     .catch(error => console.log(`There was an error: ${error}`));
 }
-
 /*
  *
  * Event delegation to help with dynamically created items
  * Working as intended
  */
-
 menuTable.addEventListener('click', event => {
     const buttonTarget = event.target;
+    event.stopPropagation();
+    event.preventDefault();
     getMenuIndex(buttonTarget, event);
 });
 
 subMenuTable.addEventListener('click', event => {
     const buttonTarget = event.target;
+    event.stopPropagation();
+    event.preventDefault();
     getSubMenuIndex(buttonTarget, event);
 });
 
