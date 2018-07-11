@@ -23,6 +23,8 @@ class MessageTitles {
                 break;
             case "/manage-pdfs": res.locals.messageTitle = 'Delete PDF';
                 break;
+            case "/manage-images": res.locals.messageTitle = 'Delete Image';
+                break;
             case `/edit-page/${id}`: res.locals.messageTitle = 'Delete Page';
                 break;
             case `/edit-user/${id}`: res.locals.messageTitle = 'Delete User';

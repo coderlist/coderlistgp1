@@ -1,11 +1,23 @@
 const fs = require('fs');
 const express = require('express');
 const userRoutes = new express.Router();
-const passport = require('../auth/local');
+// const passport = require('../auth/local');
 const Logins = require('../helperFunctions/Logins');
 const UserLocalsNavigationStyling = require('../helperFunctions/navigation-locals');
 const userLocalsNavigationStyling = new UserLocalsNavigationStyling();
 const MessageTitles = require('../helperFunctions/message-titles');
+const sanitizeHtml = require('sanitize-html');
+const allowedCkeditorItems = { 
+  allowedTags: [ 'h3', 'h4', 'h5', 'h6', 'img', 'blockquote', 'p', 'a', 'ul', 'ol',
+    'nl', 'li', 'b', 'i', 'strong', 'em', 'strike', 'code', 'hr', 'br', 'div',
+    'table', 'thead', 'caption', 'tbody', 'tr', 'th', 'td', 'pre' ],
+  allowedAttributes: {
+    a: [ 'href', 'name', 'target' ],
+    img: [ 'src' ]
+  },
+  selfClosing: [ 'img', 'br', 'hr', 'area', 'base', 'basefont', 'input', 'link', 'meta' ],
+allowedIframeHostnames: ['www.youtube.com', 'player.vimeo.com']
+}
 const messageTitles = new MessageTitles();
 const logins = new Logins();
 const {
@@ -17,31 +29,38 @@ const {
 } = require('express-validator/check');
 const {
   matchedData,
-  sanitize
+  sanitize,
+  sanitizeBody
 } = require('express-validator/filter');
 const {
   updatePassword,
   updateUserEmail,
   insertOldEmailObject,
-  listUsers,
+  listAllUsers,
   findEmailById,
   getUserById,
   updateUserName,
   deleteUserById,
   getIsUserAdmin,
-  createUser
+  createUser,
+  getUnverifiedUsers
 } = require('../server/models/users').user;
 const {
   createPage,
-  getPages,
+  getAllPages,
   getPagebyID,
   deletePageById,
-  updatePageContentById
+  updatePageContentById,
+  updatePageContentByIdNoBanner,
+  updateBannerLocationById,
+  updatePageLocationsById
 } = require('../server/models/pages');
 const {
   insertBannerImage,
   getAllImages,
-  deleteImageObjectByImageId
+  deleteImageObjectByImageId,
+  getAllImagesData,
+  createImageObjComplete
 } = require('../server/models/images');
 const {
   createParentNavItem,
@@ -65,7 +84,7 @@ let storage = multer.diskStorage({
   },
   filename: function (req, file, next) {
     const ext = file.mimetype.split('/')[1];
-    req.fileLocation = file.fieldname + '-' + Date.now() + '.' + ext
+    req.fileLocation = 'image' + '-' + Date.now() + '.' + ext
     next(null, req.fileLocation);
   },
   fileFilter: function (req, file, next) {
@@ -90,7 +109,7 @@ let storage2 = multer.diskStorage({
   },
   filename: function (req, file, next) {
     const ext = file.mimetype.split('/')[1];
-    req.fileLocation = file.fieldname + '-' + Date.now() + '.' + ext
+    req.fileLocation = 'image' + '-' + Date.now() + '.' + ext
     next(null, req.fileLocation);
   },
   fileFilter: function (req, file, next) {
@@ -177,21 +196,19 @@ userRoutes.use(messageTitles.setMessageTitles);
 // });
 
 userRoutes.get('/dashboard', (req, res) => {
-  listUsers(0, 9)
+  listAllUsers()
   .then(function(userData){
-  getPages(9) //this need to be thought more about. THis just gets the first 10 pages
-  .then(function(pageData){
-    res.status(200).render('pages/users/dashboard.ejs', { 
-      users : userData,
-      pages : pageData,
-      messages: req.flash('info')
+    getAllPages() 
+    .then(function(pageData){
+      res.status(200).render('pages/users/dashboard.ejs', { 
+        users : userData,
+        pages : pageData,
+        messages: req.flash('info')
+      })
+    })
+  }).catch(function(err){
+    console.log('err :', err);
   })
-  
-}).catch(function(err){
-  console.log('err :', err);
-})
-  
-});
   return;
 });
 
@@ -202,14 +219,10 @@ userRoutes.post('/dashboard', ckeditorPostCheck, (req, res) => {
   let errors = validationResult(req);
   if (!errors.isEmpty()) {
     req.flash('info', 'Invalid ckeditor data');
-    res.status(200).render('pages/users/dashboard.ejs', { 
-      users : userData,
-      pages : pageData,
-      content : req.body.content,
-      messages: req.flash('info')
-  })
+    res.status(200).redirect('users/dashboard.ejs') 
     return;
   }
+  req.body.content = sanitizeHtml(req.body.content, allowedCkeditorItems);
   insertCallToAction(req.body.content)
   .then(function(){
     req.flash('info', 'Call to action text saved');
@@ -267,7 +280,7 @@ userRoutes.get('/manage-pdfs', function (req, res) {
     }
       pdfs.map(function(pdf) {
       console.log('pdfs :', pdf);
-      const shortName = pdf.match(/([\w\s]*)/)[0] + ".pdf";
+      const shortName = pdf.match(/([\w\s]*)/)[0] + ".pdf";  //remove the random number to make displaying prettier
       pdfList.push({name: pdf, short: shortName, location: `/pdfs/${pdf}`})
     })
     console.log('pdfList :', pdfList);
@@ -290,7 +303,7 @@ userRoutes.post('/manage-pdfs', PDFPostTitleCheck, PDFUpload.single('pdf'), func
     res.status(200).redirect('/users/manage-pdfs');
     return;
   }
-  console.log('req.file :', req.file);
+  // console.log('req.file :', req.file);
   req.flash('info', 'PDF Uploaded')
   res.status(200).redirect('users/manage-pdfs.ejs', { 
   })
@@ -301,47 +314,96 @@ userRoutes.post('/manage-pdfs', PDFPostTitleCheck, PDFUpload.single('pdf'), func
 })
 
 PDFDeleteCheck = [
-  body('pdf_name').isAlphanumeric()
+  param('pdf_name').matches('^[\\w\\s-.]+$')
 ]
 
-userRoutes.delete('/manage-pdfs', PDFDeleteCheck, function(req, res){
+userRoutes.delete('/manage-pdfs/:pdf_name', PDFDeleteCheck, function(req, res){
   let errors = validationResult(req);
   if (!errors.isEmpty()) {
-    req.flash('info', 'Invalid PDF Name');
-    res.status(200).redirect('/users/manage-pdfs');
+    console.log('errors.array() :', errors.array());
+    res.status(200).json({ status: "FAILURE", message: 'Invalid PDF name', location: "/users/manage-pdfs" });
     return;
   }
-  fs.unlink(`/assets/pdfs/${req.body.pdf_name}`)
-  .then(function(){
-    req.flash('info', 'PDF Deleted');
-    res.redirect('/users/manage-pdfs');
+  console.log('req.params :', req.params);
+  fs.unlink(`assets/pdfs/${req.params.pdf_name}`, function(err){
+    if (err) {
+      console.log('err :', err);
+      res.status(200).json({ status: "FAILURE", message: 'There was an error deleting the PDF file', location: "/users/manage-pdfs" });
+      return;
+    }
+    res.status(200).json({ status: "SUCCESS", message: 'PDF successfully deleted', location: "/users/manage-pdfs" });
+    return;
+  })
+});
+
+
+userRoutes.get('/manage-images', function(req, res){
+  getAllImagesData(req.params.image_id)
+  .then(function(data){
+    console.log('data :', data);
+    if(!data || data.length === 0) {
+      req.flash('info', 'No images');
+      res.status(200).render('pages/users/manage-images', { message: req.flash('info'), messagesError: req.flash('error') } );
+      return;
+    }
+    req.flash('info', 'No images');
+      res.status(200).render('pages/users/manage-images', { images: data, message: req.flash('info'), messagesError: req.flash('error') } );
+      return;
   }).catch(function(err){
-    req.flash('info', 'There was an error deleting the PDF file');
-    res.redirect('/users/manage-pdfs');
+    console.log('err :', err);
+    req.flash('error', 'There was an error loading the images');
+    res.status(200).redirect('/users/manage-images');
+    return;
+  })
+});
+
+
+userRoutes.post('/manage-images/', upload.single('image'), function(req, res){  // needs to be converted to delete route
+  let errors = validationResult(req);
+
+  const image = {
+    banner_location: `/images/${req.file.filename}`,
+    filename: req.file.filename,
+    banner_image: false,
+    uploaded_images: true,
+    page_image: true
+  }
+  createImageObjComplete(image)
+  .then(function(data){    
+    req.flash('info', 'Image added');
+    res.status(200).redirect('/users/manage-images');
+    return;
+  }).catch(function(err){
+    req.flash('error', 'There was an error adding the image');
+    res.status(200).redirect('/users/manage-images');
+    return;
   })
 });
 
 imageDeleteCheck = [
-  body('image_id').isAlphanumeric()
+  param('image_id').isAlphanumeric()
 ]
 
-userRoutes.delete('/manage-images', imageDeleteCheck, function(req, res){
+userRoutes.delete('/manage-images/:image_id', imageDeleteCheck, function(req, res){  // needs to be converted to delete route
   let errors = validationResult(req);
   if (!errors.isEmpty()) {
     req.flash('info', 'Invalid image Name');
     res.status(200).redirect('/users/manage-images');
     return;
   }
-  deleteImageObjectByImageId(req.body.image_id)
-  .then(function(data){    
-    fs.unlink(`/assets/pdfs/${req.body.pdf_name}`)
-    .then(function(){
+  console.log('req.params.image_id :', req.params.image_id);
+  deleteImageObjectByImageId(req.params.image_id)
+  .then(function(data){  
+    fs.unlink(`assets/images/${data[0].image_name}`, (err) => {
+      if (err) { console.log('err :', err); }
       req.flash('info', 'Image Deleted');
-      res.redirect('/users/manage-images');
+      res.status(200).redirect('/users/manage-images');
+      return;
     })
   }).catch(function(err){
     req.flash('error', 'There was an error deleting the image');
-    res.redirect('/users/manage-images');
+    res.status(200).redirect('/users/manage-images');
+    return;
   })
 });
 
@@ -353,7 +415,20 @@ userRoutes.get('/profile', function (req, res) {
 })
 
 userRoutes.get('/edit-page', function (req, res) { //  with no id number this should just create a page
-  res.status(200).render('pages/users/edit-page.ejs', {messages: req.flash('info')})
+  let pdfList = [];
+  fs.readdir('assets/pdfs', (err, pdfs) => {
+    if (err) {
+      console.log('err :', err);
+    }
+    pdfs.map(function(pdf) { //refactor two of these now
+      console.log('pdfs :', pdf);
+      const shortName = pdf.match(/([\w\s]*)/)[0] + ".pdf";  //remove the random number to make displaying prettier
+      pdfList.push({name: pdf, short: shortName, location: `/pdfs/${pdf}`})
+    })
+    req.flash('info', 'Page ready for editing');
+    res.status(200).render('pages/users/edit-page.ejs', {messages: req.flash('info'), pdfs : pdfList});
+    return;
+  })
 })
 
 const pageIDCheck = [
@@ -362,13 +437,13 @@ const pageIDCheck = [
 
 userRoutes.get('/edit-page/:page_id', pageIDCheck, function (req, res) {
   let errors = validationResult(req);
-  let pageID = parseInt(req.params.page_id);
-  console.log('page_id :', pageID);
-  console.log('errors :', errors.array());
-  if (!errors) {
+  if (!errors.isEmpty()) {
     req.flash('info', 'invalid pageID');
-    res.status(200).redirect('/users/edit-page');
+    res.status(200).redirect('/users/dashboard');
+    return;
   }
+
+  let pageID = parseInt(req.params.page_id);
   getPagebyID(pageID)
   .then(function(data){
     console.log('data :', data);
@@ -377,21 +452,35 @@ userRoutes.get('/edit-page/:page_id', pageIDCheck, function (req, res) {
       res.status(200).redirect('/users/dashboard');
       return;
     }
-    getUserById(req.session.user_id)
+    // data.ckeditor.html =  unescape(data.ckeditor.html);
+    getUserById(req.session.user_id) /// Would probably be better with promise.all
     .then(function(userData){
-      // console.log('userData :', userData);
-      // console.log('(!(req.session.isAdmin || req.session.email === data.created_by)) :', req.session.email, data[0].created_by,(!(req.session.isAdmin || req.session.email === data.created_by)));
       if (!(userData[0].is_admin || req.session.user_id === data[0].owner_id)) { // Check page ownership or admin
         req.flash('info', 'This is not your page to modify');
         res.status(200).redirect('/users/dashboard');
         return;  
       }
-      console.log('getshere');
-      req.flash('info', 'Page ready for editing');
-      res.status(200).render('pages/users/edit-page.ejs', {page: data[0], messages: req.flash('info')});
-      return;
+      let pdfList = [];
+      fs.readdir('assets/pdfs', (err, pdfs) => {
+        if (err) {
+          console.log('err :', err);
+        }
+        pdfs.map(function(pdf) { //refactor two of these now
+          console.log('pdfs :', pdf);
+          const shortName = pdf.match(/([\w\s]*)/)[0] + ".pdf";  //remove the random number to make displaying prettier
+          pdfList.push({name: pdf, short: shortName, location: `/pdfs/${pdf}`})
+        })
+        req.flash('info', 'Page ready for editing');
+        res.status(200).render('pages/users/edit-page.ejs', {page: data[0], messages: req.flash('info'), pdfs : pdfList});
+        return;
+      })
     })
-  })
+  }).catch(function(err){
+    console.log('err :', err);
+    req.flash('error', 'There was a system error. Please contact your administrator');
+    res.status(200).render('pages/users/edit-page.ejs', {messages: req.flash('info')});
+    return;
+  });
 })
 
 ////////////////////    Change password while authenticated ////////////////////
@@ -464,8 +553,50 @@ userRoutes.post('/change-password', passwordCheck, (req, res) => {
 
 
 /////////////       Create users           /////////////////////////
+const pageIDPostCheck = [
+  body('page_id').isInt()
+]
 
-userRoutes.get('/:name-user', function (req, res) {
+
+userRoutes.post('/update-banner', upload.single('image'), function(req, res){
+  let errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    req.flash('info', 'invalid pageID');
+    res.status(200).redirect(`/users/edit-page/${req.body.page_id}`);
+    return;
+  }
+  //send updated banner to banner_location  pages table
+  console.log('req.body :', req.body);
+  let image = {
+    banner_location: `/images/${req.file.filename}`,
+    filename: req.file.filename,
+    banner_image: true,
+    uploaded_images: true,
+    page_image: false
+  }
+  const page = {
+    banner_location: `/images/${req.file.filename}`,
+    page_id: req.body.page_id
+  }
+  createImageObjComplete(image)
+  .then(function(){
+    console.log('page1 :', page);
+    updateBannerLocationById(page)  
+    .then(function(){
+      console.log('page2 :', page);
+      req.flash('info','Banner updated');
+      res.status(200).redirect('/users/dashboard');
+      return;
+    })
+  }).catch(function(err){
+    req.flash('error','There was a system error. Please contact your administrator');
+    res.status(200).redirect('/users/dashboard');
+    return;
+  });
+})
+
+
+userRoutes.get('/:name-user', function (req, res) {  /// this user parameter is not sanitised...?
   const url = req.url;
   res.status(200).render('pages/users/edit-user.ejs', { 
     messages: url === "/edit-user" ? req.flash('Are you sure you want to delete this USER?') : ''
@@ -544,12 +675,8 @@ userRoutes.get('/admin', (req, res) => {
   });
 });
 
-const ckeditorHTMLValidation = [
-  sanitize('ckeditorHTML').escape().trim()
-];
 
 userRoutes.post('/admin', (req, res) => {
-  console.log('req.body.ckeditorHTML:', req.body.ckeditorHTML);
   res.status(200).render('pages/users/admin.ejs', {
     messages: req.flash("info"),
     ckeditorData: req.body.ckeditorHTML || ""
@@ -641,21 +768,23 @@ userRoutes.post('/edit-user', editUserPostCheck , function(req, res){
 })
 
 deleteUserPostCheck = [
-  body('user_id').isInt().exists()
+  param('user_id').isInt().exists()
 ]
 
-userRoutes.post('/delete-user', deleteUserPostCheck, function(req, res){
-  console.log(req.body.user_id);
+userRoutes.delete('/delete-user/:user_id', deleteUserPostCheck, function(req, res){
+  console.log("Hello World");
   let errors = validationResult(req);
   if (!errors.isEmpty()){
     console.log('invalis :');
-    req.flash('error','Invalid user id');
-    res.status(200).redirect('/users/dashboard');
+    // req.flash('error','Invalid user id');
+    // res.status(200).redirect('/users/dashboard');
+    res.json({ status: "FAILURE", message: 'Invalid user id', location: "/users/dashboard"});
     return;
   }
-  if (req.body.user_id === req.session.user_id){
-    req.flash('error','You are not authorised to delete yourself');
-    res.status(200).redirect('/users/dashboard');
+  if (req.params.user_id === req.session.user_id){
+    // req.flash('error','You are not authorised to delete yourself');
+    // res.status(200).redirect('/users/dashboard');
+    res.json({ status: "FAILURE", message: 'You are not authorised to delete yourself', location: "/users/dashboard" });
     return;
   }
   console.log('req.session.user_id :', req.session.user_id);
@@ -669,19 +798,28 @@ userRoutes.post('/delete-user', deleteUserPostCheck, function(req, res){
         console.log('data :', data);
         if (data) {
           // run sql command orphan pages owned by user
-          req.flash('info','User deleted');
-          res.status(200).redirect('/users/dashboard');
+          // req.flash('info','User deleted');
+          // res.status(200).redirect('/users/dashboard');
+          res.json({ status: "SUCCESS", message: 'User successfully deleted', location: "/users/dashboard" });
           return;
         }
-        req.flash('error','There was an error. User does not exist');
-        res.status(200).redirect('/users/dashboard');
+        // req.flash('error','There was an error. User does not exist');
+        // res.status(200).redirect('/users/dashboard');
+        res.json({ status: "FAILURE", message: 'There was an error. User does not exist', location: "/users/dashboard" });
         return;
       })
-      req.flash('error','You are not authorised to delete users');
-      res.status(200).redirect('/users/dashboard');
+      // req.flash('error','You are not authorised to delete users');
+      // res.status(200).redirect('/users/dashboard');
+      res.json({ status: "FAILURE", message: 'You are not authorised to delete users', location: "/users/dashboard" });
       return;
     }
-  }).catch(function(err){ throw err})
+  }).catch(function(err){
+    console.log('err :', err);
+      // req.flash('error','There was a system error');
+      // res.status(200).redirect('/users/dashboard');
+      res.json({ status: "FAILURE", message: 'There was a system error. Please contact your administrator', location: "/users/dashboard" });
+      return
+  })
 })
 
 userRoutes.get('/change-password', (req, res) => {
@@ -782,6 +920,7 @@ userRoutes.post('/upload-images', upload.single('image'), (req, res) => {
   } else {
     req.flash('info', 'File received');
     res.status(200).redirect('/users/upload-images')
+    return;
   }
 })
 
@@ -881,12 +1020,13 @@ userRoutes.post('/page-navmenu-request', function(req,res){
 postCreatePageCheck = [
   body('title').isAlphanumeric(),
   body('content').exists(), // ensure sanitised in and out of db
-  body('description').isAlphanumeric()
+  body('description').isAlphanumeric(),
+  body('publish_page').isBoolean()
 ]
 
 userRoutes.post('/create-page', postCreatePageCheck, upload.single('image'), function(req, res){
   let errors = validationResult(req);
-  console.log('req.session.user_id :', req.session.user_id);
+  req.body.content = sanitizeHtml(req.body.content, allowedCkeditorItems)
   let page = {
     created_by: req.session.user_id,
     last_edited_by: req.session.user_id,
@@ -894,6 +1034,7 @@ userRoutes.post('/create-page', postCreatePageCheck, upload.single('image'), fun
     ckeditor_html: req.body.content,
     page_description: req.body.description,
     order_number: 1,
+    is_published: req.body.publish_page
     
   }
   if (!errors.isEmpty || !req.file) { // check that a file has been uploaded
@@ -902,7 +1043,7 @@ userRoutes.post('/create-page', postCreatePageCheck, upload.single('image'), fun
     return;
   }
   
-  console.log('req.file :', req.file);
+  // console.log('req.file :', req.file);
   
   page.banner_location = `/images/${req.file.filename}`
   let image = {
@@ -919,7 +1060,7 @@ userRoutes.post('/create-page', postCreatePageCheck, upload.single('image'), fun
     console.log('err :', err);
     req.flash('info', 'Failure adding image to db')
   })
-  console.log('req.file :', req.file);
+  // console.log('req.file :', req.file);
   console.log('page :', page);
   // i would like page id from the db please
   createPage(page).then(function(data){
@@ -953,16 +1094,15 @@ userRoutes.post('/edit-page', postEditPageCheck, function(req, res){
     last_edited_date: Date.now()
   }
   console.log('page :', page);
-  console.log('req.body :', req.body);
+  // console.log('req.body :', req.body);
   if (!errors.isEmpty) {
     req.flash('info','Invalid page data');
     res.status(200).redirect('/users/edit-page', {page : page});
     return;
   }
  
-  
-  // i would like page id from the db please
-  updatePageContentById(page).then(function(data){
+   // i would like page id from the db please
+  updatePageContentByIdNoBanner(page).then(function(data){
     req.flash('info', 'Page updated successfully');
     res.status(200).redirect('/users/dashboard');
   }).catch(function(err){
@@ -975,52 +1115,86 @@ userRoutes.post('/edit-page', postEditPageCheck, function(req, res){
 
 
 deletePageCheck = [
-  body('page_id').isInt().exists()
+  param('page_id').isInt().exists()
 ]
 
-userRoutes.post('/delete-page', deletePageCheck, function(req, res){
+userRoutes.delete('/delete-page/:page_id', deletePageCheck, function(req, res){
   let errors = validationResult(req);
   if (!errors.isEmpty()) {
-    req.flash('info', 'Invalid Page ID');
-    res.status(200).redirect('/users/dashboard');
+    console.log('req.params.page_id :', req.params.page_id);
+    // req.flash('info', 'Invalid Page ID');
+    // res.status(200).redirect('/users/dashboard');
+    res.json({ status: "FAILURE", message: 'Invalid page id', location: "/users/dashboard" });
     return;
   }
-  getPageById(req.body.page_id)
+  console.log(req.params.page_id)
+  console.log('req.session.user :', req.session.user_id);
+  console.log(req.method);
+  
+  console.log(req.method);
+  getPagebyID(req.params.page_id)
   .then(function(pageData){
-    getUserById(req.session.user)
+    getUserById(req.session.user_id)
     .then(function(userData){
       if (pageData.created_by === req.session.user_id || userData[0].is_admin){
-        deletePageById(req.body.page_id)
+        deletePageById(req.params.page_id)
         .then(function(data){
           if (data) {
-            req.flash('info', 'Page deleted');
-            res.redirect('/users/dashboard');
+            // req.flash('info', 'Page deleted');
+            // req.method = "GET";
+            // res.status(301).redirect('/users/dashboard');
+            res.status(200).json({ status: "SUCCESS", message: 'Page successfully deleted', location: "/users/dashboard" });
+            return;
+          } else {
+            // req.flash('info', 'Error. Page not deleted. Please contact your administrator');
+            // req.method = "GET";
+            // res.status(301).redirect('/users/dashboard');
+            res.json({ message: 'Not deleted' });
             return;
           }
-          req.flash('info', 'Error. Page not deleted. Please contact your administrator');
-          res.redirect('/users/dashboard');
-          return;
         })
+      } else {
+        // req.flash('info', 'You are not authorised to delete this page');
+        // req.method = "GET";
+        // res.status(301).redirect('/users/dashboard');
+        res.status(400).json({ status: "FAILURE", message: 'You are not authorised to delete this page.', location: "/users/dashboard"});
+        return;
       }
-      req.flash('info', 'You are not authorised to delete this page');
-      res.redirect('/users/dashboard');
-      return;
-      
     })
+  }).catch(function(err){
+    console.log('err :', err);
+    res.json({ status: "FAILURE", message: 'There was a system error. Please contact your administrator.', location: "/users/dashboard" });
   })
 })
 
 userRoutes.post('/upload-file', fileUpload.single('upload'), function(req, res){
   console.log('req.file :', req.file);
+  let image = {
+    banner_location: `/images/${req.file.filename}`,
+    filename: req.file.filename,
+    banner_image: false,
+    uploaded_images: true,
+    page_image: true
+  }
+  createImageObjComplete(image)
+  .then(function(){
     res.json({
       "uploaded": 1,
       "fileName": req.file.filename,
       "url": `/images/${req.file.filename}` //this is the response ckeditor requires to immediately load the image and provide a positive message
+    })
+  }).catch(function(err) {
+    res.json({
+      "uploaded": 0,
+      "error": {
+        "message": `There was an error uploading the file, err: ${err}`
+      }
+    })
   })
 });
 
 
-userRoutes.get('/get-server-images', function(req, res){
+userRoutes.get('/get-server-images', function(req, res){  // This supplies ckeditor with public images on the server in the form of json
   fs.readdir('assets/images', (err, images) => {
     let imagesJSON = [];
     images.map(function(image) {
@@ -1033,32 +1207,33 @@ userRoutes.get('/get-server-images', function(req, res){
   })
 })
 
-pageOrderPostCheck = [
-  body('page_id').isInt().exists,
-  body('is_published').isBoolean(),
-  body('is_nav_menu').isBoolean(),
-  body('is_homepage_grid').isBoolean(),
-  body('page_order_number').isInt()
+const pageSavePostCheck = [
+  check('pageId').isInt().exists,
+  check('isPublished').isBoolean(),
+  check('isNavMenuItem').isBoolean(),
+  check('isHomePageGrid').isBoolean(),
+  check('pageOrderNumber').isInt()
 ]
 
-userRoutes.post('/page-order', pageOrderPostCheck, function(req,res){
-  let errors = validationResult(req);
-  if (!errors.isEmpty()) {
+userRoutes.post('/save-order', function(req,res){
+
+  if (!Number.isInteger(parseInt(req.body.pageId)) || typeof req.body.isPublished != 'boolean' || typeof req.body.isNavMenuItem != 'boolean' || typeof req.body.isHomePageGrid != 'boolean' || !Number.isInteger(parseInt(req.body.pageOrderNumber))) { // cannot get the json body to work with express validator 5
+    console.log('failed :');
     req.flash('error', 'Invalid Page Data');
     res.status(200).redirect('/users/dashboard');
     return;
   }
   const page = {
-    page_id: req.body.page_id,
-    is_published: req.body.is_published,
-    is_nav_menu: req.body.is_nav_menu,
-    order_number: req.body.page_order_number,
-    is_homepage_grid: req.body.is_homepage_grid
+    page_id: parseInt(req.body.pageId),
+    is_published: req.body.isPublished,
+    is_nav_menu: req.body.isNavMenuItem,
+    order_number: parseInt(req.body.pageOrderNumber),
+    is_homepage_grid: req.body.isHomePageGrid
   }
 
-  updatePageContentById(page)
+  updatePageLocationsById(page)
   .then(function(data){
-    console.log('data :', data);
+    res.status(200).redirect('/users/dashboard');
   }).catch(function(err){
     console.log('err :', err);
     req.flash('error', 'There was an error');
@@ -1067,10 +1242,24 @@ userRoutes.post('/page-order', pageOrderPostCheck, function(req,res){
   })
  })
 
+userRoutes.get('/manage-users', function(req, res){
+  getIsUserAdmin(req.session.user_id)
+  .then(function(isAdmin){
+    if (!isAdmin) {
+      req.flash('error', 'You are not authorised to access the manage users page')
+      res.status(200).redirect('/users/dashboard')
+      return;
+    }
+    getUnverifiedUsers()
+    .then(function(users){
+      console.log(users)
+      res.status(200).render('pages/users/manage-users', { unverifiedUsers: users})
+    });
+  });
+})
 
-//////////////         end of change email whilst validated ////////////////
 
-userRoutes.all('*', (req, res) => {
+ userRoutes.all('*', (req, res) => {
   res.status(200).render('pages/public/unknown.ejs', {
     url: req.url
   });

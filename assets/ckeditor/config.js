@@ -35,12 +35,15 @@ CKEDITOR.editorConfig = function( config ) {
 
 	// Simplify the dialog windows.
   config.removeDialogTabs = 'image:advanced;link:advanced';
-  config.extraPlugins = 'uploadimage', 'uploadwidget', 'imagebrowser' ;
+  config.extraPlugins = 'uploadimage', 'uploadwidget', 'imagebrowser', 'stylesheetparser';
   config.filebrowserBrowseUrl = '/users/upload-file';
   config.filebrowserUploadUrl = '/users/upload-file';
   config.imageUploadUrl = '/users/upload-file';
   config.uploadUrl = '/users/upload-file';
-  config.imageBrowser_listUrl = '/users/get-server-images'
+  config.imageBrowser_listUrl = '/users/get-server-images';
+  config.contentsCss = '/ckeditor/page-styles.css';
+  config.height = '400px';
+  // config.stylesSet = [];
   // config.simpleImageBrowserURL = '/users/get-server-images';
   // filebrowserBrowseUrl = 'images';
 };

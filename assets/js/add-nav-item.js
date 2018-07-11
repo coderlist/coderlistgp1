@@ -57,6 +57,14 @@ const parentMenuItemPage = "parentMenuItemPage";
 const childMenuItemPage = "childMenuItemPage";
 const inputFieldName = "inputFieldName";
 const inputFieldOrderNumber = "inputFieldOrderNumber";
+
+/* Create hidden input field to hold ids */
+const createMainNavItemHiddenInputIDField = function (){
+    return '<input type="hidden" class="main-nav-item-id" value="null"/>';
+};
+const createSubNavItemHiddenInputIDField = function (){
+    return '<input type="hidden" class="sub-nav-item-id" value="null"/>';
+};
 /* Creates Input Field */
 const createInputFieldPageName = function (inputFieldName) {
     let input = "";
@@ -102,29 +110,31 @@ const createSelectionMenu = function (pageName) {
     return select;
 };
 /* Creates an Anchor Element */
-const createAnchorElement = function () {
-    const anchor = `<a href="javascript:void(0)" class="btn btn-secondary btn-sm">Save</a>`
-    return `<td>${anchor}</td>`
+const createButtonElement = function (className) {
+    const button = `<button href="javascript:void(0)" class="btn btn-secondary btn-sm ${className}">Save</button>`;
+    return `<td>${button}</td>`;
 };
 
 /* Display menu items */
 const menuItemList = function () {
     /* Append all elements to the html variable */
     let html = '';
-    html = createInputFieldPageName(inputFieldName) + 
+    html = createMainNavItemHiddenInputIDField() +
+        createInputFieldPageName(inputFieldName) + 
         createSelectionMenu() + 
         createInputFieldPageName(inputFieldOrderNumber) + 
-        createAnchorElement();
+        createButtonElement("save-menu-item");
     return html;
 };
 /* Submenu items have two extra elements */
 const subMenuItemList = function () {
     let html = '';
-    html = createInputFieldPageName(inputFieldName) +
+    html = createSubNavItemHiddenInputIDField() + 
+        createInputFieldPageName(inputFieldName) +
         createSelectionMenu(parentMenuItemPage) +
         createSelectionMenu(childMenuItemPage) +
         createInputFieldPageName(inputFieldOrderNumber) +
-        createAnchorElement();
+        createButtonElement("save-sub-menu-item");
     return html;
 };
 /* Function to prepend the new item */
@@ -134,16 +144,85 @@ const addNewMenuItem = function (event) {
         const html = `<tr>${subMenuItemList()}</tr>`;
         /* Insert item before the first child */
         tableSubMenuItem.insertAdjacentHTML('afterbegin', html);
+        /* Remove Event Listeners */
+        removeEventListenersFromSubMenuItems();
     } else {
         /* Append the result of createTableData */
         const html = `<tr>${menuItemList()}</tr>`;
         /* Insert item before the first child */
         tableMenuItem.insertAdjacentHTML('afterbegin', html);
+        /* Remove Event Listeners */
+        removeEventListenersFromMenuItems();
     }
 };
-/* Event Listeners */
+
+/* 
+*
+*   Add New Menu Item Buttons
+*
+*/
 addNewMenuItemButton.forEach( button => {
     button.addEventListener('click', (event) => {
         addNewMenuItem(event);
     });
+});
+
+
+/* 
+*
+*   Get a live list of all the current save menu item buttons in the table and assign to variable saveNewMenuItemButton
+*   Get a live list of all the current save sub menu item buttons in the table and assign to variable saveNewMenuItemButton
+*
+*/
+
+let saveNewMenuItemButton = document.querySelectorAll(".save-menu-item");
+let saveNewSubMenuItemButton = document.querySelectorAll(".save-sub-menu-item");
+
+/* Save New Items into DB */
+function saveNewMenuItem(event, index){
+    console.log(index);
+};
+function saveNewSubMenuItem(event, index){
+    console.log(index);
+};
+
+/* 
+*
+*   Remove event listeners from all the elements in the table
+*
+*/
+function removeEventListenersFromMenuItems(){
+    saveNewMenuItemButton.forEach( (button) => {
+        button.removeEventListener('click', saveNewMenuItem.bind(0), true);
+    });
+}
+function removeEventListenersFromSubMenuItems(){
+    saveNewMenuItemButton.forEach( (button) => {
+        button.removeEventListener('click', saveNewMenuItem.bind(0), true);
+    });
+}
+
+/*
+*
+*
+*   Map new event listeners
+*
+*/
+
+/* 
+*
+*   Bind event listeners to the current live node save button elements.
+*
+*/
+
+saveNewMenuItemButton.forEach( (button, index) => {
+    button.addEventListener('click', (event) => {
+        saveNewMenuItem();
+    }, true);
+});
+
+saveNewSubMenuItemButton.forEach( (button, index) => {
+    button.addEventListener('click', (event) => {
+        saveNewSubMenuItem();
+    }, true);
 });

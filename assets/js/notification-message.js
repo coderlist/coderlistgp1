@@ -4,64 +4,75 @@ const confirmDeleteButton = document.querySelector('.confirm-delete');
 const overlay = document.querySelector('.overlay');
 const title = document.querySelector('.overlay-alert-message h4').textContent;
 
-
-function deleteThisUser(url, user_id){
+// All the delete messages are returning undefined due to not being able to reach the .delete routes
+function deleteThisUser(url, user_id){  
     console.log("USER ID:", user_id);
-    fetch(url, {
-        method: 'POST',
-        body: user_id,
+    return fetch(`${url}/${user_id}`, {
+        method: 'DELETE',
         headers: {
-            'Access-Control-Allow-Headers': 'Access-Control-Allow-Methods',
-            'Content-Type' : 'application/x-www-form-urlencoded'
+            'Content-Type': 'application/json'
         },
         credentials: 'include',
-        mode: 'same-origin'
+        mode: 'cors'
     }).then(response => {
-        console.log(response.status);
-        console.log(response.statusText);
-        console.log(response.url);
-        console.log(response.headers);
-        response.text();
+        console.log(response);
+        return response.json();
+    })
+    .then(message => {
+        console.log(message.status);
     })
     .catch(error => console.log(`There was an error: ${error}`));
 }
 function deleteThisPage(url, page_id){
     console.log("PAGE ID:", page_id);
-    fetch(url, {
-        method: 'POST',
-        body: page_id,
+    return fetch(`${url}/${page_id}`, {
+        method: 'DELETE',
         headers: {
-            'Access-Control-Allow-Headers': 'Access-Control-Allow-Methods',
-            'Content-Type' : 'application/x-www-form-urlencoded'
+            'Content-Type': 'application/json'
         },
         credentials: 'include',
-        mode: 'same-origin'
+        mode: 'cors'
     }).then(response => {
-        console.log(response.status);
-        console.log(response.statusText);
-        console.log(response.url);
-        console.log(response.headers);
-        response.text();
+        console.log(response);
+        return response;
+    })
+    .then(message => {
+        console.log(message.status);
+        if(message.status == 200 ){
+            window.location.href = '/users/dashboard';
+        }
     })
     .catch(error => console.log(`There was an error: ${error}`));
 }
 function deleteThisPDF(url, pdf_name){
     console.log("PDF NAME:", pdf_name);
-    fetch(url, {
+    return fetch(`${url}/${pdf_name}`, {
         method: 'DELETE',
-        body: pdf_name,
-        headers: {
-            'Access-Control-Allow-Headers': 'Access-Control-Allow-Methods',
-            'Content-Type': 'application/x-www-form-urlencoded'
-        },
         credentials: 'include',
-        mode: 'same-origin'
+        mode: 'cors'
     }).then(response => {
-        console.log(response.status);
-        console.log(response.statusText);
-        console.log(response.url);
-        console.log(response.headers);
-        response.text();
+        return response;
+    })
+    .then(message => {
+        if(message.status == 200 ){
+            window.location.href = '/users/manage-pdfs';
+        }
+    })
+    .catch(error => console.log(`There was an error: ${error}`));
+}
+function deleteThisImage(url, id){
+    console.log("Image NAME:", id);
+    return fetch(`${url}/${id}`, {
+        method: 'DELETE',
+        credentials: 'include',
+        mode: 'cors'
+    }).then(response => {
+        return response;
+    })
+    .then(message => {
+        if(message.status == 200 ){
+            window.location.href = '/users/manage-images';
+        }
     })
     .catch(error => console.log(`There was an error: ${error}`));
 }
@@ -70,8 +81,6 @@ function deleteThisPDF(url, pdf_name){
 const toggleAlertMessage = function () {
     overlay.classList.toggle("show");
 };
-
-
 /* Necessary Variables for scalability */
 let inputFieldId = '';
 let inputFieldName = '';
@@ -89,7 +98,7 @@ const populateNotificationMessageContentWithName = function (index){
 /* This function sets above variables with data from hidden input fields */
 const setVariablesDataFromHiddenInputFields = function(id, name){
     /* We just need either the id for pages and users or the name for the pdf files */
-    inputFieldId = id,
+    inputFieldId = id;
     inputFieldName = name;
     console.log(inputFieldId, inputFieldName);
 };
@@ -101,7 +110,9 @@ const confirmDeleteMessage = function (event){
             break;
         case "Delete Page": deleteThisPage('/users/delete-page', inputFieldId);
             break;
-        case "Delete PDF": deleteThisPDF('/manage-pdfs', inputFieldName);
+        case "Delete PDF": deleteThisPDF('/users/manage-pdfs', inputFieldName);
+            break;
+        case "Delete Image": deleteThisImage('/users/manage-images', inputFieldId);
             break;
     }
 }

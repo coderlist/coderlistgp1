@@ -50,6 +50,8 @@ class UserLocalsNavigationStyling {
                 break;
             case "/manage-pdfs": res.locals.title = 'Manage Files';
                 break;
+            case "/manage-images": res.locals.title = 'Manage Files';
+                break;
             case "/unknown": res.locals.title = '404 Not Found';
                 break;
             default: res.locals.title = 'Ginny Bradley';

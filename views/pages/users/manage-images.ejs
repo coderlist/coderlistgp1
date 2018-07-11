@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <% include ../partials/head.ejs %>
+</head>
+
+<body>
+    <% include ../partials/header.ejs %>
+        <% include ../partials/delete-alert-message.ejs %>
+            <div class="my-3 my-md-5">
+                <div class="container">
+                    <div class="page-header">
+                        <h1 class="page-title">
+                            Manage Image Files
+                        </h1>
+                    </div>
+                    <div class="row row-cards row-deck">
+                        <% if (typeof images == 'object' && images) { %>
+                        <div class="col-lg-8">
+                            <div class="row row-cards row-deck">
+                                <% images.map(function(image){ %>
+                                  <div class="card-column mx-4">
+                                      <input type="hidden" name="image_name" class="this_name" value="<%= image.name%>" />
+                                      <input type="hidden" name="image_id" class="this_id" value="<%= image.image_id%>" />
+                                      <div class="card">
+                                          <img class="card-img-top" src="<%=image.location%>" alt="Placeholder image">
+                                          <div class="card-body d-flex flex-column">
+                                              <h4><a href="<%=image.location%>"><%= image.name%></a></h4>
+                                              <div class="d-flex align-items-center pt-5 mt-auto">
+                                                  <div class="card-options">
+                                                      <button class="btn btn-danger delete-this">Delete Image</button>
+                                                      <button class="btn btn-primary ml-2 copy-link">Copy Link</button>
+                                                  </div>
+                                              </div>
+                                          </div>
+                                      </div>
+                                  </div>
+                                <% }) %>
+                            </div>
+                        </div>
+                        <% } %>
+                        <div class="col-md-3">
+                            <div class="form-group form-image fixed-image-size">
+                                <div class=" form-image-preview">
+                                    <img class="card-img-top img-top-preview" src="http://via.placeholder.com/300x300" alt="Placeholder image">
+                                </div>
+                            </div>
+                            <form method="post" enctype="multipart/form-data" class="card card-fixed-size form-upload-image-height">
+                                <div class="card-header">
+                                    <h3 class="card-title">Upload New Image</h3>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label">Title</label>
+                                    <input name="title" type="text" class="form-control" name="title" placeholder="Name" required>
+                                </div>
+                                <div class="form-group">
+                                    <div class="form-label">Choose file</div>
+                                    <div class="custom-file">
+                                        <input type="file" class="custom-file-input img-button-upload" name="image">
+                                        <label class="custom-file-label">Choose File</label>
+                                    </div>
+                                </div>
+                                <div class="card-footer text-right">
+                                    <button type="submit" class="btn btn-primary ml-auto">Upload Image</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <% include ../partials/footer.ejs %>
+                <!-- Scripts -->
+                <script src="/js/image-preview.js"></script>
+                <script src="/js/notification-message.js"></script>
+                <script src="/js/alert-message.js"></script>
+</body>
+
+</html>

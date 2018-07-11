@@ -15,25 +15,31 @@ module.exports = {
    */
   createImageObj(bodyReq){
      if (bodyReq.pageImage){
-        return queryHelper(`INSERT into images (image_name,page_id,location,page_image)
-         VALUES ('${bodyReq.filename}',${bodyReq.page_id},'${bodyReq.banner_location}',true)`)
+        return queryHelper(`INSERT into images (image_name,location,page_image)
+         VALUES ('${bodyReq.filename}','${bodyReq.banner_location}',true)`)
          .then(response => response)
         .catch(e =>{throw e})
      }
      if(bodyReq.bannerImage){
-        return queryHelper(`INSERT into images (image_name,page_id,location,banner_image)
-        VALUES ('$${bodyReq.filename}',${bodyReq.page_id},'${bodyReq.banner_location}',true)`)
+        return queryHelper(`INSERT into images (image_name,location,banner_image)
+        VALUES ('$${bodyReq.filename}','${bodyReq.banner_location}',true)`)
         .then(response => response)
        .catch(e =>{throw e})
      }
      if(bodyReq.uploadedImages){
-      return queryHelper(`INSERT into images (image_name,page_id,location,uploaded_images)
-      VALUES ('${bodyReq.filename}',${bodyReq.page_id},'${bodyReq.banner_location}',true)`)
+      return queryHelper(`INSERT into images (image_name,location,uploaded_images)
+      VALUES ('${bodyReq.filename}','${bodyReq.banner_location}',true)`)
       .then(response => response)
       .catch(e =>{throw e})
     }
   },
   
+  createImageObjComplete(bodyReq){
+       return queryHelper(`INSERT into images (image_name,location,page_image, uploaded_images, banner_image)
+        VALUES ('${bodyReq.filename}','${bodyReq.banner_location}','${bodyReq.page_image}','${bodyReq.uploaded_images}','${bodyReq.banner_image}')`)
+        .then(response => response)
+       .catch(e =>{throw e})
+  },
 
   getAllImages(){
        return queryHelper(`
@@ -41,6 +47,14 @@ module.exports = {
       .then(response => response)
        .catch(e =>{throw e})
   },
+
+  getAllImagesData(){ // for users/manage-images page
+       return queryHelper(`
+         SELECT * FROM images`)
+      .then(response => response)
+       .catch(e =>{throw e})
+  },
+
   getImageObjectByImageId(id){
        return queryHelper(`
          SELECT * FROM images where image_id=${id}
@@ -57,7 +71,7 @@ module.exports = {
 
   deleteImageObjectByImageId(id){
     return queryHelper(`
-    DELETE FROM images where image_id=${id}
+    DELETE FROM images where image_id=${id} RETURNING *
   `).then(response => response)
   .catch(e =>{throw e})
   },

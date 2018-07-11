@@ -2085,6 +2085,11 @@ select.form-control-lg:not([size]):not([multiple]), .input-group-lg > select.for
   margin-bottom: 1rem;
   padding: 0 1rem;
 }
+.fixed-image-size {
+  height: 300px;
+  width: 300px;
+  padding: 0;
+}
 .form-image{
   margin: 0 auto 1rem auto;
   max-width: 300px;
@@ -4465,8 +4470,15 @@ input[type="button"].btn-block {
   border: 1px solid rgba(0, 40, 100, 0.12);
   border-radius: 3px;
 }
+.card-fixed-size {
+  width: 300px !important;
+}
 .form-upload-pdf-height{
-  max-height: 310px;
+  height: 300px;
+}
+
+.card-column {
+  max-width: 20rem;
 }
 
 .card > hr {
@@ -5022,6 +5034,32 @@ input[type="button"].btn-block {
   animation-duration: 1s;
   animation-name: flashin;
   box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.2);
+}
+
+.drawer-pdfs-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 9999;
+  display: none; 
+}
+.drawer-pdfs-body {
+  position: absolute;
+  width: 500px;
+  background-color: rgb(255, 255, 255);
+  top: 30%;
+  left: 50%;
+  padding: 1rem;
+  transform: translateX(-50%);
+  animation-duration: 1s;
+  animation-name: slidein;
+}
+
+.close-drawer-pdfs {
+  padding: 1rem;
 }
 
 /* Animation for Flash Alert Message */

@@ -1,0 +1,34 @@
+<div class="drawer-pdfs-overlay">
+    <div class="drawer-pdfs-body">
+        <button type="button" class="close close-drawer-pdfs"></button>
+        <div class="table-responsive">
+            <table class="table table-outline table-vcenter text-nowrap card-table">
+                <thead>
+                    <tr>
+                        <th>PDF Name</th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <% if ( typeof pdfs == 'object' && pdfs) { %> 
+                <tbody>
+                      <% pdfs.map(function(pdf){%>
+                        <tr>
+                                <td>
+                                    <p><%= pdf.short%></p>
+                                </td>
+                                <td>
+                                    <a href="<%= pdf.location%>" class="btn btn-secondary btn-sm">Open PDF</a>
+                                    <a href="<%= pdf.location%>" class="btn btn-secondary btn-sm ml-2">Copy Link</a>
+                                 </td>
+                                 <td>
+
+                                 </td>
+                        </tr>
+                         <% }) %>
+                </tbody>
+              <% } %>
+            </table>
+        </div>
+    </div>
+</div>

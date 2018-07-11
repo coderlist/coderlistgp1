@@ -9,9 +9,9 @@ const {queryHelper} = require('../../helperFunctions/query/queryHelper');
 
 module.exports = {
   createPage(body) {
-    return queryHelper(`INSERT INTO pages (created_by,banner_location,title,page_description,order_number,ckeditor_html)
+    return queryHelper(`INSERT INTO pages (created_by,banner_location,title,page_description,order_number,ckeditor_html, is_published)
                        VALUES (${body.created_by},'${body.banner_location}','${body.title}',
-                       '${body.page_description}','${body.order_number}', '${body.ckeditor_html}')`)
+                       '${body.page_description}','${body.order_number}', '${body.ckeditor_html}', '${body.is_published}')`)
         .then(response => console.log('PAGE CREATED'))
         .catch(e => {console.log('e :', e); throw e})
   },
@@ -24,6 +24,12 @@ module.exports = {
 
   getPages(rowsLimit){
     return queryHelper(`SELECT * FROM pages ORDER BY creation_date  FETCH FIRST ${rowsLimit} ROW ONLY`)
+    .then(response => response)
+      .catch(e => {throw e})
+  },
+
+  getAllPages(){
+    return queryHelper(`SELECT * FROM pages ORDER BY creation_date`)
     .then(response => response)
       .catch(e => {throw e})
   },
@@ -43,9 +49,22 @@ module.exports = {
      .catch(e => {throw e})
   },
 
+  updateBannerLocationById(body){
+     return queryHelper(`UPDATE pages SET banner_location='${body.banner_location}' WHERE page_id = ${body.page_id};`)
+     .then(response => response)
+     .catch(e => {throw e})
+  },
+
+  updatePageContentByIdNoBanner(body){
+     return queryHelper(`UPDATE pages SET title='${body.title}',
+      page_description ='${body.page_description}', last_edited_by='${body.last_edited_by}', ckeditor_html = '${body.ckeditor_html}' where page_id = ${body.page_id};`)
+     .then(response => response)
+     .catch(e => {throw e})
+  },
+
   updatePageLocationsById(body){
      return queryHelper(`UPDATE pages SET is_homepage_grid='${body.is_homepage_grid}',
-      is_published ='${body.is_published}', is_nav_menu='${body.is_nav_menu}', where page_id = ${body.page_id};`)
+      is_published ='${body.is_published}', is_nav_menu='${body.is_nav_menu}', order_number = ${body.order_number} where page_id = ${body.page_id};`)
      .then(response => response)
      .catch(e => {throw e})
   },
@@ -57,9 +76,9 @@ module.exports = {
   },
 
   getPagesByHomePageGrid(){
-    return queryHelper(`SELECT * FROM pages WHERE is_homepage_grid = true;`)
+    return queryHelper(`SELECT * FROM pages WHERE is_homepage_grid = true AND is_published = true order by order_number;`)
       .then(response => response)
       .catch(e => {throw e})
-  },
+  }
 
 }

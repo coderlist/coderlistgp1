@@ -36,13 +36,9 @@ CKEDITOR.stylesSet.add( 'default', [
 	{ name: 'Italic Title',		element: 'h2', styles: { 'font-style': 'italic' } },
 	{ name: 'Subtitle',			element: 'h3', styles: { 'color': '#aaa', 'font-style': 'italic' } },
 	{
-		name: 'Special Container',
+		name: 'Div Row',
 		element: 'div',
-		styles: {
-			padding: '5px 10px',
-			background: '#eee',
-			border: '1px solid #ccc'
-		}
+		attributes: { 'class': 'row' }
 	},
 
 	/* Inline styles */
@@ -80,17 +76,27 @@ CKEDITOR.stylesSet.add( 'default', [
 	{ name: 'Language: LTR',	element: 'span', attributes: { 'dir': 'ltr' } },
 
 	/* Object styles */
-
 	{
-		name: 'Styled Image (left)',
-		element: 'img',
+		name: 'Float Left',
+		element: 'span',
 		attributes: { 'class': 'left' }
 	},
-
 	{
-		name: 'Styled Image (right)',
-		element: 'img',
+		name: 'Float Right',
+		element: 'span',
 		attributes: { 'class': 'right' }
+	},
+	{
+		name: 'Float Image Left',
+		element: 'img',
+		attributes: { 'class': 'left' },
+		styles: { 'margin-right': '1rem'}
+	},
+	{
+		name: 'Float Image Right',
+		element: 'img',
+		attributes: { 'class': 'right' },
+		styles: { 'margin-left': '1rem'}
 	},
 
 	{
