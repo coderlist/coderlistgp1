@@ -153,6 +153,28 @@ ALTER TABLE images DROP COLUMN IF EXISTS page_id;
 
 
 
+-- make nav order unique
+DO $$
+BEGIN
+    IF NOT EXISTS ( SELECT  conname
+                FROM    pg_constraint 
+                WHERE   conname = 'nav_order_const')
+    THEN
+        ALTER TABLE navigations ADD CONSTRAINT nav_order_const UNIQUE (nav_order_number);
+    END IF;
+END$$;
+
+-- make child nav order unique
+DO $$
+BEGIN
+    IF NOT EXISTS ( SELECT  conname
+                FROM    pg_constraint 
+                WHERE   conname = 'sub_nav_order_const')
+    THEN
+        ALTER TABLE sub_navigations ADD CONSTRAINT sub_nav_order_const UNIQUE (grid_order_number);
+    END IF;
+END$$;
+
 
 DO $$
 BEGIN

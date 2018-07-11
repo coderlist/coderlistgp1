@@ -1,11 +1,23 @@
 const fs = require('fs');
 const express = require('express');
 const userRoutes = new express.Router();
-const passport = require('../auth/local');
+// const passport = require('../auth/local');
 const Logins = require('../helperFunctions/Logins');
 const UserLocalsNavigationStyling = require('../helperFunctions/navigation-locals');
 const userLocalsNavigationStyling = new UserLocalsNavigationStyling();
 const MessageTitles = require('../helperFunctions/message-titles');
+const sanitizeHtml = require('sanitize-html');
+const allowedCkeditorItems = { 
+  allowedTags: [ 'h3', 'h4', 'h5', 'h6', 'img', 'blockquote', 'p', 'a', 'ul', 'ol',
+    'nl', 'li', 'b', 'i', 'strong', 'em', 'strike', 'code', 'hr', 'br', 'div',
+    'table', 'thead', 'caption', 'tbody', 'tr', 'th', 'td', 'pre' ],
+  allowedAttributes: {
+    a: [ 'href', 'name', 'target' ],
+    img: [ 'src' ]
+  },
+  selfClosing: [ 'img', 'br', 'hr', 'area', 'base', 'basefont', 'input', 'link', 'meta' ],
+allowedIframeHostnames: ['www.youtube.com', 'player.vimeo.com']
+}
 const messageTitles = new MessageTitles();
 const logins = new Logins();
 const {
@@ -17,7 +29,8 @@ const {
 } = require('express-validator/check');
 const {
   matchedData,
-  sanitize
+  sanitize,
+  sanitizeBody
 } = require('express-validator/filter');
 const {
   updatePassword,
@@ -209,6 +222,7 @@ userRoutes.post('/dashboard', ckeditorPostCheck, (req, res) => {
     res.status(200).redirect('users/dashboard.ejs') 
     return;
   }
+  req.body.content = sanitizeHtml(req.body.content, allowedCkeditorItems);
   insertCallToAction(req.body.content)
   .then(function(){
     req.flash('info', 'Call to action text saved');
@@ -438,6 +452,7 @@ userRoutes.get('/edit-page/:page_id', pageIDCheck, function (req, res) {
       res.status(200).redirect('/users/dashboard');
       return;
     }
+    // data.ckeditor.html =  unescape(data.ckeditor.html);
     getUserById(req.session.user_id) /// Would probably be better with promise.all
     .then(function(userData){
       if (!(userData[0].is_admin || req.session.user_id === data[0].owner_id)) { // Check page ownership or admin
@@ -660,12 +675,8 @@ userRoutes.get('/admin', (req, res) => {
   });
 });
 
-const ckeditorHTMLValidation = [
-  sanitize('ckeditorHTML').escape().trim()
-];
 
 userRoutes.post('/admin', (req, res) => {
-  console.log('req.body.ckeditorHTML:', req.body.ckeditorHTML);
   res.status(200).render('pages/users/admin.ejs', {
     messages: req.flash("info"),
     ckeditorData: req.body.ckeditorHTML || ""
@@ -1009,12 +1020,13 @@ userRoutes.post('/page-navmenu-request', function(req,res){
 postCreatePageCheck = [
   body('title').isAlphanumeric(),
   body('content').exists(), // ensure sanitised in and out of db
-  body('description').isAlphanumeric()
+  body('description').isAlphanumeric(),
+  body('publish_page').isBoolean()
 ]
 
 userRoutes.post('/create-page', postCreatePageCheck, upload.single('image'), function(req, res){
   let errors = validationResult(req);
-  console.log('req.session.user_id :', req.session.user_id);
+  req.body.content = sanitizeHtml(req.body.content, allowedCkeditorItems)
   let page = {
     created_by: req.session.user_id,
     last_edited_by: req.session.user_id,
@@ -1022,6 +1034,7 @@ userRoutes.post('/create-page', postCreatePageCheck, upload.single('image'), fun
     ckeditor_html: req.body.content,
     page_description: req.body.description,
     order_number: 1,
+    is_published: req.body.publish_page
     
   }
   if (!errors.isEmpty || !req.file) { // check that a file has been uploaded
