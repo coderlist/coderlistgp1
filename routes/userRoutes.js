@@ -236,7 +236,7 @@ userRoutes.post('/dashboard', ckeditorPostCheck, (req, res) => {
 /////////////////////// Admin page routes /////////////////////
 
 userRoutes.get('/manage-nav', function (req, res) {
-  getAllPages()
+  getAllPages() // this currently gets all information about the page. We need to cut this down to what is needed
   .then(function(items){
     console.log('items :', items);
     res.status(200).render('pages/users/manage-nav.ejs', { 
