@@ -35,15 +35,15 @@
                                     </thead>
                                     <tbody class="table-menu-items">
                                         <tr>
-                                            <input type="hidden" class="main-nav-item-id" value="null" />
+                                            <input type="hidden" class="main-nav-item-id" name="main_nav_item_id" value="null" />
                                             <td>
-                                                <input type="text" class="form-control menu-page-name" name="page_name" value="">
+                                                <input type="text" class="form-control menu-page-name" name="menu_page_name" value="">
                                             </td>
                                             <td>
                                                 <select name="menu_page" class="form-control custom-select menu-items-select">
-                                                    <option value="1">no-link</option>
-                                                    <option value="2">about</option>
-                                                    <option value="3">workshops</option>
+                                                    <option value="no-link">no-link</option>
+                                                    <option value="about">about</option>
+                                                    <option value="workshops">workshops</option>
                                                 </select>
                                             </td>
                                             <td>
@@ -79,9 +79,9 @@
                                     </thead>
                                     <tbody class="table-sub-menu-items">
                                         <tr>
-                                            <input type="hidden" class="sub-nav-item-id" value="null" />
+                                            <input type="hidden" class="sub-nav-item-id" value="null" name="sub_nav_item_id" />
                                             <td>
-                                                <input type="text" class="form-control sub-menu-page-name" name="page_name" placeholder="Nursery Classes">
+                                                <input type="text" class="form-control sub-menu-page-name" name="sub_menu_page_name" placeholder="Nursery Classes">
                                             </td>
                                             <td>
                                                 <select name="parent_page" class="custom-select parent-item-select">
@@ -91,7 +91,7 @@
                                                 </select>
                                             </td>
                                             <td>
-                                                <select name="child_page" class="form-control custom-select">
+                                                <select name="child_page" class="form-control custom-select child-item-select">
                                                   <% if (typeof subMenuList == 'object' && subMenuList) { %>
                                                     <% subMenuList.map(function(page, index){ %>
                                                       <option value="<%=page.title%>"><%=page.title%></option>
@@ -100,7 +100,7 @@
                                                 </select>
                                             </td>
                                             <td>
-                                                <input type="text" class="form-control page-order sub-menu-page-order" name="page_order" value="0">
+                                                <input type="text" class="form-control page-order sub-menu-page-order" name="sub_menu_page_order" value="0">
                                             </td>
                                             <td>
                                                 <button class="btn btn-secondary btn-sm save-submenu-item">Save</button>

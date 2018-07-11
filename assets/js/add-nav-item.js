@@ -60,27 +60,27 @@ const inputFieldOrderNumber = "inputFieldOrderNumber";
 
 /* Create hidden input field to hold ids */
 const createMainNavItemHiddenInputIDField = function () {
-    return '<input type="hidden" class="main-nav-item-id" value="null"/>';
+    return '<input name="main_nav_item_id" type="hidden" class="main-nav-item-id" value="null"/>';
 };
 const createSubNavItemHiddenInputIDField = function () {
-    return '<input type="hidden" class="sub-nav-item-id" value="null"/>';
+    return '<input name="sub_nav_item_id" type="hidden" class="sub-nav-item-id" value="null"/>';
 };
 /* Creates Input Field */
 const createInputFieldPageName = function (inputFieldName) {
     let input = "";
     switch (inputFieldName) {
         case "menuInputFieldName":
-            input = `<input type="text" class="form-control menu-page-name" name="page_name" placeholder="Page Name">`;
+            input = `<input type="text" class="form-control menu-page-name" name="menu_page_name" value="Page Name">`;
             break;
         case "menuInputFieldOrderNumber":
-            input = `<input type="text" class="form-control page-order menu-page-order" name="page_order" placeholder="">`;
+            input = `<input type="text" class="form-control page-order menu-page-order" name="menu_page_order" value="0">`;
             break;
         case "subMenuInputFieldName":
-            input = `<input type="text" class="form-control sub-menu-page-name" name="page_name" placeholder="Page Name">`;
+            input = `<input type="text" class="form-control sub-menu-page-name" name="sub_menu_page_name" value="Page Name">`;
             break;
         
         case "subMenuInputFieldOrderNumber":
-            input = `<input type="text" class="form-control page-order sub-menu-page-order" name="page_order" placeholder="">`;
+            input = `<input type="text" class="form-control page-order sub-menu-page-order" name="sub_menu_page_order" value="0">`;
             break;
     }
     return `<td>${input}</td>`;
