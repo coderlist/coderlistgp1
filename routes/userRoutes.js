@@ -8,13 +8,16 @@ const userLocalsNavigationStyling = new UserLocalsNavigationStyling();
 const MessageTitles = require('../helperFunctions/message-titles');
 const sanitizeHtml = require('sanitize-html');
 const allowedCkeditorItems = { 
-  allowedTags: [ 'h3', 'h4', 'h5', 'h6', 'img', 'blockquote', 'p', 'a', 'ul', 'ol',
-    'nl', 'li', 'b', 'i', 'strong', 'em', 'strike', 'code', 'hr', 'br', 'div',
+  allowedTags: [ 'h1', 'h2','h3', 'h4', 'h5', 'h6', 'img', 'blockquote', 'p', 'a', 'ul', 'ol',
+    'nl', 'li', 'b', 'i', 'img', 'strong', 'span', 'em', 'strike', 'code', 'hr', 'br', 'div',
     'table', 'thead', 'caption', 'tbody', 'tr', 'th', 'td', 'pre' ],
-  allowedAttributes: {
-    a: [ 'href', 'name', 'target' ],
-    img: [ 'src' ]
-  },
+  allowedAttributes: false,
+  // {
+  //   a: [ 'href', 'name', 'target' ],
+  //   img: [ 'src' ],
+  //   table: ['align', 'border', 'cellpadding', 'cellspacing'],
+  //   '*': ['id', "class", "lang", "title", "dir", 'style', 'margin*', 'width', 'height']
+  // },
   selfClosing: [ 'img', 'br', 'hr', 'area', 'base', 'basefont', 'input', 'link', 'meta' ],
 allowedIframeHostnames: ['www.youtube.com', 'player.vimeo.com']
 }
@@ -1026,7 +1029,7 @@ postCreatePageCheck = [
 
 userRoutes.post('/create-page', postCreatePageCheck, upload.single('image'), function(req, res){
   let errors = validationResult(req);
-  req.body.content = sanitizeHtml(req.body.content, allowedCkeditorItems)
+  req.body.content = sanitizeHtml(req.body.content, allowedCkeditorItems);
   let page = {
     created_by: req.session.user_id,
     last_edited_by: req.session.user_id,
