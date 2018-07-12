@@ -275,7 +275,9 @@ userRoutes.post('/manage-nav', function(req,res){
    }).catch(e => {
      res.status(400).send(e.stack)
    })
- })
+ }).catch(e => {
+  res.status(400).send(e.stack)
+})
  
 }
 })
