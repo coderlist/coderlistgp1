@@ -31,6 +31,7 @@
                                             <% if (typeof pdfList === 'object' && pdfList) { %>
                                               <% pdfList.map(function(pdf){ %>
                                                 <tr>
+                                                    <input type="text" name="pdf_location" class="this-location" value="<%= pdf.location %>" />
                                                     <input type="hidden" name="pdf_name" class="this_name" value="<%=pdf.name%>" />
                                                     <input type="hidden" name="pdf_id" class="this_id" value="<%= pdf.id%>" />
                                                     <td>
@@ -45,13 +46,13 @@
                                                                 <i class="fe fe-more-vertical"></i>
                                                             </a>
                                                             <div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; transform: translate3d(15px, 20px, 0px); top: 0px; left: 0px; will-change: transform;">
-                                                                <a href="javascript:void(0)" class="dropdown-item">
-                                                                    <i class="dropdown-icon fe fe-book-open"></i> Open PDF </a>
-                                                                <a href="javascript:void(0)" class="dropdown-item">
-                                                                    <i class="dropdown-icon fe fe-edit-2"></i> Copy Link </a>
+                                                                <button class="dropdown-item">
+                                                                    <i class="dropdown-icon fe fe-book-open"></i> Open PDF </button>
+                                                                <button class="dropdown-item copy-to-clipboard">
+                                                                    <i class="dropdown-icon fe fe-edit-2 "></i> Copy Link </button>
                                                                 <div class="dropdown-divider"></div>
-                                                                <a href="javascript:void(0)" class="dropdown-item delete-this">
-                                                                    <i class="dropdown-icon fe fe-trash"></i> Delete PDF</a>
+                                                                <button  class="dropdown-item delete-this">
+                                                                    <i class="dropdown-icon fe fe-trash"></i> Delete PDF</button>
                                                             </div>
                                                         </div>
                                                     </td>
@@ -89,6 +90,7 @@
             </div>
             <% include ../partials/footer.ejs %>
         <!-- Scripts -->
+        <script src="/js/copy-link.js"></script>
         <script src="/js/notification-message.js"></script>
         <script src="/js/alert-message.js"></script>
 </body>

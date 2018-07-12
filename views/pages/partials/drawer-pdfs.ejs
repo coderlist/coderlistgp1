@@ -13,13 +13,14 @@
                 <% if ( typeof pdfs == 'object' && pdfs) { %> 
                 <tbody>
                       <% pdfs.map(function(pdf){%>
-                        <tr>
+                        <tr>    
+                            <input type="text" name="pdf_location" class="this-location" value="<%=pdf.location%>" />
                                 <td>
                                     <p><%= pdf.short%></p>
                                 </td>
                                 <td>
                                     <a href="<%= pdf.location%>" class="btn btn-secondary btn-sm">Open PDF</a>
-                                    <a href="<%= pdf.location%>" class="btn btn-secondary btn-sm ml-2">Copy Link</a>
+                                    <button class="btn btn-secondary btn-sm ml-2 copy-to-clipboard">Copy Link</button>
                                  </td>
                                  <td>
 
