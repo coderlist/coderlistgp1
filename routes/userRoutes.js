@@ -251,7 +251,7 @@ userRoutes.post('/manage-nav', function(req,res){
     //req is for parent nav if it does not contain
     //a parent_page value
  nav = {
-   name:req.body.menuInputField,//name:req.body.page_name,
+   title:req.body.menuInputField,//name:req.body.page_name,
    link:req.body.menuItemSelectedOption, 
    nav_order_number:req.body.menuItemOrderNumber
  }
@@ -262,13 +262,14 @@ userRoutes.post('/manage-nav', function(req,res){
    res.status(400).send(e.stack)
  })
 }else{
+  console.log('CHILD REQ', req.body)
  nav = {
-   name: req.body.subMenuInputField,//name:req.body.page_name,
+   title: req.body.subMenuInputField,//name:req.body.page_name,
    link:req.body.subMenuChildItemSelectedOption,
    grid_order_number:req.body.subMenuItemOrderNumber,
-   parent_name: req.body.subMenuParentItemSelectedOption
+   parent_title: req.body.subMenuParentItemSelectedOption
  }
- getParentNavIdByName(nav.parent_name).then(response => {
+ getParentNavIdByName(nav.parent_title).then(response => {
    createChildNavItem(nav, response[0].navigation_id).then(response => {
      res.status(200).send('child nav created')
    }).catch(e => {

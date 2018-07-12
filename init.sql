@@ -106,6 +106,14 @@ ALTER TABLE navigations DROP COLUMN IF EXISTS parent_navigation_id;
 
 ALTER TABLE navigations DROP COLUMN IF EXISTS grid_order_numer;
 
+ALTER TABLE navigations DROP COLUMN IF EXISTS name;
+
+ALTER TABLE navigations DROP COLUMN IF EXISTS content;
+
+ALTER TABLE sub_navigations DROP COLUMN IF EXISTS name;
+
+ALTER TABLE sub_navigations DROP COLUMN IF EXISTS content;
+
 ALTER TABLE users ALTER COLUMN password DROP NOT NULL;
 
 ALTER TABLE call_to_actions DROP COLUMN IF EXISTS decription;
@@ -139,6 +147,10 @@ ALTER TABLE pages ADD COLUMN IF NOT EXISTS ckeditor_html TEXT,
    ADD COLUMN IF NOT EXISTS last_edited_by TEXT;
  --  ADD COLUMN IF NOT EXISTS owner_id INT REFERENCES users(user_id) ON DELETE SET NULL;
 
+
+ALTER TABLE sub_navigations ADD COLUMN IF NOT EXISTS title TEXT;
+
+ 
  ALTER TABLE call_to_actions ADD COLUMN IF NOT EXISTS created TIMESTAMP DEFAULT NOW();
 
 ALTER TABLE call_to_actions ADD COLUMN IF NOT EXISTS description TEXT;
@@ -176,15 +188,15 @@ BEGIN
 END$$;
 
 
-DO $$
-BEGIN
-    IF NOT EXISTS ( SELECT  conname
-                FROM    pg_constraint 
-                WHERE   conname = 'nav_name_const')
-    THEN
-        ALTER TABLE navigations ADD CONSTRAINT nav_name_const UNIQUE (name);
-    END IF;
-END$$;
+-- DO $$
+-- BEGIN
+--     IF NOT EXISTS ( SELECT  conname
+--                 FROM    pg_constraint 
+--                 WHERE   conname = 'nav_name_const')
+--     THEN
+--         ALTER TABLE navigations ADD CONSTRAINT nav_name_const UNIQUE (name);
+--     END IF;
+-- END$$;
 
  -- adds constraint to email column does
  --  not recieve empty string
