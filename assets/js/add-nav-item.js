@@ -244,7 +244,7 @@ function getMenuItemData(index){
  * 
  */
 function postMenuItemData(data){
-    return fetch(`/users/save-order`, {
+    return fetch(`/users/manage-nav`, {
         method: "POST",
         mode: "cors",
         credentials: "include",
@@ -329,7 +329,7 @@ function getSubMenuItemData(index){
  * 
  */
 function postSubMenuItemData(data){
-    return fetch(`/users/save-order`, {
+    return fetch(`/users/manage-nav`, {
         method: "POST",
         mode: "cors",
         credentials: "include",
