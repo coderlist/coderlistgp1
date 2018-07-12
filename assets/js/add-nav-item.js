@@ -257,6 +257,72 @@ function postMenuItemData(data){
         return response;
     })
     .then(message => {
+        console.log(message);
+    })
+    .catch(error => console.log(`There was an error: ${error}`));
+}
+/**
+ * Gets the getDeleteButtonRowIndex
+ */
+function getIndexOfRowWhereMenuDeleteButtonIsAt(buttonTarget) {
+    /* If the target doesn't contain this class just return 
+    *  This will prevent unnecessary side effects that
+    *  Where event propagation doesn't work
+    */
+    if(!buttonTarget.classList.contains('delete-menu-item')){
+        return;
+    }
+    /* Get updated state of the nodes */
+    let currentMenuTable = document.querySelector('.table-menu-items');
+    let buttonMenuIndex = 0;
+    let found = false;
+    for (let i = 0, rows = currentMenuTable.rows; i < rows.length; i++) {
+        const row = rows[i];
+        for (let j = 0, cells = row.cells; j < cells.length; j++) {
+            const cell = cells[j];
+            if (buttonTarget === cell.children[0]) {
+                if(buttonTarget.classList.contains('delete-menu-item')){
+                    found = !found;
+                    break;
+                }
+            }
+        }
+        if(found === true){
+            buttonSubMenuIndex = i;
+            break;
+        }
+    }
+    found = !found;
+    if(buttonSubMenuIndex === undefined || buttonSubMenuIndex === null){
+        return;
+    }
+    getDeleteMenuItemID(buttonSubMenuIndex);
+}
+
+/**
+ * 
+ * Gets the data of the elements
+ * Necessary to be sent to the DB
+ * 
+ */
+function getDeleteMenuItemID(index){
+    const id = document.querySelectorAll('.main-nav-item-id')[index].value;
+    deleteMenuItemAtID(id);
+}
+/**
+ * 
+ * Deletes data of this item to the DB
+ * 
+ */
+function deleteMenuItemAtID(itemId){
+    return fetch(`/users/manage-nav/main-nav-item/${itemId}`, {
+        method: "DELETE",
+        mode: "cors",
+        credentials: "include"
+    }).then(response => {
+        return response;
+    })
+    .then(message => {
         if(message.status == 200){
             window.location.href = '/users/manage-nav';
         }
@@ -343,6 +409,72 @@ function postSubMenuItemData(data){
         return response;
     })
     .then(message => {
+        console.log(message);
+    })
+    .catch(error => console.log(`There was an error: ${error}`));
+}
+/**
+ * Gets the getDeleteButtonRowIndex
+ */
+function getIndexOfRowWhereSubMenuDeleteButtonIsAt(buttonTarget) {
+    /* If the target doesn't contain this class just return 
+    *  This will prevent unnecessary side effects that
+    *  Where event propagation doesn't work
+    */
+    if(!buttonTarget.classList.contains('delete-submenu-item')){
+        return;
+    }
+    /* Get updated state of the nodes */
+    let currentSubMenuTable = document.querySelector('.table-sub-menu-items');
+    let buttonSubMenuIndex = 0;
+    let found = false;
+    for (let i = 0, rows = currentSubMenuTable.rows; i < rows.length; i++) {
+        const row = rows[i];
+        for (let j = 0, cells = row.cells; j < cells.length; j++) {
+            const cell = cells[j];
+            if (buttonTarget === cell.children[0]) {
+                if(buttonTarget.classList.contains('delete-submenu-item')){
+                    found = !found;
+                    break;
+                }
+            }
+        }
+        if(found === true){
+            buttonSubMenuIndex = i;
+            break;
+        }
+    }
+    found = !found;
+    if(buttonSubMenuIndex === undefined || buttonSubMenuIndex === null){
+        return;
+    }
+    getDeleteSubMenuItemID(buttonSubMenuIndex);
+}
+
+/**
+ * 
+ * Gets the data of the elements
+ * Necessary to be sent to the DB
+ * 
+ */
+function getDeleteSubMenuItemID(index){
+    const id = document.querySelectorAll('.sub-nav-item-id')[index].value;
+    deleteSubMenuItemID(id);
+}
+/**
+ * 
+ * Deletes data of this item to the DB
+ * 
+ */
+function deleteSubMenuItemID(itemId){
+    return fetch(`/users/manage-nav/sub-nav-item/${itemId}`, {
+        method: "DELETE",
+        mode: "cors",
+        credentials: "include"
+    }).then(response => {
+        return response;
+    })
+    .then(message => {
         if(message.status == 200){
             window.location.href = '/users/manage-nav';
         }
@@ -350,6 +482,7 @@ function postSubMenuItemData(data){
     })
     .catch(error => console.log(`There was an error: ${error}`));
 }
+
 /*
  *
  * Event delegation to help with dynamically created items
@@ -359,14 +492,22 @@ menuTable.addEventListener('click', event => {
     const buttonTarget = event.target;
     event.stopPropagation();
     event.preventDefault();
-    getMenuIndex(buttonTarget, event);
+    if(buttonTarget.classList.contains('save-submenu-item')){
+        getMenuIndex(buttonTarget);
+    } else if(buttonTarget.classList.contains('delete-menu-item')){
+        getIndexOfRowWhereMenuDeleteButtonIsAt(buttonTarget);
+    }
 });
 
 subMenuTable.addEventListener('click', event => {
-   
     const buttonTarget = event.target;
     event.stopPropagation();
     event.preventDefault();
-    getSubMenuIndex(buttonTarget, event);
+    if(buttonTarget.classList.contains('save-submenu-item')){
+        getSubMenuIndex(buttonTarget);
+    } else if(buttonTarget.classList.contains('delete-submenu-item')){
+        getIndexOfRowWhereSubMenuDeleteButtonIsAt(buttonTarget);
+    }
+    
 });
 

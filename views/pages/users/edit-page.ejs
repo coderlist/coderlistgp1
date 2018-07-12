@@ -39,9 +39,9 @@
                         </div>
                         <div class="form-group ">
                             <label class="form-label">Short description
-                                <span class="form-label-small">0/120</span>
+                                <span class="form-label-small character-counter">0/120</span>
                             </label>
-                            <textarea class="form-control" name="description" rows="6" placeholder="Description.." max-length="120" required><%= (typeof page == 'object' && page) ?page.page_description : 'Add a description' %></textarea>
+                            <textarea class="form-control page-description" name="description" rows="6" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" max-length="120" required><%= (typeof page == 'object' && page) ?page.page_description : 'Add a description' %></textarea>
                         </div>
                         <% if (title === "Create Page") { %>
                           <div class="form-group form-image">
@@ -103,6 +103,7 @@
     <% include ../partials/footer.ejs %>
     <!-- <% include ../partials/footer.ejs %> -->
     <!-- Scripts -->
+    <script src="/js/count-words.js"></script>
     <script src="/js/copy-link.js"></script>
     <script src="/js/toggle-drawer.js"></script>
     <script src="/js/image-preview.js"></script>
