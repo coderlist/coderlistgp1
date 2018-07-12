@@ -8,13 +8,16 @@ const userLocalsNavigationStyling = new UserLocalsNavigationStyling();
 const MessageTitles = require('../helperFunctions/message-titles');
 const sanitizeHtml = require('sanitize-html');
 const allowedCkeditorItems = { 
-  allowedTags: [ 'h3', 'h4', 'h5', 'h6', 'img', 'blockquote', 'p', 'a', 'ul', 'ol',
-    'nl', 'li', 'b', 'i', 'strong', 'em', 'strike', 'code', 'hr', 'br', 'div',
+  allowedTags: [ 'h1', 'h2','h3', 'h4', 'h5', 'h6', 'img', 'blockquote', 'p', 'a', 'ul', 'ol',
+    'nl', 'li', 'b', 'i', 'img', 'strong', 'span', 'em', 'strike', 'code', 'hr', 'br', 'div',
     'table', 'thead', 'caption', 'tbody', 'tr', 'th', 'td', 'pre' ],
-  allowedAttributes: {
-    a: [ 'href', 'name', 'target' ],
-    img: [ 'src' ]
-  },
+  allowedAttributes: false,
+  // {
+  //   a: [ 'href', 'name', 'target' ],
+  //   img: [ 'src' ],
+  //   table: ['align', 'border', 'cellpadding', 'cellspacing'],
+  //   '*': ['id', "class", "lang", "title", "dir", 'style', 'margin*', 'width', 'height']
+  // },
   selfClosing: [ 'img', 'br', 'hr', 'area', 'base', 'basefont', 'input', 'link', 'meta' ],
 allowedIframeHostnames: ['www.youtube.com', 'player.vimeo.com']
 }
@@ -233,19 +236,24 @@ userRoutes.post('/dashboard', ckeditorPostCheck, (req, res) => {
 /////////////////////// Admin page routes /////////////////////
 
 userRoutes.get('/manage-nav', function (req, res) {
-  res.status(200).render('pages/users/manage-nav.ejs', { 
-    messages: req.flash('info')
+  getAllPages() // this currently gets all information about the page. We need to cut this down to what is needed
+  .then(function(items){
+    console.log('items :', items);
+    res.status(200).render('pages/users/manage-nav.ejs', { 
+      messages: req.flash('info'),
+      subMenuList: items
+    })
   })
 })
 
 userRoutes.post('/manage-nav', function(req,res){
-  if (!req.body.parent_page){
+  if (!req.body.subMenuParentItemSelectedOption){
     //req is for parent nav if it does not contain
     //a parent_page value
  nav = {
-   name:req.body.page_name,
-   link:req.body.menu_page,
-   nav_order_number:req.body.page_order
+   name:req.body.menuInputField,//name:req.body.page_name,
+   link:req.body.menuItemSelectedOption, 
+   nav_order_number:req.body.menuItemOrderNumber
  }
  
  createParentNavItem(nav).then(response => {
@@ -255,10 +263,10 @@ userRoutes.post('/manage-nav', function(req,res){
  })
 }else{
  nav = {
-   name:req.body.page_name,
-   link:req.body.menu_page,
-   grid_order_number:req.body.page_order,
-   parent_name: req.body.parent_page
+   name: req.body.subMenuInputField,//name:req.body.page_name,
+   link:req.body.subMenuChildItemSelectedOption,
+   grid_order_number:req.body.subMenuItemOrderNumber,
+   parent_name: req.body.subMenuParentItemSelectedOption
  }
  getParentNavIdByName(nav.parent_name).then(response => {
    createChildNavItem(nav, response[0].navigation_id).then(response => {
@@ -1013,9 +1021,7 @@ userRoutes.get('/page-navmenu-request', function (req, res) {
  })
 })
 
-userRoutes.post('/page-navmenu-request', function(req,res){
-    
-})
+
 
 postCreatePageCheck = [
   body('title').isAlphanumeric(),
@@ -1026,7 +1032,7 @@ postCreatePageCheck = [
 
 userRoutes.post('/create-page', postCreatePageCheck, upload.single('image'), function(req, res){
   let errors = validationResult(req);
-  req.body.content = sanitizeHtml(req.body.content, allowedCkeditorItems)
+  req.body.content = sanitizeHtml(req.body.content, allowedCkeditorItems);
   let page = {
     created_by: req.session.user_id,
     last_edited_by: req.session.user_id,

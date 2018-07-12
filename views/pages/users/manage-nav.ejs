@@ -7,68 +7,114 @@
 
 <body>
     <% include ../partials/header.ejs %>
-            <div class="my-3 my-md-5">
-                <div class="container">
-                    <div class="page-header">
-                        <h1 class="page-title">
-                            Manage Navigation Items
-                        </h1>
-                    </div>
-                    <div class="row row-cards row-deck">
-                        <div class="col-md-12">
-                            <div class="card">
-                                <div class="card-header manage-navigation-items-header">
-                                    <h3 class="card-title">Main menu</h3>
-                                    <div class="text-right">
-                                        <button class="btn btn-primary ml-auto add-new-item-button menu-item-button">Add new item</button>
-                                    </div>
-                                </div>
-                                <div class="table-responsive">
-                                    <table class="table card-table table-vcenter text-nowrap">
-                                        <thead>
-                                            <tr>
-                                                <th>Title</th>
-                                                <th>Page</th>
-                                                <th>Order</th>
-                                                <th></th>
-                                            </tr>
-                                        </thead>
-                                        <tbody class="table-menu-items">
-                                            
-                                        </tbody>
-                                    </table>
+        <div class="my-3 my-md-5">
+            <div class="container">
+                <div class="page-header">
+                    <h1 class="page-title">
+                        Manage Navigation Items
+                    </h1>
+                </div>
+                <div class="row row-cards row-deck">
+                    <div class="col-md-12">
+                        <div class="card">
+                            <div class="card-header manage-navigation-items-header">
+                                <h3 class="card-title">Main menu</h3>
+                                <div class="text-right">
+                                    <button class="btn btn-primary ml-auto add-new-item-button menu-item-button">Add new item</button>
                                 </div>
                             </div>
+                            <div class="table-responsive">
+                                <table class="table card-table table-vcenter text-nowrap">
+                                    <thead>
+                                        <tr>
+                                            <th>Title</th>
+                                            <th>Page</th>
+                                            <th>Order</th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="table-menu-items">
+                                        <tr>
+                                            <input type="hidden" class="main-nav-item-id" name="main_nav_item_id" value="null" />
+                                            <td>
+                                                <input type="text" class="form-control menu-page-name" name="menu_page_name" value="">
+                                            </td>
+                                            <td>
+                                                <select name="menu_page" class="form-control custom-select menu-items-select">
+                                                    <option value="no-link">no-link</option>
+                                                    <option value="about">about</option>
+                                                    <option value="workshops">workshops</option>
+                                                </select>
+                                            </td>
+                                            <td>
+                                                <input type="text" class="form-control page-order menu-page-order" name="menu_page_order" value="0">
+                                            </td>
+                                            <td>
+                                                <button class="btn btn-secondary btn-sm save-menu-item">Save</button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
-                        <div class="col-md-12">
-                            <div class="card">
-                                <div class="card-header manage-navigation-items-header">
-                                    <h3 class="card-title">Sub menu</h3>
-                                    <div class="text-right">
-                                        <button class="btn btn-primary ml-auto add-new-item-button sub-menu-item-button">Add new item</button>
-                                    </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="card">
+                            <div class="card-header manage-navigation-items-header">
+                                <h3 class="card-title">Sub menu</h3>
+                                <div class="text-right">
+                                    <button class="btn btn-primary ml-auto add-new-item-button sub-menu-item-button">Add new item</button>
                                 </div>
-                                <div class="table-responsive">
-                                    <table class="table card-table table-vcenter text-nowrap">
-                                        <thead>
-                                            <tr>
-                                                <th>Title</th>
-                                                <th>Parent</th>
-                                                <th>Page</th>
-                                                <th>Order</th>
-                                                <th></th>
-                                            </tr>
-                                        </thead>
-                                        <tbody class="table-sub-menu-items">
-                                        </tbody>
-                                    </table>
-                                </div>
+                            </div>
+                            <div class="table-responsive">
+                                <table class="table card-table table-vcenter text-nowrap">
+                                    <thead>
+                                        <tr>
+                                            <th>Title</th>
+                                            <th>Parent</th>
+                                            <th>Page</th>
+                                            <th>Order</th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="table-sub-menu-items">
+                                        <tr>
+                                            <input type="hidden" class="sub-nav-item-id" value="null" name="sub_nav_item_id" />
+                                            <td>
+                                                <input type="text" class="form-control sub-menu-page-name" name="sub_menu_page_name" placeholder="Nursery Classes">
+                                            </td>
+                                            <td>
+                                                <select name="parent_page" class="custom-select parent-item-select">
+                                                    <option value="1">Workshops</option>
+                                                    <option value="2">about</option>
+                                                    <option value="3">workshops</option>
+                                                </select>
+                                            </td>
+                                            <td>
+                                                <select name="child_page" class="form-control custom-select child-item-select">
+                                                  <% if (typeof subMenuList == 'object' && subMenuList) { %>
+                                                    <% subMenuList.map(function(page, index){ %>
+                                                      <option value="<%=page.title%>"><%=page.title%></option>
+                                                    <% }) %>
+                                                    <% } %>
+                                                </select>
+                                            </td>
+                                            <td>
+                                                <input type="text" class="form-control page-order sub-menu-page-order" name="sub_menu_page_order" value="0">
+                                            </td>
+                                            <td>
+                                                <button class="btn btn-secondary btn-sm save-submenu-item">Save</button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-            <% include ../partials/footer.ejs %>
+        </div>
+        <% include ../partials/footer.ejs %>
             <!-- Scripts -->
             <script src="/js/add-nav-item.js"></script>
 </body>
