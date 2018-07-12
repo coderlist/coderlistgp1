@@ -236,12 +236,16 @@ userRoutes.post('/dashboard', ckeditorPostCheck, (req, res) => {
 /////////////////////// Admin page routes /////////////////////
 
 userRoutes.get('/manage-nav', function (req, res) {
-  getAllPages() // this currently gets all information about the page. We need to cut this down to what is needed
-  .then(function(items){
-    console.log('items :', items);
+  const pageItems = getAllPages() // this currently gets all information about the page. We need to cut this down to what is needed
+  const navigationItems = getAllNavs()
+  Promise.all([pageItems,navigationItems])
+  .then(function(values){
+    console.log('items :', values[1]);
     res.status(200).render('pages/users/manage-nav.ejs', { 
       messages: req.flash('info'),
-      subMenuList: items
+      subMenuList: values[0],
+      navItems: values[1]
+
     })
   })
 })

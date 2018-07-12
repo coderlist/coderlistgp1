@@ -34,11 +34,13 @@
                                             <th></th>
                                         </tr>
                                     </thead>
+                                    <% if (typeof navItems == 'object' && navItems) {%>
                                     <tbody class="table-menu-items">
+                                      <% navItems.map(function(nav){%>
                                         <tr>
-                                            <input type="hidden" class="main-nav-item-id" name="main_nav_item_id" value="null" />
+                                            <input type="hidden" class="main-nav-item-id" name="main_nav_item_id" value="<%=nav.navigation_id%>" />
                                             <td>
-                                                <input type="text" class="form-control menu-page-name" name="menu_page_name" value="">
+                                                <input type="text" class="form-control menu-page-name" name="menu_page_name" value="<%=nav.page%>">
                                             </td>
                                             <td>
                                                 <select name="menu_page" class="form-control custom-select menu-items-select">
@@ -57,7 +59,9 @@
                                                 <button class="btn btn-danger btn-sm delete-menu-item">Delete</button>
                                             </td>
                                         </tr>
+                                        <% }) %>
                                     </tbody>
+                                    <% } %>
                                 </table>
                             </div>
                         </div>
