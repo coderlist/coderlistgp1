@@ -492,7 +492,7 @@ menuTable.addEventListener('click', event => {
     const buttonTarget = event.target;
     event.stopPropagation();
     event.preventDefault();
-    if(buttonTarget.classList.contains('save-submenu-item')){
+    if(buttonTarget.classList.contains('save-menu-item')){
         getMenuIndex(buttonTarget);
     } else if(buttonTarget.classList.contains('delete-menu-item')){
         getIndexOfRowWhereMenuDeleteButtonIsAt(buttonTarget);
