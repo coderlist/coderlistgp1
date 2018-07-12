@@ -247,13 +247,13 @@ userRoutes.get('/manage-nav', function (req, res) {
 })
 
 userRoutes.post('/manage-nav', function(req,res){
-  if (!req.body.parent_page){
+  if (!req.body.subMenuParentItemSelectedOption){
     //req is for parent nav if it does not contain
     //a parent_page value
  nav = {
-   name:req.body.page_name,
-   link:req.body.menu_page,
-   nav_order_number:req.body.page_order
+   name:req.body.menuInputField,//name:req.body.page_name,
+   link:req.body.menuItemSelectedOption, 
+   nav_order_number:req.body.menuItemOrderNumber
  }
  
  createParentNavItem(nav).then(response => {
@@ -263,10 +263,10 @@ userRoutes.post('/manage-nav', function(req,res){
  })
 }else{
  nav = {
-   name:req.body.page_name,
-   link:req.body.menu_page,
-   grid_order_number:req.body.page_order,
-   parent_name: req.body.parent_page
+   name: req.body.subMenuInputField,//name:req.body.page_name,
+   link:req.body.subMenuChildItemSelectedOption,
+   grid_order_number:req.body.subMenuItemOrderNumber,
+   parent_name: req.body.subMenuParentItemSelectedOption
  }
  getParentNavIdByName(nav.parent_name).then(response => {
    createChildNavItem(nav, response[0].navigation_id).then(response => {
@@ -1021,9 +1021,7 @@ userRoutes.get('/page-navmenu-request', function (req, res) {
  })
 })
 
-userRoutes.post('/page-navmenu-request', function(req,res){
-    
-})
+
 
 postCreatePageCheck = [
   body('title').isAlphanumeric(),

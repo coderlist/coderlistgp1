@@ -236,7 +236,8 @@ function getMenuItemData(index){
     console.log("Item Name:",thisMenuItemData.menuInputField);
     console.log("Item SelectedOption:",thisMenuItemData.menuItemSelectedOption);
     console.log("Item OrderNumber:",thisMenuItemData.menuItemOrderNumber);
-    postMenuItemData(thisTableItemData);
+   // postMenuItemData(thisTableItemData);
+    postMenuItemData(thisMenuItemData);
 }
 /**
  * 
@@ -257,7 +258,7 @@ function postMenuItemData(data){
     })
     .then(message => {
         if(message.status == 200){
-            window.location.href = '/users/manage-navs';
+            window.location.href = '/users/manage-nav';
         }
         console.log(message);
     })
@@ -321,7 +322,8 @@ function getSubMenuItemData(index){
     console.log("Item SelectedOption:",thisMenuItemData.subMenuParentItemSelectedOption);
     console.log("Item SelectedOption:",thisMenuItemData.subMenuChildItemSelectedOption);
     console.log("Item OrderNumber:",thisMenuItemData.subMenuItemOrderNumber);
-    postSubMenuItemData(thisTableItemData);
+   // postSubMenuItemData(thisTableItemData);
+   postSubMenuItemData(thisMenuItemData);
 }
 /**
  * 
@@ -342,7 +344,7 @@ function postSubMenuItemData(data){
     })
     .then(message => {
         if(message.status == 200){
-            window.location.href = '/users/manage-navs';
+            window.location.href = '/users/manage-nav';
         }
         console.log(message);
     })
@@ -361,6 +363,7 @@ menuTable.addEventListener('click', event => {
 });
 
 subMenuTable.addEventListener('click', event => {
+   
     const buttonTarget = event.target;
     event.stopPropagation();
     event.preventDefault();
