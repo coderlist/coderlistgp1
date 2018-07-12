@@ -32,9 +32,9 @@ createChildNavItem(bodyReq, parentId){
   * @param  {} order
   * select parent title by order number
   */
- getParentNavIdByName(order){
+ getParentNavIdByName(title){
   return queryHelper(`
-  SELECT navigation_id FROM navigations WHERE nav_order_number ='${order}' 
+  SELECT navigation_id FROM navigations WHERE title ='${title}' 
 `).then(response => response)
 .catch(e =>{throw e})
  },

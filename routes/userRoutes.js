@@ -277,9 +277,11 @@ userRoutes.post('/manage-nav', function(req,res){
    createChildNavItem(nav, response[0].navigation_id).then(response => {
      res.status(200).send('child nav created')
    }).catch(e => {
-     res.status(400).send(e.stack)
+    console.error(e.stack)
    })
- })
+ }).catch(e => {
+  console.error(e.stack)
+})
  
 }
 })
