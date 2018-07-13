@@ -249,7 +249,6 @@ userRoutes.get('/manage-nav', function (req, res) {
       subMenuList: values[0],
       parentNav: values[1],
       childNav: values[2]
-
     })
   })
 })

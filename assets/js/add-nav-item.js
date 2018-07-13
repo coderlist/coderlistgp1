@@ -1,9 +1,9 @@
 /* 
  * Arrays to hold pages, parent pages and child pages names.
  */
-const pageNames = ['no-link'];
-const parentPageName = [];
-const childPageName = [];
+const parentNavLinks = ['no-link'];
+const parentNavItems = [];
+const childNavLinks = [];
 /* Options for fetch method */
 const init = {
     method: 'GET',
@@ -18,20 +18,25 @@ fetch('/users/page-navmenu-request', init)
         return response.json();
     }).then(function (data) {
         data.forEach(page => {
-            console.log(page.page);
-            /* If parent page has children */
+            console.log(page);
+            if(page.link === null){
+                return;
+            } else {
+                
+            }
             if (page.children !== null) {
-                /* Get page name */
-                parentPageName.push(page.page);
+                parentPageName.push(page.link);
+                console.log(parentPageName);
                 /* Get children pages */
                 page.children.forEach(child => {
+                    console.log(childPageName);
                     childPageName.push(child.page);
-                    console.log(child.page);
-                });
-
+             });
+                pageNames.push(page.page);
             }
-            /* Get Parent pages who don't have Children */
-            pageNames.push(page.page);
+            /* If parent page has children */
+                /* Get page name */
+                
         });
     }).catch(function (error) {
         console.log("It wasn't possible to return any data from the server: ", error);
@@ -89,9 +94,10 @@ const createInputFieldPageName = function (inputFieldName) {
 const createSelectionMenu = function (pageName) {
     let options = '';
     let select = ``;
+    console.log(parentNavItems);
     switch (pageName) {
         case "parentMenuItemPage":
-            options = parentPageName.map((option) => {
+            options = parentNavItems.map((option) => {
                 return `<option value="${option}">${option}</option>`
             });
             select = `<td><select name="parent_page" class="form-control custom-select parent-item-select">
@@ -99,7 +105,7 @@ const createSelectionMenu = function (pageName) {
             </select></td>`;
             break;
         case "childMenuItemPage":
-            options = childPageName.map((option) => {
+            options = childNavLinks.map((option) => {
                 return `<option value="${option}">${option}</option>`
             });
             select = `<td><select name="child_page" class="form-control custom-select child-item-select">
@@ -107,7 +113,7 @@ const createSelectionMenu = function (pageName) {
             </select></td>`;
             break;
         default:
-            options = pageNames.map((option) => {
+            options = parentNavLinks.map((option) => {
                 return `<option value="${option}">${option}</option>`
             });
             select = `<td><select name="menu_page" class="form-control custom-select menu-items-select">
@@ -288,15 +294,15 @@ function getIndexOfRowWhereMenuDeleteButtonIsAt(buttonTarget) {
             }
         }
         if(found === true){
-            buttonSubMenuIndex = i;
+            buttonMenuIndex = i;
             break;
         }
     }
     found = !found;
-    if(buttonSubMenuIndex === undefined || buttonSubMenuIndex === null){
+    if(buttonMenuIndex === undefined || buttonMenuIndex === null){
         return;
     }
-    getDeleteMenuItemID(buttonSubMenuIndex);
+    getDeleteMenuItemID(buttonMenuIndex);
 }
 
 /**
