@@ -65,14 +65,14 @@ createChildNavItem(bodyReq, parentId){
 
  getAllParentNavs(){
     return queryHelper(
-      `SELECT title, link, nav_order_number as order FROM navigations;`
+      `SELECT navigation_id, title, link, nav_order_number as order FROM navigations;`
     ).then(response => response)
     .catch(e =>{throw e})
  },
 
  getAllChildNavs(){
   return queryHelper(
-    `SELECT title, link, grid_order_number as order FROM sub_navigations;`
+    `SELECT sub_nav_id,title, link, grid_order_number as order FROM sub_navigations;`
   ).then(response => response)
   .catch(e =>{throw e})
  }
