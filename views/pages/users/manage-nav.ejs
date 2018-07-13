@@ -34,13 +34,13 @@
                                             <th></th>
                                         </tr>
                                     </thead>
-                                    <% if (typeof navItems == 'object' && navItems) {%>
+                                    <% if (typeof parentNav == 'object' && parentNav) {%>
                                     <tbody class="table-menu-items">
-                                      <% navItems.map(function(nav){%>
+                                      <% parentNav.map(function(nav){%>
                                         <tr>
                                             <input type="hidden" class="main-nav-item-id" name="main_nav_item_id" value="<%=nav.navigation_id%>" />
                                             <td>
-                                                <input type="text" class="form-control menu-page-name" name="menu_page_name" value="<%=nav.page%>">
+                                                <input type="text" class="form-control menu-page-name" name="menu_page_name" value="<%=nav.title%>">
                                             </td>
                                             <td>
                                                 <select name="menu_page" class="form-control custom-select menu-items-select">
@@ -50,7 +50,7 @@
                                                 </select>
                                             </td>
                                             <td>
-                                                <input type="text" class="form-control page-order menu-page-order" name="menu_page_order" value="0">
+                                                <input type="text" class="form-control page-order menu-page-order" name="menu_page_order" value="<%=nav.order || 0 %>">
                                             </td>
                                             <td>
                                                 <button class="btn btn-secondary btn-sm save-menu-item">Save</button>

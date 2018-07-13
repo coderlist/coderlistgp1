@@ -69,7 +69,9 @@ const {
   createParentNavItem,
   createChildNavItem,
   getParentNavIdByName,
-  getAllNavs
+  getAllNavs,
+  getAllParentNavs,
+  getAllChildNavs
 } = require('../server/models/navigations')
 const {toNavJSON} = require('../helperFunctions/query/navJson')
 const { 
@@ -237,14 +239,16 @@ userRoutes.post('/dashboard', ckeditorPostCheck, (req, res) => {
 
 userRoutes.get('/manage-nav', function (req, res) {
   const pageItems = getAllPages() // this currently gets all information about the page. We need to cut this down to what is needed
-  const navigationItems = getAllNavs()
-  Promise.all([pageItems,navigationItems])
+  const parentNavs = getAllParentNavs();
+  const childNavs = getAllChildNavs()
+  Promise.all([pageItems, parentNavs, childNavs])
   .then(function(values){
-    console.log('items :', values[1]);
+    console.log('items :', values[1], 'items 2', values[2]);
     res.status(200).render('pages/users/manage-nav.ejs', { 
       messages: req.flash('info'),
       subMenuList: values[0],
-      navItems: values[1]
+      parentNav: values[1],
+      childNav: values[2]
 
     })
   })
