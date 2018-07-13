@@ -65,15 +65,51 @@ createChildNavItem(bodyReq, parentId){
 
  getAllParentNavs(){
     return queryHelper(
-      `SELECT title, link, nav_order_number as order FROM navigations order by nav_order_number;`
+      `SELECT title, link, nav_order_number as order FROM navigations ORDER BY nav_order_number;`
     ).then(response => response)
     .catch(e =>{throw e})
  },
 
  getAllChildNavs(){
   return queryHelper(
-    `SELECT title, link, grid_order_number as order FROM sub_navigations order by grid_order_number;`
+    `SELECT title, link, grid_order_number as order FROM sub_navigations ORDER BY grid_order_number;`
   ).then(response => response)
   .catch(e =>{throw e})
- }
+ },
+
+ /**
+  * deleting parent nav orphans child nav connected to it
+  */
+
+ deleteParentNavById(id){
+  return queryHelper(
+    `DELETE FROM navigations WHERE navigation_id = ${id};`
+  ).then(response => response)
+  .catch(e =>{throw e})
+},
+
+deleteParentNavByOrder(order){
+  return queryHelper(
+    `DELETE FROM navigations WHERE nav_order_number = ${order};`
+  ).then(response => response)
+  .catch(e =>{throw e})
+},
+
+deleteChildNavById(id){
+  return queryHelper(
+    `DELETE FROM sub_navigations WHERE sub_nav_id = ${id};`
+  ).then(response => response)
+  .catch(e =>{throw e})
+},
+
+deleteChildNavByOrder(order){
+  return queryHelper(
+    `DELETE FROM sub_navigations WHERE grid_order_number = ${order};`
+  ).then(response => response)
+  .catch(e =>{throw e})
+}
+
+
 } 
+
+
