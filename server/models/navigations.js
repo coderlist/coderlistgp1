@@ -49,16 +49,8 @@ createChildNavItem(bodyReq, parentId){
 
  getAllNavs(){
    return queryHelper(
-     
-      // WITH page AS (SELECT n.navigation_id,n.name,n.link,
-      //   n.nav_order_number,s.name AS child_name,s.link AS child_link,
-      //   s.grid_order_number FROM navigations AS n 
-      //   FULL JOIN sub_navigations AS s ON n.navigation_id = s.parent_navigation_id) 
-      //   SELECT navigation_id,name as page,link,nav_order_number AS order, 
-      //   json_build_object('page', child_name, 'link', child_link, 'order', grid_order_number) AS 
-      //   children FROM page;
-`
-        WITH page AS (SELECT n.navigation_id,n.title,n.link,
+ 
+`         WITH page AS (SELECT n.navigation_id,n.title,n.link,
           n.nav_order_number,s.title AS child_name,s.link AS child_link,
           s.grid_order_number FROM navigations AS n 
           FULL JOIN sub_navigations AS s ON n.navigation_id = s.parent_navigation_id) 
@@ -68,5 +60,20 @@ createChildNavItem(bodyReq, parentId){
      `
    ).then(response => response)
    .catch(e =>{throw e})
+ },
+
+
+ getAllParentNavs(){
+    return queryHelper(
+      `SELECT title, link, nav_order_number as order FROM navigations;`
+    ).then(response => response)
+    .catch(e =>{throw e})
+ },
+
+ getAllChildNavs(){
+  return queryHelper(
+    `SELECT title, link, grid_order_number as order FROM sub_navigations;`
+  ).then(response => response)
+  .catch(e =>{throw e})
  }
 }
