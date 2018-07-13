@@ -34,11 +34,13 @@
                                             <th></th>
                                         </tr>
                                     </thead>
+                                    <% if (typeof parentNav == 'object' && parentNav) {%>
                                     <tbody class="table-menu-items">
+                                      <% parentNav.map(function(nav){%>
                                         <tr>
-                                            <input type="hidden" class="main-nav-item-id" name="main_nav_item_id" value="null" />
+                                            <input type="hidden" class="main-nav-item-id" name="main_nav_item_id" value="<%=nav.navigation_id%>" />
                                             <td>
-                                                <input type="text" class="form-control menu-page-name" name="menu_page_name" value="">
+                                                <input type="text" class="form-control menu-page-name" name="menu_page_name" value="<%=nav.title%>">
                                             </td>
                                             <td>
                                                 <select name="menu_page" class="form-control custom-select menu-items-select">
@@ -48,7 +50,7 @@
                                                 </select>
                                             </td>
                                             <td>
-                                                <input type="text" class="form-control page-order menu-page-order" name="menu_page_order" value="0">
+                                                <input type="text" class="form-control page-order menu-page-order" name="menu_page_order" value="<%=nav.order || 0 %>">
                                             </td>
                                             <td>
                                                 <button class="btn btn-secondary btn-sm save-menu-item">Save</button>
@@ -57,7 +59,9 @@
                                                 <button class="btn btn-danger btn-sm delete-menu-item">Delete</button>
                                             </td>
                                         </tr>
+                                        <% }) %>
                                     </tbody>
+                                    <% } %>
                                 </table>
                             </div>
                         </div>
@@ -82,7 +86,9 @@
                                             <th></th>
                                         </tr>
                                     </thead>
+                                    <%if ( typeof childNav == 'object' && childNav) {%>
                                     <tbody class="table-sub-menu-items">
+                                      <%childNav.map(function(child) {%>
                                         <tr>
                                             <input type="hidden" class="sub-nav-item-id" value="null" name="sub_nav_item_id" />
                                             <td>
@@ -114,7 +120,9 @@
                                                 <button class="btn btn-danger btn-sm delete-submenu-item">Delete</button>
                                             </td>
                                         </tr>
+                                        <% }) %>
                                     </tbody>
+                                    <% } %>
                                 </table>
                             </div>
                         </div>
