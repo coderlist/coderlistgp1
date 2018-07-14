@@ -150,7 +150,7 @@ ALTER TABLE pages ADD COLUMN IF NOT EXISTS ckeditor_html TEXT,
 
 ALTER TABLE sub_navigations ADD COLUMN IF NOT EXISTS title TEXT;
 
-ALTER TABLE sub_navigations DROP CONSTRAINT sub_nav_order_const;
+ALTER TABLE sub_navigations DROP CONSTRAINT IF EXISTS sub_nav_order_const;
 
  
  ALTER TABLE call_to_actions ADD COLUMN IF NOT EXISTS created TIMESTAMP DEFAULT NOW();
