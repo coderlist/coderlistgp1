@@ -17,10 +17,10 @@ class UserLocalsNavigationStyling {
         console.log(url);
         let id = '';
         if(url.match("\/edit-page\/") == "/edit-page/"){
-            id = url.match(/\d+$/);
+            id = url.match(/[\w-]+$/)[0];
         } 
         if(url.match("\/edit-user\/") == "/edit-user/"){
-            id = url.match(/\d+$/);
+            id = url.match(/[\d]+$/)[0];
         }
         if(url.match("\/enter-password") == "/enter-password"){
             url = "enter-password";

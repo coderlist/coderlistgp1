@@ -342,6 +342,7 @@ userRoutes.get('/manage-pdfs', function (req, res) {
         messagesError: req.flash('error'),
         pdfList: pdfList
       })
+      return;
     }
       pdfs.map(function(pdf) {
       console.log('pdfs :', pdf);
@@ -941,84 +942,8 @@ userRoutes.post('/upload-images', upload.single('image'), (req, res) => {
 
 
 userRoutes.get('/page-navmenu-request', function (req, res) {
- 
-  // const pages = [{
-  //     page: "Home",
-  //     link: "Home",
-  //     order: "1",
-  //     children: null
-  //   },
-  //   {
-  //     page: "About",
-  //     link: "About",
-  //     order: "2",
-  //     children: null
-  //   },
-  //   {
-  //     page: "Workshops",
-  //     link: "no-link",
-  //     order: "3",
-  //     children: [{
-  //         page: "Private Sessions",
-  //         link: "Private sessions",
-  //         order: "1"
-  //       },
-  //       {
-  //         page: "Nursery Level",
-  //         link: "Nursery level",
-  //         order: "2"
-  //       },
-  //       {
-  //         page: "Small Groups",
-  //         link: "Small groups",
-  //         order: "3"
-  //       },
-  //       {
-  //         page: "Weekly Classes",
-  //         link: "Weekly classes",
-  //         order: "4"
-  //       }
-  //     ]
-  //   },
-  //   {
-  //     page: "Contact",
-  //     link: "Contact",
-  //     order: "4",
-  //     children: null
-  //   },
-  //   {
-  //     page: "Another Page",
-  //     link: "no-link",
-  //     order: "3",
-  //     children: [{
-  //         page: "New Sessions",
-  //         link: "New sessions",
-  //         order: "1"
-  //       },
-  //       {
-  //         page: "New Level",
-  //         link: "New level",
-  //         order: "2"
-  //       },
-  //       {
-  //         page: "New Groups",
-  //         link: "New groups",
-  //         order: "3"
-  //       },
-  //       {
-  //         page: "New Classes",
-  //         link: "New classes",
-  //         order: "4"
-  //       }
-  //     ]
-  //   }
-  // ]
-  // console.log('JSON.stringify :', JSON.stringify(pages));
-  // res.status(200).send(JSON.stringify(pages));
-
-//work on getAllNavs to return page as above
-
-  getAllNavs().then(response => {
+// This is working now.
+getAllNavs().then(response => {
     const pages = toNavJSON(response)
     res.status(200).send(pages)
   }).catch(e => {
@@ -1084,6 +1009,15 @@ userRoutes.get('/edit-page/:link', pageIDCheck, function (req, res) {
       fs.readdir('assets/pdfs', (err, pdfs) => {
         if (err) {
           console.log('err :', err);
+        }
+        if (!pdfs) {
+          req.flash('error','No PDFs uploaded')
+          res.status(200).render('pages/users/edit-page.ejs', { 
+            messages: req.flash('info'),
+            messagesError: req.flash('error'),
+            pdfList: pdfList
+          })
+          return;
         }
         pdfs.map(function(pdf) { //refactor two of these now
           console.log('pdfs :', pdf);
@@ -1155,8 +1089,7 @@ userRoutes.post('/create-page', postCreatePageCheck, upload.single('image'), fun
     res.status(200).redirect('/users/dashboard');
   }).catch(function(err){
     req.flash('info', 'There was an error creating the page');
-    res.status(200).render('pages/users/edit-page.ejs', {messages: req.flash('info'), page : page});
-    
+    res.status(200).render('pages/users/edit-page.ejs', {messages: req.flash('info'), page : page}); 
   })
 });
 postEditPageCheck = [
