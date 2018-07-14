@@ -584,11 +584,18 @@ userRoutes.post('/update-banner', upload.single('image'), function(req, res){
   });
 })
 
+userRoutes.get('/create-user', (req, res) => { //accessible by authed admin
+  res.status(200).render('pages/users/create-user.ejs', {
+    messages: req.flash('info'),
+    messagesError: req.flash('error')
+  });
+});
 
 const createUserCheck = [
   body('email').isEmail().normalizeEmail(),
   body('first_name').trim().isAlphanumeric(),
-  body('last_name').trim().isAlphanumeric()
+  body('last_name').trim().isAlphanumeric(),
+  body('is_admin').isBoolean()
 ];
 
 
@@ -603,36 +610,44 @@ userRoutes.post('/create-user', createUserCheck, (req, res) => { //accessible by
     }
     req.flash("info", "Invalid user data", process.env.NODE_ENV === 'development' ? errors.array() : ""); //error.array() for development only
     res.status(200).render('pages/users/edit-user.ejs', {
+      messagesError:  req.flash('error'),
       messages: req.flash('info'),
       userTemp
     });
     return;
   }
-
-  const user = {
-    email: req.body.email,
-    last_failed_login: "",
-    first_name: req.body.first_name,
-    last_name: req.body.last_name,
-    failed_login_attempts: 0,
-    activation_token: uuid()
-  };
-  createUser(user).then(function (userCreated) { // returns user created true or false
-    if (userCreated) {
-      let mail = new Mail;
-      mail.sendVerificationLink(user);
-      req.flash('info', 'user created and email sent'); // email not currently being sent
+  getIsUserAdmin(req.session.user_id)
+  .then(function(isAdmin){
+    if (!isAdmin[0].is_admin) {
+      req.flash('error', 'You are unable to create users');
       res.redirect('/users/dashboard');
       return;
-    } else {
-      console.log("There was a create user error", err)
-      req.flash('info', 'There was an error creating this user. Please try again. If you already have please contact support.')
-      res.status(200).render('pages/users/edit-user.ejs', {
-        messages: req.flash('info'),
-        user
-      });
-      return;
     }
+    const user = {
+      email: req.body.email,
+      last_failed_login: "",
+      first_name: req.body.first_name,
+      last_name: req.body.last_name,
+      failed_login_attempts: 0,
+      activation_token: uuid()
+    };
+    createUser(user).then(function (userCreated) { // returns user created true or false
+      if (userCreated) {
+        let mail = new Mail;
+        mail.sendVerificationLink(user);
+        req.flash('info', 'user created and email sent'); // email not currently being sent
+        res.redirect('/users/dashboard');
+        return;
+      } else {
+        console.log("There was a create user error", err)
+        req.flash('info', 'There was an error creating this user. Please try again. If you already have please contact support.')
+        res.status(200).render('pages/users/edit-user.ejs', {
+          messages: req.flash('info'),
+          user
+        });
+        return;
+      }
+    })
   }).catch(function (err) {
     const userExistsCode = "23505";
     if (err.code === userExistsCode) {
@@ -713,7 +728,8 @@ userRoutes.get('/edit-user/:user_id', checkUserID, (req, res) => { //accessible 
 editUserPostCheck = [
   body('user_id').isInt(),
   body('first_name').trim().isAlphanumeric(),
-  body('last_name').trim().isAlphanumeric()
+  body('last_name').trim().isAlphanumeric(),
+  body('is_admin').isBoolean()
 ]
 
 userRoutes.post('/edit-user', editUserPostCheck , function(req, res){
@@ -723,15 +739,21 @@ userRoutes.post('/edit-user', editUserPostCheck , function(req, res){
     res.status(200).redirect('/users/dashboard');
   }
   getUserById(req.body.user_id)
-  
   .then(function(user){
     user = user[0];
     console.log('user :', user);
     getIsUserAdmin(req.session.user_id)
     .then(function(userAdmin){
-      console.log('userAdmin :', userAdmin);
       if (userAdmin[0].is_admin || user.user_id === req.session.user_id){ // if user is the same user being edited or user is super admin
-        updateUserName(req.body)
+        let userUpdate = {
+          user_id : req.body.user_id,
+          first_name: req.body.first_name,
+          last_name: req.body.last_name
+        }
+        if(!userAdmin[0].is_admin){
+          userUpdate.is_admin = user.is_admin ? true : req.body.is_admin // This stops someone removing admin rights. Currently a non reversible process. 
+          }
+         updateUserName(userUpdate)
         .then(function(response){
           console.log('response :', response);
           if (response){
@@ -927,6 +949,14 @@ userRoutes.get('/edit-page', function (req, res) { //  with no id number this sh
   fs.readdir('assets/pdfs', (err, pdfs) => {
     if (err) {
       console.log('err :', err);
+    }
+    if (!pdf) {
+      req.flash('error', 'No PDFs uploaded');
+    res.status(200).render('pages/users/edit-page.ejs', {
+      messages: req.flash('info'), 
+      messagesError: req.flash('error'),
+      pdfs : pdfList});
+    return;
     }
     pdfs.map(function(pdf) { //refactor two of these now
       console.log('pdfs :', pdf);
