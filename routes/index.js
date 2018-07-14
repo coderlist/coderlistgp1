@@ -83,7 +83,11 @@ routes.get('/login', (req, res) => {
   // messagesError = req.flash('error');
   // messages = messagesInfo + messagesError;
   // console.log('messages :', messages,messagesInfo,);
-  res.status(200).render('pages/public/login', { title: 'Login', messages: req.flash('error')} );
+  res.status(200).render('pages/public/login', { 
+    title: 'Login', 
+    messages: req.flash('info'),
+    messagesError: req.flash('error')
+  });
   // sess.destroy(function(err){
   //   console.log('cannot access session here')
   // })
