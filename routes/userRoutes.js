@@ -53,7 +53,7 @@ const {
   getAllPages,
   getAllPagesWithTitle,
   getPagebyID,
-  getPagebyLink,
+  getPageByLink,
   deletePageById,
   updatePageContentById,
   updatePageContentByIdNoBanner,
@@ -585,13 +585,6 @@ userRoutes.post('/update-banner', upload.single('image'), function(req, res){
 })
 
 
-userRoutes.get('/:name-user', function (req, res) {  /// this user parameter is not sanitised...?
-  const url = req.url;
-  res.status(200).render('pages/users/edit-user.ejs', { 
-    messages: url === "/edit-user" ? req.flash('Are you sure you want to delete this USER?') : ''
-  })
-})
-
 const createUserCheck = [
   body('email').isEmail().normalizeEmail(),
   body('first_name').trim().isAlphanumeric(),
@@ -603,7 +596,6 @@ userRoutes.post('/create-user', createUserCheck, (req, res) => { //accessible by
 
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    console.log('ERROR', errors)
     const userTemp = {
       email: req.body.email || "",
       first_name: req.body.first_name || "",
@@ -737,7 +729,8 @@ userRoutes.post('/edit-user', editUserPostCheck , function(req, res){
     console.log('user :', user);
     getIsUserAdmin(req.session.user_id)
     .then(function(userAdmin){
-      if (userAdmin.is_admin || user.user_id === req.session.user_id){ // if user is the same user being edited or user is super admin
+      console.log('userAdmin :', userAdmin);
+      if (userAdmin[0].is_admin || user.user_id === req.session.user_id){ // if user is the same user being edited or user is super admin
         updateUserName(req.body)
         .then(function(response){
           console.log('response :', response);
@@ -746,14 +739,14 @@ userRoutes.post('/edit-user', editUserPostCheck , function(req, res){
             res.status(200).redirect('/users/dashboard');
             return;
           }
-        }).catch(function(err){
-          console.log('err :', err);
-          req.flash('info','User not updated. There was an error');
-          res.status(200).redirect('/users/dashboard');
-          return;
         })
       }
     })
+  }).catch(function(err){
+    console.log('err :', err);
+    req.flash('info','User not updated. There was an error');
+    res.status(200).redirect('/users/dashboard');
+    return;
   })
 })
 
@@ -947,19 +940,17 @@ userRoutes.get('/edit-page', function (req, res) { //  with no id number this sh
 })
 
 const pageIDCheck = [
-  param('page_id').isInt()
+  param('link').exists()
 ]
 
-userRoutes.get('/edit-page/:page_id', pageIDCheck, function (req, res) {
+userRoutes.get('/edit-page/:link', pageIDCheck, function (req, res) {
   let errors = validationResult(req);
-  if (!errors.isEmpty()) {
+  if (!errors.isEmpty() || !(/^[\w-]+$/g).test(req.params.link)) {
     req.flash('info', 'invalid pageID');
     res.status(200).redirect('/users/dashboard');
     return;
   }
-
-  let pageID = parseInt(req.params.page_id);
-  getPagebyID(pageID)
+  getPageByLink(req.params.link)
   .then(function(data){
     console.log('data :', data);
     if (data.length === 0) { // Check to make sure page data exists
