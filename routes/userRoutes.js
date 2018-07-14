@@ -139,6 +139,12 @@ let storagePDF = multer.diskStorage({
     cb(null, PDFUploadLocation)
   },
   filename: function (req, file, next) {
+    console.log('req.body :', req.body);
+    let errors = validationResult(req);
+    req.body.title = req.body.title.replace(/[^\w _]+/, "")
+    if(req.body.title === ""){
+      req.body.title = "No Name Given";
+    }
     const ext = file.mimetype.split('/')[1];
     file.fieldname = `${req.body.title}-${file.fieldname}`;
     req.fileLocation = file.fieldname + '-' + Date.now() + '.' + ext
@@ -149,7 +155,7 @@ let storagePDF = multer.diskStorage({
       console.log('nofile :');
       next();
     }
-    // const pdf = file.mimetype.startsWith('application/pdf')
+   const pdf = file.mimetype.startsWith('application/pdf')
 
     if (pdf) {
       console.log('PDF uploaded');
@@ -324,12 +330,10 @@ userRoutes.post('/manage-pdfs', PDFPostTitleCheck, PDFUpload.single('pdf'), func
   }
   // console.log('req.file :', req.file);
   req.flash('info', 'PDF Uploaded')
-  res.status(200).redirect('users/manage-pdfs.ejs', { 
-  })
-  .catch(function(err){
-    req.flash('error', 'There was an error uploading this pdf. Please try again or contact your administrator')
-    res.status(200).redirect('/users/manage-pdfs');
-  })
+  res.status(200).redirect('users/manage-pdfs.ejs')
+  // }).catch(function(err){
+  //   req.flash('error', 'There was an error uploading this pdf. Please try again or contact your administrator')
+  //   res.status(200).redirect('/users/manage-pdfs');
 })
 
 PDFDeleteCheck = [
