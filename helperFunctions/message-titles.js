@@ -8,13 +8,16 @@
 class MessageTitles {
     constructor(){}
     setMessageTitles(req, res, next){
+        console.log
         const url = req.url;
+        console.log(url.match(/[\w-]+$/)[0]);
+        console.log(url.match("\/edit-page\/") == "/edit-page/");
         let id = '';
         if(url.match("\/edit-page\/") == "/edit-page/"){
-            id = url.match(/\d+$/);
+            id = url.match(/[\w-]+$/)[0];
         } 
         if(url.match("\/edit-user\/") == "/edit-user/"){
-            id = url.match(/\d+$/);
+            id = url.match(/[\d]+$/)[0];
         }
         switch(url){
             case "/": res.locals.messageTitle = 'Delete User';
