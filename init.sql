@@ -150,6 +150,8 @@ ALTER TABLE pages ADD COLUMN IF NOT EXISTS ckeditor_html TEXT,
 
 ALTER TABLE sub_navigations ADD COLUMN IF NOT EXISTS title TEXT;
 
+ALTER TABLE sub_navigations DROP CONSTRAINT sub_nav_order_const;
+
  
  ALTER TABLE call_to_actions ADD COLUMN IF NOT EXISTS created TIMESTAMP DEFAULT NOW();
 
@@ -177,15 +179,16 @@ BEGIN
 END$$;
 
 -- make child nav order unique
-DO $$
-BEGIN
-    IF NOT EXISTS ( SELECT  conname
-                FROM    pg_constraint 
-                WHERE   conname = 'sub_nav_order_const')
-    THEN
-        ALTER TABLE sub_navigations ADD CONSTRAINT sub_nav_order_const UNIQUE (grid_order_number);
-    END IF;
-END$$;
+-- DO $$
+-- BEGIN
+--     IF NOT EXISTS ( SELECT  conname
+--                 FROM    pg_constraint 
+--                 WHERE   conname = 'sub_nav_order_const')
+--     THEN
+--         ALTER TABLE sub_navigations ADD CONSTRAINT sub_nav_order_const UNIQUE (grid_order_number);
+--         -- DELETE FROM pg_constraint WHERE conname= 'sub_nav_order_const';
+--     END IF;
+-- END$$;
 
 
 -- DO $$
