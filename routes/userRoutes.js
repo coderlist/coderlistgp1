@@ -304,7 +304,7 @@ userRoutes.delete('/manage-nav/main-nav-item/:itemId', function(req,res){
 })
 
 
-userRoutes.delete('manage-nav/sub-nav-item/:itemId', function(req,res){
+userRoutes.delete('/manage-nav/sub-nav-item/:itemId', function(req,res){
   deleteChildNavById(req.params.itemId)
   .then(response => {
     console.log('Sub Menu deleted')
