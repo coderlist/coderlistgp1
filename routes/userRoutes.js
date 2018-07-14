@@ -51,6 +51,7 @@ const {
 const {
   createPage,
   getAllPages,
+  getAllPagesWithTitle,
   getPagebyID,
   deletePageById,
   updatePageContentById,
@@ -71,7 +72,11 @@ const {
   getParentNavIdByName,
   getAllNavs,
   getAllParentNavs,
-  getAllChildNavs
+  getAllChildNavs,
+  deleteParentNavById,
+  deleteParentNavByOrder,
+  deleteChildNavById,
+  deleteChildNavByOrder
 } = require('../server/models/navigations')
 const {toNavJSON} = require('../helperFunctions/query/navJson')
 const { 
@@ -212,18 +217,17 @@ userRoutes.post('/dashboard', ckeditorPostCheck, (req, res) => {
 /////////////////////// Admin page routes /////////////////////
 
 userRoutes.get('/manage-nav', function (req, res) {
-  const pageItems = getAllPages() // this currently gets all information about the page. We need to cut this down to what is needed
+  const pageItems = getAllPagesWithTitle() // this currently gets all information about the page. We need to cut this down to what is needed
   const parentNavs = getAllParentNavs();
   const childNavs = getAllChildNavs()
   Promise.all([pageItems, parentNavs, childNavs])
   .then(function(values){
-    console.log('items :', values[1], 'items 2', values[2]);
+    console.log('items :', values[1], 'items 2', values[2], 'items 3', values[0]);
     res.status(200).render('pages/users/manage-nav.ejs', { 
       messages: req.flash('info'),
       subMenuList: values[0],
       parentNav: values[1],
       childNav: values[2]
-
     })
   })
 })
@@ -265,10 +269,27 @@ userRoutes.post('/manage-nav', function(req,res){
 })
 
 
+userRoutes.delete('/manage-nav/main-nav-item/:itemId', function(req,res){
+    deleteParentNavById(req.params.itemId) 
+    .then(response => {
+      console.log('Main Menu deleted')
+    }).catch(err => {
+      console.error(err)
+    })
+})
+
+
+userRoutes.delete('/manage-nav/sub-nav-item/:itemId', function(req,res){
+  deleteChildNavById(req.params.itemId)
+  .then(response => {
+    console.log('Sub Menu deleted')
+  }).catch(err => {
+    console.error(err)
+  })
+})
 
 //////////////////  MANAGE PDFS  //////////////////
-
-
+ 
 userRoutes.get('/manage-pdfs', function (req, res) {
   // messages: req.flash('Are you sure you want to delete this PDF?') // This will not work. Flash messages are in the form req.flash('flashtype', 'Message') "Kristian"
   let pdfList = [];
