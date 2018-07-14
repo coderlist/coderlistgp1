@@ -335,6 +335,14 @@ userRoutes.get('/manage-pdfs', function (req, res) {
     if (err) {
       console.log('err :', err);
     }
+    if (!pdfs) {
+      req.flash('error','No PDFs uploaded')
+      res.status(200).render('pages/users/manage-pdfs.ejs', { 
+        messages: req.flash('info'),
+        messagesError: req.flash('error'),
+        pdfList: pdfList
+      })
+    }
       pdfs.map(function(pdf) {
       console.log('pdfs :', pdf);
       const shortName = pdf.match(/([\w\s]*)/)[0] + ".pdf";  //remove the random number to make displaying prettier
