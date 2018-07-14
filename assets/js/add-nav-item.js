@@ -3,7 +3,7 @@
  */
 const parentNavLinks = ['no-link'];
 const parentNavItems = [];
-const childNavLinks = [];
+const childrenNavLinks = [];
 /* Options for fetch method */
 const init = {
     method: 'GET',
@@ -18,25 +18,33 @@ fetch('/users/page-navmenu-request', init)
         return response.json();
     }).then(function (data) {
         data.forEach(page => {
-            console.log(page);
-            if(page.link === null){
-                return;
-            } else {
-                
-            }
-            if (page.children !== null) {
-                parentPageName.push(page.link);
-                console.log(parentPageName);
-                /* Get children pages */
-                page.children.forEach(child => {
-                    console.log(childPageName);
-                    childPageName.push(child.page);
-             });
-                pageNames.push(page.page);
-            }
-            /* If parent page has children */
-                /* Get page name */
-                
+            Object.keys(page).map(parentKey => {
+                // Map through parents and push their links to the array of Navlinks
+                if(parentKey === "page" && parentNavItems.indexOf(page[parentKey]) === -1){
+                    // Name reference to be used for the sub nav items
+                    parentNavItems.push(page[parentKey]);
+                }
+                if(parentKey === "link" && page[parentKey] !== "no-link"){
+                    // Check if the links already exist in array, we don't want copies, links are unique
+                    if(parentNavLinks.indexOf(page[parentKey]) === -1){
+                        parentNavLinks.push(page[parentKey]);
+                    } 
+                }
+                // If parents have children:
+                // Convert to an array of object
+                if(parentKey === "children" && page[parentKey] !== null){
+                    page[parentKey].forEach(childPage => {
+                        Object.keys(childPage).map(childrenKey => {
+                            if(childrenKey === "link" && childPage[childrenKey] !== "no-link"){
+                                // Check if the links already exist in array, we don't want copies, links are unique
+                                if(childrenNavLinks.indexOf(childPage[childrenKey]) === -1){
+                                    childrenNavLinks.push(childPage[childrenKey]);
+                                }
+                            }
+                        });
+                    });
+                } 
+            });
         });
     }).catch(function (error) {
         console.log("It wasn't possible to return any data from the server: ", error);
@@ -94,7 +102,7 @@ const createInputFieldPageName = function (inputFieldName) {
 const createSelectionMenu = function (pageName) {
     let options = '';
     let select = ``;
-    console.log(parentNavItems);
+    // console.log(parentNavItems); Working
     switch (pageName) {
         case "parentMenuItemPage":
             options = parentNavItems.map((option) => {
@@ -105,7 +113,7 @@ const createSelectionMenu = function (pageName) {
             </select></td>`;
             break;
         case "childMenuItemPage":
-            options = childNavLinks.map((option) => {
+            options = childrenNavLinks.map((option) => {
                 return `<option value="${option}">${option}</option>`
             });
             select = `<td><select name="child_page" class="form-control custom-select child-item-select">

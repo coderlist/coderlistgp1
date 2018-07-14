@@ -8,3 +8,5 @@ assets/images
 helperFunctions/verification/mailTestManual.js
 playground
 .vs
+testyrun.js
+testyrun.json

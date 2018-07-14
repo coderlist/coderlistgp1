@@ -53,6 +53,7 @@ const {
   getAllPages,
   getAllPagesWithTitle,
   getPagebyID,
+  getPageByLink,
   deletePageById,
   updatePageContentById,
   updatePageContentByIdNoBanner,
@@ -76,7 +77,8 @@ const {
   deleteParentNavById,
   deleteParentNavByOrder,
   deleteChildNavById,
-  deleteChildNavByOrder
+  deleteChildNavByOrder,
+  getAllNavItemsWithLink
 } = require('../server/models/navigations')
 const {toNavJSON} = require('../helperFunctions/query/navJson')
 const { 
@@ -88,6 +90,9 @@ const multer = require('multer');
 const imageUploadLocation = './assets/images/';
 const PDFUploadLocation = './assets/pdfs/';
 const path = require('path');
+
+//// Multer Uploads  ////
+
 let storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, imageUploadLocation)
@@ -144,6 +149,12 @@ let storagePDF = multer.diskStorage({
     cb(null, PDFUploadLocation)
   },
   filename: function (req, file, next) {
+    console.log('req.body :', req.body);
+    let errors = validationResult(req);
+    req.body.title = req.body.title.replace(/[^\w _]+/, "")
+    if(req.body.title === ""){
+      req.body.title = "No Name Given";
+    }
     const ext = file.mimetype.split('/')[1];
     file.fieldname = `${req.body.title}-${file.fieldname}`;
     req.fileLocation = file.fieldname + '-' + Date.now() + '.' + ext
@@ -154,7 +165,7 @@ let storagePDF = multer.diskStorage({
       console.log('nofile :');
       next();
     }
-    // const pdf = file.mimetype.startsWith('application/pdf')
+   const pdf = file.mimetype.startsWith('application/pdf')
 
     if (pdf) {
       console.log('PDF uploaded');
@@ -185,6 +196,8 @@ const fileUpload = multer({
 const PDFUpload = multer({
   storage: storagePDF
 });
+
+//// End of Multer Uploads  ////
 
 userRoutes.use(logins.isLoggedIn);
 
@@ -244,16 +257,15 @@ userRoutes.post('/dashboard', ckeditorPostCheck, (req, res) => {
 
 userRoutes.get('/manage-nav', function (req, res) {
   const pageItems = getAllPagesWithTitle() // this currently gets all information about the page. We need to cut this down to what is needed
-  const parentNavs = getAllParentNavs();
-  const childNavs = getAllChildNavs()
-  Promise.all([pageItems, parentNavs, childNavs])
+  const navigationItems = getAllNavItemsWithLink()
+  Promise.all([pageItems, navigationItems])
   .then(function(values){
-    console.log('items :', values[1], 'items 2', values[2], 'items 3', values[0]);
+    console.log('items :', values[1]);
     res.status(200).render('pages/users/manage-nav.ejs', { 
       messages: req.flash('info'),
       subMenuList: values[0],
       parentNav: values[1],
-      childNav: values[2]
+      childNav: values[1]
     })
   })
 })
@@ -313,6 +325,8 @@ userRoutes.delete('/manage-nav/sub-nav-item/:itemId', function(req,res){
     console.error(err)
   })
 })
+
+//////////////////  MANAGE PDFS  //////////////////
  
 userRoutes.get('/manage-pdfs', function (req, res) {
   // messages: req.flash('Are you sure you want to delete this PDF?') // This will not work. Flash messages are in the form req.flash('flashtype', 'Message') "Kristian"
@@ -320,6 +334,15 @@ userRoutes.get('/manage-pdfs', function (req, res) {
   fs.readdir('assets/pdfs', (err, pdfs) => {
     if (err) {
       console.log('err :', err);
+    }
+    if (!pdfs) {
+      req.flash('error','No PDFs uploaded');
+      res.status(200).render('pages/users/manage-pdfs.ejs', { 
+        messages: req.flash('info'),
+        messagesError: req.flash('error'),
+        pdfList: pdfList
+      })
+      return;
     }
       pdfs.map(function(pdf) {
       console.log('pdfs :', pdf);
@@ -335,26 +358,15 @@ userRoutes.get('/manage-pdfs', function (req, res) {
   })
 })
 
-PDFPostTitleCheck = [
-  body('title').isAlphanumeric()
-]
 
-userRoutes.post('/manage-pdfs', PDFPostTitleCheck, PDFUpload.single('pdf'), function (req, res) {
-  let errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    req.flash('info', 'Invalid Title');
-    res.status(200).redirect('/users/manage-pdfs');
-    return;
-  }
-  // console.log('req.file :', req.file);
+
+userRoutes.post('/manage-pdfs', PDFUpload.single('pdf'), function (req, res) {
+  // logic handled within PDFUpload
   req.flash('info', 'PDF Uploaded')
-  res.status(200).redirect('users/manage-pdfs.ejs', { 
-  })
-  .catch(function(err){
-    req.flash('error', 'There was an error uploading this pdf. Please try again or contact your administrator')
-    res.status(200).redirect('/users/manage-pdfs');
-  })
+  res.status(200).redirect('users/manage-pdfs.ejs')
+  return;
 })
+
 
 PDFDeleteCheck = [
   param('pdf_name').matches('^[\\w\\s-.]+$')
@@ -379,6 +391,10 @@ userRoutes.delete('/manage-pdfs/:pdf_name', PDFDeleteCheck, function(req, res){
   })
 });
 
+
+////////////////  End of Manage PDFs    /////////////////////////
+
+///////////////   Manage Images     /////////////////////////
 
 userRoutes.get('/manage-images', function(req, res){
   getAllImagesData(req.params.image_id)
@@ -451,80 +467,19 @@ userRoutes.delete('/manage-images/:image_id', imageDeleteCheck, function(req, re
 });
 
 
+///////////////   End of Manage Images   /////////////////////
+
+////////////////   End of User 
+
+
 userRoutes.get('/profile', function (req, res) {
   res.status(200).render('pages/users/profile.ejs', { 
     messages: req.flash('info')
   })
 })
 
-userRoutes.get('/edit-page', function (req, res) { //  with no id number this should just create a page
-  let pdfList = [];
-  fs.readdir('assets/pdfs', (err, pdfs) => {
-    if (err) {
-      console.log('err :', err);
-    }
-    pdfs.map(function(pdf) { //refactor two of these now
-      console.log('pdfs :', pdf);
-      const shortName = pdf.match(/([\w\s]*)/)[0] + ".pdf";  //remove the random number to make displaying prettier
-      pdfList.push({name: pdf, short: shortName, location: `/pdfs/${pdf}`})
-    })
-    req.flash('info', 'Page ready for editing');
-    res.status(200).render('pages/users/edit-page.ejs', {messages: req.flash('info'), pdfs : pdfList});
-    return;
-  })
-})
 
-const pageIDCheck = [
-  param('page_id').isInt()
-]
 
-userRoutes.get('/edit-page/:page_id', pageIDCheck, function (req, res) {
-  let errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    req.flash('info', 'invalid pageID');
-    res.status(200).redirect('/users/dashboard');
-    return;
-  }
-
-  let pageID = parseInt(req.params.page_id);
-  getPagebyID(pageID)
-  .then(function(data){
-    console.log('data :', data);
-    if (data.length === 0) { // Check to make sure page data exists
-      req.flash('info', 'No such page exists');
-      res.status(200).redirect('/users/dashboard');
-      return;
-    }
-    // data.ckeditor.html =  unescape(data.ckeditor.html);
-    getUserById(req.session.user_id) /// Would probably be better with promise.all
-    .then(function(userData){
-      if (!(userData[0].is_admin || req.session.user_id === data[0].owner_id)) { // Check page ownership or admin
-        req.flash('info', 'This is not your page to modify');
-        res.status(200).redirect('/users/dashboard');
-        return;  
-      }
-      let pdfList = [];
-      fs.readdir('assets/pdfs', (err, pdfs) => {
-        if (err) {
-          console.log('err :', err);
-        }
-        pdfs.map(function(pdf) { //refactor two of these now
-          console.log('pdfs :', pdf);
-          const shortName = pdf.match(/([\w\s]*)/)[0] + ".pdf";  //remove the random number to make displaying prettier
-          pdfList.push({name: pdf, short: shortName, location: `/pdfs/${pdf}`})
-        })
-        req.flash('info', 'Page ready for editing');
-        res.status(200).render('pages/users/edit-page.ejs', {page: data[0], messages: req.flash('info'), pdfs : pdfList});
-        return;
-      })
-    })
-  }).catch(function(err){
-    console.log('err :', err);
-    req.flash('error', 'There was a system error. Please contact your administrator');
-    res.status(200).render('pages/users/edit-page.ejs', {messages: req.flash('info')});
-    return;
-  });
-})
 
 ////////////////////    Change password while authenticated ////////////////////
 
@@ -638,18 +593,18 @@ userRoutes.post('/update-banner', upload.single('image'), function(req, res){
   });
 })
 
-
-userRoutes.get('/:name-user', function (req, res) {  /// this user parameter is not sanitised...?
-  const url = req.url;
-  res.status(200).render('pages/users/edit-user.ejs', { 
-    messages: url === "/edit-user" ? req.flash('Are you sure you want to delete this USER?') : ''
-  })
-})
+userRoutes.get('/create-user', (req, res) => { //accessible by authed admin
+  res.status(200).render('pages/users/create-user.ejs', {
+    messages: req.flash('info'),
+    messagesError: req.flash('error')
+  });
+});
 
 const createUserCheck = [
   body('email').isEmail().normalizeEmail(),
   body('first_name').trim().isAlphanumeric(),
-  body('last_name').trim().isAlphanumeric()
+  body('last_name').trim().isAlphanumeric(),
+  body('is_admin').isBoolean()
 ];
 
 
@@ -657,7 +612,6 @@ userRoutes.post('/create-user', createUserCheck, (req, res) => { //accessible by
 
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    console.log('ERROR', error)
     const userTemp = {
       email: req.body.email || "",
       first_name: req.body.first_name || "",
@@ -665,36 +619,44 @@ userRoutes.post('/create-user', createUserCheck, (req, res) => { //accessible by
     }
     req.flash("info", "Invalid user data", process.env.NODE_ENV === 'development' ? errors.array() : ""); //error.array() for development only
     res.status(200).render('pages/users/edit-user.ejs', {
+      messagesError:  req.flash('error'),
       messages: req.flash('info'),
       userTemp
     });
     return;
   }
-
-  const user = {
-    email: req.body.email,
-    last_failed_login: "",
-    first_name: req.body.first_name,
-    last_name: req.body.last_name,
-    failed_login_attempts: 0,
-    activation_token: uuid()
-  };
-  createUser(user).then(function (userCreated) { // returns user created true or false
-    if (userCreated) {
-      let mail = new Mail;
-      mail.sendVerificationLink(user);
-      req.flash('info', 'user created and email sent'); // email not currently being sent
+  getIsUserAdmin(req.session.user_id)
+  .then(function(isAdmin){
+    if (!isAdmin[0].is_admin) {
+      req.flash('error', 'You are unable to create users');
       res.redirect('/users/dashboard');
       return;
-    } else {
-      console.log("There was a create user error", err)
-      req.flash('info', 'There was an error creating this user. Please try again. If you already have please contact support.')
-      res.status(200).render('pages/users/edit-user.ejs', {
-        messages: req.flash('info'),
-        user
-      });
-      return;
     }
+    const user = {
+      email: req.body.email,
+      last_failed_login: "",
+      first_name: req.body.first_name,
+      last_name: req.body.last_name,
+      failed_login_attempts: 0,
+      activation_token: uuid()
+    };
+    createUser(user).then(function (userCreated) { // returns user created true or false
+      if (userCreated) {
+        let mail = new Mail;
+        mail.sendVerificationLink(user);
+        req.flash('info', 'user created and email sent'); // email not currently being sent
+        res.redirect('/users/dashboard');
+        return;
+      } else {
+        console.log("There was a create user error", err)
+        req.flash('info', 'There was an error creating this user. Please try again. If you already have please contact support.')
+        res.status(200).render('pages/users/edit-user.ejs', {
+          messages: req.flash('info'),
+          user
+        });
+        return;
+      }
+    })
   }).catch(function (err) {
     const userExistsCode = "23505";
     if (err.code === userExistsCode) {
@@ -727,6 +689,7 @@ userRoutes.post('/admin', (req, res) => {
 });
 
 userRoutes.get('/logout', logins.logUserOut, (req, res) => { 
+  req.flash('info','You have been logged out');
   res.status(200).redirect('/login');
   return;
 });
@@ -774,7 +737,8 @@ userRoutes.get('/edit-user/:user_id', checkUserID, (req, res) => { //accessible 
 editUserPostCheck = [
   body('user_id').isInt(),
   body('first_name').trim().isAlphanumeric(),
-  body('last_name').trim().isAlphanumeric()
+  body('last_name').trim().isAlphanumeric(),
+  body('is_admin').isBoolean()
 ]
 
 userRoutes.post('/edit-user', editUserPostCheck , function(req, res){
@@ -784,14 +748,21 @@ userRoutes.post('/edit-user', editUserPostCheck , function(req, res){
     res.status(200).redirect('/users/dashboard');
   }
   getUserById(req.body.user_id)
-  
   .then(function(user){
     user = user[0];
     console.log('user :', user);
     getIsUserAdmin(req.session.user_id)
     .then(function(userAdmin){
-      if (userAdmin.is_admin || user.user_id === req.session.user_id){ // if user is the same user being edited or user is super admin
-        updateUserName(req.body)
+      if (userAdmin[0].is_admin || user.user_id === req.session.user_id){ // if user is the same user being edited or user is super admin
+        let userUpdate = {
+          user_id : req.body.user_id,
+          first_name: req.body.first_name,
+          last_name: req.body.last_name
+        }
+        if(!userAdmin[0].is_admin){
+          userUpdate.is_admin = user.is_admin ? true : req.body.is_admin // This stops someone removing admin rights. Currently a non reversible process. 
+          }
+         updateUserName(userUpdate)
         .then(function(response){
           console.log('response :', response);
           if (response){
@@ -799,14 +770,14 @@ userRoutes.post('/edit-user', editUserPostCheck , function(req, res){
             res.status(200).redirect('/users/dashboard');
             return;
           }
-        }).catch(function(err){
-          console.log('err :', err);
-          req.flash('info','User not updated. There was an error');
-          res.status(200).redirect('/users/dashboard');
-          return;
         })
       }
     })
+  }).catch(function(err){
+    console.log('err :', err);
+    req.flash('info','User not updated. There was an error');
+    res.status(200).redirect('/users/dashboard');
+    return;
   })
 })
 
@@ -971,84 +942,8 @@ userRoutes.post('/upload-images', upload.single('image'), (req, res) => {
 
 
 userRoutes.get('/page-navmenu-request', function (req, res) {
- 
-  // const pages = [{
-  //     page: "Home",
-  //     link: "Home",
-  //     order: "1",
-  //     children: null
-  //   },
-  //   {
-  //     page: "About",
-  //     link: "About",
-  //     order: "2",
-  //     children: null
-  //   },
-  //   {
-  //     page: "Workshops",
-  //     link: "no-link",
-  //     order: "3",
-  //     children: [{
-  //         page: "Private Sessions",
-  //         link: "Private sessions",
-  //         order: "1"
-  //       },
-  //       {
-  //         page: "Nursery Level",
-  //         link: "Nursery level",
-  //         order: "2"
-  //       },
-  //       {
-  //         page: "Small Groups",
-  //         link: "Small groups",
-  //         order: "3"
-  //       },
-  //       {
-  //         page: "Weekly Classes",
-  //         link: "Weekly classes",
-  //         order: "4"
-  //       }
-  //     ]
-  //   },
-  //   {
-  //     page: "Contact",
-  //     link: "Contact",
-  //     order: "4",
-  //     children: null
-  //   },
-  //   {
-  //     page: "Another Page",
-  //     link: "no-link",
-  //     order: "3",
-  //     children: [{
-  //         page: "New Sessions",
-  //         link: "New sessions",
-  //         order: "1"
-  //       },
-  //       {
-  //         page: "New Level",
-  //         link: "New level",
-  //         order: "2"
-  //       },
-  //       {
-  //         page: "New Groups",
-  //         link: "New groups",
-  //         order: "3"
-  //       },
-  //       {
-  //         page: "New Classes",
-  //         link: "New classes",
-  //         order: "4"
-  //       }
-  //     ]
-  //   }
-  // ]
-  // console.log('JSON.stringify :', JSON.stringify(pages));
-  // res.status(200).send(JSON.stringify(pages));
-
-//work on getAllNavs to return page as above
-
-  getAllNavs().then(response => {
+// This is working now.
+getAllNavs().then(response => {
     const pages = toNavJSON(response)
     res.status(200).send(pages)
   }).catch(e => {
@@ -1056,7 +951,91 @@ userRoutes.get('/page-navmenu-request', function (req, res) {
  })
 })
 
+//////////////////   Edit / Create Page  //////////////////
 
+userRoutes.get('/edit-page', function (req, res) { //  with no id number this should just create a page
+  let pdfList = [];
+  fs.readdir('assets/pdfs', (err, pdfs) => {
+    if (err) {
+      console.log('err :', err);
+    }
+    if (!pdfs) {
+      req.flash('error', 'No PDFs uploaded');
+      res.status(200).render('pages/users/edit-page.ejs', {
+      messages: req.flash('info'), 
+      messagesError: req.flash('error'),
+      pdfs : pdfList});
+    return;
+    }
+    pdfs.map(function(pdf) { //refactor two of these now
+      console.log('pdfs :', pdf);
+      const shortName = pdf.match(/([\w\s]*)/)[0] + ".pdf";  //remove the random number to make displaying prettier
+      pdfList.push({name: pdf, short: shortName, location: `/pdfs/${pdf}`})
+    })
+    req.flash('info', 'Page ready for editing');
+    res.status(200).render('pages/users/edit-page.ejs', {messages: req.flash('info'), pdfs : pdfList});
+    return;
+  })
+})
+
+const pageIDCheck = [
+  param('link').exists()
+]
+
+userRoutes.get('/edit-page/:link', pageIDCheck, function (req, res) {
+  let errors = validationResult(req);
+  if (!errors.isEmpty() || !(/^[\w-]+$/g).test(req.params.link)) {
+    req.flash('info', 'invalid pageID');
+    res.status(200).redirect('/users/dashboard');
+    return;
+  }
+  getPageByLink(req.params.link)
+  .then(function(data){
+    console.log('data :', data);
+    if (data.length === 0) { // Check to make sure page data exists
+      req.flash('info', 'No such page exists');
+      res.status(200).redirect('/users/dashboard');
+      return;
+    }
+    // data.ckeditor.html =  unescape(data.ckeditor.html);
+    getUserById(req.session.user_id) /// Would probably be better with promise.all
+    .then(function(userData){
+      if (!(userData[0].is_admin || req.session.user_id === data[0].owner_id)) { // Check page ownership or admin
+        req.flash('info', 'This is not your page to modify');
+        res.status(200).redirect('/users/dashboard');
+        return;  
+      }
+      let pdfList = [];
+      fs.readdir('assets/pdfs', (err, pdfs) => {
+        if (err) {
+          console.log('err :', err);
+        }
+        if (!pdfs) {
+          req.flash('error','No PDFs uploaded')
+          res.status(200).render('pages/users/edit-page.ejs', { 
+            messages: req.flash('info'),
+            messagesError: req.flash('error'),
+            pdfList: pdfList
+          })
+          return;
+        }
+        pdfs.map(function(pdf) { //refactor two of these now
+          console.log('pdfs :', pdf);
+          const shortName = pdf.match(/([\w\s]*)/)[0] + ".pdf";  //remove the random number to make displaying prettier
+          pdfList.push({name: pdf, short: shortName, location: `/pdfs/${pdf}`})
+        })
+        req.flash('info', 'Page ready for editing');
+        res.status(200).render('pages/users/edit-page.ejs', {page: data[0], messages: req.flash('info'), pdfs : pdfList});
+        return;
+      })
+    })
+  }).catch(function(err){
+    console.log('err :', err);
+    req.flash('error', 'There was a system error. Please contact your administrator');
+    res.status(200).render('pages/users/edit-page.ejs', {messages: req.flash('info')});
+    return;
+  });
+})
 
 postCreatePageCheck = [
   body('title').isAlphanumeric(),
@@ -1085,7 +1064,7 @@ userRoutes.post('/create-page', postCreatePageCheck, upload.single('image'), fun
   }
   
   // console.log('req.file :', req.file);
-  
+  page.link = req.body.title.trim().toLowerCase().replace(/[ ]+/g, "-");
   page.banner_location = `/images/${req.file.filename}`
   let image = {
     banner_location: `/images/${req.file.filename}`,
@@ -1110,8 +1089,7 @@ userRoutes.post('/create-page', postCreatePageCheck, upload.single('image'), fun
     res.status(200).redirect('/users/dashboard');
   }).catch(function(err){
     req.flash('info', 'There was an error creating the page');
-    res.status(200).render('pages/users/edit-page.ejs', {messages: req.flash('info'), page : page});
-    
+    res.status(200).render('pages/users/edit-page.ejs', {messages: req.flash('info'), page : page}); 
   })
 });
 postEditPageCheck = [
@@ -1124,7 +1102,7 @@ postEditPageCheck = [
 
 userRoutes.post('/edit-page', postEditPageCheck, function(req, res){
   let errors = validationResult(req);
-  page = {
+  let page = {
     created_by: req.body.created_by,
     title: req.body.title,
     ckeditor_html: req.body.content,
@@ -1141,7 +1119,8 @@ userRoutes.post('/edit-page', postEditPageCheck, function(req, res){
     res.status(200).redirect('/users/edit-page', {page : page});
     return;
   }
- 
+  page.link = req.body.title.trim().toLowerCase().replace(/[ ]+/g, "-");
+  console.log('page :', page);
    // i would like page id from the db please
   updatePageContentByIdNoBanner(page).then(function(data){
     req.flash('info', 'Page updated successfully');
@@ -1233,6 +1212,9 @@ userRoutes.post('/upload-file', fileUpload.single('upload'), function(req, res){
     })
   })
 });
+
+
+////  End of pages //////////////
 
 
 userRoutes.get('/get-server-images', function(req, res){  // This supplies ckeditor with public images on the server in the form of json
