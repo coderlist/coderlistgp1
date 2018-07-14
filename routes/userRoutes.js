@@ -77,7 +77,8 @@ const {
   deleteParentNavById,
   deleteParentNavByOrder,
   deleteChildNavById,
-  deleteChildNavByOrder
+  deleteChildNavByOrder,
+  getAllNavItemsWithLink
 } = require('../server/models/navigations')
 const {toNavJSON} = require('../helperFunctions/query/navJson')
 const { 
@@ -256,16 +257,15 @@ userRoutes.post('/dashboard', ckeditorPostCheck, (req, res) => {
 
 userRoutes.get('/manage-nav', function (req, res) {
   const pageItems = getAllPagesWithTitle() // this currently gets all information about the page. We need to cut this down to what is needed
-  const parentNavs = getAllParentNavs();
-  const childNavs = getAllChildNavs()
-  Promise.all([pageItems, parentNavs, childNavs])
+  const navigationItems = getAllNavItemsWithLink()
+  Promise.all([pageItems, navigationItems])
   .then(function(values){
-    console.log('items :', values[1], 'items 2', values[2], 'items 3', values[0]);
+    console.log('items :', values[1]);
     res.status(200).render('pages/users/manage-nav.ejs', { 
       messages: req.flash('info'),
       subMenuList: values[0],
       parentNav: values[1],
-      childNav: values[2]
+      childNav: values[1]
     })
   })
 })
@@ -336,7 +336,7 @@ userRoutes.get('/manage-pdfs', function (req, res) {
       console.log('err :', err);
     }
     if (!pdfs) {
-      req.flash('error','No PDFs uploaded')
+      req.flash('error','No PDFs uploaded');
       res.status(200).render('pages/users/manage-pdfs.ejs', { 
         messages: req.flash('info'),
         messagesError: req.flash('error'),
