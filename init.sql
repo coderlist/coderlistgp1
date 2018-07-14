@@ -47,31 +47,41 @@ CREATE TABLE IF NOT EXISTS images (
 );
 
 
-CREATE TABLE IF NOT EXISTS navigations (
-  page_id INTEGER REFERENCES pages(page_id) ON DELETE SET NULL,
-  created_by TEXT,
-  created TIMESTAMP DEFAULT NOW(),
-  name TEXT,
-  title TEXT,
-  link TEXT,
-  order_number INTEGER,
-  content TEXT,
-  navigation_id SERIAL,
-  parent_navigation_id INTEGER REFERENCES navigations(navigation_id),
-  PRIMARY KEY (navigation_id)
+CREATE TABLE IF NOT EXISTS page_navigations (
+   item_id INTEGER,
+   page_id INTEGER REFERENCES pages (page_id) ON DELETE CASCADE,
+   parent_id INTEGER,
+   title TEXT UNIQUE,
+   order_num INTEGER,
+   PRIMARY KEY (item_id)
 );
 
-CREATE TABLE IF NOT EXISTS sub_navigations (
-  sub_nav_id SERIAL,
-  page_id INTEGER REFERENCES pages(page_id) ON DELETE SET NULL,
-  created TIMESTAMP DEFAULT NOW(),
-  name TEXT,
-  link TEXT,
-  grid_order_number INTEGER,
-  content TEXT,
-  parent_navigation_id INTEGER REFERENCES navigations(navigation_id),
-  PRIMARY KEY (sub_nav_id)
-);
+
+-- CREATE TABLE IF NOT EXISTS navigations (
+--   page_id INTEGER REFERENCES pages(page_id) ON DELETE SET NULL,
+--   created_by TEXT,
+--   created TIMESTAMP DEFAULT NOW(),
+--   name TEXT,
+--   title TEXT,
+--   link TEXT,
+--   order_number INTEGER,
+--   content TEXT,
+--   navigation_id SERIAL,
+--   parent_navigation_id INTEGER REFERENCES navigations(navigation_id),
+--   PRIMARY KEY (navigation_id)
+-- );
+
+-- CREATE TABLE IF NOT EXISTS sub_navigations (
+--   sub_nav_id SERIAL,
+--   page_id INTEGER REFERENCES pages(page_id) ON DELETE SET NULL,
+--   created TIMESTAMP DEFAULT NOW(),
+--   name TEXT,
+--   link TEXT,
+--   grid_order_number INTEGER,
+--   content TEXT,
+--   parent_navigation_id INTEGER REFERENCES navigations(navigation_id),
+--   PRIMARY KEY (sub_nav_id)
+-- );
 
 CREATE TABLE IF NOT EXISTS call_to_actions (
   action_id SERIAL,
@@ -91,6 +101,9 @@ CREATE TABLE IF NOT EXISTS user_sessions (
 )
 WITH (OIDS=FALSE);
 
+DROP TABLE IF EXISTS sub_navigations;
+
+DROP TABLE IF EXISTS navigations;
 
 ALTER TABLE users DROP COLUMN IF EXISTS active;
 
@@ -100,19 +113,19 @@ ALTER TABLE users DROP COLUMN IF EXISTS old_pasword;
 
 ALTER TABLE pages DROP COLUMN IF EXISTS owner_id;
 
-ALTER TABLE navigations DROP COLUMN IF EXISTS order_number;
+-- ALTER TABLE navigations DROP COLUMN IF EXISTS order_number;
 
-ALTER TABLE navigations DROP COLUMN IF EXISTS parent_navigation_id;
+-- ALTER TABLE navigations DROP COLUMN IF EXISTS parent_navigation_id;
 
-ALTER TABLE navigations DROP COLUMN IF EXISTS grid_order_numer;
+-- ALTER TABLE navigations DROP COLUMN IF EXISTS grid_order_numer;
 
-ALTER TABLE navigations DROP COLUMN IF EXISTS name;
+-- ALTER TABLE navigations DROP COLUMN IF EXISTS name;
 
-ALTER TABLE navigations DROP COLUMN IF EXISTS content;
+-- ALTER TABLE navigations DROP COLUMN IF EXISTS content;
 
-ALTER TABLE sub_navigations DROP COLUMN IF EXISTS name;
+-- ALTER TABLE sub_navigations DROP COLUMN IF EXISTS name;
 
-ALTER TABLE sub_navigations DROP COLUMN IF EXISTS content;
+-- ALTER TABLE sub_navigations DROP COLUMN IF EXISTS content;
 
 ALTER TABLE users ALTER COLUMN password DROP NOT NULL;
 
@@ -144,13 +157,14 @@ ALTER TABLE pages ADD COLUMN IF NOT EXISTS ckeditor_html TEXT,
    ADD COLUMN IF NOT EXISTS order_number INTEGER,
    ADD COLUMN IF NOT EXISTS page_description TEXT,
    ADD COLUMN IF NOT EXISTS banner_location TEXT,
-   ADD COLUMN IF NOT EXISTS last_edited_by TEXT;
+   ADD COLUMN IF NOT EXISTS last_edited_by TEXT,
+   ADD COLUMN IF NOT EXISTS link TEXT UNIQUE;
  --  ADD COLUMN IF NOT EXISTS owner_id INT REFERENCES users(user_id) ON DELETE SET NULL;
 
 
-ALTER TABLE sub_navigations ADD COLUMN IF NOT EXISTS title TEXT;
+-- ALTER TABLE sub_navigations ADD COLUMN IF NOT EXISTS title TEXT;
 
-ALTER TABLE sub_navigations DROP CONSTRAINT IF EXISTS sub_nav_order_const;
+-- ALTER TABLE sub_navigations DROP CONSTRAINT IF EXISTS sub_nav_order_const;
 
  
  ALTER TABLE call_to_actions ADD COLUMN IF NOT EXISTS created TIMESTAMP DEFAULT NOW();
@@ -160,7 +174,7 @@ ALTER TABLE call_to_actions ADD COLUMN IF NOT EXISTS description TEXT;
 --ALTER TABLE pages DROP COLUMN IF EXISTS owner_id;
 ALTER TABLE pages ALTER COLUMN title SET NOT NULL;
 
-ALTER TABLE navigations ADD COLUMN IF NOT EXISTS nav_order_number INTEGER;
+-- ALTER TABLE navigations ADD COLUMN IF NOT EXISTS nav_order_number INTEGER;
 --  ADD COLUMN IF NOT EXISTS grid_order_number INTEGER;
 
 ALTER TABLE images DROP COLUMN IF EXISTS page_id;
@@ -168,15 +182,15 @@ ALTER TABLE images DROP COLUMN IF EXISTS page_id;
 
 
 -- make nav order unique
-DO $$
-BEGIN
-    IF NOT EXISTS ( SELECT  conname
-                FROM    pg_constraint 
-                WHERE   conname = 'nav_order_const')
-    THEN
-        ALTER TABLE navigations ADD CONSTRAINT nav_order_const UNIQUE (nav_order_number);
-    END IF;
-END$$;
+-- DO $$
+-- BEGIN
+--     IF NOT EXISTS ( SELECT  conname
+--                 FROM    pg_constraint 
+--                 WHERE   conname = 'nav_order_const')
+--     THEN
+--         ALTER TABLE navigations ADD CONSTRAINT nav_order_const UNIQUE (nav_order_number);
+--     END IF;
+-- END$$;
 
 -- make child nav order unique
 -- DO $$
