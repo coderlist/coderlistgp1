@@ -105,6 +105,12 @@ DROP TABLE IF EXISTS sub_navigations;
 
 DROP TABLE IF EXISTS navigations;
 
+CREATE SEQUENCE IF NOT EXISTS page_navigations_item_id_seq;
+
+ALTER table page_navigations ALTER COLUMN item_id SET NOT NULL;
+
+ALTER TABLE page_navigations ALTER COLUMN item_id SET DEFAULT  nextval('page_navigations_item_id_seq');
+
 ALTER TABLE users DROP COLUMN IF EXISTS active;
 
 ALTER TABLE users DROP COLUMN IF EXISTS activated;
@@ -252,6 +258,8 @@ BEGIN
      ALTER TABLE users ADD COLUMN old_email JSON[];
   END IF;
 END $$;
+
+
 
 
 
