@@ -53,7 +53,7 @@ const {
   getAllPages,
   getAllPagesWithTitle,
   getPagebyID,
-  getPagebyLink,
+  getPageByLink,
   deletePageById,
   updatePageContentById,
   updatePageContentByIdNoBanner,
@@ -1023,19 +1023,17 @@ userRoutes.get('/edit-page', function (req, res) { //  with no id number this sh
 })
 
 const pageIDCheck = [
-  param('page_id').isInt()
+  param('link').exists()
 ]
 
-userRoutes.get('/edit-page/:page_id', pageIDCheck, function (req, res) {
+userRoutes.get('/edit-page/:link', pageIDCheck, function (req, res) {
   let errors = validationResult(req);
-  if (!errors.isEmpty()) {
+  if (!errors.isEmpty() || !(/^[\w-]+$/g).test(req.params.link)) {
     req.flash('info', 'invalid pageID');
     res.status(200).redirect('/users/dashboard');
     return;
   }
-
-  let pageID = parseInt(req.params.page_id);
-  getPagebyID(pageID)
+  getPageByLink(req.params.link)
   .then(function(data){
     console.log('data :', data);
     if (data.length === 0) { // Check to make sure page data exists

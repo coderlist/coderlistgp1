@@ -466,10 +466,10 @@ routes.post('/create-user', createUserCheck, (req, res) => { //accessible by aut
 });
 
 getPageParamCheck = [
-  param('page_id').exists()
+  param('link').exists()
 ]
 
-routes.get('/pages/:page_id', getPageParamCheck, function(req,res){
+routes.get('/pages/:link', getPageParamCheck, function(req,res){
   errors = validationResult(req)
   if (!errors.isEmpty() || !(/^[\w-]+$/g).test(req.params.page_id)) {
     req.flash('error','Invalid page id parameters');
@@ -477,7 +477,7 @@ routes.get('/pages/:page_id', getPageParamCheck, function(req,res){
     return;
   }
 
-  getPageByLink(req.params.page_id)
+  getPageByLink(req.params.link)
   .then(function(data){
     console.log('data :', data);
     res.status(200).render('pages/public/page', {
