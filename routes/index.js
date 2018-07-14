@@ -13,7 +13,7 @@ const {
   getLatestCall 
 } = require('../server/models/callActions');
 const changePassword = require('../server/models/users').changePassword;
-const { getPagesByHomePageGrid, getPagebyID } = require('../server/models/pages');
+const { getPagesByHomePageGrid, getPagebyID, getPageByLink } = require('../server/models/pages');
 
 const uuid = require('uuid/v1');
 const _ = require('lodash');
@@ -34,17 +34,15 @@ routes.get('/', (req, res) => {
   .then(function(pages){
     getLatestCall()
     .then(function(callToAction){
-    res.status(200).render('pages/public/index', {
-      callToAction: callToAction[0], 
-      menuItems: menuItems,
-      pages: pages,
-      messages: req.flash('info'),
-      messagesError: req.flash('error') 
+      res.status(200).render('pages/public/index', {
+        callToAction: callToAction[0], 
+        menuItems: menuItems,
+        pages: pages,
+        messages: req.flash('info'),
+        messagesError: req.flash('error') 
+      })
+      return;
     })
-    
-      
-    });
-    return;
   }).catch(function(err){
     console.log('err :', err);
     req.flash('error', 'There was an error');
@@ -85,7 +83,11 @@ routes.get('/login', (req, res) => {
   // messagesError = req.flash('error');
   // messages = messagesInfo + messagesError;
   // console.log('messages :', messages,messagesInfo,);
-  res.status(200).render('pages/public/login', { title: 'Login', messages: req.flash('error')} );
+  res.status(200).render('pages/public/login', { 
+    title: 'Login', 
+    messages: req.flash('info'),
+    messagesError: req.flash('error')
+  });
   // sess.destroy(function(err){
   //   console.log('cannot access session here')
   // })
@@ -464,17 +466,18 @@ routes.post('/create-user', createUserCheck, (req, res) => { //accessible by aut
 });
 
 getPageParamCheck = [
-  param('page_id').isInt().exists()
+  param('page_id').exists()
 ]
 
 routes.get('/pages/:page_id', getPageParamCheck, function(req,res){
   errors = validationResult(req)
-  if (!errors.isEmpty()) {
+  if (!errors.isEmpty() || !(/^[\w-]+$/g).test(req.params.page_id)) {
     req.flash('error','Invalid page id parameters');
     res.status(200).redirect('/');
     return;
   }
-  getPagebyID(req.params.page_id)
+
+  getPageByLink(req.params.page_id)
   .then(function(data){
     console.log('data :', data);
     res.status(200).render('pages/public/page', {

@@ -3,113 +3,88 @@ const {queryHelper} = require('../../helperFunctions/query/queryHelper')
 
 module.exports = {
 
-   /**
-   * @param  {Object} bodyReq
-   * parent_nav will be ordered by nav_order_number
-   */
-  createParentNavItem(bodyReq){
-    return  queryHelper(`
-      INSERT INTO navigations(title,link,nav_order_number
-        ) VALUES ('${bodyReq.title}',
-        '${bodyReq.link}',${bodyReq.nav_order_number}) RETURNING *
+   createNavItem(data){
+     return queryHelper(`
+     INSERT INTO page_navigations (page_id,parent_id,title,order_num) 
+     VALUES (${data.page_id},${parent_id},'${data.title}',${data.order_num})
      `).then(response => response)
-      .catch(e =>{throw e})
-},
+     .catch(e =>{throw e})
+   },
 
-/**
- * @param  {Object} bodyReq
- * child_nav will be ordered by grid_order_number
- */
-createChildNavItem(bodyReq, parentId){
-  return queryHelper(`
-      INSERT INTO sub_navigations(title,link,
-        grid_order_number,parent_navigation_id) VALUES ('${bodyReq.title}',
-        '${bodyReq.link}',${bodyReq.grid_order_number},${parentId})
-     `).then(response => response)
-      .catch(e =>{throw e})
-},
- /**
-  * @param  {} order
-  * select parent title by order number
-  */
- getParentNavIdByName(title){
-  return queryHelper(`
-  SELECT navigation_id FROM navigations WHERE title ='${title}' 
-`).then(response => response)
-.catch(e =>{throw e})
- },
+   getNavItemByNavId(id){
+     return queryHelper(
+       `SELECT * FROM page_navigations WHERE item_id=${id}`
+     ).then(response => response)
+     .catch(e =>{throw e})
+   },
 
-
-
- /**
-  * gets all nav items and return as JSON object
-  */
-
- 
-
- getAllNavs(){
-   return queryHelper(
- 
-`         WITH page AS (SELECT n.navigation_id,n.title,n.link,
-          n.nav_order_number,s.title AS child_name,s.link AS child_link,
-          s.grid_order_number FROM navigations AS n 
-          FULL JOIN sub_navigations AS s ON n.navigation_id = s.parent_navigation_id) 
-          SELECT navigation_id,title as page,link,nav_order_number AS order, 
-          json_build_object('page', child_name, 'link', child_link, 'order', grid_order_number) AS 
-          children FROM page;
-     `
-   ).then(response => response)
-   .catch(e =>{throw e})
- },
-
-
- getAllParentNavs(){
+   getNavItemsByPageId(id){
     return queryHelper(
-      `SELECT title, link, nav_order_number as order FROM navigations ORDER BY nav_order_number;`
+      `SELECT * FROM page_navigations WHERE page_id=${id}`
     ).then(response => response)
     .catch(e =>{throw e})
- },
+   },
 
- getAllChildNavs(){
-  return queryHelper(
-    `SELECT title, link, grid_order_number as order FROM sub_navigations ORDER BY grid_order_number;`
-  ).then(response => response)
-  .catch(e =>{throw e})
- },
+   getNavItemByOrderNum(num){
+    return queryHelper(
+      `SELECT * FROM page_navigations WHERE order_num=${num}`
+    ).then(response => response)
+    .catch(e =>{throw e})
+   },
 
- /**
-  * deleting parent nav orphans child nav connected to it
-  */
+   getAllNavItems(){
+    return queryHelper(
+      `SELECT * FROM page_navigations`
+    ).then(response => response)
+    .catch(e =>{throw e})
+   },
 
- deleteParentNavById(id){
-  return queryHelper(
-    `DELETE FROM navigations WHERE navigation_id = ${id};`
-  ).then(response => response)
-  .catch(e =>{throw e})
-},
+   deleteNavItemById(id){
+    return queryHelper(
+      `DELTE FROM page_navigations WHERE item_id=${id}`
+    ).then(response => response)
+    .catch(e =>{throw e})
+   },
 
-deleteParentNavByOrder(order){
-  return queryHelper(
-    `DELETE FROM navigations WHERE nav_order_number = ${order};`
-  ).then(response => response)
-  .catch(e =>{throw e})
-},
+   deleteNavItemByOrderNum(num){
+    return queryHelper(
+      `DELTE FROM page_navigations WHERE order_num=${num}`
+    ).then(response => response)
+    .catch(e =>{throw e})
+   },
 
-deleteChildNavById(id){
-  return queryHelper(
-    `DELETE FROM sub_navigations WHERE sub_nav_id = ${id};`
-  ).then(response => response)
-  .catch(e =>{throw e})
-},
+   
+   /**
+    * @param  {Int} id
+    * gets nav link information by page_id
+    */
+   getNavLinkByPageId(id){
+    return queryHelper(`
+   WITH temp_table AS(SELECT p.link,n.page_id FROM pages 
+    AS p FULL JOIN page_navigations AS n ON 
+    p.page_id = n.page_id;) SELECT link from 
+    temp_table where page_id=${id};
+    `).then(response => response)
+    .catch(e =>{throw e})
+   },
 
-deleteChildNavByOrder(order){
-  return queryHelper(
-    `DELETE FROM sub_navigations WHERE grid_order_number = ${order};`
-  ).then(response => response)
-  .catch(e =>{throw e})
-}
+   /**
+    * 
+    * gets all nav item information with link
+    */
+   getAllNavItemsWithLink(){
+     return queryHelper(`
+     SELECT p.link,n.item_id,n.title,n.page_id,n.parent_id,
+     n.order_num FROM pages as p FULL JOIN page_navigations 
+     AS n ON p.page_id = n.page_id;
+     `).then(response => response)
+     .catch(e =>{throw e})
+   },
+
+   
+
+
 
 
 } 
-
 
