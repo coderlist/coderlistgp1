@@ -950,9 +950,9 @@ userRoutes.get('/edit-page', function (req, res) { //  with no id number this sh
     if (err) {
       console.log('err :', err);
     }
-    if (!pdf) {
+    if (!pdfs) {
       req.flash('error', 'No PDFs uploaded');
-    res.status(200).render('pages/users/edit-page.ejs', {
+      res.status(200).render('pages/users/edit-page.ejs', {
       messages: req.flash('info'), 
       messagesError: req.flash('error'),
       pdfs : pdfList});
