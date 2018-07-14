@@ -342,6 +342,7 @@ userRoutes.get('/manage-pdfs', function (req, res) {
         messagesError: req.flash('error'),
         pdfList: pdfList
       })
+      return;
     }
       pdfs.map(function(pdf) {
       console.log('pdfs :', pdf);
@@ -1009,6 +1010,15 @@ userRoutes.get('/edit-page/:link', pageIDCheck, function (req, res) {
         if (err) {
           console.log('err :', err);
         }
+        if (!pdfs) {
+          req.flash('error','No PDFs uploaded')
+          res.status(200).render('pages/users/edit-page.ejs', { 
+            messages: req.flash('info'),
+            messagesError: req.flash('error'),
+            pdfList: pdfList
+          })
+          return;
+        }
         pdfs.map(function(pdf) { //refactor two of these now
           console.log('pdfs :', pdf);
           const shortName = pdf.match(/([\w\s]*)/)[0] + ".pdf";  //remove the random number to make displaying prettier
@@ -1079,8 +1089,7 @@ userRoutes.post('/create-page', postCreatePageCheck, upload.single('image'), fun
     res.status(200).redirect('/users/dashboard');
   }).catch(function(err){
     req.flash('info', 'There was an error creating the page');
-    res.status(200).render('pages/users/edit-page.ejs', {messages: req.flash('info'), page : page});
-    
+    res.status(200).render('pages/users/edit-page.ejs', {messages: req.flash('info'), page : page}); 
   })
 });
 postEditPageCheck = [
