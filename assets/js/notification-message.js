@@ -23,9 +23,9 @@ function deleteThisUser(url, user_id){
     })
     .catch(error => console.log(`There was an error: ${error}`));
 }
-function deleteThisPage(url, page_id){
-    console.log("PAGE ID:", page_id);
-    return fetch(`${url}/${page_id}`, {
+function deleteThisPage(url, page_name){
+    console.log("PAGE ID:", page_name);
+    return fetch(`${url}/${page_name}`, {
         method: 'DELETE',
         headers: {
             'Content-Type': 'application/json'
@@ -100,7 +100,6 @@ const setVariablesDataFromHiddenInputFields = function(id, name){
     /* We just need either the id for pages and users or the name for the pdf files */
     inputFieldId = id;
     inputFieldName = name;
-    console.log(inputFieldId, inputFieldName);
 };
 /* Uses the above variables to delete an item */
 const confirmDeleteMessage = function (event){
@@ -108,7 +107,7 @@ const confirmDeleteMessage = function (event){
     switch(title){
         case "Delete User": deleteThisUser('/users/delete-user', inputFieldId);
             break;
-        case "Delete Page": deleteThisPage('/users/delete-page', inputFieldId);
+        case "Delete Page": deleteThisPage('/users/delete-page', inputFieldName);
             break;
         case "Delete PDF": deleteThisPDF('/users/manage-pdfs', inputFieldName);
             break;
