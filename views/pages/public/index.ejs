@@ -33,7 +33,7 @@
                             <%=page.page_description%>.
                         </div>
                         <div class="card-body-url">
-                            <a href="/pages/<%=page.page_id%>" target="_blank">About</a>
+                            <a href="/pages/<%=page.link%>" target="_blank">About</a>
                         </div>
                     </div>
                 </div>
@@ -44,6 +44,7 @@
     </main>
     <script src="//cdnjs.cloudflare.com/ajax/libs/velocity/2.0.3/velocity.min.js"></script>
     <% include ../../partials/footer.ejs %>
+    <% include ../../partials/flash-message.ejs %>
 </body>
 
 </html>

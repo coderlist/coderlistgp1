@@ -53,6 +53,7 @@ const {
   getAllPages,
   getAllPagesWithTitle,
   getPagebyID,
+  getPagebyLink,
   deletePageById,
   updatePageContentById,
   updatePageContentByIdNoBanner,
@@ -88,6 +89,9 @@ const multer = require('multer');
 const imageUploadLocation = './assets/images/';
 const PDFUploadLocation = './assets/pdfs/';
 const path = require('path');
+
+//// Multer Uploads  ////
+
 let storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, imageUploadLocation)
@@ -139,7 +143,39 @@ let storage2 = multer.diskStorage({
   }
 });
 
+let storagePDF = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, PDFUploadLocation)
+  },
+  filename: function (req, file, next) {
+    console.log('req.body :', req.body);
+    let errors = validationResult(req);
+    req.body.title = req.body.title.replace(/[^\w _]+/, "")
+    if(req.body.title === ""){
+      req.body.title = "No Name Given";
+    }
+    const ext = file.mimetype.split('/')[1];
+    file.fieldname = `${req.body.title}-${file.fieldname}`;
+    req.fileLocation = file.fieldname + '-' + Date.now() + '.' + ext
+    next(null, req.fileLocation);
+  },
+  fileFilter: function (req, file, next) {
+    if (!file) {
+      console.log('nofile :');
+      next();
+    }
+   const pdf = file.mimetype.startsWith('application/pdf')
 
+    if (pdf) {
+      console.log('PDF uploaded');
+      next(null, true);
+    } else {
+      console.log("file not supported");
+      //TODO:  A better message response to user on failure.
+      return next();
+    }
+  }
+});
 
 const crypto = require('crypto');
 // crypto.pseudoRandomBytes(16, function(err, raw) {
@@ -159,6 +195,8 @@ const fileUpload = multer({
 const PDFUpload = multer({
   storage: storagePDF
 });
+
+//// End of Multer Uploads  ////
 
 userRoutes.use(logins.isLoggedIn);
 
@@ -311,39 +349,7 @@ userRoutes.get('/manage-pdfs', function (req, res) {
   })
 })
 
-let storagePDF = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, PDFUploadLocation)
-  },
-  filename: function (req, file, next) {
-    console.log('req.body :', req.body);
-    let errors = validationResult(req);
-    req.body.title = req.body.title.replace(/[^\w _]+/, "")
-    if(req.body.title === ""){
-      req.body.title = "No Name Given";
-    }
-    const ext = file.mimetype.split('/')[1];
-    file.fieldname = `${req.body.title}-${file.fieldname}`;
-    req.fileLocation = file.fieldname + '-' + Date.now() + '.' + ext
-    next(null, req.fileLocation);
-  },
-  fileFilter: function (req, file, next) {
-    if (!file) {
-      console.log('nofile :');
-      next();
-    }
-   const pdf = file.mimetype.startsWith('application/pdf')
 
-    if (pdf) {
-      console.log('PDF uploaded');
-      next(null, true);
-    } else {
-      console.log("file not supported");
-      //TODO:  A better message response to user on failure.
-      return next();
-    }
-  }
-});
 
 userRoutes.post('/manage-pdfs', PDFUpload.single('pdf'), function (req, res) {
   // logic handled within PDFUpload
@@ -464,76 +470,7 @@ userRoutes.get('/profile', function (req, res) {
 })
 
 
-//////////////////   Edit Create Page  //////////////////
 
-userRoutes.get('/edit-page', function (req, res) { //  with no id number this should just create a page
-  let pdfList = [];
-  fs.readdir('assets/pdfs', (err, pdfs) => {
-    if (err) {
-      console.log('err :', err);
-    }
-    pdfs.map(function(pdf) { //refactor two of these now
-      console.log('pdfs :', pdf);
-      const shortName = pdf.match(/([\w\s]*)/)[0] + ".pdf";  //remove the random number to make displaying prettier
-      pdfList.push({name: pdf, short: shortName, location: `/pdfs/${pdf}`})
-    })
-    req.flash('info', 'Page ready for editing');
-    res.status(200).render('pages/users/edit-page.ejs', {messages: req.flash('info'), pdfs : pdfList});
-    return;
-  })
-})
-
-const pageIDCheck = [
-  param('page_id').isInt()
-]
-
-userRoutes.get('/edit-page/:page_id', pageIDCheck, function (req, res) {
-  let errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    req.flash('info', 'invalid pageID');
-    res.status(200).redirect('/users/dashboard');
-    return;
-  }
-
-  let pageID = parseInt(req.params.page_id);
-  getPagebyID(pageID)
-  .then(function(data){
-    console.log('data :', data);
-    if (data.length === 0) { // Check to make sure page data exists
-      req.flash('info', 'No such page exists');
-      res.status(200).redirect('/users/dashboard');
-      return;
-    }
-    // data.ckeditor.html =  unescape(data.ckeditor.html);
-    getUserById(req.session.user_id) /// Would probably be better with promise.all
-    .then(function(userData){
-      if (!(userData[0].is_admin || req.session.user_id === data[0].owner_id)) { // Check page ownership or admin
-        req.flash('info', 'This is not your page to modify');
-        res.status(200).redirect('/users/dashboard');
-        return;  
-      }
-      let pdfList = [];
-      fs.readdir('assets/pdfs', (err, pdfs) => {
-        if (err) {
-          console.log('err :', err);
-        }
-        pdfs.map(function(pdf) { //refactor two of these now
-          console.log('pdfs :', pdf);
-          const shortName = pdf.match(/([\w\s]*)/)[0] + ".pdf";  //remove the random number to make displaying prettier
-          pdfList.push({name: pdf, short: shortName, location: `/pdfs/${pdf}`})
-        })
-        req.flash('info', 'Page ready for editing');
-        res.status(200).render('pages/users/edit-page.ejs', {page: data[0], messages: req.flash('info'), pdfs : pdfList});
-        return;
-      })
-    })
-  }).catch(function(err){
-    console.log('err :', err);
-    req.flash('error', 'There was a system error. Please contact your administrator');
-    res.status(200).render('pages/users/edit-page.ejs', {messages: req.flash('info')});
-    return;
-  });
-})
 
 ////////////////////    Change password while authenticated ////////////////////
 
@@ -1065,7 +1002,76 @@ userRoutes.get('/page-navmenu-request', function (req, res) {
  })
 })
 
+//////////////////   Edit / Create Page  //////////////////
 
+userRoutes.get('/edit-page', function (req, res) { //  with no id number this should just create a page
+  let pdfList = [];
+  fs.readdir('assets/pdfs', (err, pdfs) => {
+    if (err) {
+      console.log('err :', err);
+    }
+    pdfs.map(function(pdf) { //refactor two of these now
+      console.log('pdfs :', pdf);
+      const shortName = pdf.match(/([\w\s]*)/)[0] + ".pdf";  //remove the random number to make displaying prettier
+      pdfList.push({name: pdf, short: shortName, location: `/pdfs/${pdf}`})
+    })
+    req.flash('info', 'Page ready for editing');
+    res.status(200).render('pages/users/edit-page.ejs', {messages: req.flash('info'), pdfs : pdfList});
+    return;
+  })
+})
+
+const pageIDCheck = [
+  param('page_id').isInt()
+]
+
+userRoutes.get('/edit-page/:page_id', pageIDCheck, function (req, res) {
+  let errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    req.flash('info', 'invalid pageID');
+    res.status(200).redirect('/users/dashboard');
+    return;
+  }
+
+  let pageID = parseInt(req.params.page_id);
+  getPagebyID(pageID)
+  .then(function(data){
+    console.log('data :', data);
+    if (data.length === 0) { // Check to make sure page data exists
+      req.flash('info', 'No such page exists');
+      res.status(200).redirect('/users/dashboard');
+      return;
+    }
+    // data.ckeditor.html =  unescape(data.ckeditor.html);
+    getUserById(req.session.user_id) /// Would probably be better with promise.all
+    .then(function(userData){
+      if (!(userData[0].is_admin || req.session.user_id === data[0].owner_id)) { // Check page ownership or admin
+        req.flash('info', 'This is not your page to modify');
+        res.status(200).redirect('/users/dashboard');
+        return;  
+      }
+      let pdfList = [];
+      fs.readdir('assets/pdfs', (err, pdfs) => {
+        if (err) {
+          console.log('err :', err);
+        }
+        pdfs.map(function(pdf) { //refactor two of these now
+          console.log('pdfs :', pdf);
+          const shortName = pdf.match(/([\w\s]*)/)[0] + ".pdf";  //remove the random number to make displaying prettier
+          pdfList.push({name: pdf, short: shortName, location: `/pdfs/${pdf}`})
+        })
+        req.flash('info', 'Page ready for editing');
+        res.status(200).render('pages/users/edit-page.ejs', {page: data[0], messages: req.flash('info'), pdfs : pdfList});
+        return;
+      })
+    })
+  }).catch(function(err){
+    console.log('err :', err);
+    req.flash('error', 'There was a system error. Please contact your administrator');
+    res.status(200).render('pages/users/edit-page.ejs', {messages: req.flash('info')});
+    return;
+  });
+})
 
 postCreatePageCheck = [
   body('title').isAlphanumeric(),
@@ -1094,7 +1100,7 @@ userRoutes.post('/create-page', postCreatePageCheck, upload.single('image'), fun
   }
   
   // console.log('req.file :', req.file);
-  
+  page.link = req.body.title.trim().toLowerCase().replace(/[ ]+/g, "-");
   page.banner_location = `/images/${req.file.filename}`
   let image = {
     banner_location: `/images/${req.file.filename}`,
@@ -1133,7 +1139,7 @@ postEditPageCheck = [
 
 userRoutes.post('/edit-page', postEditPageCheck, function(req, res){
   let errors = validationResult(req);
-  page = {
+  let page = {
     created_by: req.body.created_by,
     title: req.body.title,
     ckeditor_html: req.body.content,
@@ -1150,7 +1156,8 @@ userRoutes.post('/edit-page', postEditPageCheck, function(req, res){
     res.status(200).redirect('/users/edit-page', {page : page});
     return;
   }
- 
+  page.link = req.body.title.trim().toLowerCase().replace(/[ ]+/g, "-");
+  console.log('page :', page);
    // i would like page id from the db please
   updatePageContentByIdNoBanner(page).then(function(data){
     req.flash('info', 'Page updated successfully');
@@ -1242,6 +1249,9 @@ userRoutes.post('/upload-file', fileUpload.single('upload'), function(req, res){
     })
   })
 });
+
+
+////  End of pages //////////////
 
 
 userRoutes.get('/get-server-images', function(req, res){  // This supplies ckeditor with public images on the server in the form of json
