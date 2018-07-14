@@ -13,7 +13,6 @@ class Logins {
   
   logUserOut(req, res, next) {
     req.logout();
-    res.redirect('/login');
     return next();
   }
 

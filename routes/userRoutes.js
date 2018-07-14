@@ -673,6 +673,7 @@ userRoutes.post('/admin', (req, res) => {
 });
 
 userRoutes.get('/logout', logins.logUserOut, (req, res) => { 
+  req.flash('info','You have been logged out');
   res.status(200).redirect('/login');
   return;
 });

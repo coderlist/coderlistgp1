@@ -39,7 +39,7 @@ routes.get('/', (req, res) => {
         menuItems: menuItems,
         pages: pages,
         messages: req.flash('info'),
-        messageError: req.flash('error') 
+        messagesError: req.flash('error') 
       })
       return;
     })
@@ -48,7 +48,7 @@ routes.get('/', (req, res) => {
     req.flash('error', 'There was an error');
     res.status(200).render('pages/public/broken', {
       messages: req.flash('info'),
-      messageError: req.flash('error') 
+      messagesError: req.flash('error') 
     });
     return;
   })
