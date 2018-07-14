@@ -603,7 +603,7 @@ userRoutes.post('/create-user', createUserCheck, (req, res) => { //accessible by
 
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    console.log('ERROR', error)
+    console.log('ERROR', errors)
     const userTemp = {
       email: req.body.email || "",
       first_name: req.body.first_name || "",
