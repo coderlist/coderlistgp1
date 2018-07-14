@@ -71,7 +71,11 @@ const {
   getParentNavIdByName,
   getAllNavs,
   getAllParentNavs,
-  getAllChildNavs
+  getAllChildNavs,
+  deleteParentNavById,
+  deleteParentNavByOrder,
+  deleteChildNavById,
+  deleteChildNavByOrder
 } = require('../server/models/navigations')
 const {toNavJSON} = require('../helperFunctions/query/navJson')
 const { 
@@ -289,6 +293,26 @@ userRoutes.post('/manage-nav', function(req,res){
 }
 })
 
+
+userRoutes.delete('/manage-nav/main-nav-item/:itemId', function(req,res){
+    deleteParentNavById(req.params.itemId) 
+    .then(response => {
+      console.log('Main Menu deleted')
+    }).catch(err => {
+      console.error(err)
+    })
+})
+
+
+userRoutes.delete('manage-nav/sub-nav-item/:itemId', function(req,res){
+  deleteChildNavById(req.params.itemId)
+  .then(response => {
+    console.log('Sub Menu deleted')
+  }).catch(err => {
+    console.error(err)
+  })
+})
+ 
 userRoutes.get('/manage-pdfs', function (req, res) {
   // messages: req.flash('Are you sure you want to delete this PDF?') // This will not work. Flash messages are in the form req.flash('flashtype', 'Message') "Kristian"
   let pdfList = [];
