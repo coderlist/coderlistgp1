@@ -134,39 +134,7 @@ let storage2 = multer.diskStorage({
   }
 });
 
-let storagePDF = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, PDFUploadLocation)
-  },
-  filename: function (req, file, next) {
-    console.log('req.body :', req.body);
-    let errors = validationResult(req);
-    req.body.title = req.body.title.replace(/[^\w _]+/, "")
-    if(req.body.title === ""){
-      req.body.title = "No Name Given";
-    }
-    const ext = file.mimetype.split('/')[1];
-    file.fieldname = `${req.body.title}-${file.fieldname}`;
-    req.fileLocation = file.fieldname + '-' + Date.now() + '.' + ext
-    next(null, req.fileLocation);
-  },
-  fileFilter: function (req, file, next) {
-    if (!file) {
-      console.log('nofile :');
-      next();
-    }
-   const pdf = file.mimetype.startsWith('application/pdf')
 
-    if (pdf) {
-      console.log('PDF uploaded');
-      next(null, true);
-    } else {
-      console.log("file not supported");
-      //TODO:  A better message response to user on failure.
-      return next();
-    }
-  }
-});
 
 const crypto = require('crypto');
 // crypto.pseudoRandomBytes(16, function(err, raw) {
@@ -296,6 +264,11 @@ userRoutes.post('/manage-nav', function(req,res){
 }
 })
 
+
+
+//////////////////  MANAGE PDFS  //////////////////
+
+
 userRoutes.get('/manage-pdfs', function (req, res) {
   // messages: req.flash('Are you sure you want to delete this PDF?') // This will not work. Flash messages are in the form req.flash('flashtype', 'Message') "Kristian"
   let pdfList = [];
@@ -317,24 +290,47 @@ userRoutes.get('/manage-pdfs', function (req, res) {
   })
 })
 
-PDFPostTitleCheck = [
-  body('title').isAlphanumeric()
-]
+let storagePDF = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, PDFUploadLocation)
+  },
+  filename: function (req, file, next) {
+    console.log('req.body :', req.body);
+    let errors = validationResult(req);
+    req.body.title = req.body.title.replace(/[^\w _]+/, "")
+    if(req.body.title === ""){
+      req.body.title = "No Name Given";
+    }
+    const ext = file.mimetype.split('/')[1];
+    file.fieldname = `${req.body.title}-${file.fieldname}`;
+    req.fileLocation = file.fieldname + '-' + Date.now() + '.' + ext
+    next(null, req.fileLocation);
+  },
+  fileFilter: function (req, file, next) {
+    if (!file) {
+      console.log('nofile :');
+      next();
+    }
+   const pdf = file.mimetype.startsWith('application/pdf')
 
-userRoutes.post('/manage-pdfs', PDFPostTitleCheck, PDFUpload.single('pdf'), function (req, res) {
-  let errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    req.flash('info', 'Invalid Title');
-    res.status(200).redirect('/users/manage-pdfs');
-    return;
+    if (pdf) {
+      console.log('PDF uploaded');
+      next(null, true);
+    } else {
+      console.log("file not supported");
+      //TODO:  A better message response to user on failure.
+      return next();
+    }
   }
-  // console.log('req.file :', req.file);
+});
+
+userRoutes.post('/manage-pdfs', PDFUpload.single('pdf'), function (req, res) {
+  // logic handled within PDFUpload
   req.flash('info', 'PDF Uploaded')
   res.status(200).redirect('users/manage-pdfs.ejs')
-  // }).catch(function(err){
-  //   req.flash('error', 'There was an error uploading this pdf. Please try again or contact your administrator')
-  //   res.status(200).redirect('/users/manage-pdfs');
+  return;
 })
+
 
 PDFDeleteCheck = [
   param('pdf_name').matches('^[\\w\\s-.]+$')
@@ -359,6 +355,10 @@ userRoutes.delete('/manage-pdfs/:pdf_name', PDFDeleteCheck, function(req, res){
   })
 });
 
+
+////////////////  End of Manage PDFs    /////////////////////////
+
+///////////////   Manage Images     /////////////////////////
 
 userRoutes.get('/manage-images', function(req, res){
   getAllImagesData(req.params.image_id)
@@ -431,11 +431,19 @@ userRoutes.delete('/manage-images/:image_id', imageDeleteCheck, function(req, re
 });
 
 
+///////////////   End of Manage Images   /////////////////////
+
+////////////////   End of User 
+
+
 userRoutes.get('/profile', function (req, res) {
   res.status(200).render('pages/users/profile.ejs', { 
     messages: req.flash('info')
   })
 })
+
+
+//////////////////   Edit Create Page  //////////////////
 
 userRoutes.get('/edit-page', function (req, res) { //  with no id number this should just create a page
   let pdfList = [];
