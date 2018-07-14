@@ -165,6 +165,10 @@ ALTER TABLE pages ADD COLUMN IF NOT EXISTS ckeditor_html TEXT,
    ADD COLUMN IF NOT EXISTS banner_location TEXT,
    ADD COLUMN IF NOT EXISTS last_edited_by TEXT,
    ADD COLUMN IF NOT EXISTS link TEXT UNIQUE;
+
+ALTER TABLE page_navigations ADD COLUMN IF NOT EXISTS updated_date TIMESTAMP,
+    ADD COLUMN IF NOT EXISTS creation_date TIMESTAMP DEFAULT NOW(),
+    ADD COLUMN created_by INTEGER REFERENCES users(user_id) ON DELETE SET NULL;
  --  ADD COLUMN IF NOT EXISTS owner_id INT REFERENCES users(user_id) ON DELETE SET NULL;
 
 
@@ -291,15 +295,40 @@ END;
 $$ LANGUAGE plpgsql;
 
 
+-- function to update time on page_navigations
+
+
+CREATE OR REPLACE FUNCTION trigger_set_nav_timestamp()
+RETURNS TRIGGER AS $$
+BEGIN
+    NEW.updated_date = NOW();
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+
 -- sets a trigger for update action time
 
 DO $$
 BEGIN
   IF NOT EXISTS (SELECT 1 FROM pg_trigger WHERE tgname = 'set_timestamp') THEN
         CREATE TRIGGER set_timestamp
-        BEFORE UPDATE ON pages
+        BEFORE UPDATE ON pages 
         FOR EACH ROW
         EXECUTE PROCEDURE trigger_set_timestamp();
+  END IF;
+END
+$$;
+
+
+-- sets trigger for update action time on page_navigations
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_trigger WHERE tgname = 'set_nav_timestamp') THEN
+        CREATE TRIGGER set_nav_timestamp
+        BEFORE UPDATE ON page_navigations
+        FOR EACH ROW
+        EXECUTE PROCEDURE trigger_set_nav_timestamp();
   END IF;
 END
 $$;
@@ -310,7 +339,7 @@ DO $$
 BEGIN
   IF ( select confdeltype from pg_constraint 
       where conname = 'pages_created_by_fkey') = 'c'
-  THEN
+  THEN 
      ALTER TABLE pages DROP CONSTRAINT pages_created_by_fkey;
      ALTER TABLE pages ADD CONSTRAINT pages_created_by_fkey FOREIGN KEY 
      (created_by) REFERENCES users(email) ON DELETE SET NULL;
