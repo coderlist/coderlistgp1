@@ -584,6 +584,12 @@ userRoutes.post('/update-banner', upload.single('image'), function(req, res){
   });
 })
 
+userRoutes.get('/create-user', (req, res) => { //accessible by authed admin
+  res.status(200).render('pages/users/create-user.ejs', {
+    messages: req.flash('info'),
+    messagesError: req.flash('error')
+  });
+});
 
 const createUserCheck = [
   body('email').isEmail().normalizeEmail(),
@@ -713,7 +719,8 @@ userRoutes.get('/edit-user/:user_id', checkUserID, (req, res) => { //accessible 
 editUserPostCheck = [
   body('user_id').isInt(),
   body('first_name').trim().isAlphanumeric(),
-  body('last_name').trim().isAlphanumeric()
+  body('last_name').trim().isAlphanumeric(),
+  body('is_admin').isBoolean()
 ]
 
 userRoutes.post('/edit-user', editUserPostCheck , function(req, res){
@@ -723,15 +730,21 @@ userRoutes.post('/edit-user', editUserPostCheck , function(req, res){
     res.status(200).redirect('/users/dashboard');
   }
   getUserById(req.body.user_id)
-  
   .then(function(user){
     user = user[0];
     console.log('user :', user);
     getIsUserAdmin(req.session.user_id)
     .then(function(userAdmin){
-      console.log('userAdmin :', userAdmin);
       if (userAdmin[0].is_admin || user.user_id === req.session.user_id){ // if user is the same user being edited or user is super admin
-        updateUserName(req.body)
+        let userUpdate = {
+          user_id : req.body.user_id,
+          first_name: req.body.first_name,
+          last_name: req.body.last_name
+        }
+        if(!userAdmin[0].is_admin){
+          userUpdate.is_admin = user.is_admin ? true : req.body.is_admin // This stops someone removing admin rights. Currently a non reversible process. 
+          }
+         updateUserName(userUpdate)
         .then(function(response){
           console.log('response :', response);
           if (response){
