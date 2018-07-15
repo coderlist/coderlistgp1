@@ -260,10 +260,13 @@ userRoutes.get('/manage-nav', function (req, res) {
   const navigationItems = getAllNavItemsWithLink()
   Promise.all([pageItems, navigationItems])
   .then(function(values){
+    values[1].map(function(navs){
+
+    })
     console.log('items :', values[1]);
     res.status(200).render('pages/users/manage-nav.ejs', { 
       messages: req.flash('info'),
-      subMenuList: values[0],
+      subMenuList: values[1],
       parentNav: values[1],
       childNav: values[1]
     })
@@ -271,60 +274,65 @@ userRoutes.get('/manage-nav', function (req, res) {
 })
 
 userRoutes.post('/manage-nav', function(req,res){
-  if (!req.body.subMenuParentItemSelectedOption){
-    //req is for parent nav if it does not contain
-    //a parent_page value
- nav = {
-   title:req.body.menuInputField,//name:req.body.page_name,
-   link:req.body.menuItemSelectedOption, 
-   nav_order_number:req.body.menuItemOrderNumber
- }
+
+});
+
+
+// userRoutes.post('/manage-nav', function(req,res){
+//   if (!req.body.subMenuParentItemSelectedOption){
+//     //req is for parent nav if it does not contain
+//     //a parent_page value
+//  nav = {
+//    title:req.body.menuInputField,//name:req.body.page_name,
+//    link:req.body.menuItemSelectedOption, 
+//    nav_order_number:req.body.menuItemOrderNumber
+//  }
  
- createParentNavItem(nav).then(response => {
-   res.status(200).send('parent nav created')
- }).catch(e => {
-   res.status(400).send(e.stack)
- })
-}else{
-  console.log('CHILD REQ', req.body)
- nav = {
-   title: req.body.subMenuInputField,//name:req.body.page_name,
-   link:req.body.subMenuChildItemSelectedOption,
-   grid_order_number:req.body.subMenuItemOrderNumber,
-   parent_title: req.body.subMenuParentItemSelectedOption
- }
- getParentNavIdByName(nav.parent_title).then(response => {
-   createChildNavItem(nav, response[0].navigation_id).then(response => {
-     res.status(200).send('child nav created')
-   }).catch(e => {
-    console.error(e.stack)
-   })
- }).catch(e => {
-  console.error(e.stack)
-})
+//  createParentNavItem(nav).then(response => {
+//    res.status(200).send('parent nav created')
+//  }).catch(e => {
+//    res.status(400).send(e.stack)
+//  })
+// }else{
+//   console.log('CHILD REQ', req.body)
+//  nav = {
+//    title: req.body.subMenuInputField,//name:req.body.page_name,
+//    link:req.body.subMenuChildItemSelectedOption,
+//    grid_order_number:req.body.subMenuItemOrderNumber,
+//    parent_title: req.body.subMenuParentItemSelectedOption
+//  }
+//  getParentNavIdByName(nav.parent_title).then(response => {
+//    createChildNavItem(nav, response[0].navigation_id).then(response => {
+//      res.status(200).send('child nav created')
+//    }).catch(e => {
+//     console.error(e.stack)
+//    })
+//  }).catch(e => {
+//   console.error(e.stack)
+// })
  
-}
-})
+// }
+// })
 
 
-userRoutes.delete('/manage-nav/main-nav-item/:itemId', function(req,res){
-    deleteParentNavById(req.params.itemId) 
-    .then(response => {
-      console.log('Main Menu deleted')
-    }).catch(err => {
-      console.error(err)
-    })
-})
+// userRoutes.delete('/manage-nav/main-nav-item/:itemId', function(req,res){
+//     deleteParentNavById(req.params.itemId) 
+//     .then(response => {
+//       console.log('Main Menu deleted')
+//     }).catch(err => {
+//       console.error(err)
+//     })
+// })
 
 
-userRoutes.delete('/manage-nav/sub-nav-item/:itemId', function(req,res){
-  deleteChildNavById(req.params.itemId)
-  .then(response => {
-    console.log('Sub Menu deleted')
-  }).catch(err => {
-    console.error(err)
-  })
-})
+// userRoutes.delete('/manage-nav/sub-nav-item/:itemId', function(req,res){
+//   deleteChildNavById(req.params.itemId)
+//   .then(response => {
+//     console.log('Sub Menu deleted')
+//   }).catch(err => {
+//     console.error(err)
+//   })
+// })
 
 //////////////////  MANAGE PDFS  //////////////////
  
@@ -802,6 +810,7 @@ userRoutes.delete('/delete-user/:user_id', deleteUserPostCheck, function(req, re
     return;
   }
   console.log('req.session.user_id :', req.session.user_id);
+  const location = "/users/dashboard"
   getIsUserAdmin(req.session.user_id)
   .then(function(userAdmin){
     console.log('req.session.user_id :', req.session.user_id);
@@ -814,24 +823,24 @@ userRoutes.delete('/delete-user/:user_id', deleteUserPostCheck, function(req, re
           // run sql command orphan pages owned by user
           // req.flash('info','User deleted');
           // res.status(200).redirect('/users/dashboard');
-          res.json({ status: "SUCCESS", message: 'User successfully deleted', location: "/users/dashboard" });
+          res.json({ status: "SUCCESS", message: 'User successfully deleted', location: location });
           return;
         }
         // req.flash('error','There was an error. User does not exist');
         // res.status(200).redirect('/users/dashboard');
-        res.json({ status: "FAILURE", message: 'There was an error. User does not exist', location: "/users/dashboard" });
+        res.json({ status: "FAILURE", message: 'There was an error. User does not exist', location: location });
         return;
       })
       // req.flash('error','You are not authorised to delete users');
       // res.status(200).redirect('/users/dashboard');
-      res.json({ status: "FAILURE", message: 'You are not authorised to delete users', location: "/users/dashboard" });
+      res.json({ status: "FAILURE", message: 'You are not authorised to delete users', location: location });
       return;
     }
   }).catch(function(err){
     console.log('err :', err);
       // req.flash('error','There was a system error');
       // res.status(200).redirect('/users/dashboard');
-      res.json({ status: "FAILURE", message: 'There was a system error. Please contact your administrator', location: "/users/dashboard" });
+      res.json({ status: "FAILURE", message: 'There was a system error. Please contact your administrator', location: location });
       return
   })
 })
@@ -941,14 +950,14 @@ userRoutes.post('/upload-images', upload.single('image'), (req, res) => {
 
 
 
-userRoutes.get('/page-navmenu-request', function (req, res) {
+userRoutes.get('/page-navmenu-request', function (req, res) { // update to get split list.
 // This is working now.
-getAllNavs().then(response => {
-    const pages = toNavJSON(response)
-    res.status(200).send(pages)
-  }).catch(e => {
-   res.status(400).send(e.stack)
- })
+// getAllNavs().then(response => {
+//     const pages = toNavJSON(response)
+//     res.status(200).send(pages)
+//   }).catch(e => {
+//    res.status(400).send(e.stack)
+//  })
 })
 
 //////////////////   Edit / Create Page  //////////////////
@@ -1064,7 +1073,7 @@ userRoutes.post('/create-page', postCreatePageCheck, upload.single('image'), fun
   }
   
   // console.log('req.file :', req.file);
-  page.link = req.body.title.trim().toLowerCase().replace(/[ ]+/g, "-");
+  page.link = req.body.title.trim().toLowerCase().replace(/[ ]/g, "-");
   page.banner_location = `/images/${req.file.filename}`
   let image = {
     banner_location: `/images/${req.file.filename}`,
@@ -1119,7 +1128,7 @@ userRoutes.post('/edit-page', postEditPageCheck, function(req, res){
     res.status(200).redirect('/users/edit-page', {page : page});
     return;
   }
-  page.link = req.body.title.trim().toLowerCase().replace(/[ ]+/g, "-");
+  page.link = req.body.title.trim().toLowerCase().replace(/[ ]/g, "-");
   console.log('page :', page);
    // i would like page id from the db please
   updatePageContentByIdNoBanner(page).then(function(data){

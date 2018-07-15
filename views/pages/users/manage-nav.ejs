@@ -49,8 +49,11 @@
                                             <td>
                                                 <select name="menu_page" class="form-control custom-select menu-items-select">
                                                     <option value="no-link">no-link</option>
-                                                    <option value="about">about</option>
-                                                    <option value="workshops">workshops</option>
+                                                    <% if (typeof subMenuList == 'object' && subMenuList) {%>
+                                                      <% subMenuList.map(function(option){%>
+                                                      <option value="<%=option.link%>"><%=option.link%></option>
+                                                        <% }) %>
+                                                    <% } %>
                                                 </select>
                                             </td>
                                             <td>
@@ -111,7 +114,7 @@
                                                     <% subMenuList.map(function(page, index){ %>
                                                       <option value="<%=page.title%>"><%=page.title%></option>
                                                     <% }) %>
-                                                    <% } %>
+                                                  <% } %>
                                                 </select>
                                             </td>
                                             <td>
