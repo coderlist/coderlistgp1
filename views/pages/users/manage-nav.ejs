@@ -38,6 +38,10 @@
                                     <tbody class="table-menu-items">
                                       <% parentNav.map(function(nav){%>
                                         <tr>
+                                            <!-- Do not change this line for now -->
+                                            <input type="hidden" class="main-nav-item-id" name="main_nav_item_id" value="<%=nav.navigation_id%>" />
+                                            <!-- Do not change this line for now -->
+                                            <input type="hidden" class="page_id" name="page_id" value="<%=nav.navigation_id%>" />
                                             <input type="hidden" class="main-nav-item-id" name="main_nav_item_id" value="<%=nav.navigation_id%>" />
                                             <td>
                                                 <input type="text" class="form-control menu-page-name" name="menu_page_name" value="<%=nav.title%>">

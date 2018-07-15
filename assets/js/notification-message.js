@@ -23,9 +23,9 @@ function deleteThisUser(url, user_id){
     })
     .catch(error => console.log(`There was an error: ${error}`));
 }
-function deleteThisPage(url, page_name){
-    console.log("PAGE ID:", page_name);
-    return fetch(`${url}/${page_name}`, {
+function deleteThisPage(url, page_id){
+    console.log("PAGE ID:", page_id);
+    return fetch(`${url}/${page_id}`, {
         method: 'DELETE',
         headers: {
             'Content-Type': 'application/json'
@@ -107,7 +107,7 @@ const confirmDeleteMessage = function (event){
     switch(title){
         case "Delete User": deleteThisUser('/users/delete-user', inputFieldId);
             break;
-        case "Delete Page": deleteThisPage('/users/delete-page', inputFieldName);
+        case "Delete Page": deleteThisPage('/users/delete-page', inputFieldId);
             break;
         case "Delete PDF": deleteThisPDF('/users/manage-pdfs', inputFieldName);
             break;
