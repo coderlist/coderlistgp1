@@ -243,11 +243,13 @@ function getMenuItemData(index){
     const thisMenuItemData = {
         menuItemId: document.querySelectorAll('.main-nav-item-id')[index].value,
         menuInputField: document.querySelectorAll('.menu-page-name')[index].value,
+        menuItemSelectedOptionDataID: document.querySelectorAll('.menu-items-select')[index].getAttribute('data-id'),
         menuItemSelectedOption: document.querySelectorAll('.menu-items-select')[index].value,
         menuItemOrderNumber: document.querySelectorAll('.menu-page-order')[index].value,
     };
     console.log("Item ID:", thisMenuItemData.menuItemId);
     console.log("Item Name:",thisMenuItemData.menuInputField);
+    console.log("Item SelectedOption:",thisMenuItemData.menuItemSelectedOptionDataID);
     console.log("Item SelectedOption:",thisMenuItemData.menuItemSelectedOption);
     console.log("Item OrderNumber:",thisMenuItemData.menuItemOrderNumber);
    // postMenuItemData(thisTableItemData);
@@ -259,6 +261,7 @@ function getMenuItemData(index){
  * 
  */
 function postMenuItemData(data){
+    const manageNavMessage = document.querySelector('.manage-nav-message');
     return fetch(`/users/manage-nav`, {
         method: "POST",
         mode: "cors",
@@ -271,9 +274,17 @@ function postMenuItemData(data){
         return response;
     })
     .then(message => {
+        if(message.status == 200 ){
+            
+        } else {
+            manageNavMessage.textContent = message.status;
+            toggleManageNavOverlay();
+        }
         console.log(message);
     })
-    .catch(error => console.log(`There was an error: ${error}`));
+    .catch(error => {
+        console.log(`There was an error: ${error}`)
+    });
 }
 /**
  * Gets the getDeleteButtonRowIndex
@@ -393,12 +404,16 @@ function getSubMenuItemData(index){
     const thisMenuItemData = {
         subMenuItemId: document.querySelectorAll('.sub-nav-item-id')[index].value,
         subMenuInputField: document.querySelectorAll('.sub-menu-page-name')[index].value,
+        subMenuParentItemSelectedOptionDataID: document.querySelectorAll('.parent-item-select')[index].getAttribute('data-id'),
+        subMenuChildItemSelectedOptionDataID: document.querySelectorAll('.child-item-select')[index].getAttribute('data-id'),
         subMenuParentItemSelectedOption: document.querySelectorAll('.parent-item-select')[index].value,
         subMenuChildItemSelectedOption: document.querySelectorAll('.child-item-select')[index].value,
         subMenuItemOrderNumber: document.querySelectorAll('.sub-menu-page-order')[index].value,
     };
     console.log("Item ID:", thisMenuItemData.subMenuItemId);
     console.log("Item Name:",thisMenuItemData.subMenuInputField);
+    console.log("Item SelectedOptionDataId:",thisMenuItemData.subMenuParentItemSelectedOptionDataID);
+    console.log("Item SelectedOptionDataId:",thisMenuItemData.subMenuChildItemSelectedOptionDataID);
     console.log("Item SelectedOption:",thisMenuItemData.subMenuParentItemSelectedOption);
     console.log("Item SelectedOption:",thisMenuItemData.subMenuChildItemSelectedOption);
     console.log("Item OrderNumber:",thisMenuItemData.subMenuItemOrderNumber);
