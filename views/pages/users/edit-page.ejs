@@ -31,7 +31,7 @@
                             <input class="form-control this_id" name="page_id" type="hidden" value="<%= (typeof page == 'object' && page) ? page.page_id : ''%>" />
                             <input class="form-control" name="created_by" type="hidden" value="<%= (typeof page == 'object' && page) ? page.created_by : ''%>" />
                             <label class="form-label">Title</label>
-                            <input type="text" class="form-control this_name" name="title" placeholder="Title.." value="<%= (typeof page == 'object' && page) ? page.title : 'Hello World' %>" required>
+                            <input type="text" class="form-control this_name" name="title" placeholder="Page title" value="<%= (typeof page == 'object' && page) ? page.title : 'Hello World' %>" required>
                         </div>
                         <div class="form-group ">
                             <label class="form-label"></label>

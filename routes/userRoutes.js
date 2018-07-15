@@ -371,7 +371,7 @@ userRoutes.get('/manage-pdfs', function (req, res) {
 userRoutes.post('/manage-pdfs', PDFUpload.single('pdf'), function (req, res) {
   // logic handled within PDFUpload
   req.flash('info', 'PDF Uploaded')
-  res.status(200).redirect('users/manage-pdfs.ejs')
+  res.status(200).redirect('/users/manage-pdfs')
   return;
 })
 

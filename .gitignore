@@ -5,6 +5,7 @@ vscode
 .vscode
 .vscode/
 assets/images
+assets/pdfs
 helperFunctions/verification/mailTestManual.js
 playground
 .vs
