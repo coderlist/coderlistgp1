@@ -34,9 +34,9 @@
                                             <th></th>
                                         </tr>
                                     </thead>
-                                    <% if (typeof parentNav == 'object' && parentNav) {%>
+                                    <% if (typeof mainMenuItems == 'object' && mainMenuItems) {%>
                                     <tbody class="table-menu-items">
-                                      <% parentNav.map(function(nav){%>
+                                      <% mainMenuItems.map(function(nav){%>
                                         <tr>
                                             <!-- Do not change this line for now -->
                                             <input type="hidden" class="main-nav-item-id" name="main_nav_item_id" value="<%=nav.navigation_id%>" />
@@ -49,9 +49,11 @@
                                             <td>
                                                 <select name="menu_page" class="form-control custom-select menu-items-select">
                                                     <option value="no-link">no-link</option>
-                                                    <% if (typeof subMenuList == 'object' && subMenuList) {%>
-                                                      <% subMenuList.map(function(option){%>
-                                                      <option value="<%=option.link%>"><%=option.link%></option>
+                                                    <% if (typeof pageItems == 'object' && pageItems) {%>
+                                                      <% pageItems.map(function(option){%>
+                                                        <% let selected = (option.link) === nav.link ? "selected" : "" %>
+                                                        <%console.log('selected',selected)%>
+                                                      <option data-id="<%=option.page_id %>" value="<%=option.link%>" <%=selected%> ><%=option.link%></option>
                                                         <% }) %>
                                                     <% } %>
                                                 </select>
@@ -93,28 +95,35 @@
                                             <th></th>
                                         </tr>
                                     </thead>
-                                    <%if ( typeof childNav == 'object' && childNav) {%>
+                                    <%if ( typeof subMenuItems == 'object' && subMenuItems) {%>
                                     <tbody class="table-sub-menu-items">
-                                      <%childNav.map(function(child) {%>
+                                      <%subMenuItems.map(function(child) {%>
                                         <tr>
                                             <input type="hidden" class="sub-nav-item-id" value="null" name="sub_nav_item_id" />
+                                        
                                             <td>
                                                 <input type="text" class="form-control sub-menu-page-name" name="sub_menu_page_name" placeholder="Nursery Classes">
                                             </td>
                                             <td>
                                                 <select name="parent_page" class="custom-select parent-item-select">
                                                     <option value="1">Workshops</option>
-                                                    <option value="2">about</option>
-                                                    <option value="3">workshops</option>
+                                                    <% if (typeof mainMenuItems == 'object' && mainMenuItems) {%>
+                                                      <% mainMenuItems.filter(function(item){return item.title !== null;}).map(function(page, index){ %>
+                                                        <option data-id="<%=page.item_id%>" value="<%=page.title%>"><%=page.title%></option>
+                                                      <% }) %>
+                                                    <% } %>
                                                 </select>
                                             </td>
                                             <td>
                                                 <select name="child_page" class="form-control custom-select child-item-select">
-                                                  <% if (typeof subMenuList == 'object' && subMenuList) { %>
-                                                    <% subMenuList.map(function(page, index){ %>
-                                                      <option value="<%=page.title%>"><%=page.title%></option>
-                                                    <% }) %>
-                                                  <% } %>
+                                                    <option value="no-link">no-link</option>
+                                                    <% if (typeof pageItems == 'object' && pageItems) {%>
+                                                      <% pageItems.map(function(option){%>
+                                                        <% let selected = (option.link === nav.link) ? "selected" : "" %>
+                                                        <%console.log('selected',selected)%>
+                                                      <option data-id="<%=option.page_id %>" value="<%=option.link%>" <%=selected%> ><%=option.link%></option>
+                                                        <% }) %>
+                                                    <% } %>
                                                 </select>
                                             </td>
                                             <td>

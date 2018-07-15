@@ -46,6 +46,12 @@ module.exports = {
       .catch(e => {throw e})
   },
 
+  getAllPagesWithLink(){
+    return queryHelper(`SELECT page_id,link FROM pages ORDER BY creation_date`)
+    .then(response => response)
+      .catch(e => {throw e})
+  },
+
   getUserPages(rowsLimit,id){
     return queryHelper(`SELECT title,creation_date,last_edited_date,ckeditor_html
                        FROM pages WHERE owner_id='${id}' ORDER BY creation_date 

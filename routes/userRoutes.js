@@ -52,6 +52,7 @@ const {
   createPage,
   getAllPages,
   getAllPagesWithTitle,
+  getAllPagesWithLink,
   getPagebyID,
   getPageByLink,
   deletePageById,
@@ -68,8 +69,7 @@ const {
   createImageObjComplete
 } = require('../server/models/images');
 const {
-  createParentNavItem,
-  createChildNavItem,
+  createNavItem,
   getParentNavIdByName,
   getAllNavs,
   getAllParentNavs,
@@ -241,7 +241,7 @@ ckeditorPostCheck = [
 userRoutes.post('/dashboard', ckeditorPostCheck, (req, res) => {
   let errors = validationResult(req);
   if (!errors.isEmpty()) {
-    req.flash('info', 'Invalid ckeditor data');
+    req.flash('error', 'Invalid ckeditor data');
     res.status(200).redirect('users/dashboard.ejs') 
     return;
   }
@@ -256,27 +256,82 @@ userRoutes.post('/dashboard', ckeditorPostCheck, (req, res) => {
 /////////////////////// Admin page routes /////////////////////
 
 userRoutes.get('/manage-nav', function (req, res) {
-  const pageItems = getAllPagesWithTitle() // this currently gets all information about the page. We need to cut this down to what is needed
-  const navigationItems = getAllNavItemsWithLink()
+  const pageItems = getAllPagesWithLink(); // this currently gets all information about the page. We need to cut this down to what is needed
+  const navigationItems = getAllNavItemsWithLink();
   Promise.all([pageItems, navigationItems])
   .then(function(values){
     values[1].map(function(navs){
 
     })
-    console.log('items :', values[1]);
+    console.log('items :', values[0]);
+    values[1].map(function(item){
+      console.log('navs item :', item);
+    })
     res.status(200).render('pages/users/manage-nav.ejs', { 
       messages: req.flash('info'),
-      subMenuList: values[1],
-      parentNav: values[1],
-      childNav: values[1]
-    })
+      pageItems: values[0],
+      mainMenuItems: values[1],
+      subMenuItems: values[1]
+    });
+  }).catch(function(err){
+    console.log("err", err);
+    req.flash('error','There was a system error');
   })
 })
 
-userRoutes.post('/manage-nav', function(req,res){
+const userPostNavItemsCheck = [
+  body('menuItemId').matches(/^([\d]+$|)$/), //  the or parameter matches the empty string
+  body('menuInputField').matches(/^[\w ]+$/), //aplhanumeric with spaces
+  body('menuItemPageId').matches(/^([\d]+$|)$/),  // the or parameter matches the empty string
+  body('menuItemOrderNumber').isInt()
+]
 
+userRoutes.post('/manage-nav', userPostNavItemsCheck, function(req,res){
+  let errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    console.log('errors.array() :',req.body, errors.array());
+    req.flash('error', 'Invalid nav item');
+    res.status(200).redirect('users/manage-nav') 
+    return;
+  }
+  console.log('req.body :', req.body);
+//  menuItemId: 'null',
+//   menuInputField: 'Page Name',
+//   menuItemSelectedOption: 'no-link',
+//   menuItemOrderNumber: '0' }
+  nav = {
+    page_id: req.body.menuItemPageId || null,
+    title: req.body.menuInputField,
+    order_num: req.body.menuItemOrderNumber,
+    parent_id: req.body.parent_id || null,
+    created_by: req.session.user_id,
+    item_id : req.body.item_id
+  }
+  console.log('nav :', nav);
+  if (typeof nav.item_id === 'integer') {
+    updateNavItemById(nav)
+    .then(function(nav){
+
+    })
+  }
+  else {
+    createNavItem(nav)
+    .then(function(navItem){
+      console.log('navItem :', navItem);
+    }).catch(function(err){
+      console.log('err :', err);
+    })
+  }
 });
 
+
+userRoutes.get('/all-manage-nav-items', function(req, res){
+  res.JSON(data)
+})
+
+userRoutes.get('/page-navmenu-request', function (req, res) { // update to get split list.
+  // fetch navs
+  })
 
 // userRoutes.post('/manage-nav', function(req,res){
 //   if (!req.body.subMenuParentItemSelectedOption){
@@ -797,13 +852,14 @@ userRoutes.delete('/delete-user/:user_id', deleteUserPostCheck, function(req, re
   console.log("Hello World");
   let errors = validationResult(req);
   if (!errors.isEmpty()){
-    console.log('invalis :');
+    console.log('invalid user id')
     // req.flash('error','Invalid user id');
     // res.status(200).redirect('/users/dashboard');
     res.json({ status: "FAILURE", message: 'Invalid user id', location: "/users/dashboard"});
     return;
   }
   if (req.params.user_id === req.session.user_id){
+    console.log('cannot delete yourself')
     // req.flash('error','You are not authorised to delete yourself');
     // res.status(200).redirect('/users/dashboard');
     res.json({ status: "FAILURE", message: 'You are not authorised to delete yourself', location: "/users/dashboard" });
@@ -820,12 +876,14 @@ userRoutes.delete('/delete-user/:user_id', deleteUserPostCheck, function(req, re
       .then(function(data){
         console.log('data :', data);
         if (data) {
+          console.log('Successfully deleted')
           // run sql command orphan pages owned by user
           // req.flash('info','User deleted');
           // res.status(200).redirect('/users/dashboard');
           res.json({ status: "SUCCESS", message: 'User successfully deleted', location: location });
           return;
         }
+        console.log('User does not exist')
         // req.flash('error','There was an error. User does not exist');
         // res.status(200).redirect('/users/dashboard');
         res.json({ status: "FAILURE", message: 'There was an error. User does not exist', location: location });
@@ -950,15 +1008,7 @@ userRoutes.post('/upload-images', upload.single('image'), (req, res) => {
 
 
 
-userRoutes.get('/page-navmenu-request', function (req, res) { // update to get split list.
-// This is working now.
-// getAllNavs().then(response => {
-//     const pages = toNavJSON(response)
-//     res.status(200).send(pages)
-//   }).catch(e => {
-//    res.status(400).send(e.stack)
-//  })
-})
+
 
 //////////////////   Edit / Create Page  //////////////////
 
