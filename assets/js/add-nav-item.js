@@ -259,6 +259,7 @@ function getMenuItemData(index){
  * 
  */
 function postMenuItemData(data){
+    const manageNavMessage = document.querySelector('.manage-nav-message');
     return fetch(`/users/manage-nav`, {
         method: "POST",
         mode: "cors",
@@ -271,9 +272,17 @@ function postMenuItemData(data){
         return response;
     })
     .then(message => {
+        if(message.status == 200 ){
+            
+        } else {
+            manageNavMessage.textContent = message.status;
+            toggleManageNavOverlay();
+        }
         console.log(message);
     })
-    .catch(error => console.log(`There was an error: ${error}`));
+    .catch(error => {
+        console.log(`There was an error: ${error}`)
+    });
 }
 /**
  * Gets the getDeleteButtonRowIndex

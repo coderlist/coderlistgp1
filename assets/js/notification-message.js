@@ -7,11 +7,10 @@ const title = document.querySelector('.overlay-alert-message h4').textContent;
 // All the delete messages are returning undefined due to not being able to reach the .delete routes
 function deleteThisUser(url, user_id){  
     console.log("USER ID:", user_id);
+    console.log("URL:", url);
+    console.log(`${url}/${user_id}`);
     return fetch(`${url}/${user_id}`, {
         method: 'DELETE',
-        headers: {
-            'Content-Type': 'application/json'
-        },
         credentials: 'include',
         mode: 'cors'
     }).then(response => {
@@ -20,6 +19,9 @@ function deleteThisUser(url, user_id){
     })
     .then(message => {
         console.log(message.status);
+        if(message.status == 200 ){
+            window.location.href = '/users/dashboard';
+        }
     })
     .catch(error => console.log(`There was an error: ${error}`));
 }
@@ -27,9 +29,6 @@ function deleteThisPage(url, page_id){
     console.log("PAGE ID:", page_id);
     return fetch(`${url}/${page_id}`, {
         method: 'DELETE',
-        headers: {
-            'Content-Type': 'application/json'
-        },
         credentials: 'include',
         mode: 'cors'
     }).then(response => {

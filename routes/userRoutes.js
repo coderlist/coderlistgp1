@@ -274,7 +274,7 @@ userRoutes.get('/manage-nav', function (req, res) {
 })
 
 userRoutes.post('/manage-nav', function(req,res){
-
+  res.status(404).json({ status: "FAILURE", message: 'Invalid Page', location: "/users/manage-nav" });
 });
 
 
@@ -795,6 +795,7 @@ deleteUserPostCheck = [
 
 userRoutes.delete('/delete-user/:user_id', deleteUserPostCheck, function(req, res){
   console.log("Hello World");
+  console.log(req.params.user_id);
   let errors = validationResult(req);
   if (!errors.isEmpty()){
     console.log('invalis :');
@@ -815,7 +816,8 @@ userRoutes.delete('/delete-user/:user_id', deleteUserPostCheck, function(req, re
   .then(function(userAdmin){
     console.log('req.session.user_id :', req.session.user_id);
     console.log('useradmin :', userAdmin);
-    if (userAdmin.is_admin){ //check if user is admin or if user
+    console.log("Is user admin?: ", userAdmin[0].is_admin);
+    if (userAdmin[0].is_admin){ //check if user is admin or if user
       deleteUserById(req.body.user_id)
       .then(function(data){
         console.log('data :', data);
