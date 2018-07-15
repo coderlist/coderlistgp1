@@ -119,7 +119,7 @@
                                                     <option value="no-link">no-link</option>
                                                     <% if (typeof pageItems == 'object' && pageItems) {%>
                                                       <% pageItems.map(function(option){%>
-                                                        <% let selected = (option.link === nav.link) ? "selected" : "" %>
+                                                        <% let selected = (option.link === child.link) ? "selected" : "" %>
                                                         <%console.log('selected',selected)%>
                                                       <option data-id="<%=option.page_id %>" value="<%=option.link%>" <%=selected%> ><%=option.link%></option>
                                                         <% }) %>
