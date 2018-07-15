@@ -90,7 +90,9 @@ const populateNotificationMessageContentWithName = function (index){
         const inputFieldName = document.querySelector('.inputFieldName');
         let name = document.querySelectorAll('.this_name')[index].value;
         let id = document.querySelectorAll('.this_id')[index].value;
+        console.log(inputIdField);
         inputIdField.value = id;
+        console.log(inputIdField);
         inputFieldName.value = name;
         placeholder.textContent = name;
         setVariablesDataFromHiddenInputFields(id, name);
@@ -104,6 +106,7 @@ const setVariablesDataFromHiddenInputFields = function(id, name){
 /* Uses the above variables to delete an item */
 const confirmDeleteMessage = function (event){
     event.preventDefault();
+    console.log(inputFieldId);
     switch(title){
         case "Delete User": deleteThisUser('/users/delete-user', inputFieldId);
             break;
