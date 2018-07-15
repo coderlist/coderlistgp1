@@ -5,9 +5,17 @@ module.exports = {
 
    createNavItem(data){
      return queryHelper(`
-     INSERT INTO page_navigations (page_id,parent_id,title,order_num) 
-     VALUES (${data.page_id},${parent_id},'${data.title}',${data.order_num})
+     INSERT INTO page_navigations (page_id,parent_id,title,order_num,created_by) 
+     VALUES (${data.page_id},${data.parent_id},'${data.title}',${data.order_num}, ${data.created_by})
      `).then(response => response)
+     .catch(e =>{throw e})
+   },
+
+   updateNavItemById(data){
+     return queryHelper(`
+     INSERT INTO page_navigations (page_id,parent_id,title,order_num,created_by) 
+     VALUES (${data.page_id},${data.parent_id},'${data.title}',${data.order_num}, ${data.created_by})
+     WHERE item_id = ${data.item_id}`).then(response => response)
      .catch(e =>{throw e})
    },
 
