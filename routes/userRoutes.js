@@ -279,10 +279,6 @@ userRoutes.get('/manage-nav', function (req, res) {
   })
 })
 
-<<<<<<< HEAD
-userRoutes.post('/manage-nav', function(req,res){
-  res.status(404).json({ status: "FAILURE", message: 'Invalid Page', location: "/users/manage-nav" });
-=======
 const userPostNavItemsCheck = [
   body('menuItemId').matches(/^([\d]+$|)$/), //  the or parameter matches the empty string
   body('menuInputField').matches(/^[\w ]+$/), //aplhanumeric with spaces
@@ -326,7 +322,6 @@ userRoutes.post('/manage-nav', userPostNavItemsCheck, function(req,res){
       console.log('err :', err);
     })
   }
->>>>>>> 158f1ad40710ef0d75cc2c59c24efe787f2fa619
 });
 
 
