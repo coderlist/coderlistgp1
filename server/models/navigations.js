@@ -48,7 +48,7 @@ module.exports = {
 
    deleteNavItemById(id){
     return queryHelper(
-      `DELTE FROM page_navigations WHERE item_id=${id}`
+      `DELETE FROM page_navigations WHERE item_id=${id}`
     ).then(response => response)
     .catch(e =>{throw e})
    },

@@ -79,7 +79,8 @@ const {
   deleteChildNavById,
   deleteChildNavByOrder,
   getAllNavItemsWithLink,
-  updateNavItemById
+  updateNavItemById,
+  deleteNavItemById
 } = require('../server/models/navigations')
 const {toNavJSON} = require('../helperFunctions/query/navJson')
 const { 
@@ -296,11 +297,6 @@ userRoutes.post('/manage-nav', userPostNavItemsCheck, function(req,res){
     res.status(200).redirect('users/manage-nav') 
     return;
   }
-  console.log('req.body :', req.body);
-//  menuItemId: 'null',
-//   menuInputField: 'Page Name',
-//   menuItemSelectedOption: 'no-link',
-//   menuItemOrderNumber: '0' }
   nav = {
     page_id: req.body.menuPageId || null,
     title: req.body.menuInputField,
@@ -309,30 +305,47 @@ userRoutes.post('/manage-nav', userPostNavItemsCheck, function(req,res){
     created_by: req.session.user_id, 
     item_id : req.body.menuItemId || null  //setting these to null stops errors happening with the insert queries
   }
-  console.log('nav :', nav);
-  console.log('check if :', !nav.item_id === null, nav.item_id );
   if (nav.item_id !== null) {
     console.log('updating :');
     updateNavItemById(nav)
-    .then(function(updatedNav){
-      console.log('updated nNav :', updatedNav);
-      res.status(200).json(updatedNav);
+    .then(function(updatedNavItem){
+      res.status(200).json({ status: "SUCCESS", message: 'Nav Item Updated', updatedNavItem: updatedNavItem });
       return;
     }).catch(function(err){
       console.log('err :', err);
+      res.status(200).json({ status: "FAILURE", message: 'Nav Item update failed' });
     })
   }
   else {
-    console.log('craeting :');
     createNavItem(nav)
-    .then(function(createdNav){
-      console.log('navItem created:', createdNav);
+    .then(function(createdNavItem){
+      res.status(200).json({ status: "SUCCESS", message: 'Nav Item Created', createdNavItem: createdNavItem });
     }).catch(function(err){
-      console.log('err :', err);
+      console.log({ status: "FAILURE", message: 'Nav Item not created' });
     })
   }
 });
 
+const navItemDeleteCheck = [
+  param('item_id').isInt()
+]
+
+userRoutes.delete('/manage-nav', navItemDeleteCheck, function(req,res){
+  let errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    console.log('errors.array() :',req.body, errors.array());
+    req.flash('error', 'Invalid nav item');
+    res.status(200).redirect('users/manage-nav') 
+    return;
+  }
+  deleteNavItemById(req.params.item_id)
+  .then(function(){
+    res.status(200).json({ status: "SUCCESS", message: 'Nav Item deleted' });
+  }).catch(function(err){
+    console.log('err :',err)
+    res.status(200).json({ status: "FAILURE", message: 'Nav Item not deleted' });
+  })
+})
 
 userRoutes.get('/all-manage-nav-items', function(req, res){
   res.JSON(data)
