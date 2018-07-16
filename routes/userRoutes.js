@@ -348,7 +348,17 @@ userRoutes.delete('/manage-nav', navItemDeleteCheck, function(req,res){
 })
 
 userRoutes.get('/all-manage-nav-items', function(req, res){
-  res.JSON(data)
+  const pageItems = getAllPagesWithLink(); // this currently gets all information about the page. We need to cut this down to what is needed
+  const navigationItems = getAllNavItemsWithLink();
+  Promise.all([pageItems, navigationItems])
+  .then(function(values){
+    const data = {
+      pagesItems: values[0],
+      mainMenuItems: values[1].filter(function(mainMenuItem){return mainMenuItem.title === null}),
+      subMenuItems: values[1].filter(function(subMenuItem){return subMenuItem.title !== null})
+    }
+  })
+  res.status(200).json(data)
 })
 
 userRoutes.get('/page-navmenu-request', function (req, res) { // update to get split list.
