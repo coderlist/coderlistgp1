@@ -106,7 +106,7 @@ const createSelectionMenu = function (pageName) {
     switch (pageName) {
         case "parentMenuItemPage":
             options = parentNavItems.map((option) => {
-                return `<option value="${option}">${option}</option>`
+                return `<option data-id="" value="${option}">${option}</option>`
             });
             select = `<td><select name="parent_page" class="form-control custom-select parent-item-select">
             ${options}
@@ -114,7 +114,7 @@ const createSelectionMenu = function (pageName) {
             break;
         case "childMenuItemPage":
             options = childrenNavLinks.map((option) => {
-                return `<option value="${option}">${option}</option>`
+                return `<option data-id="" value="${option}">${option}</option>`
             });
             select = `<td><select name="child_page" class="form-control custom-select child-item-select">
             ${options}
@@ -122,7 +122,7 @@ const createSelectionMenu = function (pageName) {
             break;
         default:
             options = parentNavLinks.map((option) => {
-                return `<option value="${option}">${option}</option>`
+                return `<option data-id="" value="${option}">${option}</option>`
             });
             select = `<td><select name="menu_page" class="form-control custom-select menu-items-select">
             ${options}
