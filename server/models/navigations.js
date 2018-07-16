@@ -13,9 +13,14 @@ module.exports = {
 
    updateNavItemById(data){
      return queryHelper(`
-     INSERT INTO page_navigations (page_id,parent_id,title,order_num,created_by) 
-     VALUES (${data.page_id},${data.parent_id},'${data.title}',${data.order_num}, ${data.created_by})
-     WHERE item_id = ${data.item_id}`).then(response => response)
+     UPDATE 
+     page_navigations 
+     SET page_id = ${data.page_id},
+     parent_id = ${data.parent_id} ,title = '${data.title}',
+     order_num = ${data.order_num},created_by = ${data.created_by}
+     WHERE 
+     item_id = ${data.item_id}`)
+     .then(response => response)
      .catch(e =>{throw e})
    },
 
