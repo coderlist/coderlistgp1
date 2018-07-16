@@ -1,9 +1,9 @@
 /* 
  * Arrays to hold pages, parent pages and child pages names.
  */
-const parentNavLinks = ['no-link'];
-const parentNavItems = [];
-const childrenNavLinks = [];
+const pageItems = ['no-link'];
+const mainMenuItems = [];
+const subMenuItems = [];
 /* Options for fetch method */
 const init = {
     method: 'GET',
@@ -16,36 +16,27 @@ const init = {
 fetch('/users/page-navmenu-request', init)
     .then(function (response) {
         return response.json();
-    }).then(function (data) {
-        data.forEach(page => {
-            Object.keys(page).map(parentKey => {
-                // Map through parents and push their links to the array of Navlinks
-                if(parentKey === "page" && parentNavItems.indexOf(page[parentKey]) === -1){
-                    // Name reference to be used for the sub nav items
-                    parentNavItems.push(page[parentKey]);
-                }
-                if(parentKey === "link" && page[parentKey] !== "no-link"){
-                    // Check if the links already exist in array, we don't want copies, links are unique
-                    if(parentNavLinks.indexOf(page[parentKey]) === -1){
-                        parentNavLinks.push(page[parentKey]);
-                    } 
-                }
-                // If parents have children:
-                // Convert to an array of object
-                if(parentKey === "children" && page[parentKey] !== null){
-                    page[parentKey].forEach(childPage => {
-                        Object.keys(childPage).map(childrenKey => {
-                            if(childrenKey === "link" && childPage[childrenKey] !== "no-link"){
-                                // Check if the links already exist in array, we don't want copies, links are unique
-                                if(childrenNavLinks.indexOf(childPage[childrenKey]) === -1){
-                                    childrenNavLinks.push(childPage[childrenKey]);
-                                }
-                            }
-                        });
-                    });
-                } 
-            });
-        });
+    }).then(function (items) {
+        Object.keys(items).map(itemKey => {
+            if(itemKey === "pageItems"){
+                items[itemKey].map(pageItem => {
+                    console.log(pageItem);
+                    pageItems.push(pageItem);
+                });
+            }
+            if(itemKey === "mainMenuItems"){
+                items[itemKey].map(mainMenuItem => {
+                    console.log(mainMenuItem);
+                    mainMenuItems.push(mainMenuItem);
+                });
+            }
+            if(itemKey === "subMenuItems"){
+                items[itemKey].map(subMenuItem => {
+                    console.log(subMenuItem);
+                    subMenuItems.push(subMenuItem);
+                });
+            }
+        }); 
     }).catch(function (error) {
         console.log("It wasn't possible to return any data from the server: ", error);
     });
@@ -105,24 +96,27 @@ const createSelectionMenu = function (pageName) {
     // console.log(parentNavItems); Working
     switch (pageName) {
         case "parentMenuItemPage":
-            options = parentNavItems.map((option) => {
-                return `<option data-id="" value="${option}">${option}</option>`
+            options = mainMenuItems.map((option) => {
+                return `<option data-id="${option.item_id}" value="${option.title}">${option.title}</option>`;
             });
             select = `<td><select name="parent_page" class="form-control custom-select parent-item-select">
             ${options}
             </select></td>`;
             break;
         case "childMenuItemPage":
-            options = childrenNavLinks.map((option) => {
-                return `<option data-id="" value="${option}">${option}</option>`
+            options = subMenuItems.map((option) => {
+                return `<option data-id="${option.item_id}" value="${option.title}">${option.title}</option>`
             });
             select = `<td><select name="child_page" class="form-control custom-select child-item-select">
             ${options}
             </select></td>`;
             break;
         default:
-            options = parentNavLinks.map((option) => {
-                return `<option data-id="" value="${option}">${option}</option>`
+            options = pageItems.map((option) => {
+                if(option === "no-link"){
+                    return `<option data-id="" value="no-link">no-link</option>`;
+                }
+                return `<option data-id="${option.page_id}" value="${option.link}">${option.link}</option>`
             });
             select = `<td><select name="menu_page" class="form-control custom-select menu-items-select">
             ${options}
@@ -275,7 +269,6 @@ function postMenuItemData(data){
     })
     .then(message => {
         if(message.status == 200 ){
-            
         } else {
             manageNavMessage.textContent = message.status;
             toggleManageNavOverlay();
@@ -340,7 +333,7 @@ function getDeleteMenuItemID(index){
  * 
  */
 function deleteMenuItemAtID(itemId){
-    return fetch(`/users/manage-nav/main-nav-item/${itemId}`, {
+    return fetch(`users/manage-nav`, {
         method: "DELETE",
         mode: "cors",
         credentials: "include"
@@ -497,7 +490,7 @@ function getDeleteSubMenuItemID(index){
  * 
  */
 function deleteSubMenuItemID(itemId){
-    return fetch(`/users/manage-nav/sub-nav-item/${itemId}`, {
+    return fetch(`users/manage-nav`, {
         method: "DELETE",
         mode: "cors",
         credentials: "include"
