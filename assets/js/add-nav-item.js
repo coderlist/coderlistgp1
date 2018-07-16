@@ -247,9 +247,10 @@ function getMenuItemData(index){
         menuItemSelectedOption: document.querySelectorAll('.menu-items-select')[index].value,
         menuItemOrderNumber: document.querySelectorAll('.menu-page-order')[index].value,
     };
+    console.log("item selected",document.querySelectorAll('.menu-items-select')[index].getAttribute('data-id'));
     console.log("Item ID:", thisMenuItemData.menuItemId);
     console.log("Item Name:",thisMenuItemData.menuInputField);
-    console.log("Item SelectedOption:",thisMenuItemData.menuItemSelectedOptionDataID);
+    console.log("Item SelectedOptionID:",thisMenuItemData.menuItemSelectedOptionDataID);
     console.log("Item SelectedOption:",thisMenuItemData.menuItemSelectedOption);
     console.log("Item OrderNumber:",thisMenuItemData.menuItemOrderNumber);
    // postMenuItemData(thisTableItemData);
@@ -404,18 +405,18 @@ function getSubMenuItemData(index){
     const thisMenuItemData = {
         subMenuItemId: document.querySelectorAll('.sub-nav-item-id')[index].value,
         subMenuInputField: document.querySelectorAll('.sub-menu-page-name')[index].value,
-        subMenuParentItemSelectedOptionDataID: document.querySelectorAll('.parent-item-select')[index].getAttribute('data-id'),
-        subMenuChildItemSelectedOptionDataID: document.querySelectorAll('.child-item-select')[index].getAttribute('data-id'),
+        subMenuParentItemSelectedOptionDataID: document.querySelectorAll('.parent-item-select')[index].options[document.querySelectorAll('.parent-item-select')[index].selectedIndex].getAttribute('data-id'),
+        subMenuChildItemSelectedOptionDataID: document.querySelectorAll('.child-item-select')[index].options[document.querySelectorAll('.child-item-select')[index].selectedIndex].getAttribute('data-id'),
         subMenuParentItemSelectedOption: document.querySelectorAll('.parent-item-select')[index].value,
         subMenuChildItemSelectedOption: document.querySelectorAll('.child-item-select')[index].value,
         subMenuItemOrderNumber: document.querySelectorAll('.sub-menu-page-order')[index].value,
     };
     console.log("Item ID:", thisMenuItemData.subMenuItemId);
     console.log("Item Name:",thisMenuItemData.subMenuInputField);
-    console.log("Item SelectedOptionDataId:",thisMenuItemData.subMenuParentItemSelectedOptionDataID);
-    console.log("Item SelectedOptionDataId:",thisMenuItemData.subMenuChildItemSelectedOptionDataID);
-    console.log("Item SelectedOption:",thisMenuItemData.subMenuParentItemSelectedOption);
-    console.log("Item SelectedOption:",thisMenuItemData.subMenuChildItemSelectedOption);
+    console.log("Item SelectedOptionDataIdParent:",thisMenuItemData.subMenuParentItemSelectedOptionDataID);
+    console.log("Item SelectedOptionDataIdChild:",thisMenuItemData.subMenuChildItemSelectedOptionDataID);
+    console.log("Item SelectedOptionParentTitle:",thisMenuItemData.subMenuParentItemSelectedOption);
+    console.log("Item SelectedOptionChildPage:",thisMenuItemData.subMenuChildItemSelectedOption);
     console.log("Item OrderNumber:",thisMenuItemData.subMenuItemOrderNumber);
    // postSubMenuItemData(thisTableItemData);
    postSubMenuItemData(thisMenuItemData);

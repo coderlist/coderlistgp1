@@ -12,9 +12,7 @@ module.exports = {
    },
 
    updateNavItemById(data){
-     return queryHelper(`
-     INSERT INTO page_navigations (page_id,parent_id,title,order_num,created_by) 
-     VALUES (${data.page_id},${data.parent_id},'${data.title}',${data.order_num}, ${data.created_by})
+     return queryHelper(`UPDATE page_navigations SET page_id=${data.page_id},parent_id=${data.parent_id},title='${data.title}',order_num=${data.order_num},created_by=${data.created_by}
      WHERE item_id = ${data.item_id}`).then(response => response)
      .catch(e =>{throw e})
    },
@@ -85,7 +83,7 @@ module.exports = {
     return queryHelper(`
     SELECT p.link,n.item_id,n.page_id,n.parent_id,n.title,
     n.order_num,n.updated_date,n.creation_date,n.created_by 
-    FROM pages AS p RIGHT JOIN page_navigations AS n ON p.page_id = n.page_id;
+    FROM pages AS p FULL JOIN page_navigations AS n ON p.page_id = n.page_id;
     `).then(response => response)
     .catch(e =>{throw e})
 

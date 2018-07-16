@@ -263,9 +263,9 @@ userRoutes.get('/manage-nav', function (req, res) {
     values[1].map(function(navs){
 
     })
-    console.log('items :', values[0]);
+    // console.log('items :', values[0]);
     values[1].map(function(item){
-      console.log('navs item :', item);
+      // console.log('navs item :', item);
     })
     res.status(200).render('pages/users/manage-nav.ejs', { 
       messages: req.flash('info'),
@@ -304,11 +304,12 @@ userRoutes.post('/manage-nav', userPostNavItemsCheck, function(req,res){
     title: req.body.menuInputField,
     order_num: req.body.menuItemOrderNumber,
     parent_id: req.body.parent_id || null,
-    created_by: req.session.user_id,
-    item_id : req.body.item_id
+    created_by: req.session.user_id, 
+    item_id : req.body.menuItemId || null  //setting these to null stops errors happening with the insert queries
   }
   console.log('nav :', nav);
-  if (typeof nav.item_id === 'integer') {
+  if (typeof nav.menuItemId === 'integer') {
+    console.log('object :',nav.menuItemId === 'integer');
     updateNavItemById(nav)
     .then(function(nav){
 
