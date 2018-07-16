@@ -243,14 +243,14 @@ function getMenuItemData(index){
     const thisMenuItemData = {
         menuItemId: document.querySelectorAll('.main-nav-item-id')[index].value,
         menuInputField: document.querySelectorAll('.menu-page-name')[index].value,
-        menuItemSelectedOptionDataID: document.querySelectorAll('.menu-items-select')[index].options[document.querySelectorAll('.menu-items-select')[index].selectedIndex].getAttribute('data-id'),
-        menuItemSelectedOption: document.querySelectorAll('.menu-items-select')[index].value,
+        menuPageId: document.querySelectorAll('.menu-items-select')[index].options[document.querySelectorAll('.menu-items-select')[index].selectedIndex].getAttribute('data-id'),
+        // menuItemSelectedOption: document.querySelectorAll('.menu-items-select')[index].value,
         menuItemOrderNumber: document.querySelectorAll('.menu-page-order')[index].value,
     };
     console.log("Item ID:", thisMenuItemData.menuItemId);
     console.log("Item Name:",thisMenuItemData.menuInputField);
-    console.log("Item SelectedOptionID:",thisMenuItemData.menuItemSelectedOptionDataID);
-    console.log("Item SelectedOption:",thisMenuItemData.menuItemSelectedOption);
+    console.log("Item SelectedOptionID:",thisMenuItemData.menuPageId);
+    // console.log("Item SelectedOption:",thisMenuItemData.menuItemSelectedOption);
     console.log("Item OrderNumber:",thisMenuItemData.menuItemOrderNumber);
    // postMenuItemData(thisTableItemData);
     postMenuItemData(thisMenuItemData);
@@ -405,18 +405,18 @@ function getSubMenuItemData(index){
         menuItemId: document.querySelectorAll('.sub-nav-item-id')[index].value,
         menuInputField: document.querySelectorAll('.sub-menu-page-name')[index].value,
         menuParentItemSelectedOptionDataID: document.querySelectorAll('.parent-item-select')[index].options[document.querySelectorAll('.parent-item-select')[index].selectedIndex].getAttribute('data-id'),
-        menuChildItemSelectedOptionDataID: document.querySelectorAll('.child-item-select')[index].options[document.querySelectorAll('.child-item-select')[index].selectedIndex].getAttribute('data-id'),
-        menuParentItemSelectedOption: document.querySelectorAll('.parent-item-select')[index].value,
-        menuChildItemSelectedOption: document.querySelectorAll('.child-item-select')[index].value,
+        menuPageId: document.querySelectorAll('.child-item-select')[index].options[document.querySelectorAll('.child-item-select')[index].selectedIndex].getAttribute('data-id'),
+        // menuParentItemSelectedOption: document.querySelectorAll('.parent-item-select')[index].value,
+        // menuPageIdName: document.querySelectorAll('.child-item-select')[index].value,
         menuItemOrderNumber: document.querySelectorAll('.sub-menu-page-order')[index].value,
     };
-    console.log("Item ID:", thisMenuItemData.subMenuItemId);
-    console.log("Item Name:",thisMenuItemData.subMenuInputField);
-    console.log("Item SelectedOptionDataIdParent:",thisMenuItemData.subMenuParentItemSelectedOptionDataID);
-    console.log("Item SelectedOptionDataIdChild:",thisMenuItemData.subMenuChildItemSelectedOptionDataID);
-    console.log("Item SelectedOptionParentTitle:",thisMenuItemData.subMenuParentItemSelectedOption);
-    console.log("Item SelectedOptionChildPage:",thisMenuItemData.subMenuChildItemSelectedOption);
-    console.log("Item OrderNumber:",thisMenuItemData.subMenuItemOrderNumber);
+    console.log("Item ID:", thisMenuItemData.menuItemId);
+    console.log("Item Name:",thisMenuItemData.menuInputField);
+    console.log("Item SelectedOptionDataIdParent:",thisMenuItemData.menuParentItemSelectedOptionDataID);
+    console.log("Item SelectedOptionDataIdChild:",thisMenuItemData.menuPageId);
+    // console.log("Item SelectedOptionParentTitle:",thisMenuItemData.menuParentItemSelectedOption);
+    // console.log("Item SelectedOptionChildPage:",thisMenuItemData.menuChildItemSelectedOption);
+    console.log("Item OrderNumber:",thisMenuItemData.menuItemOrderNumber);
    // postSubMenuItemData(thisTableItemData);
    postSubMenuItemData(thisMenuItemData);
 }

@@ -84,7 +84,7 @@ module.exports = {
     return queryHelper(`
     SELECT p.link,n.item_id,n.page_id,n.parent_id,n.title,
     n.order_num,n.updated_date,n.creation_date,n.created_by 
-    FROM pages AS p FULL JOIN page_navigations AS n ON p.page_id = n.page_id;
+    FROM pages AS p RIGHT JOIN page_navigations AS n ON p.page_id = n.page_id;
     `).then(response => response)
     .catch(e =>{throw e})
 

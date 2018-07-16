@@ -284,7 +284,8 @@ const userPostNavItemsCheck = [
   body('menuItemId').matches(/^([\d]+$|)$/), //  the or parameter matches the empty string
   body('menuInputField').matches(/^[\w ]+$/), //aplhanumeric with spaces
   body('menuItemPageId').matches(/^([\d]+$|)$/),  // the or parameter matches the empty string
-  body('menuItemOrderNumber').isInt()
+  body('menuItemOrderNumber').isInt(),
+  body('menuParentItemSelectedOptionDataID').matches(/^([\d]+$|)$/)
 ]
 
 userRoutes.post('/manage-nav', userPostNavItemsCheck, function(req,res){
@@ -301,29 +302,31 @@ userRoutes.post('/manage-nav', userPostNavItemsCheck, function(req,res){
 //   menuItemSelectedOption: 'no-link',
 //   menuItemOrderNumber: '0' }
   nav = {
-    page_id: req.body.menuItemSelectedOptionDataID || null,
+    page_id: req.body.menuPageId || null,
     title: req.body.menuInputField,
     order_num: req.body.menuItemOrderNumber,
-    parent_id: req.body.parent_id || null,
+    parent_id: req.body.menuParentItemSelectedOptionDataID || null,
     created_by: req.session.user_id, 
     item_id : req.body.menuItemId || null  //setting these to null stops errors happening with the insert queries
   }
-  console.log('typeof nav.item_id :',typeof parseInt(nav.item_id));
-  console.log('object :',typeof parseInt(nav.item_id) === 'number');
-  if (typeof parseInt(nav.item_id) === 'number') {
+  console.log('nav :', nav);
+  console.log('check if :', !nav.item_id === null, nav.item_id );
+  if (nav.item_id !== null) {
+    console.log('updating :');
     updateNavItemById(nav)
     .then(function(updatedNav){
       console.log('updated nNav :', updatedNav);
-      res.status(200).JSON(createdNav);
+      res.status(200).json(updatedNav);
       return;
     }).catch(function(err){
       console.log('err :', err);
     })
   }
   else {
+    console.log('craeting :');
     createNavItem(nav)
-    .then(function(navItem){
-      console.log('navItem created:', navItem);
+    .then(function(createdNav){
+      console.log('navItem created:', createdNav);
     }).catch(function(err){
       console.log('err :', err);
     })
