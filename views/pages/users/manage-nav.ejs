@@ -108,8 +108,9 @@
                                                       <% mainMenuItems.filter(function(item){ %>
                                                         <% return (item.title !== null && item.link === null) %>
                                                         <% }).map(function(page, index){ %>
+                                                          <% console.log("links", page.item_id, child.parent_id)%>
                                                           <% let selected = (page.item_id === child.parent_id) ? "selected" : "" %>
-                                                        <option data-id="<%=page.item_id%>" value="<%=page.title%>"><%=page.title%></option>
+                                                        <option data-id="<%=page.item_id%>" <%=selected%> value="<%=page.title%>"><%=page.title%></option>
                                                       <% }) %>
                                                     <% } %>
                                                 </select>
@@ -118,6 +119,7 @@
                                                 <select name="child_page" class="form-control custom-select child-item-select">
                                                     <% if (typeof pageItems == 'object' && pageItems) {%>
                                                       <% pageItems.map(function(option){%>
+                                                        
                                                         <% let selected = (option.link === child.link) ? "selected" : "" %>
                                                       <option data-id="<%=option.page_id %>" value="<%=option.link%>" <%=selected%> ><%=option.link%></option>
                                                         <% }) %>
