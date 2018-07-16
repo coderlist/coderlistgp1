@@ -78,7 +78,9 @@ const {
   deleteParentNavByOrder,
   deleteChildNavById,
   deleteChildNavByOrder,
-  getAllNavItemsWithLink
+  getAllNavItemsWithLink,
+  updateNavItemById,
+  deleteNavItemById
 } = require('../server/models/navigations')
 const {toNavJSON} = require('../helperFunctions/query/navJson')
 const { 
@@ -263,9 +265,9 @@ userRoutes.get('/manage-nav', function (req, res) {
     values[1].map(function(navs){
 
     })
-    console.log('items :', values[0]);
+    // console.log('items :', values[0]);
     values[1].map(function(item){
-      console.log('navs item :', item);
+      // console.log('navs item :', item);
     })
     res.status(200).render('pages/users/manage-nav.ejs', { 
       messages: req.flash('info'),
@@ -283,7 +285,8 @@ const userPostNavItemsCheck = [
   body('menuItemId').matches(/^([\d]+$|)$/), //  the or parameter matches the empty string
   body('menuInputField').matches(/^[\w ]+$/), //aplhanumeric with spaces
   body('menuItemPageId').matches(/^([\d]+$|)$/),  // the or parameter matches the empty string
-  body('menuItemOrderNumber').isInt()
+  body('menuItemOrderNumber').isInt(),
+  body('menuParentItemSelectedOptionDataID').matches(/^([\d]+$|)$/)
 ]
 
 userRoutes.post('/manage-nav', userPostNavItemsCheck, function(req,res){
@@ -294,36 +297,55 @@ userRoutes.post('/manage-nav', userPostNavItemsCheck, function(req,res){
     res.status(200).redirect('users/manage-nav') 
     return;
   }
-  console.log('req.body :', req.body);
-//  menuItemId: 'null',
-//   menuInputField: 'Page Name',
-//   menuItemSelectedOption: 'no-link',
-//   menuItemOrderNumber: '0' }
   nav = {
-    page_id: req.body.menuItemPageId || null,
+    page_id: req.body.menuPageId || null,
     title: req.body.menuInputField,
     order_num: req.body.menuItemOrderNumber,
-    parent_id: req.body.parent_id || null,
-    created_by: req.session.user_id,
-    item_id : req.body.item_id
+    parent_id: req.body.menuParentItemSelectedOptionDataID || null,
+    created_by: req.session.user_id, 
+    item_id : req.body.menuItemId || null  //setting these to null stops errors happening with the insert queries
   }
-  console.log('nav :', nav);
-  if (typeof nav.item_id === 'integer') {
+  if (nav.item_id !== null) {
+    console.log('updating :');
     updateNavItemById(nav)
-    .then(function(nav){
-
+    .then(function(updatedNavItem){
+      res.status(200).json({ status: "SUCCESS", message: 'Nav Item Updated', updatedNavItem: updatedNavItem });
+      return;
+    }).catch(function(err){
+      console.log('err :', err);
+      res.status(200).json({ status: "FAILURE", message: 'Nav Item update failed' });
     })
   }
   else {
     createNavItem(nav)
-    .then(function(navItem){
-      console.log('navItem :', navItem);
+    .then(function(createdNavItem){
+      res.status(200).json({ status: "SUCCESS", message: 'Nav Item Created', createdNavItem: createdNavItem });
     }).catch(function(err){
-      console.log('err :', err);
+      console.log({ status: "FAILURE", message: 'Nav Item not created' });
     })
   }
 });
 
+const navItemDeleteCheck = [
+  param('item_id').isInt()
+]
+
+userRoutes.delete('/manage-nav', navItemDeleteCheck, function(req,res){
+  let errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    console.log('errors.array() :',req.body, errors.array());
+    req.flash('error', 'Invalid nav item');
+    res.status(200).redirect('users/manage-nav') 
+    return;
+  }
+  deleteNavItemById(req.params.item_id)
+  .then(function(){
+    res.status(200).json({ status: "SUCCESS", message: 'Nav Item deleted' });
+  }).catch(function(err){
+    console.log('err :',err)
+    res.status(200).json({ status: "FAILURE", message: 'Nav Item not deleted' });
+  })
+})
 
 userRoutes.get('/all-manage-nav-items', function(req, res){
   res.JSON(data)
