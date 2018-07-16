@@ -243,11 +243,10 @@ function getMenuItemData(index){
     const thisMenuItemData = {
         menuItemId: document.querySelectorAll('.main-nav-item-id')[index].value,
         menuInputField: document.querySelectorAll('.menu-page-name')[index].value,
-        menuItemSelectedOptionDataID: document.querySelectorAll('.menu-items-select')[index].getAttribute('data-id'),
+        menuItemSelectedOptionDataID: document.querySelectorAll('.menu-items-select')[index].options[document.querySelectorAll('.menu-items-select')[index].selectedIndex].getAttribute('data-id'),
         menuItemSelectedOption: document.querySelectorAll('.menu-items-select')[index].value,
         menuItemOrderNumber: document.querySelectorAll('.menu-page-order')[index].value,
     };
-    console.log("item selected",document.querySelectorAll('.menu-items-select')[index].getAttribute('data-id'));
     console.log("Item ID:", thisMenuItemData.menuItemId);
     console.log("Item Name:",thisMenuItemData.menuInputField);
     console.log("Item SelectedOptionID:",thisMenuItemData.menuItemSelectedOptionDataID);
@@ -403,13 +402,13 @@ function getSubMenuIndex(buttonTarget) {
  */
 function getSubMenuItemData(index){
     const thisMenuItemData = {
-        subMenuItemId: document.querySelectorAll('.sub-nav-item-id')[index].value,
-        subMenuInputField: document.querySelectorAll('.sub-menu-page-name')[index].value,
-        subMenuParentItemSelectedOptionDataID: document.querySelectorAll('.parent-item-select')[index].options[document.querySelectorAll('.parent-item-select')[index].selectedIndex].getAttribute('data-id'),
-        subMenuChildItemSelectedOptionDataID: document.querySelectorAll('.child-item-select')[index].options[document.querySelectorAll('.child-item-select')[index].selectedIndex].getAttribute('data-id'),
-        subMenuParentItemSelectedOption: document.querySelectorAll('.parent-item-select')[index].value,
-        subMenuChildItemSelectedOption: document.querySelectorAll('.child-item-select')[index].value,
-        subMenuItemOrderNumber: document.querySelectorAll('.sub-menu-page-order')[index].value,
+        menuItemId: document.querySelectorAll('.sub-nav-item-id')[index].value,
+        menuInputField: document.querySelectorAll('.sub-menu-page-name')[index].value,
+        menuParentItemSelectedOptionDataID: document.querySelectorAll('.parent-item-select')[index].options[document.querySelectorAll('.parent-item-select')[index].selectedIndex].getAttribute('data-id'),
+        menuChildItemSelectedOptionDataID: document.querySelectorAll('.child-item-select')[index].options[document.querySelectorAll('.child-item-select')[index].selectedIndex].getAttribute('data-id'),
+        menuParentItemSelectedOption: document.querySelectorAll('.parent-item-select')[index].value,
+        menuChildItemSelectedOption: document.querySelectorAll('.child-item-select')[index].value,
+        menuItemOrderNumber: document.querySelectorAll('.sub-menu-page-order')[index].value,
     };
     console.log("Item ID:", thisMenuItemData.subMenuItemId);
     console.log("Item Name:",thisMenuItemData.subMenuInputField);

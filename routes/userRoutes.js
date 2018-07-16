@@ -78,7 +78,8 @@ const {
   deleteParentNavByOrder,
   deleteChildNavById,
   deleteChildNavByOrder,
-  getAllNavItemsWithLink
+  getAllNavItemsWithLink,
+  updateNavItemById
 } = require('../server/models/navigations')
 const {toNavJSON} = require('../helperFunctions/query/navJson')
 const { 
@@ -300,25 +301,29 @@ userRoutes.post('/manage-nav', userPostNavItemsCheck, function(req,res){
 //   menuItemSelectedOption: 'no-link',
 //   menuItemOrderNumber: '0' }
   nav = {
-    page_id: req.body.menuItemPageId || null,
+    page_id: req.body.menuItemSelectedOptionDataID || null,
     title: req.body.menuInputField,
     order_num: req.body.menuItemOrderNumber,
     parent_id: req.body.parent_id || null,
     created_by: req.session.user_id, 
     item_id : req.body.menuItemId || null  //setting these to null stops errors happening with the insert queries
   }
-  console.log('nav :', nav);
-  if (typeof nav.menuItemId === 'integer') {
-    console.log('object :',nav.menuItemId === 'integer');
+  console.log('typeof nav.item_id :',typeof parseInt(nav.item_id));
+  console.log('object :',typeof parseInt(nav.item_id) === 'number');
+  if (typeof parseInt(nav.item_id) === 'number') {
     updateNavItemById(nav)
-    .then(function(nav){
-
+    .then(function(updatedNav){
+      console.log('updated nNav :', updatedNav);
+      res.status(200).JSON(createdNav);
+      return;
+    }).catch(function(err){
+      console.log('err :', err);
     })
   }
   else {
     createNavItem(nav)
     .then(function(navItem){
-      console.log('navItem :', navItem);
+      console.log('navItem created:', navItem);
     }).catch(function(err){
       console.log('err :', err);
     })

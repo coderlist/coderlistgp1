@@ -39,10 +39,9 @@
                                       <% mainMenuItems.map(function(nav){%>
                                         <tr>
                                             <!-- Do not change this line for now -->
-                                            <input type="hidden" class="main-nav-item-id" name="main_nav_item_id" value="<%=nav.item_id%>" />
+                                            <input type="hidden" class="main-nav-item-id" name="item_id" value="<%=nav.item_id%>" />
                                             <!-- Do not change this line for now -->
-                                            <input type="hidden" class="page_id" name="page_id" value="<%=nav.navigation_id%>" />
-                                            <input type="hidden" class="main-nav-item-id" name="main_nav_item_id" value="<%=nav.navigation_id%>" />
+                                            <input type="hidden" class="page_id" name="page_id" value="<%=nav.page_id%>" />
                                             <td>
                                                 <input type="text" class="form-control menu-page-name" name="menu_page_name" value="<%=nav.title%>">
                                             </td>
@@ -59,7 +58,7 @@
                                                 </select>
                                             </td>
                                             <td>
-                                                <input type="text" class="form-control page-order menu-page-order" name="menu_page_order" value="<%=nav.order || 0 %>">
+                                                <input type="text" class="form-control page-order menu-page-order" name="menu_page_order" value="<%=nav.order_num || 0 %>">
                                             </td>
                                             <td>
                                                 <button class="btn btn-secondary btn-sm save-menu-item">Save</button>
@@ -99,14 +98,13 @@
                                     <tbody class="table-sub-menu-items">
                                       <%subMenuItems.map(function(child) {%>
                                         <tr>
-                                            <input type="hidden" class="sub-nav-item-id" value="child.item_id" name="sub_nav_item_id" />
+                                            <input type="hidden" class="sub-nav-item-id" value="child.item_id" name="item_id" />
                                         
                                             <td>
                                                 <input type="text" class="form-control sub-menu-page-name" name="sub_menu_page_name" placeholder="Nursery Classes">
                                             </td>
                                             <td>
                                                 <select name="parent_page" class="custom-select parent-item-select">
-                                                    <option value="1">Workshops</option>
                                                     <% if (typeof mainMenuItems == 'object' && mainMenuItems) {%>
                                                       <% mainMenuItems.filter(function(item){return item.title !== null;}).map(function(page, index){ %>
                                                         <option data-id="<%=page.item_id%>" value="<%=page.title%>"><%=page.title%></option>
@@ -116,7 +114,6 @@
                                             </td>
                                             <td>
                                                 <select name="child_page" class="form-control custom-select child-item-select">
-                                                    <option value="no-link">no-link</option>
                                                     <% if (typeof pageItems == 'object' && pageItems) {%>
                                                       <% pageItems.map(function(option){%>
                                                         <% let selected = (option.link === child.link) ? "selected" : "" %>
@@ -127,7 +124,7 @@
                                                 </select>
                                             </td>
                                             <td>
-                                                <input type="text" class="form-control page-order sub-menu-page-order" name="sub_menu_page_order" value="0">
+                                                <input type="text" class="form-control page-order sub-menu-page-order" name="menu_page_order" value="<%=child.order_num || 0%>">
                                             </td>
                                             <td>
                                                 <button class="btn btn-secondary btn-sm save-submenu-item">Save</button>

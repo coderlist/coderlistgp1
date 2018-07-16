@@ -12,6 +12,7 @@ module.exports = {
    },
 
    updateNavItemById(data){
+     console.log('data in sql:', data);
      return queryHelper(`UPDATE page_navigations SET page_id=${data.page_id},parent_id=${data.parent_id},title='${data.title}',order_num=${data.order_num},created_by=${data.created_by}
      WHERE item_id = ${data.item_id}`).then(response => response)
      .catch(e =>{throw e})
