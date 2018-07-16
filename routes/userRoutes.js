@@ -347,23 +347,20 @@ userRoutes.delete('/manage-nav', navItemDeleteCheck, function(req,res){
   })
 })
 
-userRoutes.get('/all-manage-nav-items', function(req, res){
+userRoutes.get('/page-navmenu-request', function(req, res){
   const pageItems = getAllPagesWithLink(); // this currently gets all information about the page. We need to cut this down to what is needed
   const navigationItems = getAllNavItemsWithLink();
   Promise.all([pageItems, navigationItems])
   .then(function(values){
     const data = {
-      pagesItems: values[0],
-      mainMenuItems: values[1].filter(function(mainMenuItem){return mainMenuItem.title === null}),
-      subMenuItems: values[1].filter(function(subMenuItem){return subMenuItem.title !== null})
+      pageItems: values[0],
+      mainMenuItems: values[1].filter(function(mainMenuItem){return mainMenuItem.parent_id === null}),
+      subMenuItems: values[1].filter(function(subMenuItem){return subMenuItem.parent_id !== null})
     }
-  })
-  res.status(200).json(data)
+    res.status(200).send(JSON.stringify(data))
+  }).catch(err => console.log('err :', err))
 })
 
-userRoutes.get('/page-navmenu-request', function (req, res) { // update to get split list.
-  // fetch navs
-  })
 
 // userRoutes.post('/manage-nav', function(req,res){
 //   if (!req.body.subMenuParentItemSelectedOption){

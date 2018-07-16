@@ -108,7 +108,6 @@
                                                       <% mainMenuItems.filter(function(item){ %>
                                                         <% return (item.title !== null && item.link === null) %>
                                                         <% }).map(function(page, index){ %>
-                                                          <% console.log("links", page.item_id, child.parent_id)%>
                                                           <% let selected = (page.item_id === child.parent_id) ? "selected" : "" %>
                                                         <option data-id="<%=page.item_id%>" <%=selected%> value="<%=page.title%>"><%=page.title%></option>
                                                       <% }) %>

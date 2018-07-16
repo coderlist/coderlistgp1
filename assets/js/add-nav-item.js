@@ -243,7 +243,7 @@ function getMenuItemData(index){
     const thisMenuItemData = {
         menuItemId: document.querySelectorAll('.main-nav-item-id')[index].value,
         menuInputField: document.querySelectorAll('.menu-page-name')[index].value,
-        menuPageId: document.querySelectorAll('.menu-items-select')[index].selectedIndex.getAttribute('data-id'),
+        menuPageId: document.querySelectorAll('.menu-items-select')[index].options[document.querySelectorAll('.menu-items-select')[index].selectedIndex].getAttribute('data-id'),
         // menuItemSelectedOption: document.querySelectorAll('.menu-items-select')[index].value,
         menuItemOrderNumber: document.querySelectorAll('.menu-page-order')[index].value,
     };
@@ -404,8 +404,8 @@ function getSubMenuItemData(index){
     const thisMenuItemData = {
         menuItemId: document.querySelectorAll('.sub-nav-item-id')[index].value,
         menuInputField: document.querySelectorAll('.sub-menu-page-name')[index].value,
-        menuParentItemSelectedOptionDataID: document.querySelectorAll('.parent-item-select')[index].selectedIndex.getAttribute('data-id'),
-        menuPageId: document.querySelectorAll('.child-item-select')[index].selectedIndex.getAttribute('data-id'),
+        menuParentItemSelectedOptionDataID: document.querySelectorAll('.parent-item-select')[index].options[document.querySelectorAll('.parent-item-select')[index].selectedIndex].getAttribute('data-id'),
+        menuPageId: document.querySelectorAll('.child-item-select')[index].options[document.querySelectorAll('.child-item-select')[index].selectedIndex].getAttribute('data-id'),
         // menuParentItemSelectedOption: document.querySelectorAll('.parent-item-select')[index].value,
         // menuPageIdName: document.querySelectorAll('.child-item-select')[index].value,
         menuItemOrderNumber: document.querySelectorAll('.sub-menu-page-order')[index].value,
@@ -435,6 +435,7 @@ function postSubMenuItemData(data){
         },
         body: JSON.stringify(data) // body data type must match "Content-Type" header
     }).then(response => {
+      console.log('response :', response);
         return response;
     })
     .then(message => {
