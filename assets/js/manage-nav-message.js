@@ -9,7 +9,7 @@ function toggleManageNavOverlay (callback){
         }
     }
     if(callback){
-        setTimeout(callback, 1000);
+        setTimeout(callback, 1500);
     }
 }
 function toggleManageNavMessage(){
