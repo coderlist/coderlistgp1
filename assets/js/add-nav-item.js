@@ -314,7 +314,7 @@ function getIndexOfRowWhereMenuDeleteButtonIsAt(buttonTarget) {
  * 
  */
 function getDeleteMenuItemID(index){
-    const id = document.querySelectorAll('.delete-menu-item')[index].value;
+    const id = document.querySelectorAll('.main-nav-item-id')[index].value;
     deleteMenuItemAtID(id);
 }
 /**
@@ -323,7 +323,7 @@ function getDeleteMenuItemID(index){
  * 
  */
 function deleteMenuItemAtID(itemId){
-    return fetch(`users/manage-nav/${itemId}`, {
+    return fetch(`/users/manage-nav/${itemId}`, {
         method: "DELETE",
         mode: "cors",
         credentials: "include"
@@ -418,7 +418,6 @@ function postSubMenuItemData(data){
         },
         body: JSON.stringify(data) // body data type must match "Content-Type" header
     }).then(response => {
-      console.log('response :', response);
         return response.json();
     })
     .then(message => {
@@ -471,7 +470,7 @@ function getIndexOfRowWhereSubMenuDeleteButtonIsAt(buttonTarget) {
  * 
  */
 function getDeleteSubMenuItemID(index){
-    const id = document.querySelectorAll('.delete-submenu-item')[index].value;
+    const id = document.querySelectorAll('.sub-nav-item-id')[index].value;
     console.log(id);
     deleteSubMenuItemID(id);
 }
@@ -481,7 +480,7 @@ function getDeleteSubMenuItemID(index){
  * 
  */
 function deleteSubMenuItemID(itemId){
-    return fetch(`users/manage-nav/${itemId}`, {
+    return fetch(`/users/manage-nav/${itemId}`, {
         method: "DELETE",
         mode: "cors",
         credentials: "include"
@@ -509,7 +508,7 @@ function manageNavMessagesAndStatus(message){
     } else if(message.status === "SUCCESS" && message.message === "Nav Item deleted"){
         manageNavTitle.textContent = message.status;
         manageNavMessage.textContent = message.message;
-        toggleManageNavOverlay(() => window.location.href = '/users/manage-nav');
+        toggleManageNavOverlay(callMeBackWhenYouNeedMeToRedirect);
     }else if(message.status === "FAILURE" && message.message === "Nav Item not created"){
         manageNavTitle.textContent = message.status;
         manageNavMessage.textContent = message.message;
@@ -523,6 +522,10 @@ function manageNavMessagesAndStatus(message){
         manageNavMessage.textContent = message.message;
         toggleManageNavOverlay();
     }
+}
+
+function callMeBackWhenYouNeedMeToRedirect(){
+    return window.location.href = '/users/manage-nav';
 }
 
 /*

@@ -2,14 +2,16 @@ const manageNavOverlay = document.querySelector('.manage-nav-overlay');
 const closeManageNavMessageButton = document.querySelector('.close-manage-nav-message');
 let manageNavTimeOut;
 
-function toggleManageNavOverlay (){
+function toggleManageNavOverlay (callback){
     if(manageNavOverlay !== null){
         if(manageNavOverlay.classList.contains("hide")){
             toggleManageNavMessage();
         }
     }
+    if(callback){
+        setTimeout(callback, 1000);
+    }
 }
-
 function toggleManageNavMessage(){
     // toggle flashOverlay
     // If it is displayed, hide it
