@@ -485,9 +485,10 @@ function deleteSubMenuItemID(itemId){
         mode: "cors",
         credentials: "include"
     }).then(response => {
-        return response;
+        return response.json();
     })
     .then(message => {
+        manageNavMessagesAndStatus(message);
         console.log(message);
     })
     .catch(error => console.log(`There was an error: ${error}`));
