@@ -282,11 +282,11 @@ userRoutes.get('/manage-nav', function (req, res) {
 })
 
 const userPostNavItemsCheck = [
-  body('menuItemId').matches(/^([\d]+$|)$/), //  the or parameter matches the empty string
+  body('menuItemId').matches(/\d*|/), //  the or parameter matches the empty string
   body('menuInputField').matches(/^[\w ]+$/), //aplhanumeric with spaces
-  body('menuItemPageId').matches(/^([\d]+$|)$/),  // the or parameter matches the empty string
+  body('menuItemPageId').matches(/\d*|/),  // the or parameter matches the empty string
   body('menuItemOrderNumber').isInt(),
-  body('menuParentItemSelectedOptionDataID').matches(/^([\d]+$|)$/)
+  body('menuParentItemSelectedOptionDataID').matches(/\d*|/)
 ]
 
 userRoutes.post('/manage-nav', userPostNavItemsCheck, function(req,res){
@@ -297,15 +297,26 @@ userRoutes.post('/manage-nav', userPostNavItemsCheck, function(req,res){
     res.status(200).redirect('users/manage-nav') 
     return;
   }
-  nav = {
+  console.log('req.body :', req.body);
+  let nav = {
     page_id: req.body.menuPageId || null,
     title: req.body.menuInputField,
     order_num: req.body.menuItemOrderNumber,
     parent_id: req.body.menuParentItemSelectedOptionDataID || null,
     created_by: req.session.user_id, 
-    item_id : req.body.menuItemId || null  //setting these to null stops errors happening with the insert queries
+    item_id : req.body.menuItemId || null
   }
-  if (nav.item_id !== null) {
+  console.log('typeof nav.item_id :', typeof nav.item_id);
+  if (typeof nav.item_id !== 'number' ) {
+    console.log('creating :');
+    createNavItem(nav)
+    .then(function(createdNavItem){
+      res.status(200).send(JSON.stringify({ status: "SUCCESS", message: 'Nav Item Created', createdNavItem: createdNavItem }));
+    }).catch(function(err){
+      console.log("err", err);
+      res.status(200).send(JSON.stringify({ status: "FAILURE", message: 'Nav Item not created' }));
+    })
+  } else {
     console.log('updating :');
     updateNavItemById(nav)
     .then(function(updatedNavItem){
@@ -314,15 +325,6 @@ userRoutes.post('/manage-nav', userPostNavItemsCheck, function(req,res){
     }).catch(function(err){
       console.log('err :', err);
       res.status(200).send(JSON.stringify({ status: "FAILURE", message: 'Nav Item update failed' }));
-    })
-  }
-  else {
-    createNavItem(nav)
-    .then(function(createdNavItem){
-      res.status(200).send(JSON.stringify({ status: "SUCCESS", message: 'Nav Item Created', createdNavItem: createdNavItem }));
-    }).catch(function(err){
-      console.log("err", err);
-      res.status(200).send(JSON.stringify({ status: "FAILURE", message: 'Nav Item not created' }));
     })
   }
 });
