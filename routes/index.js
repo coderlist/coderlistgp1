@@ -14,6 +14,7 @@ const {
 } = require('../server/models/callActions');
 const changePassword = require('../server/models/users').changePassword;
 const { getPagesByHomePageGrid, getPagebyID, getPageByLink } = require('../server/models/pages');
+const { getAllNavItemsWithLink } = require('../server/models/navigations');
 
 const uuid = require('uuid/v1');
 const _ = require('lodash');
@@ -30,19 +31,21 @@ routes.get('/', (req, res) => {
     {href:"test me one", name:"item 1"},
     {href:"test me two", name:"item 2"}
   ]
-  getPagesByHomePageGrid()
-  .then(function(pages){
-    getLatestCall()
-    .then(function(callToAction){
-      res.status(200).render('pages/public/index', {
-        callToAction: callToAction[0], 
-        menuItems: menuItems,
-        pages: pages,
-        messages: req.flash('info'),
-        messagesError: req.flash('error') 
-      })
-      return;
+  const navItems = getAllNavItemsWithLink();
+  const pageItems = getPagesByHomePageGrid();
+  const callToAction = getLatestCall();
+  Promise.all([navItems, pageItems, callToAction])
+  .then(function(values){
+    console.log('values :', values);
+    res.status(200).render('pages/public/index', {
+      callToAction: values[2][0], 
+      menuItems: values[0],
+      pages: values[1],
+      messages: req.flash('info'),
+      messagesError: req.flash('error') 
     })
+    return;
+
   }).catch(function(err){
     console.log('err :', err);
     req.flash('error', 'There was an error');
