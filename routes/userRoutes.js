@@ -51,7 +51,10 @@ const {
 const {
   createPage,
   getAllPages,
+  getAllPagesWithTitle,
+  getAllPagesWithLink,
   getPagebyID,
+  getPageByLink,
   deletePageById,
   updatePageContentById,
   updatePageContentByIdNoBanner,
@@ -66,10 +69,18 @@ const {
   createImageObjComplete
 } = require('../server/models/images');
 const {
-  createParentNavItem,
-  createChildNavItem,
+  createNavItem,
   getParentNavIdByName,
-  getAllNavs
+  getAllNavs,
+  getAllParentNavs,
+  getAllChildNavs,
+  deleteParentNavById,
+  deleteParentNavByOrder,
+  deleteChildNavById,
+  deleteChildNavByOrder,
+  getAllNavItemsWithLink,
+  updateNavItemById,
+  deleteNavItemById
 } = require('../server/models/navigations')
 const {toNavJSON} = require('../helperFunctions/query/navJson')
 const { 
@@ -81,6 +92,9 @@ const multer = require('multer');
 const imageUploadLocation = './assets/images/';
 const PDFUploadLocation = './assets/pdfs/';
 const path = require('path');
+
+//// Multer Uploads  ////
+
 let storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, imageUploadLocation)
@@ -137,6 +151,12 @@ let storagePDF = multer.diskStorage({
     cb(null, PDFUploadLocation)
   },
   filename: function (req, file, next) {
+    console.log('req.body :', req.body);
+    let errors = validationResult(req);
+    req.body.title = req.body.title.replace(/[^\w _]+/, "")
+    if(req.body.title === ""){
+      req.body.title = "No Name Given";
+    }
     const ext = file.mimetype.split('/')[1];
     file.fieldname = `${req.body.title}-${file.fieldname}`;
     req.fileLocation = file.fieldname + '-' + Date.now() + '.' + ext
@@ -147,7 +167,7 @@ let storagePDF = multer.diskStorage({
       console.log('nofile :');
       next();
     }
-    // const pdf = file.mimetype.startsWith('application/pdf')
+   const pdf = file.mimetype.startsWith('application/pdf')
 
     if (pdf) {
       console.log('PDF uploaded');
@@ -178,6 +198,8 @@ const fileUpload = multer({
 const PDFUpload = multer({
   storage: storagePDF
 });
+
+//// End of Multer Uploads  ////
 
 userRoutes.use(logins.isLoggedIn);
 
@@ -221,7 +243,7 @@ ckeditorPostCheck = [
 userRoutes.post('/dashboard', ckeditorPostCheck, (req, res) => {
   let errors = validationResult(req);
   if (!errors.isEmpty()) {
-    req.flash('info', 'Invalid ckeditor data');
+    req.flash('error', 'Invalid ckeditor data');
     res.status(200).redirect('users/dashboard.ejs') 
     return;
   }
@@ -236,55 +258,300 @@ userRoutes.post('/dashboard', ckeditorPostCheck, (req, res) => {
 /////////////////////// Admin page routes /////////////////////
 
 userRoutes.get('/manage-nav', function (req, res) {
-  getAllPages() // this currently gets all information about the page. We need to cut this down to what is needed
-  .then(function(items){
-    console.log('items :', items);
+  const pageItems = getAllPagesWithLink(); // this currently gets all information about the page. We need to cut this down to what is needed
+  const navigationItems = getAllNavItemsWithLink();
+  Promise.all([pageItems, navigationItems])
+  .then(function(values){
+    values[1].map(function(navs){
+
+    })
+    // console.log('items :', values[0]);
+    values[1].map(function(item){
+      // console.log('navs item :', item);
+    })
     res.status(200).render('pages/users/manage-nav.ejs', { 
       messages: req.flash('info'),
-      subMenuList: items
-    })
+      pageItems: values[0],
+      mainMenuItems: values[1],
+      subMenuItems: values[1]
+    });
+  }).catch(function(err){
+    console.log("err", err);
+    req.flash('error','There was a system error');
   })
 })
 
-userRoutes.post('/manage-nav', function(req,res){
-  if (!req.body.subMenuParentItemSelectedOption){
-    //req is for parent nav if it does not contain
-    //a parent_page value
- nav = {
-   name:req.body.menuInputField,//name:req.body.page_name,
-   link:req.body.menuItemSelectedOption, 
-   nav_order_number:req.body.menuItemOrderNumber
- }
- 
- createParentNavItem(nav).then(response => {
-   res.status(200).send('parent nav created')
- }).catch(e => {
-   res.status(400).send(e.stack)
- })
-}else{
- nav = {
-   name: req.body.subMenuInputField,//name:req.body.page_name,
-   link:req.body.subMenuChildItemSelectedOption,
-   grid_order_number:req.body.subMenuItemOrderNumber,
-   parent_name: req.body.subMenuParentItemSelectedOption
- }
- getParentNavIdByName(nav.parent_name).then(response => {
-   createChildNavItem(nav, response[0].navigation_id).then(response => {
-     res.status(200).send('child nav created')
-   }).catch(e => {
-     res.status(400).send(e.stack)
-   })
- })
- 
-}
+const userPostNavItemsCheck = [
+  body('menuItemId').matches(/\d*|/), //  the or parameter matches the empty string
+  body('menuInputField').matches(/^[\w ]+$/), //aplhanumeric with spaces
+  body('menuItemPageId').matches(/\d*|/),  // the or parameter matches the empty string
+  body('menuItemOrderNumber').isInt(),
+  body('menuParentItemSelectedOptionDataID').matches(/\d*|/)
+]
+
+userRoutes.post('/manage-nav', userPostNavItemsCheck, function(req,res){
+  let errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    console.log('errors.array() :',req.body, errors.array());
+    req.flash('error', 'Invalid nav item');
+    res.status(200).redirect('users/manage-nav') 
+    return;
+  }
+  console.log('req.body :', req.body);
+  let nav = {
+    page_id: req.body.menuPageId || null,
+    title: req.body.menuInputField,
+    order_num: req.body.menuItemOrderNumber,
+    parent_id: req.body.menuParentItemSelectedOptionDataID || null,
+    created_by: req.session.user_id, 
+    item_id : req.body.menuItemId || null
+  }
+  console.log('typeof nav.item_id :', typeof nav.item_id);
+  if (typeof nav.item_id !== 'number' ) {
+    console.log('creating :');
+    createNavItem(nav)
+    .then(function(createdNavItem){
+      res.status(200).send(JSON.stringify({ status: "SUCCESS", message: 'Nav Item Created', createdNavItem: createdNavItem }));
+    }).catch(function(err){
+      console.log("err", err);
+      res.status(200).send(JSON.stringify({ status: "FAILURE", message: 'Nav Item not created' }));
+    })
+  } else {
+    console.log('updating :');
+    updateNavItemById(nav)
+    .then(function(updatedNavItem){
+      res.status(200).send(JSON.stringify({ status: "SUCCESS", message: 'Nav Item Updated', updatedNavItem: updatedNavItem }));
+      return;
+    }).catch(function(err){
+      console.log('err :', err);
+      res.status(200).send(JSON.stringify({ status: "FAILURE", message: 'Nav Item update failed' }));
+    })
+  }
+});
+
+const navItemDeleteCheck = [
+  param('item_id').isInt()
+]
+
+userRoutes.delete('/manage-nav', navItemDeleteCheck, function(req,res){
+  let errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    console.log('errors.array() :',req.body, errors.array());
+    req.flash('error', 'Invalid nav item');
+    res.status(200).redirect('users/manage-nav') 
+    return;
+  }
+  deleteNavItemById(req.params.item_id)
+  .then(function(){
+    res.status(200).send(JSON.stringify({ status: "SUCCESS", message: 'Nav Item deleted' }));
+  }).catch(function(err){
+    console.log('err :',err)
+    res.status(200).send(JSON.stringify({ status: "FAILURE", message: 'Nav Item not deleted' }));
+  })
 })
 
+userRoutes.get('/page-navmenu-request', function(req, res){
+
+  /*const data = {
+    "pageItems": [
+      {
+        "page_id": 37,
+        "link": "tes-url-sluggy-page7"
+      },
+      {
+        "page_id": 38,
+        "link": "testy-sluggg-tooow-fdfdsfs"
+      },
+      {
+        "page_id": 39,
+        "link": "test-the-values-in-inspectbvxbvcxbcv"
+      },
+      {
+        "page_id": 40,
+        "link": "bolls"
+      }
+    ],
+    "mainMenuItems": [
+      {
+        "link": "tes-url-sluggy-page7",
+        "item_id": 66,
+        "page_id": 37,
+        "parent_id": null,
+        "title": "Deck the halls 3",
+        "order_num": 5,
+        "updated_date": "2018-07-16T03:17:19.225Z",
+        "creation_date": "2018-07-16T01:19:51.200Z",
+        "created_by": 1
+      },
+      {
+        "link": "testy-sluggg-tooow-fdfdsfs",
+        "item_id": 76,
+        "page_id": 38,
+        "parent_id": null,
+        "title": "New one 2 3 5 6 8",
+        "order_num": 7,
+        "updated_date": null,
+        "creation_date": "2018-07-16T01:31:15.675Z",
+        "created_by": 1
+      },
+      {
+        "link": null,
+        "item_id": 75,
+        "page_id": null,
+        "parent_id": null,
+        "title": "Deck the halls 5",
+        "order_num": 5,
+        "updated_date": "2018-07-16T03:17:32.600Z",
+        "creation_date": "2018-07-16T01:30:20.237Z",
+        "created_by": 1
+      },
+      {
+        "link": null,
+        "item_id": 86,
+        "page_id": null,
+        "parent_id": null,
+        "title": "no parent",
+        "order_num": 4,
+        "updated_date": null,
+        "creation_date": "2018-07-16T02:13:50.535Z",
+        "created_by": 1
+      },
+      {
+        "link": null,
+        "item_id": 77,
+        "page_id": null,
+        "parent_id": null,
+        "title": "blah",
+        "order_num": 4,
+        "updated_date": "2018-07-16T02:03:50.050Z",
+        "creation_date": "2018-07-16T01:32:06.855Z",
+        "created_by": 1
+      },
+    ],
+    "subMenuItems": [
+      {
+        "link": "test-the-values-in-inspectbvxbvcxbcv",
+        "item_id": 95,
+        "page_id": 39,
+        "parent_id": 92,
+        "title": "Jefffffffff",
+        "order_num": 5,
+        "updated_date": "2018-07-16T13:05:28.464Z",
+        "creation_date": "2018-07-16T02:29:41.228Z",
+        "created_by": 1
+      },
+      {
+        "link": "bolls",
+        "item_id": 94,
+        "page_id": 40,
+        "parent_id": 88,
+        "title": "Jeff",
+        "order_num": 5,
+        "updated_date": "2018-07-16T03:20:14.544Z",
+        "creation_date": "2018-07-16T02:27:48.859Z",
+        "created_by": 1
+      },
+      {
+        "link": null,
+        "item_id": 92,
+        "page_id": null,
+        "parent_id": 87,
+        "title": "Blahblah blah",
+        "order_num": 5,
+        "updated_date": null,
+        "creation_date": "2018-07-16T02:20:27.577Z",
+        "created_by": 1
+      },
+    ]
+  }
+  res.status(200).send(JSON.stringify(data))*/
+  const pageItems = getAllPagesWithLink(); // this currently gets all information about the page. We need to cut this down to what is needed
+  const navigationItems = getAllNavItemsWithLink();
+  Promise.all([pageItems, navigationItems])
+  .then(function(values){
+    const data = {
+      pageItems: values[0],
+      mainMenuItems: values[1].filter(function(mainMenuItem){return mainMenuItem.parent_id === null}),
+      subMenuItems: values[1].filter(function(subMenuItem){return subMenuItem.parent_id !== null})
+    }
+    res.status(200).send(JSON.stringify(data))
+  }).catch(err => console.log('err :', err))
+})
+
+
+// userRoutes.post('/manage-nav', function(req,res){
+//   if (!req.body.subMenuParentItemSelectedOption){
+//     //req is for parent nav if it does not contain
+//     //a parent_page value
+//  nav = {
+//    title:req.body.menuInputField,//name:req.body.page_name,
+//    link:req.body.menuItemSelectedOption, 
+//    nav_order_number:req.body.menuItemOrderNumber
+//  }
+ 
+//  createParentNavItem(nav).then(response => {
+//    res.status(200).send('parent nav created')
+//  }).catch(e => {
+//    res.status(400).send(e.stack)
+//  })
+// }else{
+//   console.log('CHILD REQ', req.body)
+//  nav = {
+//    title: req.body.subMenuInputField,//name:req.body.page_name,
+//    link:req.body.subMenuChildItemSelectedOption,
+//    grid_order_number:req.body.subMenuItemOrderNumber,
+//    parent_title: req.body.subMenuParentItemSelectedOption
+//  }
+//  getParentNavIdByName(nav.parent_title).then(response => {
+//    createChildNavItem(nav, response[0].navigation_id).then(response => {
+//      res.status(200).send('child nav created')
+//    }).catch(e => {
+//     console.error(e.stack)
+//    })
+//  }).catch(e => {
+//   console.error(e.stack)
+// })
+ 
+// }
+// })
+
+
+// userRoutes.delete('/manage-nav/main-nav-item/:itemId', function(req,res){
+//     deleteParentNavById(req.params.itemId) 
+//     .then(response => {
+//       console.log('Main Menu deleted')
+//     }).catch(err => {
+//       console.error(err)
+//     })
+// })
+
+
+// userRoutes.delete('/manage-nav/sub-nav-item/:itemId', function(req,res){
+//   deleteChildNavById(req.params.itemId)
+//   .then(response => {
+//     console.log('Sub Menu deleted')
+//   }).catch(err => {
+//     console.error(err)
+//   })
+// })
+
+//////////////////  MANAGE PDFS  //////////////////
+ 
 userRoutes.get('/manage-pdfs', function (req, res) {
   // messages: req.flash('Are you sure you want to delete this PDF?') // This will not work. Flash messages are in the form req.flash('flashtype', 'Message') "Kristian"
   let pdfList = [];
   fs.readdir('assets/pdfs', (err, pdfs) => {
     if (err) {
       console.log('err :', err);
+    }
+    if (!pdfs) {
+      req.flash('error','No PDFs uploaded');
+      res.status(200).render('pages/users/manage-pdfs.ejs', { 
+        messages: req.flash('info'),
+        messagesError: req.flash('error'),
+        pdfList: pdfList
+      })
+      return;
     }
       pdfs.map(function(pdf) {
       console.log('pdfs :', pdf);
@@ -300,26 +567,15 @@ userRoutes.get('/manage-pdfs', function (req, res) {
   })
 })
 
-PDFPostTitleCheck = [
-  body('title').isAlphanumeric()
-]
 
-userRoutes.post('/manage-pdfs', PDFPostTitleCheck, PDFUpload.single('pdf'), function (req, res) {
-  let errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    req.flash('info', 'Invalid Title');
-    res.status(200).redirect('/users/manage-pdfs');
-    return;
-  }
-  // console.log('req.file :', req.file);
+
+userRoutes.post('/manage-pdfs', PDFUpload.single('pdf'), function (req, res) {
+  // logic handled within PDFUpload
   req.flash('info', 'PDF Uploaded')
-  res.status(200).redirect('users/manage-pdfs.ejs', { 
-  })
-  .catch(function(err){
-    req.flash('error', 'There was an error uploading this pdf. Please try again or contact your administrator')
-    res.status(200).redirect('/users/manage-pdfs');
-  })
+  res.status(200).redirect('/users/manage-pdfs')
+  return;
 })
+
 
 PDFDeleteCheck = [
   param('pdf_name').matches('^[\\w\\s-.]+$')
@@ -329,21 +585,25 @@ userRoutes.delete('/manage-pdfs/:pdf_name', PDFDeleteCheck, function(req, res){
   let errors = validationResult(req);
   if (!errors.isEmpty()) {
     console.log('errors.array() :', errors.array());
-    res.status(200).json({ status: "FAILURE", message: 'Invalid PDF name', location: "/users/manage-pdfs" });
+    res.status(200).send(JSON.stringify({ status: "FAILURE", message: 'Invalid PDF name', location: "/users/manage-pdfs" }));
     return;
   }
   console.log('req.params :', req.params);
   fs.unlink(`assets/pdfs/${req.params.pdf_name}`, function(err){
     if (err) {
       console.log('err :', err);
-      res.status(200).json({ status: "FAILURE", message: 'There was an error deleting the PDF file', location: "/users/manage-pdfs" });
+      res.status(200).send(JSON.stringify({ status: "FAILURE", message: 'There was an error deleting the PDF file', location: "/users/manage-pdfs" }));
       return;
     }
-    res.status(200).json({ status: "SUCCESS", message: 'PDF successfully deleted', location: "/users/manage-pdfs" });
+    res.status(200).send(JSON.stringify({ status: "SUCCESS", message: 'PDF successfully deleted', location: "/users/manage-pdfs" }));
     return;
   })
 });
 
+
+////////////////  End of Manage PDFs    /////////////////////////
+
+///////////////   Manage Images     /////////////////////////
 
 userRoutes.get('/manage-images', function(req, res){
   getAllImagesData(req.params.image_id)
@@ -416,80 +676,19 @@ userRoutes.delete('/manage-images/:image_id', imageDeleteCheck, function(req, re
 });
 
 
+///////////////   End of Manage Images   /////////////////////
+
+////////////////   End of User 
+
+
 userRoutes.get('/profile', function (req, res) {
   res.status(200).render('pages/users/profile.ejs', { 
     messages: req.flash('info')
   })
 })
 
-userRoutes.get('/edit-page', function (req, res) { //  with no id number this should just create a page
-  let pdfList = [];
-  fs.readdir('assets/pdfs', (err, pdfs) => {
-    if (err) {
-      console.log('err :', err);
-    }
-    pdfs.map(function(pdf) { //refactor two of these now
-      console.log('pdfs :', pdf);
-      const shortName = pdf.match(/([\w\s]*)/)[0] + ".pdf";  //remove the random number to make displaying prettier
-      pdfList.push({name: pdf, short: shortName, location: `/pdfs/${pdf}`})
-    })
-    req.flash('info', 'Page ready for editing');
-    res.status(200).render('pages/users/edit-page.ejs', {messages: req.flash('info'), pdfs : pdfList});
-    return;
-  })
-})
 
-const pageIDCheck = [
-  param('page_id').isInt()
-]
 
-userRoutes.get('/edit-page/:page_id', pageIDCheck, function (req, res) {
-  let errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    req.flash('info', 'invalid pageID');
-    res.status(200).redirect('/users/dashboard');
-    return;
-  }
-
-  let pageID = parseInt(req.params.page_id);
-  getPagebyID(pageID)
-  .then(function(data){
-    console.log('data :', data);
-    if (data.length === 0) { // Check to make sure page data exists
-      req.flash('info', 'No such page exists');
-      res.status(200).redirect('/users/dashboard');
-      return;
-    }
-    // data.ckeditor.html =  unescape(data.ckeditor.html);
-    getUserById(req.session.user_id) /// Would probably be better with promise.all
-    .then(function(userData){
-      if (!(userData[0].is_admin || req.session.user_id === data[0].owner_id)) { // Check page ownership or admin
-        req.flash('info', 'This is not your page to modify');
-        res.status(200).redirect('/users/dashboard');
-        return;  
-      }
-      let pdfList = [];
-      fs.readdir('assets/pdfs', (err, pdfs) => {
-        if (err) {
-          console.log('err :', err);
-        }
-        pdfs.map(function(pdf) { //refactor two of these now
-          console.log('pdfs :', pdf);
-          const shortName = pdf.match(/([\w\s]*)/)[0] + ".pdf";  //remove the random number to make displaying prettier
-          pdfList.push({name: pdf, short: shortName, location: `/pdfs/${pdf}`})
-        })
-        req.flash('info', 'Page ready for editing');
-        res.status(200).render('pages/users/edit-page.ejs', {page: data[0], messages: req.flash('info'), pdfs : pdfList});
-        return;
-      })
-    })
-  }).catch(function(err){
-    console.log('err :', err);
-    req.flash('error', 'There was a system error. Please contact your administrator');
-    res.status(200).render('pages/users/edit-page.ejs', {messages: req.flash('info')});
-    return;
-  });
-})
 
 ////////////////////    Change password while authenticated ////////////////////
 
@@ -603,18 +802,18 @@ userRoutes.post('/update-banner', upload.single('image'), function(req, res){
   });
 })
 
-
-userRoutes.get('/:name-user', function (req, res) {  /// this user parameter is not sanitised...?
-  const url = req.url;
-  res.status(200).render('pages/users/edit-user.ejs', { 
-    messages: url === "/edit-user" ? req.flash('Are you sure you want to delete this USER?') : ''
-  })
-})
+userRoutes.get('/create-user', (req, res) => { //accessible by authed admin
+  res.status(200).render('pages/users/create-user.ejs', {
+    messages: req.flash('info'),
+    messagesError: req.flash('error')
+  });
+});
 
 const createUserCheck = [
   body('email').isEmail().normalizeEmail(),
   body('first_name').trim().isAlphanumeric(),
-  body('last_name').trim().isAlphanumeric()
+  body('last_name').trim().isAlphanumeric(),
+  body('is_admin').isBoolean()
 ];
 
 
@@ -622,7 +821,6 @@ userRoutes.post('/create-user', createUserCheck, (req, res) => { //accessible by
 
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    console.log('ERROR', error)
     const userTemp = {
       email: req.body.email || "",
       first_name: req.body.first_name || "",
@@ -630,36 +828,44 @@ userRoutes.post('/create-user', createUserCheck, (req, res) => { //accessible by
     }
     req.flash("info", "Invalid user data", process.env.NODE_ENV === 'development' ? errors.array() : ""); //error.array() for development only
     res.status(200).render('pages/users/edit-user.ejs', {
+      messagesError:  req.flash('error'),
       messages: req.flash('info'),
       userTemp
     });
     return;
   }
-
-  const user = {
-    email: req.body.email,
-    last_failed_login: "",
-    first_name: req.body.first_name,
-    last_name: req.body.last_name,
-    failed_login_attempts: 0,
-    activation_token: uuid()
-  };
-  createUser(user).then(function (userCreated) { // returns user created true or false
-    if (userCreated) {
-      let mail = new Mail;
-      mail.sendVerificationLink(user);
-      req.flash('info', 'user created and email sent'); // email not currently being sent
+  getIsUserAdmin(req.session.user_id)
+  .then(function(isAdmin){
+    if (!isAdmin[0].is_admin) {
+      req.flash('error', 'You are unable to create users');
       res.redirect('/users/dashboard');
       return;
-    } else {
-      console.log("There was a create user error", err)
-      req.flash('info', 'There was an error creating this user. Please try again. If you already have please contact support.')
-      res.status(200).render('pages/users/edit-user.ejs', {
-        messages: req.flash('info'),
-        user
-      });
-      return;
     }
+    const user = {
+      email: req.body.email,
+      last_failed_login: "",
+      first_name: req.body.first_name,
+      last_name: req.body.last_name,
+      failed_login_attempts: 0,
+      activation_token: uuid()
+    };
+    createUser(user).then(function (userCreated) { // returns user created true or false
+      if (userCreated) {
+        let mail = new Mail;
+        mail.sendVerificationLink(user);
+        req.flash('info', 'user created and email sent'); // email not currently being sent
+        res.redirect('/users/dashboard');
+        return;
+      } else {
+        console.log("There was a create user error", err)
+        req.flash('info', 'There was an error creating this user. Please try again. If you already have please contact support.')
+        res.status(200).render('pages/users/edit-user.ejs', {
+          messages: req.flash('info'),
+          user
+        });
+        return;
+      }
+    })
   }).catch(function (err) {
     const userExistsCode = "23505";
     if (err.code === userExistsCode) {
@@ -692,6 +898,7 @@ userRoutes.post('/admin', (req, res) => {
 });
 
 userRoutes.get('/logout', logins.logUserOut, (req, res) => { 
+  req.flash('info','You have been logged out');
   res.status(200).redirect('/login');
   return;
 });
@@ -739,7 +946,8 @@ userRoutes.get('/edit-user/:user_id', checkUserID, (req, res) => { //accessible 
 editUserPostCheck = [
   body('user_id').isInt(),
   body('first_name').trim().isAlphanumeric(),
-  body('last_name').trim().isAlphanumeric()
+  body('last_name').trim().isAlphanumeric(),
+  body('is_admin').isBoolean()
 ]
 
 userRoutes.post('/edit-user', editUserPostCheck , function(req, res){
@@ -749,14 +957,21 @@ userRoutes.post('/edit-user', editUserPostCheck , function(req, res){
     res.status(200).redirect('/users/dashboard');
   }
   getUserById(req.body.user_id)
-  
   .then(function(user){
     user = user[0];
     console.log('user :', user);
     getIsUserAdmin(req.session.user_id)
     .then(function(userAdmin){
-      if (userAdmin.is_admin || user.user_id === req.session.user_id){ // if user is the same user being edited or user is super admin
-        updateUserName(req.body)
+      if (userAdmin[0].is_admin || user.user_id === req.session.user_id){ // if user is the same user being edited or user is super admin
+        let userUpdate = {
+          user_id : req.body.user_id,
+          first_name: req.body.first_name,
+          last_name: req.body.last_name
+        }
+        if(!userAdmin[0].is_admin){
+          userUpdate.is_admin = user.is_admin ? true : req.body.is_admin // This stops someone removing admin rights. Currently a non reversible process. 
+          }
+         updateUserName(userUpdate)
         .then(function(response){
           console.log('response :', response);
           if (response){
@@ -764,14 +979,14 @@ userRoutes.post('/edit-user', editUserPostCheck , function(req, res){
             res.status(200).redirect('/users/dashboard');
             return;
           }
-        }).catch(function(err){
-          console.log('err :', err);
-          req.flash('info','User not updated. There was an error');
-          res.status(200).redirect('/users/dashboard');
-          return;
         })
       }
     })
+  }).catch(function(err){
+    console.log('err :', err);
+    req.flash('info','User not updated. There was an error');
+    res.status(200).redirect('/users/dashboard');
+    return;
   })
 })
 
@@ -781,51 +996,57 @@ deleteUserPostCheck = [
 
 userRoutes.delete('/delete-user/:user_id', deleteUserPostCheck, function(req, res){
   console.log("Hello World");
+  console.log(req.params.user_id);
   let errors = validationResult(req);
   if (!errors.isEmpty()){
-    console.log('invalis :');
+    console.log('invalid user id')
     // req.flash('error','Invalid user id');
     // res.status(200).redirect('/users/dashboard');
-    res.json({ status: "FAILURE", message: 'Invalid user id', location: "/users/dashboard"});
+    res.status(200).send(JSON.stringify({ status: "FAILURE", message: 'Invalid user id', location: "/users/dashboard"}));
     return;
   }
   if (req.params.user_id === req.session.user_id){
+    console.log('cannot delete yourself')
     // req.flash('error','You are not authorised to delete yourself');
     // res.status(200).redirect('/users/dashboard');
-    res.json({ status: "FAILURE", message: 'You are not authorised to delete yourself', location: "/users/dashboard" });
+    res.status(200).send(JSON.stringify({ status: "FAILURE", message: 'You are not authorised to delete yourself', location: "/users/dashboard" }));
     return;
   }
   console.log('req.session.user_id :', req.session.user_id);
+  const location = "/users/dashboard"
   getIsUserAdmin(req.session.user_id)
   .then(function(userAdmin){
     console.log('req.session.user_id :', req.session.user_id);
     console.log('useradmin :', userAdmin);
-    if (userAdmin.is_admin){ //check if user is admin or if user
+    console.log("Is user admin?: ", userAdmin[0].is_admin);
+    if (userAdmin[0].is_admin){ //check if user is admin or if user
       deleteUserById(req.body.user_id)
       .then(function(data){
         console.log('data :', data);
         if (data) {
+          console.log('Successfully deleted')
           // run sql command orphan pages owned by user
           // req.flash('info','User deleted');
           // res.status(200).redirect('/users/dashboard');
-          res.json({ status: "SUCCESS", message: 'User successfully deleted', location: "/users/dashboard" });
+         res.status(200).send(JSON.stringify({ status: "SUCCESS", message: 'User successfully deleted', location: location }));
           return;
         }
+        console.log('User does not exist')
         // req.flash('error','There was an error. User does not exist');
         // res.status(200).redirect('/users/dashboard');
-        res.json({ status: "FAILURE", message: 'There was an error. User does not exist', location: "/users/dashboard" });
+        res.status(200).send(JSON.stringify({ status: "FAILURE", message: 'There was an error. User does not exist', location: location }));
         return;
       })
       // req.flash('error','You are not authorised to delete users');
       // res.status(200).redirect('/users/dashboard');
-      res.json({ status: "FAILURE", message: 'You are not authorised to delete users', location: "/users/dashboard" });
+      res.status(200).send(JSON.stringify({ status: "FAILURE", message: 'You are not authorised to delete users', location: location }));
       return;
     }
   }).catch(function(err){
     console.log('err :', err);
       // req.flash('error','There was a system error');
       // res.status(200).redirect('/users/dashboard');
-      res.json({ status: "FAILURE", message: 'There was a system error. Please contact your administrator', location: "/users/dashboard" });
+      res.status(200).send(JSON.stringify({ status: "FAILURE", message: 'There was a system error. Please contact your administrator', location: location }));
       return
   })
 })
@@ -935,93 +1156,93 @@ userRoutes.post('/upload-images', upload.single('image'), (req, res) => {
 
 
 
-userRoutes.get('/page-navmenu-request', function (req, res) {
- 
-  // const pages = [{
-  //     page: "Home",
-  //     link: "Home",
-  //     order: "1",
-  //     children: null
-  //   },
-  //   {
-  //     page: "About",
-  //     link: "About",
-  //     order: "2",
-  //     children: null
-  //   },
-  //   {
-  //     page: "Workshops",
-  //     link: "no-link",
-  //     order: "3",
-  //     children: [{
-  //         page: "Private Sessions",
-  //         link: "Private sessions",
-  //         order: "1"
-  //       },
-  //       {
-  //         page: "Nursery Level",
-  //         link: "Nursery level",
-  //         order: "2"
-  //       },
-  //       {
-  //         page: "Small Groups",
-  //         link: "Small groups",
-  //         order: "3"
-  //       },
-  //       {
-  //         page: "Weekly Classes",
-  //         link: "Weekly classes",
-  //         order: "4"
-  //       }
-  //     ]
-  //   },
-  //   {
-  //     page: "Contact",
-  //     link: "Contact",
-  //     order: "4",
-  //     children: null
-  //   },
-  //   {
-  //     page: "Another Page",
-  //     link: "no-link",
-  //     order: "3",
-  //     children: [{
-  //         page: "New Sessions",
-  //         link: "New sessions",
-  //         order: "1"
-  //       },
-  //       {
-  //         page: "New Level",
-  //         link: "New level",
-  //         order: "2"
-  //       },
-  //       {
-  //         page: "New Groups",
-  //         link: "New groups",
-  //         order: "3"
-  //       },
-  //       {
-  //         page: "New Classes",
-  //         link: "New classes",
-  //         order: "4"
-  //       }
-  //     ]
-  //   }
-  // ]
-  // console.log('JSON.stringify :', JSON.stringify(pages));
-  // res.status(200).send(JSON.stringify(pages));
 
-//work on getAllNavs to return page as above
 
-  getAllNavs().then(response => {
-    const pages = toNavJSON(response)
-    res.status(200).send(pages)
-  }).catch(e => {
-   res.status(400).send(e.stack)
- })
+//////////////////   Edit / Create Page  //////////////////
+
+userRoutes.get('/edit-page', function (req, res) { //  with no id number this should just create a page
+  let pdfList = [];
+  fs.readdir('assets/pdfs', (err, pdfs) => {
+    if (err) {
+      console.log('err :', err);
+    }
+    if (!pdfs) {
+      req.flash('error', 'No PDFs uploaded');
+      res.status(200).render('pages/users/edit-page.ejs', {
+      messages: req.flash('info'), 
+      messagesError: req.flash('error'),
+      pdfs : pdfList});
+    return;
+    }
+    pdfs.map(function(pdf) { //refactor two of these now
+      console.log('pdfs :', pdf);
+      const shortName = pdf.match(/([\w\s]*)/)[0] + ".pdf";  //remove the random number to make displaying prettier
+      pdfList.push({name: pdf, short: shortName, location: `/pdfs/${pdf}`})
+    })
+    req.flash('info', 'Page ready for editing');
+    res.status(200).render('pages/users/edit-page.ejs', {messages: req.flash('info'), pdfs : pdfList});
+    return;
+  })
 })
 
+const pageIDCheck = [
+  param('link').exists()
+]
 
+userRoutes.get('/edit-page/:link', pageIDCheck, function (req, res) {
+  let errors = validationResult(req);
+  if (!errors.isEmpty() || !(/^[\w-]+$/g).test(req.params.link)) {
+    req.flash('info', 'invalid pageID');
+    res.status(200).redirect('/users/dashboard');
+    return;
+  }
+  getPageByLink(req.params.link)
+  .then(function(data){
+    console.log('data :', data);
+    if (data.length === 0) { // Check to make sure page data exists
+      req.flash('info', 'No such page exists');
+      res.status(200).redirect('/users/dashboard');
+      return;
+    }
+    // data.ckeditor.html =  unescape(data.ckeditor.html);
+    getUserById(req.session.user_id) /// Would probably be better with promise.all
+    .then(function(userData){
+      if (!(userData[0].is_admin || req.session.user_id === data[0].owner_id)) { // Check page ownership or admin
+        req.flash('info', 'This is not your page to modify');
+        res.status(200).redirect('/users/dashboard');
+        return;  
+      }
+      let pdfList = [];
+      fs.readdir('assets/pdfs', (err, pdfs) => {
+        if (err) {
+          console.log('err :', err);
+        }
+        if (!pdfs) {
+          req.flash('error','No PDFs uploaded')
+          res.status(200).render('pages/users/edit-page.ejs', { 
+            messages: req.flash('info'),
+            messagesError: req.flash('error'),
+            pdfList: pdfList
+          })
+          return;
+        }
+        pdfs.map(function(pdf) { //refactor two of these now
+          console.log('pdfs :', pdf);
+          const shortName = pdf.match(/([\w\s]*)/)[0] + ".pdf";  //remove the random number to make displaying prettier
+          pdfList.push({name: pdf, short: shortName, location: `/pdfs/${pdf}`})
+        })
+        req.flash('info', 'Page ready for editing');
+        res.status(200).render('pages/users/edit-page.ejs', {page: data[0], messages: req.flash('info'), pdfs : pdfList});
+        return;
+      })
+    })
+  }).catch(function(err){
+    console.log('err :', err);
+    req.flash('error', 'There was a system error. Please contact your administrator');
+    res.status(200).render('pages/users/edit-page.ejs', {messages: req.flash('info')});
+    return;
+  });
+})
 
 postCreatePageCheck = [
   body('title').isAlphanumeric(),
@@ -1050,7 +1271,7 @@ userRoutes.post('/create-page', postCreatePageCheck, upload.single('image'), fun
   }
   
   // console.log('req.file :', req.file);
-  
+  page.link = req.body.title.trim().toLowerCase().replace(/[ ]/g, "-");
   page.banner_location = `/images/${req.file.filename}`
   let image = {
     banner_location: `/images/${req.file.filename}`,
@@ -1075,8 +1296,7 @@ userRoutes.post('/create-page', postCreatePageCheck, upload.single('image'), fun
     res.status(200).redirect('/users/dashboard');
   }).catch(function(err){
     req.flash('info', 'There was an error creating the page');
-    res.status(200).render('pages/users/edit-page.ejs', {messages: req.flash('info'), page : page});
-    
+    res.status(200).render('pages/users/edit-page.ejs', {messages: req.flash('info'), page : page}); 
   })
 });
 postEditPageCheck = [
@@ -1089,7 +1309,7 @@ postEditPageCheck = [
 
 userRoutes.post('/edit-page', postEditPageCheck, function(req, res){
   let errors = validationResult(req);
-  page = {
+  let page = {
     created_by: req.body.created_by,
     title: req.body.title,
     ckeditor_html: req.body.content,
@@ -1106,7 +1326,8 @@ userRoutes.post('/edit-page', postEditPageCheck, function(req, res){
     res.status(200).redirect('/users/edit-page', {page : page});
     return;
   }
- 
+  page.link = req.body.title.trim().toLowerCase().replace(/[ ]/g, "-");
+  console.log('page :', page);
    // i would like page id from the db please
   updatePageContentByIdNoBanner(page).then(function(data){
     req.flash('info', 'Page updated successfully');
@@ -1130,7 +1351,7 @@ userRoutes.delete('/delete-page/:page_id', deletePageCheck, function(req, res){
     console.log('req.params.page_id :', req.params.page_id);
     // req.flash('info', 'Invalid Page ID');
     // res.status(200).redirect('/users/dashboard');
-    res.json({ status: "FAILURE", message: 'Invalid page id', location: "/users/dashboard" });
+    res.status(200).send(JSON.stringify({ status: "FAILURE", message: 'Invalid page id', location: "/users/dashboard" }));
     return;
   }
   console.log(req.params.page_id)
@@ -1149,13 +1370,13 @@ userRoutes.delete('/delete-page/:page_id', deletePageCheck, function(req, res){
             // req.flash('info', 'Page deleted');
             // req.method = "GET";
             // res.status(301).redirect('/users/dashboard');
-            res.status(200).json({ status: "SUCCESS", message: 'Page successfully deleted', location: "/users/dashboard" });
+            res.status(200).send(JSON.stringify({ status: "SUCCESS", message: 'Page successfully deleted', location: "/users/dashboard" }));
             return;
           } else {
             // req.flash('info', 'Error. Page not deleted. Please contact your administrator');
             // req.method = "GET";
             // res.status(301).redirect('/users/dashboard');
-            res.json({ message: 'Not deleted' });
+            res.status(200).send(JSON.stringify({ status: "FAILURE", message: 'No page to delete', location: "/users/dashboard" }));
             return;
           }
         })
@@ -1163,13 +1384,13 @@ userRoutes.delete('/delete-page/:page_id', deletePageCheck, function(req, res){
         // req.flash('info', 'You are not authorised to delete this page');
         // req.method = "GET";
         // res.status(301).redirect('/users/dashboard');
-        res.status(400).json({ status: "FAILURE", message: 'You are not authorised to delete this page.', location: "/users/dashboard"});
+        res.status(200).send(JSON.stringify({ status: "FAILURE", message: 'You are not authorised to delete this page.', location: "/users/dashboard"}));
         return;
       }
     })
   }).catch(function(err){
     console.log('err :', err);
-    res.json({ status: "FAILURE", message: 'There was a system error. Please contact your administrator.', location: "/users/dashboard" });
+    res.status(200).send(JSON.stringify({ status: "FAILURE", message: 'There was a system error. Please contact your administrator.', location: "/users/dashboard" }));
   })
 })
 
@@ -1198,6 +1419,9 @@ userRoutes.post('/upload-file', fileUpload.single('upload'), function(req, res){
     })
   })
 });
+
+
+////  End of pages //////////////
 
 
 userRoutes.get('/get-server-images', function(req, res){  // This supplies ckeditor with public images on the server in the form of json

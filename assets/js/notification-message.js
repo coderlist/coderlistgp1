@@ -7,11 +7,10 @@ const title = document.querySelector('.overlay-alert-message h4').textContent;
 // All the delete messages are returning undefined due to not being able to reach the .delete routes
 function deleteThisUser(url, user_id){  
     console.log("USER ID:", user_id);
+    console.log("URL:", url);
+    console.log(`${url}/${user_id}`);
     return fetch(`${url}/${user_id}`, {
         method: 'DELETE',
-        headers: {
-            'Content-Type': 'application/json'
-        },
         credentials: 'include',
         mode: 'cors'
     }).then(response => {
@@ -20,6 +19,9 @@ function deleteThisUser(url, user_id){
     })
     .then(message => {
         console.log(message.status);
+        if(message.status == 200 ){
+            window.location.href = '/users/dashboard';
+        }
     })
     .catch(error => console.log(`There was an error: ${error}`));
 }
@@ -27,9 +29,6 @@ function deleteThisPage(url, page_id){
     console.log("PAGE ID:", page_id);
     return fetch(`${url}/${page_id}`, {
         method: 'DELETE',
-        headers: {
-            'Content-Type': 'application/json'
-        },
         credentials: 'include',
         mode: 'cors'
     }).then(response => {
@@ -90,7 +89,9 @@ const populateNotificationMessageContentWithName = function (index){
         const inputFieldName = document.querySelector('.inputFieldName');
         let name = document.querySelectorAll('.this_name')[index].value;
         let id = document.querySelectorAll('.this_id')[index].value;
+        console.log(inputIdField);
         inputIdField.value = id;
+        console.log(inputIdField);
         inputFieldName.value = name;
         placeholder.textContent = name;
         setVariablesDataFromHiddenInputFields(id, name);
@@ -100,11 +101,11 @@ const setVariablesDataFromHiddenInputFields = function(id, name){
     /* We just need either the id for pages and users or the name for the pdf files */
     inputFieldId = id;
     inputFieldName = name;
-    console.log(inputFieldId, inputFieldName);
 };
 /* Uses the above variables to delete an item */
 const confirmDeleteMessage = function (event){
     event.preventDefault();
+    console.log(inputFieldId);
     switch(title){
         case "Delete User": deleteThisUser('/users/delete-user', inputFieldId);
             break;

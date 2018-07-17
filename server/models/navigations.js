@@ -3,56 +3,97 @@ const {queryHelper} = require('../../helperFunctions/query/queryHelper')
 
 module.exports = {
 
+   createNavItem(data){
+     return queryHelper(`
+     INSERT INTO page_navigations (page_id,parent_id,title,order_num,created_by) 
+     VALUES (${data.page_id},${data.parent_id},'${data.title}',${data.order_num}, ${data.created_by})
+     `).then(response => response)
+     .catch(e =>{throw e})
+   },
+
+   updateNavItemById(data){
+     return queryHelper(`
+     UPDATE 
+     page_navigations 
+     SET page_id = ${data.page_id},
+     parent_id = ${data.parent_id} ,title = '${data.title}',
+     order_num = ${data.order_num},created_by = ${data.created_by}
+     WHERE 
+     item_id = ${data.item_id}`)
+     .then(response => response)
+     .catch(e =>{throw e})
+   },
+
+   getNavItemByNavId(id){
+     return queryHelper(
+       `SELECT * FROM page_navigations WHERE item_id=${id}`
+     ).then(response => response)
+     .catch(e =>{throw e})
+   },
+
+   getNavItemsByPageId(id){
+    return queryHelper(
+      `SELECT * FROM page_navigations WHERE page_id=${id}`
+    ).then(response => response)
+    .catch(e =>{throw e})
+   },
+
+   getNavItemByOrderNum(num){
+    return queryHelper(
+      `SELECT * FROM page_navigations WHERE order_num=${num}`
+    ).then(response => response)
+    .catch(e =>{throw e})
+   },
+
+   getAllNavItems(){
+    return queryHelper(
+      `SELECT * FROM page_navigations`
+    ).then(response => response)
+    .catch(e =>{throw e})
+   },
+
+   deleteNavItemById(id){
+    return queryHelper(
+      `DELETE FROM page_navigations WHERE item_id=${id}`
+    ).then(response => response)
+    .catch(e =>{throw e})
+   },
+
+   deleteNavItemByOrderNum(num){
+    return queryHelper(
+      `DELTE FROM page_navigations WHERE order_num=${num}`
+    ).then(response => response)
+    .catch(e =>{throw e})
+   },
+
+   
    /**
-   * @param  {Object} bodyReq
-   * parent_nav will be ordered by nav_order_number
-   */
-  createParentNavItem(bodyReq){
-    return  queryHelper(`
-      INSERT INTO navigations(name,link,nav_order_number
-        ) VALUES ('${bodyReq.name}',
-        '${bodyReq.link}',${bodyReq.nav_order_number}) RETURNING *
-     `).then(response => response)
-      .catch(e =>{throw e})
-},
+    * @param  {Int} id
+    * gets nav link information by page_id
+    */
+   getNavLinkByPageId(id){
+    return queryHelper(`
+   WITH temp_table AS(SELECT p.link,n.page_id FROM pages 
+    AS p RIGHT JOIN page_navigations AS n ON 
+    p.page_id = n.page_id) SELECT link from 
+    temp_table where page_id=${id};
+    `).then(response => response)
+    .catch(e =>{throw e})
+   },
 
-/**
- * @param  {Object} bodyReq
- * child_nav will be ordered by grid_order_number
- */
-createChildNavItem(bodyReq, parentId){
-  return queryHelper(`
-      INSERT INTO sub_navigations(name,link,
-        grid_order_number,parent_navigation_id) VALUES ('${bodyReq.name}',
-        '${bodyReq.link}',${bodyReq.grid_order_number},${parentId})
-     `).then(response => response)
-      .catch(e =>{throw e})
-},
+   /**
+    * 
+    * gets all nav item information with link
+    */
+   getAllNavItemsWithLink(){
 
- getParentNavIdByName(name){
-  return queryHelper(`
-  SELECT navigation_id FROM navigations WHERE name ='${name}' 
-`).then(response => response)
-.catch(e =>{throw e})
- },
+    return queryHelper(`
+    SELECT p.link,n.item_id,n.page_id,n.parent_id,n.title,
+    n.order_num,n.updated_date,n.creation_date,n.created_by 
+    FROM pages AS p RIGHT JOIN page_navigations AS n ON p.page_id = n.page_id ORDER BY n.order_num;
+    `).then(response => response)
+    .catch(e =>{throw e})
 
+   },
+} 
 
-
- /**
-  * gets all nav items and return as JSON object
-  */
- getAllNavs(){
-   return queryHelper(
-     `
-      WITH page AS (SELECT n.navigation_id,n.name,n.link,
-        n.nav_order_number,s.name AS child_name,s.link AS child_link,
-        s.grid_order_number FROM navigations AS n 
-        FULL JOIN sub_navigations AS s ON n.navigation_id = s.parent_navigation_id) 
-        SELECT navigation_id,name as page,link,nav_order_number AS order, 
-        json_build_object('page', child_name, 'link', child_link, 'order', grid_order_number) AS 
-        children FROM page;
-     `
-   ).then(response => response)
-   .catch(e =>{throw e})
- }
-}

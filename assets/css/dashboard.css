@@ -312,6 +312,10 @@ button,
 input {
   overflow: visible;
 }
+.this-location{
+  position: absolute;
+  left: -9999px;
+}
 
 button,
 select {
@@ -4575,7 +4579,8 @@ input[type="button"].btn-block {
 }
 
 .card-img-top {
-  width: 100%;
+  width: 300px;
+  height: 300px;
   border-top-left-radius: calc(3px - 1px);
   border-top-right-radius: calc(3px - 1px);
 }
@@ -5026,6 +5031,26 @@ input[type="button"].btn-block {
   z-index: 9999;
 }
 .flash-overlay-alert-message{
+  position: absolute;
+  width: 90%;
+  margin: 0 auto;
+  height: auto;
+  top: 0;
+  animation-duration: 1s;
+  animation-name: flashin;
+  box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.2);
+}
+.manage-nav-overlay{
+  position: fixed;
+  top: 20vh;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 500px;
+  height: auto;
+  overflow: hidden;
+  z-index: 9999;
+}
+.manage-nav-overlay-alert-message {
   position: absolute;
   width: 90%;
   margin: 0 auto;
