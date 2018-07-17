@@ -50,6 +50,20 @@
               
         </ul>
       </li>
+      <%if (typeof menuItems == "object" && menuItems) { %>
+        <% menuItems.forEach(function(menuItem, index) { %>
+         <% console.log(menuItem.parent_id === null) %>
+         <% if (menuItem.parent_id === null) { %>
+          <li class="nav-item">
+              <a href=""><%=menuItem.title%></a>
+          </li>
+         <% } %>
+       <% }); %>
+     <% } %>
+      
+      <li class="nav-item">
+          <a href="contact">Contact</a>
+      </li>
       <li class="nav-item">
           <a href="contact">Contact</a>
       </li>
@@ -71,9 +85,12 @@
            <li class="dropdown-item"><a href="">Weekly Classes</a></li>
            <%if (typeof menuItems == "object" && menuItems) { %>
              <% menuItems.forEach(function(menuItem, index) { %>
+              <% console.log(menuItem.parent_id === null) %>
+              <% if (menuItem.parent_id === null) { %>
               <li class="dropdown-item">
-                <a href="<%=menuItem.href %>"><%=menuItem.name%></a>
+                <a href=""><%=menuItem.title%></a>
               </li>
+              <% } %>
             <% }); %>
           <% } %>
         </ul>
