@@ -1,7 +1,7 @@
 const saveThisButtons = document.querySelectorAll('.save-this');
 function getThisTableItemData(index){
     const thisTableItemData = {
-        pageId: document.querySelectorAll('.page_id')[index].value,
+        pageId: document.querySelectorAll('.this_id')[index].value,
         isPublished: document.querySelectorAll('.is-published')[index].checked == true ? true : false,
         isHomePageGrid: document.querySelectorAll('.is-homepage-grid')[index].checked == true ? true : false,
         isNavMenuItem: document.querySelectorAll('.is-nav-menu')[index].checked == true ? true : false,

@@ -22,18 +22,13 @@ fetch('/users/page-navmenu-request', init)
                 items[itemKey].map(pageItem => {
                     console.log(pageItem);
                     pageItems.push(pageItem);
+                    subMenuItems.push(pageItem);
                 });
             }
             if(itemKey === "mainMenuItems"){
                 items[itemKey].map(mainMenuItem => {
                     console.log(mainMenuItem);
                     mainMenuItems.push(mainMenuItem);
-                });
-            }
-            if(itemKey === "subMenuItems"){
-                items[itemKey].map(subMenuItem => {
-                    console.log(subMenuItem);
-                    subMenuItems.push(subMenuItem);
                 });
             }
         }); 
@@ -105,7 +100,7 @@ const createSelectionMenu = function (pageName) {
             break;
         case "childMenuItemPage":
             options = subMenuItems.map((option) => {
-                return `<option data-id="${option.item_id}" value="${option.link}">${option.link}</option>`
+                return `<option data-id="${option.page_id}" value="${option.link}">${option.link}</option>`
             });
             select = `<td><select name="child_page" class="form-control custom-select child-item-select">
             ${options}
