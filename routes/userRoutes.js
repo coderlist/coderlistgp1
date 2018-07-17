@@ -333,7 +333,7 @@ const navItemDeleteCheck = [
   param('item_id').isInt()
 ]
 
-userRoutes.delete('/manage-nav', navItemDeleteCheck, function(req,res){
+userRoutes.delete('/manage-nav/:item_id', navItemDeleteCheck, function(req,res){
   let errors = validationResult(req);
   if (!errors.isEmpty()) {
     console.log('errors.array() :',req.body, errors.array());
@@ -1020,7 +1020,7 @@ userRoutes.delete('/delete-user/:user_id', deleteUserPostCheck, function(req, re
     console.log('useradmin :', userAdmin);
     console.log("Is user admin?: ", userAdmin[0].is_admin);
     if (userAdmin[0].is_admin){ //check if user is admin or if user
-      deleteUserById(req.body.user_id)
+      deleteUserById(req.params.user_id)
       .then(function(data){
         console.log('data :', data);
         if (data) {
@@ -1042,13 +1042,13 @@ userRoutes.delete('/delete-user/:user_id', deleteUserPostCheck, function(req, re
       res.status(200).send(JSON.stringify({ status: "FAILURE", message: 'You are not authorised to delete users', location: location }));
       return;
     }
-  }).catch(function(err){
-    console.log('err :', err);
-      // req.flash('error','There was a system error');
-      // res.status(200).redirect('/users/dashboard');
-      res.status(200).send(JSON.stringify({ status: "FAILURE", message: 'There was a system error. Please contact your administrator', location: location }));
-      return
-  })
+    }).catch(function(err){
+      console.log('err :', err);
+        // req.flash('error','There was a system error');
+        // res.status(200).redirect('/users/dashboard');
+        res.status(200).send(JSON.stringify({ status: "FAILURE", message: 'There was a system error. Please contact your administrator', location: location }));
+        return
+    })
 })
 
 userRoutes.get('/change-password', (req, res) => {
