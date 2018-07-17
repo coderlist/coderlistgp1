@@ -105,7 +105,7 @@ const createSelectionMenu = function (pageName) {
             break;
         case "childMenuItemPage":
             options = subMenuItems.map((option) => {
-                return `<option data-id="${option.item_id}" value="${option.title}">${option.title}</option>`
+                return `<option data-id="${option.item_id}" value="${option.link}">${option.link}</option>`
             });
             select = `<td><select name="child_page" class="form-control custom-select child-item-select">
             ${options}
@@ -324,7 +324,7 @@ function getIndexOfRowWhereMenuDeleteButtonIsAt(buttonTarget) {
  * 
  */
 function getDeleteMenuItemID(index){
-    const id = document.querySelectorAll('.main-nav-item-id')[index].value;
+    const id = document.querySelectorAll('.delete-menu-item')[index].getAttribute('data-id');
     deleteMenuItemAtID(id);
 }
 /**
@@ -333,7 +333,7 @@ function getDeleteMenuItemID(index){
  * 
  */
 function deleteMenuItemAtID(itemId){
-    return fetch(`users/manage-nav`, {
+    return fetch(`users/manage-nav/${itemId}`, {
         method: "DELETE",
         mode: "cors",
         credentials: "include"
@@ -481,7 +481,8 @@ function getIndexOfRowWhereSubMenuDeleteButtonIsAt(buttonTarget) {
  * 
  */
 function getDeleteSubMenuItemID(index){
-    const id = document.querySelectorAll('.sub-nav-item-id')[index].value;
+    const id = document.querySelectorAll('.delete-submenu-item')[index].getAttribute('data-id');
+    console.log(id);
     deleteSubMenuItemID(id);
 }
 /**
@@ -490,7 +491,7 @@ function getDeleteSubMenuItemID(index){
  * 
  */
 function deleteSubMenuItemID(itemId){
-    return fetch(`users/manage-nav`, {
+    return fetch(`users/manage-nav/${itemId}`, {
         method: "DELETE",
         mode: "cors",
         credentials: "include"
