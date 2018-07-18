@@ -747,12 +747,15 @@ userRoutes.post('/change-password', passwordCheck, (req, res) => {
         });
         return;
       }
-      let mail = new Mail();
-      mail.sendPasswordChangeConfirmation(user);
-      req.logOut();
-      req.flash('info', 'Password updated. Please login with your new password');
-      res.status(200).redirect('/login');
-      return;
+      findEmailById(user.user_id)
+      .then(function(userEmail){
+        let mail = new Mail();
+        mail.sendPasswordChangeConfirmation(userEmail[0]);
+        req.logOut();
+        req.flash('info', 'Password updated. Please login with your new password');
+        res.status(200).redirect('/login');
+        return;
+      })
     }).catch(function (err) {
       req.flash('info', 'There was an internal error. Please contact your administrator');
       res.status(200).redirect('./dashboard');
