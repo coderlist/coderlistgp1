@@ -409,7 +409,7 @@ const user = {
         return bcrypt.hash(body.new_password, saltrounds)
           .then(hash => {
             return queryHelper(
-                `UPDATE users SET password = '${hash}' WHERE user_id =${body.id};`)
+                `UPDATE users SET password = '${hash}' WHERE user_id =${body.user_id};`)
               .then(user => {
                 return true
               }).catch(e => {
