@@ -52,8 +52,9 @@
             <a href="pages/<%=menuItem.link%>"><%=menuItem.title%></a>
           </li>
           <% } else { %> 
-            <li class="nav-item dropdown"><%=menuItem.title%>
-              <ul class="dropdown-menu">
+            <li class="nav-item dropdown">
+              <a href="#" class="dropdown-btn"><%=menuItem.title%></a>
+              <ul class="dropdown-content">
                 <%if(menuItem.children) { %>
                   <%menuItem.children.map(function(childItem){ %>
                     <li class="dropdown-item"><a href="pages/<%=childItem.link%>"><%=childItem.title%></a></li>
