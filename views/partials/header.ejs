@@ -67,7 +67,7 @@
                <li class="dropdown-item"><a href="">Nursery Level</a></li>
                <li class="dropdown-item"><a href="">Weekly Classes</a></li>
                </ul>
-               </li>
+        </li>
         <%if (typeof menuItems == "object" && menuItems) { %>
           <% menuItems.forEach(function(menuItem, index) { %>
            <% console.log('menuItem.children :',menuItem.link !== null);%>
@@ -99,10 +99,6 @@
         Workshops
         <ul class="dropdown-menu">
         <!-- Dropdown items are the ones built dynamically through a possible forEach loop -->
-           <li class="dropdown-item"><a href="">Private Sessions</a></li>
-           <li class="dropdown-item"><a href="">Small Groups</a></li>
-           <li class="dropdown-item"><a href="">Nursery Level</a></li>
-           <li class="dropdown-item"><a href="">Weekly Classes</a></li>
            <%if (typeof menuItems == "object" && menuItems) { %>
              <% menuItems.forEach(function(menuItem, index) { %>
               <% console.log(menuItem.parent_id === null) %>
