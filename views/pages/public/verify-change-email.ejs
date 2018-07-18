@@ -6,62 +6,38 @@
 </head>
 
 <body>
-   
-    
-        <div class="my-3 my-md-5">
+    <div class="page">
+        <div class="page-single">
             <div class="container">
                 <div class="row">
-                    <div class="col-md-3">
-                        <h3 class="page-title mb-5">Admin</h3>
-                        <div>
-                            <div class="list-group list-group-transparent mb-0">
-                                <a href="#" class="list-group-item list-group-item-action d-flex align-items-center">
-                                    <span class="icon mr-3">
-                                        <i class="fe fe-user"></i>
-                                    </span>Profile
-                                </a>
-                                <a href="#" class="list-group-item list-group-item-action d-flex align-items-center">
-                                    <span class="icon mr-3">
-                                        <i class="fe fe-edit"></i>
-                                    </span>Change Password
-                                </a>
-                                <a href="#" class="list-group-item list-group-item-action d-flex align-items-center active">
-                                    <span class="icon mr-3">
-                                        <i class="fe fe-mail"></i>
-                                    </span>Change Email
-                                </a>
-                            </div>
+                    <div class="col col-login mx-auto">
+                        <div class="text-center mb-6">
+                            <img src="./assets/brand/tabler.svg" class="h-6" alt="">
                         </div>
-                    </div>
-                    <div class="col-lg-9">
                         <form class="card" method="post">
-                            <div class="card-body">
-                                <h3 class="card-title">Change Email Address</h3>
-                                    <div class="row">
-                                        <div class="col-md-12">
-                                            <div class="form-group">
-                                                <input name="new_email" type="hidden" id="new_email" class="form-control" value="<%= (typeof user == 'object' && user) ? user.new_email : ''%>"required>
-                                                <input name="old_email" type="hidden" id="old_email" class="form-control" value="<%= (typeof user == 'object' && user) ? user.old_email : ''%>"required>
-                                                <input name="email_change_token" type="hidden" id="email_change_token" value="<%= (typeof user == 'object' && user) ? user.email_change_token : ''%>" class="form-control" required>
-                                                <label class="form-label" for="password">Password</label>
-                                                <input name="password" type="password" id="password" class="form-control" placeholder="Password" required>
-                                            </div>
-                                        </div>
-                                    </div>
-                              </div>
-                            <div class="card-footer text-right">
-                                <button type="reset" class="btn btn-primary">Reset Changes</button>
-                                <button type="submit" class="btn btn-primary email-confirmation">Change Email</button>
+                            <input name="email_change_token" type="hidden" id="email_change_token" value="<%= (typeof user == 'object' && user) ? user.email_change_token : ''%>" class="form-control" required>
+                            <input name="old_email" type="hidden" id="old_email" class="form-control" value="<%= (typeof user == 'object' && user) ? user.old_email : ''%>"required>
+                            <input name="new_email" type="hidden" id="new_email" class="form-control" value="<%= (typeof user == 'object' && user) ? user.new_email : ''%>"required>
+                            <div class="card-body p-6">
+                                <div class="card-title">Confirm Email Address Change</div>
+                                <div class="form-group">
+                                    <label class="form-label" for="password">Enter your Password</label>
+                                    <input name="password" type="password" id="password" class="form-control" placeholder="Password" required>
+                                </div>
+                                <div class="form-footer">
+                                        <button type="reset" class="btn btn-primary">Reset Changes</button>
+                                        <button type="submit" class="btn btn-primary email-confirmation">Confirm Changes</button>
+                                </div>
                             </div>
                         </form>
                     </div>
                 </div>
             </div>
-            
         </div>
-        <% include ../partials/footer.ejs %>
-        <% include ../partials/flash-message.ejs %>
-      
+    </div>
+    <% include ../../partials/flash-message.ejs %>
+    <!-- Scripts -->
+    <script src="/js/alert-message.js"></script>
 </body>
 
 </html>
