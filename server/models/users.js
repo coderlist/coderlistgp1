@@ -4,6 +4,7 @@ const {comparePassword} = require('../../auth/verify');
 const {
   insertOne,
   findByEmail,
+  findUserById,
   queryHelper
 } = require('../../helperFunctions/query/queryHelper');
 
@@ -379,14 +380,36 @@ const user = {
    * @param  {Object} body
    * update user password
    */
+  // updatePassword(body) {
+  //   //node sends email, old_password and new_password
+  //   return findByEmail('users', body.email).then(dbUser => {
+  //     if (comparePassword(body.old_password, dbUser.password)) {
+  //       return bcrypt.hash(body.new_password, saltrounds)
+  //         .then(hash => {
+  //           return queryHelper(
+  //               `UPDATE users SET password = '${hash}' WHERE email ='${dbUser.email}';`)
+  //             .then(user => {
+  //               return true
+  //             }).catch(e => {
+  //               throw e
+  //             })
+  //         })
+  //     } else {
+  //       return false;
+  //     }
+  //   }).catch(e => {
+  //     throw e
+  //   })
+  // },
+
   updatePassword(body) {
     //node sends email, old_password and new_password
-    return findByEmail('users', body.email).then(dbUser => {
+    return findUserById(body.user_id).then(dbUser => {
       if (comparePassword(body.old_password, dbUser.password)) {
         return bcrypt.hash(body.new_password, saltrounds)
           .then(hash => {
             return queryHelper(
-                `UPDATE users SET password = '${hash}' WHERE email ='${dbUser.email}';`)
+                `UPDATE users SET password = '${hash}' WHERE user_id =${body.user_id};`)
               .then(user => {
                 return true
               }).catch(e => {

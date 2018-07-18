@@ -370,7 +370,7 @@ routes.post('/verify-change-email', verifyEmailCheckBody, (req, res) => {
   } 
   
   user = {
-    new_email : req.body.email,
+    new_email : req.body.new_email,
     old_email : req.body.old_email,
     password : req.body.password,
     change_token : req.body.email_change_token
@@ -387,6 +387,9 @@ routes.post('/verify-change-email', verifyEmailCheckBody, (req, res) => {
     mail.sendEmailChangeConfirmation(user);
     req.logOut();
     req.flash('info', 'Please now login with your new email');
+    res.status(200).redirect('./login');
+  }).catch(function(err){
+    req.flash('error', 'There was a system error. Please contact your administrator');
     res.status(200).redirect('./login');
   })
 });
