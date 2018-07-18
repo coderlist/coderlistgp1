@@ -28,7 +28,9 @@ fetch('/users/page-navmenu-request', init)
             if(itemKey === "mainMenuItems"){
                 items[itemKey].map(mainMenuItem => {
                     console.log(mainMenuItem);
-                    mainMenuItems.push(mainMenuItem);
+                    if(mainMenuItem.link === null ){
+                        mainMenuItems.push(mainMenuItem);
+                    } 
                 });
             }
         }); 
@@ -175,8 +177,6 @@ addNewMenuItemButton.forEach(button => {
     });
 });
 
-
-
 /**
  * Get the tbody
  */
@@ -250,7 +250,6 @@ function getMenuItemData(index){
  * 
  */
 function postMenuItemData(data){
-    const manageNavMessage = document.querySelector('.manage-nav-message');
     return fetch(`/users/manage-nav`, {
         method: "POST",
         mode: "cors",
@@ -260,14 +259,10 @@ function postMenuItemData(data){
         },
         body: JSON.stringify(data) // body data type must match "Content-Type" header
     }).then(response => {
-        return response;
+        return response.json();
     })
     .then(message => {
-        if(message.status == 200 ){
-        } else {
-            manageNavMessage.textContent = message.status;
-            toggleManageNavOverlay();
-        }
+        manageNavMessagesAndStatus(message);
         console.log(message);
     })
     .catch(error => {
@@ -319,7 +314,7 @@ function getIndexOfRowWhereMenuDeleteButtonIsAt(buttonTarget) {
  * 
  */
 function getDeleteMenuItemID(index){
-    const id = document.querySelectorAll('.delete-menu-item')[index].getAttribute('data-id');
+    const id = document.querySelectorAll('.main-nav-item-id')[index].value;
     deleteMenuItemAtID(id);
 }
 /**
@@ -328,17 +323,15 @@ function getDeleteMenuItemID(index){
  * 
  */
 function deleteMenuItemAtID(itemId){
-    return fetch(`users/manage-nav/${itemId}`, {
+    return fetch(`/users/manage-nav/${itemId}`, {
         method: "DELETE",
         mode: "cors",
         credentials: "include"
     }).then(response => {
-        return response;
+        return response.json();
     })
     .then(message => {
-        if(message.status == 200){
-            window.location.href = '/users/manage-nav';
-        }
+        manageNavMessagesAndStatus(message);
         console.log(message);
     })
     .catch(error => console.log(`There was an error: ${error}`));
@@ -389,6 +382,8 @@ function getSubMenuIndex(buttonTarget) {
  * 
  */
 function getSubMenuItemData(index){
+    const indexOfThisOption = document.querySelectorAll('.parent-item-select')[index].options.selectedIndex;
+    console.log(index);
     const thisMenuItemData = {
         menuItemId: document.querySelectorAll('.sub-nav-item-id')[index].value,
         menuInputField: document.querySelectorAll('.sub-menu-page-name')[index].value,
@@ -423,11 +418,10 @@ function postSubMenuItemData(data){
         },
         body: JSON.stringify(data) // body data type must match "Content-Type" header
     }).then(response => {
-      console.log('response :', response);
-        return response;
+        return response.json();
     })
     .then(message => {
-        console.log(message);
+        manageNavMessagesAndStatus(message);
     })
     .catch(error => console.log(`There was an error: ${error}`));
 }
@@ -476,7 +470,7 @@ function getIndexOfRowWhereSubMenuDeleteButtonIsAt(buttonTarget) {
  * 
  */
 function getDeleteSubMenuItemID(index){
-    const id = document.querySelectorAll('.delete-submenu-item')[index].getAttribute('data-id');
+    const id = document.querySelectorAll('.sub-nav-item-id')[index].value;
     console.log(id);
     deleteSubMenuItemID(id);
 }
@@ -486,20 +480,53 @@ function getDeleteSubMenuItemID(index){
  * 
  */
 function deleteSubMenuItemID(itemId){
-    return fetch(`users/manage-nav/${itemId}`, {
+    return fetch(`/users/manage-nav/${itemId}`, {
         method: "DELETE",
         mode: "cors",
         credentials: "include"
     }).then(response => {
-        return response;
+        return response.json();
     })
     .then(message => {
-        if(message.status == 200){
-            window.location.href = '/users/manage-nav';
-        }
+        manageNavMessagesAndStatus(message);
         console.log(message);
     })
     .catch(error => console.log(`There was an error: ${error}`));
+}
+
+/* Function to manage messages and status of all Nav Items */
+function manageNavMessagesAndStatus(message){
+    const manageNavTitle = document.querySelector('.manage-nav-overlay-title');
+    const manageNavMessage = document.querySelector('.manage-nav-overlay-message');
+    if(message.status === "SUCCESS" && message.message === "Nav Item Created"){
+        manageNavTitle.textContent = message.status;
+        manageNavMessage.textContent = message.message;
+        toggleManageNavOverlay();
+    } else if(message.status === "SUCCESS" && message.message === "Nav Item Updated"){
+        manageNavTitle.textContent = message.status;
+        manageNavMessage.textContent = message.message;
+        toggleManageNavOverlay();
+    } else if(message.status === "SUCCESS" && message.message === "Nav Item deleted"){
+        manageNavTitle.textContent = message.status;
+        manageNavMessage.textContent = message.message;
+        toggleManageNavOverlay(callMeBackWhenYouNeedMeToRedirect);
+    }else if(message.status === "FAILURE" && message.message === "Nav Item not created"){
+        manageNavTitle.textContent = message.status;
+        manageNavMessage.textContent = message.message;
+        toggleManageNavOverlay();
+    } else if (message.status === "FAILURE" && message.message === "Nav Item update failed"){
+        manageNavTitle.textContent = message.status;
+        manageNavMessage.textContent = message.message;
+        toggleManageNavOverlay();
+    } else if (message.status === "FAILURE" && message.message === "Nav Item not deleted"){
+        manageNavTitle.textContent = message.status;
+        manageNavMessage.textContent = message.message;
+        toggleManageNavOverlay();
+    }
+}
+
+function callMeBackWhenYouNeedMeToRedirect(){
+    return window.location.href = '/users/manage-nav';
 }
 
 /*

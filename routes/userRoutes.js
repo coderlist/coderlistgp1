@@ -306,15 +306,17 @@ userRoutes.post('/manage-nav', userPostNavItemsCheck, function(req,res){
     created_by: req.session.user_id, 
     item_id : req.body.menuItemId || null
   }
-  console.log('typeof nav.item_id :', typeof nav.item_id);
-  if (typeof nav.item_id !== 'number' ) {
+  console.log('typeof nav.item_id :', isNaN(parseInt(nav.item_id)), typeof nav.item_id);
+  if (isNaN(parseInt(nav.item_id))) {
     console.log('creating :');
     createNavItem(nav)
     .then(function(createdNavItem){
       res.status(200).send(JSON.stringify({ status: "SUCCESS", message: 'Nav Item Created', createdNavItem: createdNavItem }));
+      return;
     }).catch(function(err){
       console.log("err", err);
-      res.status(200).send(JSON.stringify({ status: "FAILURE", message: 'Nav Item not created' }));
+      res.status(200).send(JSON.stringify({ status: "FAILURE", message: 'Nav Item not created. Does this name already exist?' }));
+      return;
     })
   } else {
     console.log('updating :');
@@ -325,6 +327,7 @@ userRoutes.post('/manage-nav', userPostNavItemsCheck, function(req,res){
     }).catch(function(err){
       console.log('err :', err);
       res.status(200).send(JSON.stringify({ status: "FAILURE", message: 'Nav Item update failed' }));
+      return;
     })
   }
 });
@@ -341,6 +344,7 @@ userRoutes.delete('/manage-nav/:item_id', navItemDeleteCheck, function(req,res){
     res.status(200).redirect('users/manage-nav') 
     return;
   }
+  console.log('req.params :', req.params);
   deleteNavItemById(req.params.item_id)
   .then(function(){
     res.status(200).send(JSON.stringify({ status: "SUCCESS", message: 'Nav Item deleted' }));
@@ -947,14 +951,16 @@ editUserPostCheck = [
   body('user_id').isInt(),
   body('first_name').trim().isAlphanumeric(),
   body('last_name').trim().isAlphanumeric(),
-  body('is_admin').isBoolean()
+  body('is_admin').matches(/on|/) // match either "on" or nothing
 ]
 
 userRoutes.post('/edit-user', editUserPostCheck , function(req, res){
   let errors = validationResult(req);
-  if (!errors.isEmpty()){
+  if (!errors.isEmpty()) {
+    console.log('errors.array() :', errors.array());
     req.flash('info','Invalid credentials');
     res.status(200).redirect('/users/dashboard');
+    return;
   }
   getUserById(req.body.user_id)
   .then(function(user){
@@ -968,7 +974,7 @@ userRoutes.post('/edit-user', editUserPostCheck , function(req, res){
           first_name: req.body.first_name,
           last_name: req.body.last_name
         }
-        if(!userAdmin[0].is_admin){
+        if(!userAdmin[0].is_admin){ // Only a super admin can grant super admin rights
           userUpdate.is_admin = user.is_admin ? true : req.body.is_admin // This stops someone removing admin rights. Currently a non reversible process. 
           }
          updateUserName(userUpdate)
