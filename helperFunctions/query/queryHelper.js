@@ -60,6 +60,15 @@ const findByEmail = (table, email) => {
 }
 
 
+const findUserById = (id) => {
+  return queryUnique(`SELECT EXISTS (SELECT 1 FROM users WHERE user_id= ${id})`).then(res => {
+    console.log('response at query', res)
+    if (!res.exists) return false
+    return queryUnique(`SELECT * FROM users WHERE user_id = ${id}`)
+      .then(user => user)
+  }).catch(e => e.message)
+}
+
 /**
  * @param  {Object} user
  * insert object value into users
@@ -124,5 +133,6 @@ module.exports = {
   insertOne,
   findByEmail,
   insertInTable,
-  createSuper
+  createSuper,
+  findUserById
 };
