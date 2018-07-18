@@ -219,7 +219,7 @@ header {
 /* Mobile Dropdown-menu */
 
 .navbar .navbar-mobile .dropdown {
-    width: inherit;
+    width: 100%;
 }
 
 .navbar .navbar-mobile .dropdown .dropdown-menu .dropdown-item {
@@ -285,8 +285,8 @@ header {
 .navbar .navbar-desktop .dropdown:hover .dropdown-menu {
     display: flex;
     position: absolute;
-    top: 0;
-    left: -1.7rem;
+    top: 1rem;
+    left: 0;
 }
 
 /* Page title, call to action text */
