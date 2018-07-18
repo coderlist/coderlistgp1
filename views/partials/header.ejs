@@ -24,38 +24,25 @@
                 <span class="navbar-toggler-bar"></span>
             </div>
         </div>
-        <li class="nav-item active">
-            <a href="">Home</a>
-        </li>
-        <li class="nav-item">
-            <a href="">About</a>
-        </li>
-        <li class="nav-item workshops">
-            Workshops
-        </li>
-        <li class="nav-item dropdown">
-            <ul class="dropdown-menu">
-              <li class="dropdown-item">
-                  <a href="">Private Sessions</a>
-              </li>
-              <li class="dropdown-item">
-                  <a href="">Small Groups</a>
-              </li>
-              <li class="dropdown-item">
-                  <a href="">Nursery Level</a>
-              </li>
-              <li class="dropdown-item">
-                  <a href="">Weekly Classes</a>
-              </li>
-              
-        </ul>
-      </li>
-      <li class="nav-item">
-          <a href="contact">Contact</a>
-      </li>
-      <li class="nav-item">
-          <a href="contact">Contact</a>
-      </li>
+        <%if (typeof menuItems == "object" && menuItems) { %>
+          <% menuItems.forEach(function(menuItem, index) { %>
+           <% if (menuItem.parent_id === null && menuItem.link !== null  ) { %>
+           <li class="nav-item">
+            <a href="<%menuItem.link || ''%>"><%=menuItem.title%></a>
+          </li>
+          <% } else { %> 
+            <li class="nav-item dropdown"><%=menuItem.title%>
+              <ul class="dropdown-menu">
+                <%if(menuItem.children) { %>
+                  <%menuItem.children.map(function(childItem){ %>
+                    <li class="dropdown-item"><a href="<%=childItem.link%>"><%=childItem.title%></a></li>
+                  <% }) %>
+                <% } %>
+              </ul>
+           </li>
+          <% } %>
+        <% }) %>
+      <% } %>
     </ul>
     <ul class="navbar-desktop">
         <%if (typeof menuItems == "object" && menuItems) { %>
