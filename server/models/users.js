@@ -298,6 +298,7 @@ const user = {
    */
   insertOldEmailObject(user) {
     return findByEmail('users', user.old_email).then(dbUser => {
+      console.log('user. dbUser :', user. dbUser);
       if (comparePassword(user.password, dbUser.password)) {
         return queryHelper(`update users set old_email = old_email ||` +
             ` array['{ "old_val":"${user.old_email}", "new_val":"${user.new_email}","token_date": ` +

@@ -732,7 +732,7 @@ userRoutes.post('/change-password', passwordCheck, (req, res) => {
     return;
   }
   user = {
-    email: req.session.email,
+    user_id: req.session.user_id,
     old_password: req.body.old_password,
     new_password: req.body.new_password
   }
@@ -1109,15 +1109,15 @@ userRoutes.post('/change-email-request', changeEmailCheck, (req, res) => {
   }
 
   findEmailById(req.session.user_id)
-  .then(function(user){
-    user = {
+  .then(function(userEmail){
+    const user = {
       password: req.body.password,
-      old_email: req.session.email,
+      old_email: userEmail[0].email,
       new_email: req.body.new_email,
       email_change_token: uuid()
     }
-  })
-  .then(function(){
+    console.log('user :', user);
+    console.log('userEmail :', userEmail);
     insertOldEmailObject(user)
     .then(function (data) {
         if (!data) {
@@ -1131,6 +1131,7 @@ userRoutes.post('/change-email-request', changeEmailCheck, (req, res) => {
       res.redirect('/users/dashboard');
     });
   }).catch(function (err) {
+    console.log('err :', err);
     req.flash('info', "An internal error has occurred. Please contact your administrator");
     res.redirect('/users/dashboard');
     return;
