@@ -18,7 +18,7 @@ function deleteThisUser(url, user_id){
         return response.json();
     })
     .then(message => {
-        console.log(message.status);
+        console.log(message.status, message.message);
         if(message.status == 200 ){
             window.location.href = '/users/dashboard';
         }

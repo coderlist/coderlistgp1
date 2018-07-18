@@ -527,6 +527,5 @@ subMenuTable.addEventListener('click', event => {
     } else if(buttonTarget.classList.contains('delete-submenu-item')){
         getIndexOfRowWhereSubMenuDeleteButtonIsAt(buttonTarget);
     }
-    
 });
 

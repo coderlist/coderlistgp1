@@ -10,7 +10,6 @@ class MessageTitles {
     setMessageTitles(req, res, next){
         console.log
         const url = req.url;
-        console.log(url.match(/[\w-]+$/)[0]);
         console.log(url.match("\/edit-page\/") == "/edit-page/");
         let id = '';
         if(url.match("\/edit-page\/") == "/edit-page/"){
