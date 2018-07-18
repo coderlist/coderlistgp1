@@ -24,54 +24,18 @@
                 <span class="navbar-toggler-bar"></span>
             </div>
         </div>
-        <li class="nav-item active">
-            <a href="">Home</a>
-        </li>
-        <li class="nav-item">
-            <a href="">About</a>
-        </li>
-        <li class="nav-item workshops">
-            Workshops
-        </li>
-        <li class="nav-item dropdown">
-            <ul class="dropdown-menu">
-              <li class="dropdown-item">
-                  <a href="">Private Sessions</a>
-              </li>
-              <li class="dropdown-item">
-                  <a href="">Small Groups</a>
-              </li>
-              <li class="dropdown-item">
-                  <a href="">Nursery Level</a>
-              </li>
-              <li class="dropdown-item">
-                  <a href="">Weekly Classes</a>
-              </li>
-              
-        </ul>
-      </li>
-      <li class="nav-item">
-          <a href="contact">Contact</a>
-      </li>
-      <li class="nav-item">
-          <a href="contact">Contact</a>
-      </li>
-    </ul>
-    <ul class="navbar-desktop">
         <%if (typeof menuItems == "object" && menuItems) { %>
           <% menuItems.forEach(function(menuItem, index) { %>
-           <% console.log('menuItem.children :',menuItem.link !== null);%>
            <% if (menuItem.parent_id === null && menuItem.link !== null  ) { %>
            <li class="nav-item">
-            <a href="<%menuItem.link || ''%>"><%=menuItem.title%></a>
+            <a href="pages/<%=menuItem.link%>"><%=menuItem.title%></a>
           </li>
           <% } else { %> 
             <li class="nav-item dropdown"><%=menuItem.title%>
               <ul class="dropdown-menu">
                 <%if(menuItem.children) { %>
                   <%menuItem.children.map(function(childItem){ %>
-                    <%console.log('childItem :', childItem);%>
-                    <li class="dropdown-item"><a href="<%=childItem.link%>"><%=childItem.title%></a></li>
+                    <li class="dropdown-item"><a href="pages/<%=childItem.link%>"><%=childItem.title%></a></li>
                   <% }) %>
                 <% } %>
               </ul>
@@ -79,30 +43,26 @@
           <% } %>
         <% }) %>
       <% } %>
-      <li class="nav-item">
-        <a href="/">Home</a>
-      </li>
-      <li class="nav-item">
-        <a href="about">About</a>
-      </li>
-      <li class="nav-item dropdown">
-        Workshops
-        <ul class="dropdown-menu">
-        <!-- Dropdown items are the ones built dynamically through a possible forEach loop -->
-           <%if (typeof menuItems == "object" && menuItems) { %>
-             <% menuItems.forEach(function(menuItem, index) { %>
-              <% console.log(menuItem.parent_id === null) %>
-              <% if (menuItem.parent_id === null) { %>
-              <li class="dropdown-item">
-                <a href=""><%=menuItem.title%></a>
-              </li>
-              <% } %>
-            <% }); %>
+    </ul>
+    <ul class="navbar-desktop">
+        <%if (typeof menuItems == "object" && menuItems) { %>
+          <% menuItems.forEach(function(menuItem, index) { %>
+           <% if (menuItem.parent_id === null && menuItem.link !== null  ) { %>
+           <li class="nav-item">
+            <a href="pages/<%=menuItem.link%>"><%=menuItem.title%></a>
+          </li>
+          <% } else { %> 
+            <li class="nav-item dropdown"><%=menuItem.title%>
+              <ul class="dropdown-menu">
+                <%if(menuItem.children) { %>
+                  <%menuItem.children.map(function(childItem){ %>
+                    <li class="dropdown-item"><a href="pages/<%=childItem.link%>"><%=childItem.title%></a></li>
+                  <% }) %>
+                <% } %>
+              </ul>
+           </li>
           <% } %>
-        </ul>
-      </li>
-      <li class="nav-item">
-          <a href="contact">Contact</a>
-      </li>
+        <% }) %>
+      <% } %>
     </ul>
   </nav>
