@@ -249,18 +249,17 @@ header {
 
 .navbar .navbar-desktop .nav-item {
     cursor: pointer;
-    width: 60px;
+    width: 4rem;
     position: relative;
-    padding-top: 0.5rem;
-    padding-left: 0.5rem;
-    margin-right: 1.5rem;
+    padding: 0.5rem 0.5rem 0 0;
+    margin: 0 1.5rem;
     align-self: flex-end;
 }
 
 /* Desktop Dropdown-menu */
 
 .navbar .navbar-desktop .dropdown {
-    width: 120px;
+    width: auto;
     text-align: center;
 }
 
@@ -287,7 +286,7 @@ header {
     display: flex;
     position: absolute;
     top: 0;
-    left: 0;
+    left: -1.7rem;
 }
 
 /* Page title, call to action text */
