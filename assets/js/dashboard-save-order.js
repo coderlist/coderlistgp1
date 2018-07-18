@@ -4,7 +4,6 @@ function getThisTableItemData(index){
         pageId: document.querySelectorAll('.this_id')[index].value,
         isPublished: document.querySelectorAll('.is-published')[index].checked == true ? true : false,
         isHomePageGrid: document.querySelectorAll('.is-homepage-grid')[index].checked == true ? true : false,
-        isNavMenuItem: document.querySelectorAll('.is-nav-menu')[index].checked == true ? true : false,
         pageOrderNumber: document.querySelectorAll('.page-order')[index].value 
     };
     console.log(index);

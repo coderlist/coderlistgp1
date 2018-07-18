@@ -500,7 +500,7 @@ function manageNavMessagesAndStatus(message){
     const manageNavTitle = document.querySelector('.manage-nav-overlay-title');
     const manageNavMessage = document.querySelector('.manage-nav-overlay-message');
     if(message.status === "SUCCESS" && message.message === "Nav Item Created"){
-        if(message.parent_id === null){
+        if(message.createdNavItem.parent_id === null){
             mainMenuItems.push(message.createdNavItem);
             manageNavTitle.textContent = message.status;
             manageNavMessage.textContent = message.message;
