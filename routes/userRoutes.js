@@ -1087,7 +1087,7 @@ changeEmailCheck = [
     path
   }) => {
     if (value !== req.body.confirm_new_email) {
-      throw new Error("Passwords don't match");
+      throw new Error("Emails do not match");
     } else {
       return value;
     }
