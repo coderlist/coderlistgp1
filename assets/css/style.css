@@ -219,7 +219,7 @@ header {
 /* Mobile Dropdown-menu */
 
 .navbar .navbar-mobile .dropdown {
-    width: inherit;
+    width: 100%;
 }
 
 .navbar .navbar-mobile .dropdown .dropdown-menu .dropdown-item {

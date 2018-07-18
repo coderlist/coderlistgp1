@@ -500,10 +500,16 @@ function manageNavMessagesAndStatus(message){
     const manageNavTitle = document.querySelector('.manage-nav-overlay-title');
     const manageNavMessage = document.querySelector('.manage-nav-overlay-message');
     if(message.status === "SUCCESS" && message.message === "Nav Item Created"){
-        mainMenuItems.push(message.createdNavItem);
-        manageNavTitle.textContent = message.status;
-        manageNavMessage.textContent = message.message;
-        toggleManageNavOverlay();
+        if(message.parent_id === null){
+            mainMenuItems.push(message.createdNavItem);
+            manageNavTitle.textContent = message.status;
+            manageNavMessage.textContent = message.message;
+            toggleManageNavOverlay();
+        } else {
+            manageNavTitle.textContent = message.status;
+            manageNavMessage.textContent = message.message;
+            toggleManageNavOverlay();
+        }
     } else if(message.status === "SUCCESS" && message.message === "Nav Item Updated"){
         manageNavTitle.textContent = message.status;
         manageNavMessage.textContent = message.message;
