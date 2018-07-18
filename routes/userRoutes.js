@@ -1450,7 +1450,6 @@ userRoutes.get('/get-server-images', function(req, res){  // This supplies ckedi
 const pageSavePostCheck = [
   check('pageId').isInt().exists,
   check('isPublished').isBoolean(),
-  check('isNavMenuItem').isBoolean(),
   check('isHomePageGrid').isBoolean(),
   check('pageOrderNumber').isInt()
 ]
@@ -1466,7 +1465,6 @@ userRoutes.post('/save-order', function(req,res){
   const page = {
     page_id: parseInt(req.body.pageId),
     is_published: req.body.isPublished,
-    is_nav_menu: req.body.isNavMenuItem,
     order_number: parseInt(req.body.pageOrderNumber),
     is_homepage_grid: req.body.isHomePageGrid
   }
