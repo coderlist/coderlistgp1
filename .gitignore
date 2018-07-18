@@ -4,8 +4,10 @@ indexTest.js
 vscode
 .vscode
 .vscode/
-assets/images
-assets/pdfs
+assets/images/*
+assets/pdfs/*
+!assets/images/.gitkeep 
+!assets/pdfs/.gitkeep
 helperFunctions/verification/mailTestManual.js
 playground
 .vs
