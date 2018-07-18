@@ -404,7 +404,7 @@ const user = {
 
   updatePassword(body) {
     //node sends email, old_password and new_password
-    return findUserById(body.id).then(dbUser => {
+    return findUserById(body.user_id).then(dbUser => {
       if (comparePassword(body.old_password, dbUser.password)) {
         return bcrypt.hash(body.new_password, saltrounds)
           .then(hash => {
