@@ -28,14 +28,14 @@
           <% menuItems.forEach(function(menuItem, index) { %>
            <% if (menuItem.parent_id === null && menuItem.link !== null  ) { %>
            <li class="nav-item">
-            <a href="<%menuItem.link || ''%>"><%=menuItem.title%></a>
+            <a href="pages/<%=menuItem.link%>"><%=menuItem.title%></a>
           </li>
           <% } else { %> 
             <li class="nav-item dropdown"><%=menuItem.title%>
               <ul class="dropdown-menu">
                 <%if(menuItem.children) { %>
                   <%menuItem.children.map(function(childItem){ %>
-                    <li class="dropdown-item"><a href="<%=childItem.link%>"><%=childItem.title%></a></li>
+                    <li class="dropdown-item"><a href="pages/<%=childItem.link%>"><%=childItem.title%></a></li>
                   <% }) %>
                 <% } %>
               </ul>
@@ -49,14 +49,14 @@
           <% menuItems.forEach(function(menuItem, index) { %>
            <% if (menuItem.parent_id === null && menuItem.link !== null  ) { %>
            <li class="nav-item">
-            <a href="<%menuItem.link || ''%>"><%=menuItem.title%></a>
+            <a href="pages/<%=menuItem.link%>"><%=menuItem.title%></a>
           </li>
           <% } else { %> 
             <li class="nav-item dropdown"><%=menuItem.title%>
               <ul class="dropdown-menu">
                 <%if(menuItem.children) { %>
                   <%menuItem.children.map(function(childItem){ %>
-                    <li class="dropdown-item"><a href="<%=childItem.link%>"><%=childItem.title%></a></li>
+                    <li class="dropdown-item"><a href="pages/<%=childItem.link%>"><%=childItem.title%></a></li>
                   <% }) %>
                 <% } %>
               </ul>
