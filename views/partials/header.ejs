@@ -58,16 +58,6 @@
       </li>
     </ul>
     <ul class="navbar-desktop">
-        <li class="nav-item dropdown">
-            Workshops
-            <ul class="dropdown-menu">
-            <!-- Dropdown items are the ones built dynamically through a possible forEach loop -->
-               <li class="dropdown-item"><a href="">Private Sessions</a></li>
-               <li class="dropdown-item"><a href="">Small Groups</a></li>
-               <li class="dropdown-item"><a href="">Nursery Level</a></li>
-               <li class="dropdown-item"><a href="">Weekly Classes</a></li>
-               </ul>
-        </li>
         <%if (typeof menuItems == "object" && menuItems) { %>
           <% menuItems.forEach(function(menuItem, index) { %>
            <% console.log('menuItem.children :',menuItem.link !== null);%>
