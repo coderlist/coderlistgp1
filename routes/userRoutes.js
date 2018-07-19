@@ -357,119 +357,6 @@ userRoutes.delete('/manage-nav/:item_id', navItemDeleteCheck, function(req,res){
 
 userRoutes.get('/page-navmenu-request', function(req, res){
 
-  /*const data = {
-    "pageItems": [
-      {
-        "page_id": 37,
-        "link": "tes-url-sluggy-page7"
-      },
-      {
-        "page_id": 38,
-        "link": "testy-sluggg-tooow-fdfdsfs"
-      },
-      {
-        "page_id": 39,
-        "link": "test-the-values-in-inspectbvxbvcxbcv"
-      },
-      {
-        "page_id": 40,
-        "link": "bolls"
-      }
-    ],
-    "mainMenuItems": [
-      {
-        "link": "tes-url-sluggy-page7",
-        "item_id": 66,
-        "page_id": 37,
-        "parent_id": null,
-        "title": "Deck the halls 3",
-        "order_num": 5,
-        "updated_date": "2018-07-16T03:17:19.225Z",
-        "creation_date": "2018-07-16T01:19:51.200Z",
-        "created_by": 1
-      },
-      {
-        "link": "testy-sluggg-tooow-fdfdsfs",
-        "item_id": 76,
-        "page_id": 38,
-        "parent_id": null,
-        "title": "New one 2 3 5 6 8",
-        "order_num": 7,
-        "updated_date": null,
-        "creation_date": "2018-07-16T01:31:15.675Z",
-        "created_by": 1
-      },
-      {
-        "link": null,
-        "item_id": 75,
-        "page_id": null,
-        "parent_id": null,
-        "title": "Deck the halls 5",
-        "order_num": 5,
-        "updated_date": "2018-07-16T03:17:32.600Z",
-        "creation_date": "2018-07-16T01:30:20.237Z",
-        "created_by": 1
-      },
-      {
-        "link": null,
-        "item_id": 86,
-        "page_id": null,
-        "parent_id": null,
-        "title": "no parent",
-        "order_num": 4,
-        "updated_date": null,
-        "creation_date": "2018-07-16T02:13:50.535Z",
-        "created_by": 1
-      },
-      {
-        "link": null,
-        "item_id": 77,
-        "page_id": null,
-        "parent_id": null,
-        "title": "blah",
-        "order_num": 4,
-        "updated_date": "2018-07-16T02:03:50.050Z",
-        "creation_date": "2018-07-16T01:32:06.855Z",
-        "created_by": 1
-      },
-    ],
-    "subMenuItems": [
-      {
-        "link": "test-the-values-in-inspectbvxbvcxbcv",
-        "item_id": 95,
-        "page_id": 39,
-        "parent_id": 92,
-        "title": "Jefffffffff",
-        "order_num": 5,
-        "updated_date": "2018-07-16T13:05:28.464Z",
-        "creation_date": "2018-07-16T02:29:41.228Z",
-        "created_by": 1
-      },
-      {
-        "link": "bolls",
-        "item_id": 94,
-        "page_id": 40,
-        "parent_id": 88,
-        "title": "Jeff",
-        "order_num": 5,
-        "updated_date": "2018-07-16T03:20:14.544Z",
-        "creation_date": "2018-07-16T02:27:48.859Z",
-        "created_by": 1
-      },
-      {
-        "link": null,
-        "item_id": 92,
-        "page_id": null,
-        "parent_id": 87,
-        "title": "Blahblah blah",
-        "order_num": 5,
-        "updated_date": null,
-        "creation_date": "2018-07-16T02:20:27.577Z",
-        "created_by": 1
-      },
-    ]
-  }
-  res.status(200).send(JSON.stringify(data))*/
   const pageItems = getAllPagesWithLink(); // this currently gets all information about the page. We need to cut this down to what is needed
   const navigationItems = getAllNavItemsWithLink();
   Promise.all([pageItems, navigationItems])
@@ -561,7 +448,7 @@ userRoutes.get('/manage-pdfs', function (req, res) {
       pdfs.map(function(pdf) {
       console.log('pdfs :', pdf);
       const shortName = pdf.match(/([\w\s]*)/)[0] + ".pdf";  //remove the random number to make displaying prettier
-      pdfList.push({name: pdf, short: shortName, location: `{${urlConfig.url}/pdfs/${pdf}`})
+      pdfList.push({name: pdf, short: shortName, location: `${urlConfig.url}/pdfs/${pdf}`})
     })
     console.log('pdfList :', pdfList);
     res.status(200).render('pages/users/manage-pdfs.ejs', { 
