@@ -11,7 +11,7 @@ function getThisTableItemData(index){
     saveThisTableItemInDB(thisTableItemData);
 }
 function saveThisTableItemInDB(data){
-    return fetch(`/users/save-order`, {
+    fetch('/users/save-order', {
         method: "POST",
         mode: "cors",
         credentials: "include",
@@ -20,6 +20,7 @@ function saveThisTableItemInDB(data){
         },
         body: JSON.stringify(data) // body data type must match "Content-Type" header
     }).then(response => {
+        console.log(response);
         return response;
     })
     .then(message => {

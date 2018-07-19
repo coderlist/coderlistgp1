@@ -91,7 +91,6 @@ body {
   font-weight: 700;
 }
 
-
 /* Animation for Flash Messages */ 
 @keyframes flash-messages {
   from {
@@ -5130,10 +5129,20 @@ input[type="button"].btn-block {
     top: 0;
   }
 }
+
 .image_thumbnail {
   width: 2rem;
   height: 2rem;
   border-radius: 50%;
+}
+.hold_image_thumbnail {
+  display:none;
+}
+
+@media (min-width: 576px) {
+  .hold_image_thumbnail {
+    display: block;
+  }
 }
 .alert {
   position: relative;

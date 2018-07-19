@@ -515,7 +515,7 @@ function manageNavMessagesAndStatus(message){
     const manageNavInputItemIDField = document.querySelectorAll('.main-nav-item-id')[storeNavIndex.mainNavIndex];
     const manageSubNavInputItemIDField = document.querySelectorAll('.sub-nav-item-id')[storeNavIndex.subNavIndex];
     if(message.status === "SUCCESS" && message.message === "Nav Item Created"){
-        if(message.createdNavItem.parent_id === null){
+        if(message.createdNavItem.link === null){
             mainMenuItems.push(message.createdNavItem);
             manageNavInputItemIDField.value = message.createdNavItem.item_id;
             manageNavTitle.textContent = message.status;
