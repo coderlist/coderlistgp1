@@ -12,11 +12,6 @@ module.exports = {
   //  },
 
   createNavItem(data){
-    // return queryHelper(`
-    // INSERT INTO page_navigations (page_id,parent_id,title,order_num,created_by) 
-    // VALUES (${data.page_id},${data.parent_id},'${data.title}',${data.order_num}, ${data.created_by})
-    // RETURNING * `).then(response => response[0])
-    // .catch(e =>{throw e})
     return queryHelper(`
     WITH new_table AS (INSERT INTO page_navigations (page_id,parent_id,title,order_num,created_by) 
     VALUES (${data.page_id},${data.parent_id},'${data.title}',${data.order_num}, ${data.created_by}) RETURNING *) 
