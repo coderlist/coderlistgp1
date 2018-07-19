@@ -7,6 +7,7 @@ function getThisTableItemData(index){
         pageOrderNumber: document.querySelectorAll('.page-order')[index].value 
     };
     console.log(index);
+    console.log(thisTableItemData);
     saveThisTableItemInDB(thisTableItemData);
 }
 function saveThisTableItemInDB(data){
