@@ -512,7 +512,7 @@ textarea {
 
 @media screen and (min-width: 900px) {
     main {
-        margin: 84px auto 2rem auto;
+        margin: 104px auto 2rem auto;
         padding: 0;
     }
     .form {
