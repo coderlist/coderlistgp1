@@ -421,6 +421,7 @@ function postSubMenuItemData(data){
         return response.json();
     })
     .then(message => {
+        console.log(message);
         manageNavMessagesAndStatus(message);
     })
     .catch(error => console.log(`There was an error: ${error}`));
@@ -499,9 +500,16 @@ function manageNavMessagesAndStatus(message){
     const manageNavTitle = document.querySelector('.manage-nav-overlay-title');
     const manageNavMessage = document.querySelector('.manage-nav-overlay-message');
     if(message.status === "SUCCESS" && message.message === "Nav Item Created"){
-        manageNavTitle.textContent = message.status;
-        manageNavMessage.textContent = message.message;
-        toggleManageNavOverlay();
+        if(message.createdNavItem.parent_id === null){
+            mainMenuItems.push(message.createdNavItem);
+            manageNavTitle.textContent = message.status;
+            manageNavMessage.textContent = message.message;
+            toggleManageNavOverlay();
+        } else {
+            manageNavTitle.textContent = message.status;
+            manageNavMessage.textContent = message.message;
+            toggleManageNavOverlay();
+        }
     } else if(message.status === "SUCCESS" && message.message === "Nav Item Updated"){
         manageNavTitle.textContent = message.status;
         manageNavMessage.textContent = message.message;
