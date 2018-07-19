@@ -517,7 +517,7 @@ routes.get('/pages/:link', getPageParamCheck, function(req,res){
   const pageItems = getPageByLink(req.params.link);
   Promise.all([navItems, pageItems])
   .then(function(values){
-    values[0].forEach((item, index) => {
+    values[0].forEach((item, index) => {   // this exists twice. Needs refactoring. Here and the index route.
       if (item.parent_id) {
           //If there is a parent cycle through the data, find the parent and append the item to it's children.
           values[0].forEach(parent => {
