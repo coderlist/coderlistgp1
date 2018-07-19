@@ -20,11 +20,11 @@ You will need the user name and password for this.
 
 Create environmental variables in .env file in the root folder of your project
 
-- PG_HOST=*server location* ie localhost \n
-- PG_USER=*databuse username*
-- PG_KEY=*databse password*
-- EMAIL_NODEMAILER_USERNAME=*email account*
-* EMAIL_NODEMAILER_PASSWORD=*email password*
+- PG_HOST=*Database server location* probably localhost if on the same machine
+- PG_USER=*database username*
+- PG_KEY=*database password*
+- EMAIL_NODEMAILER_USERNAME=*server email account*
+* EMAIL_NODEMAILER_PASSWORD=*server email password*
 * COOKIE_SECRET= *anything you like*
 * PG_DBASE=MYDB
 * PG_PORT=5432
@@ -33,11 +33,10 @@ In the environmentalConfig.js file in the root directly change the production do
 
 Please ensure you do not delete the projectname/public/assets/pdf and projectname/public/assets/images folders even if they are empty.
 
-After installation a default superadmin is created which you should use to create another super admin. You can then delete the old one once you have added and verified yourself.
-Please note that you cannot delete yourself as this could potentially leave no one with any access and would probably require resinstallation or some deft Postgres DB SQL manipulation.
+After installation a default superadmin is created which you should use to create a verified super admin. You can then delete the old one once you have added and verified yourself.
+Please note that no user can delete themselves as this could potentially leave no one with any access and would probably require reinstallation or some quite deft Postgres DB SQL manipulation.
 
-Default super admin credentials
-
+Default super admin credentials:
 username: super@super.infinity
 password: root
 
