@@ -1,6 +1,7 @@
 const fs = require('fs');
 const express = require('express');
 const userRoutes = new express.Router();
+const urlConfig = require ('../environmentConfig');
 // const passport = require('../auth/local');
 const Logins = require('../helperFunctions/Logins');
 const UserLocalsNavigationStyling = require('../helperFunctions/navigation-locals');
@@ -560,7 +561,7 @@ userRoutes.get('/manage-pdfs', function (req, res) {
       pdfs.map(function(pdf) {
       console.log('pdfs :', pdf);
       const shortName = pdf.match(/([\w\s]*)/)[0] + ".pdf";  //remove the random number to make displaying prettier
-      pdfList.push({name: pdf, short: shortName, location: `/pdfs/${pdf}`})
+      pdfList.push({name: pdf, short: shortName, location: `{${urlConfig.url}/pdfs/${pdf}`})
     })
     console.log('pdfList :', pdfList);
     res.status(200).render('pages/users/manage-pdfs.ejs', { 
@@ -570,8 +571,6 @@ userRoutes.get('/manage-pdfs', function (req, res) {
     })
   })
 })
-
-
 
 userRoutes.post('/manage-pdfs', PDFUpload.single('pdf'), function (req, res) {
   // logic handled within PDFUpload
@@ -618,7 +617,8 @@ userRoutes.get('/manage-images', function(req, res){
       res.status(200).render('pages/users/manage-images', { message: req.flash('info'), messagesError: req.flash('error') } );
       return;
     }
-    req.flash('info', 'No images');
+    // req.flash('info', 'Images');
+      data = data.map(function(image){ image.location = `${urlConfig.url}${image.location}`; return image}) // add domain to the beginning of the image location
       res.status(200).render('pages/users/manage-images', { images: data, message: req.flash('info'), messagesError: req.flash('error') } );
       return;
   }).catch(function(err){
@@ -1455,17 +1455,19 @@ userRoutes.post('/save-order', function(req,res){
     res.status(200).redirect('/users/dashboard');
     return;
   }
+  console.log('req.body :', req.body);
   const page = {
     page_id: parseInt(req.body.pageId),
     is_published: req.body.isPublished,
     order_number: parseInt(req.body.pageOrderNumber),
-    is_homepage_grid: req.body.isHomePageGrid
+    is_homepage_grid: req.body.isHomePageGrid,
+    is_nav_menu : false
   }
 
   updatePageLocationsById(page)
   .then(function(data){
     console.log('successfull :', data);
-    
+    req.flash('info', 'Save order updated');
     res.status(200).redirect('/users/dashboard');
     return;
   }).catch(function(err){

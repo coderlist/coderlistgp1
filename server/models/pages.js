@@ -82,7 +82,7 @@ module.exports = {
 
   updatePageLocationsById(body){
      return queryHelper(`UPDATE pages SET is_homepage_grid='${body.is_homepage_grid}',
-      is_published ='${body.is_published}', order_number = ${body.order_number} where page_id = ${body.page_id};`)
+      is_published ='${body.is_published}', is_nav_menu='${body.is_nav_menu}', order_number = ${body.order_number} where page_id = ${body.page_id};`)
      .then(response => response)
      .catch(e => {throw e})
   },
