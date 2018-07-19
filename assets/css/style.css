@@ -218,17 +218,26 @@ header {
     font-size: 1.2rem;
     cursor: pointer;
     color: #333333;
+    border-bottom: 2px solid rgba(0, 0, 0, 0.5);
+}
+
+.navbar .navbar-mobile .nav-item a {
+    width: 100%;
+    display: block;
+    padding: 1rem 0.5rem;
+}
+.navbar .navbar-mobile .nav-item a:hover {
+    background-color: #f3f3f3;
 }
 
 .navbar .navbar-mobile .dropdown .dropdown-btn {
     display: block;
     padding: 1rem 0.5rem;
     width: 100%;
-    border-bottom: 2px solid rgba(0, 0, 0, 0.5);
 }
 .navbar .navbar-mobile .dropdown .dropdown-menu .dropdown-item {
     cursor: pointer;
-    padding: 1rem;
+    padding-left: 1rem;
     color: #333333;
     border-top: 2px solid rgba(0, 0, 0, 0.5);
 }
@@ -238,11 +247,6 @@ header {
 
 .navbar .navbar-mobile .dropdown .dropdown-menu .dropdown-item:first-child {
     border-top: 2px solid rgba(0, 0, 0, 0.5);
-    border: none;
-}
-
-.navbar .navbar-mobile .dropdown .dropdown-menu .dropdown-item:last-child {
-    border-bottom: 2px solid rgba(0, 0, 0, 0.5);
 }
 
 /* Desktop */
