@@ -513,12 +513,31 @@ routes.get('/pages/:link', getPageParamCheck, function(req,res){
     res.status(200).redirect('/');
     return;
   }
-
-  getPageByLink(req.params.link)
-  .then(function(data){
-    console.log('data :', data);
+  let navItems = getAllNavItemsWithLink();
+  const pageItems = getPageByLink(req.params.link);
+  Promise.all([navItems, pageItems])
+  .then(function(values){
+    values[0].forEach((item, index) => {
+      if (item.parent_id) {
+          //If there is a parent cycle through the data, find the parent and append the item to it's children.
+          values[0].forEach(parent => {
+              if (item.parent_id === parent.item_id) parent.children ? parent.children.push(item) : parent.children = [item];
+          })
+      }
+    });
+    
+    //Remove each item that has a parent item as they are now in a collection
+    values[0] = values[0].filter(item => !item.parent_id);
+    values[0] = values[0].sort((a,b) => a.order_num < b.order_num ? -1 : a.order_num === b.order_num ? 0 : 1);
+    values[0].map(item => {
+      if (item.children) {
+          item.children = item.children.sort((a,b) => a.order_num < b.order_num ? -1 : a.order_num === b.order_num ? 0 : 1);
+      }
+      return item;
+    });
     res.status(200).render('pages/public/page', {
-      page: data[0],
+      page: values[1][0],
+      menuItems: values[0],
       messages : req.flash('info'), 
     })
   })
