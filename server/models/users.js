@@ -296,12 +296,33 @@ const user = {
    *              "token_date": "2018-06-07 14:14:51.812341+00", 
    *               "token":"386ebca7-907d-44a0-be0c-371ed1340781" }
    */
+  // insertOldEmailObject(user) {
+  //   return findByEmail('users', user.old_email).then(dbUser => {
+  //   //  console.log('user. dbUser :', user. dbUser);
+  //     if (comparePassword(user.password, dbUser.password)) {
+  //       return queryHelper(`update users set old_email = old_email ||` +
+  //           ` array['{ "old_val":"${user.old_email}", "new_val":"${user.new_email}","token_date": ` +
+  //           `"' || now() || '", "token":"${user.email_change_token}" }']` +
+  //           `::json[] where email='${user.old_email}';`)
+  //         .then(response => true)
+  //         .catch(e => {
+  //           throw e
+  //         })
+  //     } else {
+  //       console.log('VERIFICATION FAILED')
+  //       return false;
+  //     }
+  //   }).catch(e => {
+  //     throw e
+  //   })
+  // },
+ 
   insertOldEmailObject(user) {
     return findByEmail('users', user.old_email).then(dbUser => {
-      console.log('user. dbUser :', user. dbUser);
+    //  console.log('user. dbUser :', user. dbUser);
       if (comparePassword(user.password, dbUser.password)) {
         return queryHelper(`update users set old_email = old_email ||` +
-            ` array['{ "old_val":"${user.old_email}", "new_val":"${user.new_email}","token_date": ` +
+            ` array['{ "old_val":"${user.old_email}","token_date": ` +
             `"' || now() || '", "token":"${user.email_change_token}" }']` +
             `::json[] where email='${user.old_email}';`)
           .then(response => true)
@@ -316,7 +337,6 @@ const user = {
       throw e
     })
   },
-
 
 
   /**
@@ -356,7 +376,7 @@ const user = {
     BEGIN
        IF NOT EXISTS (with temp_table as (select email,unnest(old_email) 
           FROM users where email='${body.old_email}') 
-          SELECT 1 FROM temp_table WHERE unnest ->> 'email'='${body.new_email}') 
+          SELECT 1 FROM temp_table WHERE unnest ->> 'old_val'='${body.new_email}') 
       THEN
             UPDATE users SET email = '${body.new_email}' WHERE email = '${body.old_email}';
       ELSE
