@@ -479,9 +479,6 @@ textarea {
     header {
         width: 100%;
     }
-    main {
-        padding: 0;
-    }
     .card-deck {
         flex-direction: row;
         flex-wrap: nowrap;
