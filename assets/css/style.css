@@ -17,22 +17,53 @@ a {
     color: #333333;
 }
 
+.container {
+    width:1150px;
+    max-width:100%;
+    padding-left:1em;
+    padding-right:1em;
+    margin:0 auto;
+}
+
+@media (max-width:1450px){
+    .container {
+        width: 1160px;
+    }
+}
+@media (max-width:1200px){
+    .container {
+        width: 960px;
+    }
+}
+@media (max-width:992px){
+    .container {
+        width: 794px;
+    }
+}
+@media (max-width:768px){
+    .container {
+        width: 615px;
+    }
+}
+@media (max-width:576px){
+    .container {
+        width: 461px;
+    }
+}
+
+
 main {
-    display: flex;
+    /* display: flex;
     flex-direction: column;
-    flex: 1;
+    flex: 1; */
     width: 100%;
     max-width: 60rem;
-    /* 960px / 16px = 60 */
-    margin: 84px 0 1rem 0;
-    padding: 0 1.5rem 0 1rem;
+    margin-top: 84px !important;
+    padding-top: 1em;
 }
+
 /*
-*
-*   Layout Styles
-*   For pages
-*
-*/
+
 .main-layout {
     font-size: 1rem;
     padding-top: 2rem;
@@ -107,6 +138,7 @@ main {
 {
     float: left;
 }
+*/
 
 /* header */
 
@@ -125,11 +157,11 @@ header {
 /* Navigation General */
 
 .navbar {
-    max-width: 60rem;
+    /* max-width: 60rem; */
     /* 960 / 16 = 60rem */
     padding-top: 1rem;
     padding-bottom: 1rem;
-    margin: 0 1rem;
+    /* margin: 0 1rem; */
     display: flex;
     flex-direction: row;
 }
@@ -475,9 +507,9 @@ textarea {
     header {
         width: 100%;
     }
-    main {
+    /* main {
         padding: 0;
-    }
+    } */
     .card-deck {
         flex-direction: row;
         flex-wrap: nowrap;
@@ -510,10 +542,10 @@ textarea {
 }
 
 @media screen and (min-width: 900px) {
-    main {
+    /* main {
         margin: 84px auto 2rem auto;
         padding: 0;
-    }
+    } */
     .form {
         width: 960px;
     }
