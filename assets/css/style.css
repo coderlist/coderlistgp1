@@ -218,7 +218,6 @@ header {
     font-size: 1.2rem;
     cursor: pointer;
     color: #333333;
-    border-bottom: 2px solid rgba(0, 0, 0, 0.5);
 }
 
 .navbar .navbar-mobile .dropdown .dropdown-btn {
@@ -240,6 +239,10 @@ header {
 .navbar .navbar-mobile .dropdown .dropdown-menu .dropdown-item:first-child {
     border-top: 2px solid rgba(0, 0, 0, 0.5);
     border: none;
+}
+
+.navbar .navbar-mobile .dropdown .dropdown-menu .dropdown-item:last-child {
+    border-bottom: 2px solid rgba(0, 0, 0, 0.5);
 }
 
 /* Desktop */
