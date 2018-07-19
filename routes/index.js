@@ -160,10 +160,10 @@ routes.get('/enter-password', enterPasswordCheck, (req, res) => {
   //console.log('errors :', errors.array());
   if (!errors.isEmpty()){
     req.flash('info', 'Invalid credentials. Please try again or contact your administrator');
-    res.status(200).render('pages/public/enter-password.ejs', {messages : req.flash('info'), title: "Enter Password" , user : {activation_token : req.body.activation_token, email : req.body.email}});
+    res.status(200).render('pages/public/enter-password.ejs', {messages : req.flash('info'), messagesError : req.flash('error'), title: "Enter Password" , user : {activation_token : req.body.activation_token, email : req.body.email}});
     return;
   }
-  res.status(200).render('pages/public/enter-password.ejs', {messages: req.flash('info'), title: "Enter Password", user : {activation_token : req.query.token, email : req.query.email}});
+  res.status(200).render('pages/public/enter-password.ejs', {messages: req.flash('info'), messagesError : req.flash('error'), title: "Enter Password", user : {activation_token : req.query.token, email : req.query.email}});
 });
 
 postEnterPasswordCheck = [
@@ -184,7 +184,7 @@ routes.post('/enter-password', postEnterPasswordCheck, (req, res) => {
   let errors = validationResult(req);
   if (!errors.isEmpty()){
     req.flash('info', 'Invalid credentials. Please try again or contact your administrator');
-    res.status(200).render(`pages/public/enter-password.ejs`, {messages : req.flash('info'), user : {activation_token : req.body.token, email : req.body.email}});
+    res.status(200).render(`pages/public/enter-password.ejs`, {messages : req.flash('info'), messagesError : req.flash('error'), user : {activation_token : req.body.token, email : req.body.email}});
     return;
   }
   const user = {
@@ -217,7 +217,7 @@ routes.post('/enter-password', postEnterPasswordCheck, (req, res) => {
 routes.get('/reset-password-request', (req, res) => {
   // **create a page with two fields to enter email addresses
   // **ensure that emails both match before being able to post
-  res.status(200).render('pages/public/reset-password-request', { title: 'Reset Password', messages : req.flash('info')});
+  res.status(200).render('pages/public/reset-password-request', { title: 'Reset Password', messages : req.flash('info'), messagesError : req.flash('error')});
 });  
 
 
@@ -240,7 +240,7 @@ routes.post('/reset-password-request', requestResetPasswordCheck, (req, res) => 
   if (!errors.isEmpty()) {
     console.log('first req.body :', req.body, errors.array());
     req.flash("info","Invalid email");
-    res.status(200).render('pages/public/reset-password-request', {messages : req.flash('info')});
+    res.status(200).render('pages/public/reset-password-request', {messages : req.flash('info'), messagesError : req.flash('error')});
     return;
   }
   const user = {
@@ -252,7 +252,7 @@ routes.post('/reset-password-request', requestResetPasswordCheck, (req, res) => 
   .then(data => {
     if (!data) {
       req.flash("info","Further instructions have now been sent to the email address provided");
-      res.status(200).render('pages/public/index.ejs', {messages : req.flash('info')});
+      res.status(200).render('pages/public/index.ejs', {messages : req.flash('info'), messagesError : req.flash('error')});
       return;
     } 
     else {
@@ -281,7 +281,7 @@ routes.get('/reset-password', checkQueryResetPassword, (req, res) => {
     email : req.query.email
   }
   insertOldPasswordObject(user).then(response =>{
-    res.status(200).render('pages/public/reset-password', {title: 'Reset Password', messages : req.flash('info'), user : user});
+    res.status(200).render('pages/public/reset-password', {title: 'Reset Password', messages : req.flash('info'), messagesError : req.flash('error'), user : user});
   }).catch(e => res.status(500).send(e.stack))
   
 });  
@@ -305,7 +305,7 @@ routes.post('/reset-password', resetPasswordCheck, (req, res) => {
   if (!errors.isEmpty()) {
     console.log('errors :', errors.array());
     req.flash("info","Invalid credentials");
-    res.status(200).render('pages/public/reset-password', {messages : req.flash('info'), user : { email : req.body.email, forgot_password_token : req.body.forgot_password_token}});
+    res.status(200).render('pages/public/reset-password', {messages : req.flash('info'),messagesError : req.flash('error'), user : { email : req.body.email, forgot_password_token : req.body.forgot_password_token}});
     return;
   }
   const user = {
@@ -347,7 +347,7 @@ routes.get('/verify-change-email', verifyEmailCheckQuery, (req, res) => {
   const user = {old_email : req.query.old_email, new_email : req.query.new_email, email_change_token : req.query.email_change_token}
   if (!errors.isEmpty()) {
     req.flash("info","Invalid credentials. Please recheck authorisation link or contact your administrator");
-    res.status(200).render('pages/public/verify-change-email', {title: 'Verify Email', messages : req.flash('info'), user : user});
+    res.status(200).render('pages/public/verify-change-email', {title: 'Verify Email', messages : req.flash('info'), messagesError: req.flash('error'), user : user});
     return;
   }
   res.status(200).render('pages/public/verify-change-email.ejs', {title: 'Verify Email', messages : req.flash('info'), user : {email_change_token: req.query.email_change_token, old_email: req.query.old_email, new_email : req.query.new_email || "", email_change_token : req.query.email_change_token || ""}});
@@ -362,14 +362,22 @@ verifyEmailCheckBody = [
 
 routes.post('/verify-change-email', verifyEmailCheckBody, (req, res) => {
   errors = validationResult(req)
-  console.log('errors.array() :', errors.array());
+  console.log('req.body :', req.body);
   if (!errors.isEmpty()) {
-    req.flash("info","Invalid email");
-    res.status(200).render('pages/public/verify-change-email.ejs', { messages : req.flash('info'), user : { old_email : req.body.old_email, new_email : req.body.new_email, email_change_token : req.body.email_change_token }});
+    req.flash("info","Invalid data");
+    res.status(200).render('pages/public/verify-change-email.ejs', { 
+      messages : req.flash('info'), 
+      messagesError : req.flash('error'), 
+      user : { 
+        old_email : req.body.old_email, 
+        new_email : req.body.new_email, 
+        email_change_token : req.body.email_change_token 
+      }
+    });
     return;
   } 
   
-  user = {
+  let user = {
     new_email : req.body.new_email,
     old_email : req.body.old_email,
     password : req.body.password,
@@ -377,9 +385,10 @@ routes.post('/verify-change-email', verifyEmailCheckBody, (req, res) => {
   }
   updateUserEmail(user)
   .then(data => {
+    console.log('user :', data);
     if (!data) {
-      req.flash("info","Invalid credentials. Please try again.");
-      res.status(200).render('pages/public/verify-change_email.ejs', { messages : req.flash('info'), user : { old_email: req.body.old_email, new_email : req.body.new_email, email_change_token : req.body.email_change_token }});
+      req.flash("error","Invalid credentials. Please try again.");
+      res.status(200).render('pages/public/verify-change_email.ejs', { messages : req.flash('info'), messagesError : req.flash('error'), user : { old_email: req.body.old_email, new_email : req.body.new_email, email_change_token : req.body.email_change_token }});
       return;
     }
     let mail = new Mail();
@@ -389,8 +398,9 @@ routes.post('/verify-change-email', verifyEmailCheckBody, (req, res) => {
     req.flash('info', 'Please now login with your new email');
     res.status(200).redirect('./login');
   }).catch(function(err){
+    console.log('err :', err);
     req.flash('error', 'There was a system error. Please contact your administrator');
-    res.status(200).redirect('./login');
+    res.status(200).redirect('/users/dashboard');
   })
 });
 
@@ -398,12 +408,12 @@ routes.post('/verify-change-email', verifyEmailCheckBody, (req, res) => {
 // pages // move to pages/content routes
 
 routes.get('/content/manage-page', (req, res) => {
-  res.status(200).render('pages/content/create-edit-page', {messages: req.flash('info')});
+  res.status(200).render('pages/content/create-edit-page', {messages: req.flash('info'),messagesError : req.flash('error')});
   return;
 });
 
 routes.get('/content/manage-all-pages', (req, res) => { //accessible by authed admin
-  res.status(200).render('pages/content/manage-all-pages.ejs', {messages: req.flash('info')});
+  res.status(200).render('pages/content/manage-all-pages.ejs', {messages: req.flash('info'), messagesError : req.flash('error')});
   return;
 });
 
@@ -437,7 +447,8 @@ routes.post('/create-user', createUserCheck, (req, res) => { //accessible by aut
       title: 'Create User', 
       active: 'active', 
       username: 'Ginny Bradley', 
-      messages : req.flash('info'), 
+      messages : req.flash('info'),
+      messagesError : req.flash('error'), 
       userTemp});
     return;
   }
@@ -468,6 +479,7 @@ routes.post('/create-user', createUserCheck, (req, res) => { //accessible by aut
         active: 'active', 
         username: 'Ginny Bradley', 
         messages : req.flash('info'), 
+        messagesError : req.flash('error'),
         user});
       return;
     }
