@@ -1447,16 +1447,9 @@ userRoutes.get('/get-server-images', function(req, res){  // This supplies ckedi
   })
 })
 
-const pageSavePostCheck = [
-  check('pageId').isInt().exists,
-  check('isPublished').isBoolean(),
-  check('isHomePageGrid').isBoolean(),
-  check('pageOrderNumber').isInt()
-]
-
 userRoutes.post('/save-order', function(req,res){
 
-  if (!Number.isInteger(parseInt(req.body.pageId)) || typeof req.body.isPublished != 'boolean' || typeof req.body.isNavMenuItem != 'boolean' || typeof req.body.isHomePageGrid != 'boolean' || !Number.isInteger(parseInt(req.body.pageOrderNumber))) { // cannot get the json body to work with express validator 5
+  if (!Number.isInteger(parseInt(req.body.pageId)) || typeof req.body.isPublished != 'boolean' || typeof req.body.isHomePageGrid != 'boolean' || !Number.isInteger(parseInt(req.body.pageOrderNumber))) { // cannot get the json body to work with express validator 5
     console.log('failed :');
     req.flash('error', 'Invalid Page Data');
     res.status(200).redirect('/users/dashboard');
@@ -1471,7 +1464,10 @@ userRoutes.post('/save-order', function(req,res){
 
   updatePageLocationsById(page)
   .then(function(data){
+    console.log('successfull :', data);
+    
     res.status(200).redirect('/users/dashboard');
+    return;
   }).catch(function(err){
     console.log('err :', err);
     req.flash('error', 'There was an error');
