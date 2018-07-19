@@ -229,7 +229,8 @@ userRoutes.get('/dashboard', (req, res) => {
       res.status(200).render('pages/users/dashboard.ejs', { 
         users : userData,
         pages : pageData,
-        messages: req.flash('info')
+        messages: req.flash('info'),
+        messagesError : req.flash('error')
       })
     })
   }).catch(function(err){
@@ -272,6 +273,7 @@ userRoutes.get('/manage-nav', function (req, res) {
     })
     res.status(200).render('pages/users/manage-nav.ejs', { 
       messages: req.flash('info'),
+      messagesError : req.flash('error'),
       pageItems: values[0],
       mainMenuItems: values[1],
       subMenuItems: values[1]
@@ -630,7 +632,8 @@ userRoutes.post('/change-password', passwordCheck, (req, res) => {
         console.log("failed to update password");
         req.flash('info', 'Invalid credentials');
         res.status(200).render('pages/users/change-password', {
-          messages: req.flash('info')
+          messages: req.flash('info'),
+          messagesError : req.flash('error')
         });
         return;
       }
@@ -755,6 +758,7 @@ userRoutes.post('/create-user', createUserCheck, (req, res) => { //accessible by
         req.flash('info', 'There was an error creating this user. Please try again. If you already have please contact support.')
         res.status(200).render('pages/users/edit-user.ejs', {
           messages: req.flash('info'),
+          messagesError : req.flash('error'),
           user
         });
         return;
@@ -770,6 +774,7 @@ userRoutes.post('/create-user', createUserCheck, (req, res) => { //accessible by
     }
     res.status(200).render('pages/users/edit-user.ejs', { 
       messages: req.flash('info'),
+      messagesError : req.flash('error'),
       user
     });
   })
@@ -779,6 +784,7 @@ userRoutes.post('/create-user', createUserCheck, (req, res) => { //accessible by
 userRoutes.get('/admin', (req, res) => {
   res.status(200).render('pages/users/admin.ejs', {
     messages: req.flash("info"),
+    messagesError : req.flash('error'),
     ckeditorData: req.body.ckeditorHTML || ""
   });
 });
@@ -787,6 +793,7 @@ userRoutes.get('/admin', (req, res) => {
 userRoutes.post('/admin', (req, res) => {
   res.status(200).render('pages/users/admin.ejs', {
     messages: req.flash("info"),
+    messagesError : req.flash('error'),
     ckeditorData: req.body.ckeditorHTML || ""
   });
 });
@@ -825,6 +832,7 @@ userRoutes.get('/edit-user/:user_id', checkUserID, (req, res) => { //accessible 
       req.flash('info', 'Modifying user(Flash test)');
       res.status(200).render('pages/users/edit-user.ejs', {
         messages: req.flash('info'), 
+        messagesError : req.flash('error'),
         user : userRow
       });
       return;
@@ -957,7 +965,8 @@ userRoutes.get('/change-password', (req, res) => {
 
 userRoutes.get('/change-email-request', (req, res) => {
   res.status(200).render('pages/users/change-email-request.ejs', {
-    messages: req.flash('info')
+    messages: req.flash('info'),
+    messagesError : req.flash('error')
   });
 });
 
@@ -993,6 +1002,7 @@ userRoutes.post('/change-email-request', changeEmailCheck, (req, res) => {
     res.status(200).render('pages/users/change-email-request.ejs', {
       title: 'Profile',
       messages: req.flash('info'),
+      messagesError : req.flash('error'),
       userTemp
     }); // insert variable into form data
     return;
@@ -1032,7 +1042,7 @@ userRoutes.post('/change-email-request', changeEmailCheck, (req, res) => {
 
 
 userRoutes.get('/upload-images', function (req, res) {
-  res.status(200).render('pages/users/upload-images.ejs', {messages: req.flash('info')})
+  res.status(200).render('pages/users/upload-images.ejs', {messages: req.flash('info'), messagesError : req.flash('error')})
 })
 
 
@@ -1077,7 +1087,7 @@ userRoutes.get('/edit-page', function (req, res) { //  with no id number this sh
       pdfList.push({name: pdf, short: shortName, location: `/pdfs/${pdf}`})
     })
     req.flash('info', 'Page ready for editing');
-    res.status(200).render('pages/users/edit-page.ejs', {messages: req.flash('info'), pdfs : pdfList});
+    res.status(200).render('pages/users/edit-page.ejs', {messages: req.flash('info'), messagesError : req.flash('error'), pdfs : pdfList});
     return;
   })
 })
@@ -1129,14 +1139,14 @@ userRoutes.get('/edit-page/:link', pageIDCheck, function (req, res) {
           pdfList.push({name: pdf, short: shortName, location: `/pdfs/${pdf}`})
         })
         req.flash('info', 'Page ready for editing');
-        res.status(200).render('pages/users/edit-page.ejs', {page: data[0], messages: req.flash('info'), pdfs : pdfList});
+        res.status(200).render('pages/users/edit-page.ejs', {page: data[0], messages: req.flash('info'), messagesError : req.flash('error'), pdfs : pdfList});
         return;
       })
     })
   }).catch(function(err){
     console.log('err :', err);
     req.flash('error', 'There was a system error. Please contact your administrator');
-    res.status(200).render('pages/users/edit-page.ejs', {messages: req.flash('info')});
+    res.status(200).render('pages/users/edit-page.ejs', {messages: req.flash('info'), messagesError : req.flash('error')});
     return;
   });
 })
