@@ -4475,6 +4475,7 @@ input[type="button"].btn-block {
 }
 .card-fixed-size {
   width: 300px !important;
+  margin:  0 auto;
 }
 .form-upload-pdf-height{
   height: 300px;
@@ -4482,6 +4483,23 @@ input[type="button"].btn-block {
 
 .card-column {
   max-width: 20rem;
+}
+
+.card-images-column {
+  margin: 0 auto 0 auto;
+}
+@media (min-width: 768px) and (max-width: 800px){
+  .col-md-8 {
+    -ms-flex: 0 0 50%;
+    flex: 0 0 50%;
+    max-width: 50%;
+  }
+}
+@media (min-width: 700px) {
+  .card-images-column {
+    margin: 0 1rem 1rem 0;
+  }
+  
 }
 
 .card > hr {

@@ -17,10 +17,10 @@
                     </div>
                     <div class="row row-cards row-deck">
                         <% if (typeof images == 'object' && images) { %>
-                        <div class="col-lg-8">
+                        <div class="col-md-8 col-sm-5">
                             <div class="row row-cards row-deck">
                                 <% images.map(function(image){ %>
-                                  <div class="card-column mx-4">
+                                  <div class="card-column card-images-column">
                                     <input type="text" name="image_location" class="this-location" value="<%= image.location %>" />
                                       <input type="hidden" name="image_name" class="this_name" value="<%= image.name%>" />
                                       <input type="hidden" name="image_id" class="this_id" value="<%= image.image_id%>" />
