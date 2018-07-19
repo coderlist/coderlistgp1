@@ -362,14 +362,14 @@ verifyEmailCheckBody = [
 
 routes.post('/verify-change-email', verifyEmailCheckBody, (req, res) => {
   errors = validationResult(req)
-  console.log('errors.array() :', errors.array());
+  console.log('req.body :', req.body);
   if (!errors.isEmpty()) {
     req.flash("info","Invalid email");
     res.status(200).render('pages/public/verify-change-email.ejs', { messages : req.flash('info'), user : { old_email : req.body.old_email, new_email : req.body.new_email, email_change_token : req.body.email_change_token }});
     return;
   } 
   
-  user = {
+  let user = {
     new_email : req.body.new_email,
     old_email : req.body.old_email,
     password : req.body.password,
@@ -377,6 +377,7 @@ routes.post('/verify-change-email', verifyEmailCheckBody, (req, res) => {
   }
   updateUserEmail(user)
   .then(data => {
+    console.log('user :', data);
     if (!data) {
       req.flash("info","Invalid credentials. Please try again.");
       res.status(200).render('pages/public/verify-change_email.ejs', { messages : req.flash('info'), user : { old_email: req.body.old_email, new_email : req.body.new_email, email_change_token : req.body.email_change_token }});
@@ -389,6 +390,7 @@ routes.post('/verify-change-email', verifyEmailCheckBody, (req, res) => {
     req.flash('info', 'Please now login with your new email');
     res.status(200).redirect('./login');
   }).catch(function(err){
+    console.log('err :', err);
     req.flash('error', 'There was a system error. Please contact your administrator');
     res.status(200).redirect('./login');
   })
