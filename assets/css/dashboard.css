@@ -11943,6 +11943,12 @@ a.icon:hover {
   align-items: center;
 }
 
+@media (min-width: 900px) {
+  .nav-item-mobile {
+    display: none;
+  }
+}
+
 .nav-link .badge,
 .nav-item .badge {
   position: absolute;
