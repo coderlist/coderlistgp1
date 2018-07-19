@@ -360,6 +360,21 @@ END $$;
 
 
 
+-- DO 
+-- $BODY$
+-- DECLARE
+--     jsonArray json := (SELECT old_email FROM users WHERE email='test@code.io');
+-- DECLARE  i json;
+-- BEGIN
+--   FOR i IN SELECT json_array_elements(jsonArray)
+--   LOOP
+--     RAISE NOTICE 'output from jsons %', i->>'old_val';
+--   END LOOP;
+-- END;
+-- $BODY$ language plpgsql;
+
+
+
 
 
 

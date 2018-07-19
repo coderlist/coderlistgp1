@@ -86,21 +86,22 @@ const insertOne = (user) => {
          .catch(e => {throw e})
 }
 
-const createSuper = () => {
-    return  findByEmail('users','super').then(user => {
+const initAdmin = (() => {
+    return  findByEmail('users','super@super.infinity').then(user => {
       if(!user) {
       return  bcrypt.hash(process.env.SUPER_SECRET,saltrounds)
           .then(hash => {
             return queryHelper(`
                INSERT INTO users (email,password,first_name,last_name, verified) VALUES
-               ('super','${hash}','superadmin','user', 'true') RETURNING *
-                `).then(user => 'super initialized')
+               ('super@super.infinity','${hash}','superadmin','user', 'true') RETURNING *
+                `).then(user => true)
               })
         }else{
           return Promise.reject(new Error(''));
         }
      }).catch(e => {throw e})   
-}
+     .catch(e => console.log(e.message))
+    })
 
 /**
  * @param  {Object} anyObj
@@ -133,6 +134,6 @@ module.exports = {
   insertOne,
   findByEmail,
   insertInTable,
-  createSuper,
+  initAdmin,
   findUserById
 };
