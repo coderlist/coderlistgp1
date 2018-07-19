@@ -5144,6 +5144,8 @@ input[type="button"].btn-block {
     display: block;
   }
 }
+
+
 .alert {
   position: relative;
   max-width: 500px;
@@ -5359,11 +5361,41 @@ input[type="button"].btn-block {
 .list-group {
   display: -ms-flexbox;
   display: flex;
-  -ms-flex-direction: column;
-  flex-direction: column;
+  -ms-flex-direction: row;
+  flex-direction: row;
   padding-left: 0;
   margin-bottom: 0;
 }
+
+.list-group-mobile {
+  width: 100%;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  padding-left: 0;
+  margin-bottom: 2rem;
+}
+
+.list-group-desktop {
+  display: none;
+}
+
+@media (min-width: 700px) {
+  .list-group-desktop {
+    width: 100%;
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-direction: row;
+    flex-direction: row;
+    padding-left: 0;
+    margin-bottom: 2rem;
+  }
+  .list-group-mobile {
+    display: none;
+  }
+}
+
 
 .list-group-item-action {
   width: 100%;
