@@ -33,13 +33,13 @@ CKEDITOR.stylesSet.add( 'default', [
 	{ name: 'Address',			element: 'address' },
 	*/
 
-	{ name: 'Italic Title',		element: 'h2', styles: { 'font-style': 'italic' } },
-	{ name: 'Subtitle',			element: 'h3', styles: { 'color': '#aaa', 'font-style': 'italic' } },
-	{
-		name: 'Div Row',
-		element: 'div',
-		attributes: { 'class': 'row' }
-	},
+	// { name: 'Italic Title',		element: 'h2', styles: { 'font-style': 'italic' } },
+	// { name: 'Subtitle',			element: 'h3', styles: { 'color': '#aaa', 'font-style': 'italic' } },
+	// {
+	// 	name: 'Div Row',
+	// 	element: 'div',
+	// 	attributes: { 'class': 'row' }
+	// },
 
 	/* Inline styles */
 
@@ -53,7 +53,7 @@ CKEDITOR.stylesSet.add( 'default', [
 	{ name: 'Strikethrough',	element: 'strike' },
 	{ name: 'Subscript',		element: 'sub' },
 	{ name: 'Superscript',		element: 'sup' },
-	*/
+	
 
 	{ name: 'Marker',			element: 'span', attributes: { 'class': 'marker' } },
 
@@ -75,7 +75,9 @@ CKEDITOR.stylesSet.add( 'default', [
 	{ name: 'Language: RTL',	element: 'span', attributes: { 'dir': 'rtl' } },
 	{ name: 'Language: LTR',	element: 'span', attributes: { 'dir': 'ltr' } },
 
-	/* Object styles */
+	*/
+
+	/* Object styles 
 	{
 		name: 'Float Left',
 		element: 'span',
@@ -98,6 +100,7 @@ CKEDITOR.stylesSet.add( 'default', [
 		attributes: { 'class': 'right' },
 		styles: { 'margin-left': '1rem'}
 	},
+	*/
 
 	{
 		name: 'Compact Table',
@@ -118,9 +121,15 @@ CKEDITOR.stylesSet.add( 'default', [
 
 	/* Widget styles */
 
-	{ name: 'Clean Image', type: 'widget', widget: 'image', attributes: { 'class': 'image-clean' } },
+	/* { name: 'Clean Image', type: 'widget', widget: 'image', attributes: { 'class': 'image-clean' } }, */
 	{ name: 'Grayscale Image', type: 'widget', widget: 'image', attributes: { 'class': 'image-grayscale' } },
+	{ name: 'Sepia Image', type: 'widget', widget: 'image', attributes: { 'class': 'image-sepia' } },
+	{ name: 'Darken Image', type: 'widget', widget: 'image', attributes: { 'class': 'image-darken' } },
+	{ name: 'Lighten Image', type: 'widget', widget: 'image', attributes: { 'class': 'image-lighten' } },
+	{ name: 'Enhance Colour', type: 'widget', widget: 'image', attributes: { 'class': 'image-saturate' } },
 
+
+	/* 
 	{ name: 'Featured Snippet', type: 'widget', widget: 'codeSnippet', attributes: { 'class': 'code-featured' } },
 
 	{ name: 'Featured Formula', type: 'widget', widget: 'mathjax', attributes: { 'class': 'math-featured' } },
@@ -130,14 +139,17 @@ CKEDITOR.stylesSet.add( 'default', [
 	{ name: '480p', type: 'widget', widget: 'embedSemantic', attributes: { 'class': 'embed-480p' }, group: 'size' },
 	{ name: '720p', type: 'widget', widget: 'embedSemantic', attributes: { 'class': 'embed-720p' }, group: 'size' },
 	{ name: '1080p', type: 'widget', widget: 'embedSemantic', attributes: { 'class': 'embed-1080p' }, group: 'size' },
+	*/
 
 	// Adding space after the style name is an intended workaround. For now, there
 	// is no option to create two styles with the same name for different widget types. See https://dev.ckeditor.com/ticket/16664.
+	/* 
 	{ name: '240p ', type: 'widget', widget: 'embed', attributes: { 'class': 'embed-240p' }, group: 'size' },
 	{ name: '360p ', type: 'widget', widget: 'embed', attributes: { 'class': 'embed-360p' }, group: 'size' },
 	{ name: '480p ', type: 'widget', widget: 'embed', attributes: { 'class': 'embed-480p' }, group: 'size' },
 	{ name: '720p ', type: 'widget', widget: 'embed', attributes: { 'class': 'embed-720p' }, group: 'size' },
 	{ name: '1080p ', type: 'widget', widget: 'embed', attributes: { 'class': 'embed-1080p' }, group: 'size' }
+	*/
 
 ] );
 

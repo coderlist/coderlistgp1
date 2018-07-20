@@ -14,7 +14,7 @@
         <% include ../../partials/header.ejs %>
     </header>
 
-    <main class="main-layout container">
+    <main class="main-layout container push-footer-down clearfix">
         <%- (typeof page == 'object' && page) ? page.ckeditor_html : ''%>
     </main>
     <% include ../../partials/footer.ejs %>

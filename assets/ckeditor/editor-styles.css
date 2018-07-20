@@ -1,11 +1,172 @@
+@import url('https://fonts.googleapis.com/css?family=Lato:300,300i,400,400i,700,700i');
+
+body {
+    font-family: 'Lato', sans-serif;
+    font-size: 16px;
+    color: #333333;
+}
+
+em {
+    font-style:italic;
+}
+
+blockquote
+{
+	font-style: italic;
+	font-family: 'Lato', Times, "Times New Roman", serif;
+	padding: 2px 0;
+	border-left:4px solid #eee;
+    margin-bottom:1em;
+    margin-left:40px;
+    margin-right:40px;
+}
+
+blockquote p {
+    font-size:20px;
+    margin-bottom:0;
+    padding-left:1em;
+}
+
+strong {
+    font-weight:bold;
+}
+
 .image-center {
     text-align:center;
 }
 
 .image-right {
     float:right;
+    margin-left:2em !important;
 }
 
 .image-left {
     float:left;
+    margin-right:2em !important;
+}
+
+p {
+    margin-top:0;
+    margin-bottom:1em;
+    line-height:22px;
+    font-size:17px;
+    font-weight:300;
+}
+
+a {
+    color: #C07E7E;
+    transition:color .2s ease;
+    text-decoration:none;
+}
+
+a:hover {
+    color:#AD6A6A;
+}
+
+h1, h2, h3 {
+    margin-top:0;
+    margin-bottom:.5em;
+    font-weight:400;
+}
+
+h1 {
+    font-size:45px;
+}
+
+h2 {
+    font-size:32px;
+}
+
+h3 {
+    font-size:24px;
+}
+
+hr {
+    height: 3px;
+    border: none;
+    background: #ededed;
+}
+
+ul, ol {
+    padding-left: 32px;
+    line-height: 28px;
+    font-size:17px;
+    font-weight:300;
+    width:auto;
+    overflow:hidden;
+}
+
+table {
+    width:100% !important;
+
+}
+
+table tr {
+    border: 1px solid #ddd;
+    border-spacing: 2px;
+}
+
+table tr td {
+    padding:.5em;
+    border-right:1px solid #ddd;
+}
+
+table tr td:last-of-type {
+    border-right:none;
+}
+
+figure
+{
+	text-align: center;
+	/* outline: solid 1px #ccc; */
+	background: rgba(0,0,0,0.05);
+	/* padding: 10px; */
+	/* margin: 10px 20px; */
+    display: inline-block;
+    margin:0 !important;
+}
+
+figure > figcaption
+{
+    text-align: center;
+    padding:.3em 0 .7em;
+	display: block; /* For IE8 */
+}
+
+figure, img {
+    margin-bottom:1em !important;
+}
+
+figure img {
+    margin-bottom:0 !important;
+}
+
+img, .image-captioned {
+    max-width:100%;
+    height:auto;
+}
+
+@media (max-width:768px){
+    img, .image-captioned {
+        width:100%;
+        height:auto;
+    }
+}
+
+/* USER SELECTED STYLES */
+
+.image-grayscale {
+    filter: grayscale(100%);
+}
+.image-sepia {
+    filter: sepia(70%);
+}
+.image-darken {
+    filter: brightness(85%);
+}
+.image-lighten {
+    filter: brightness(115%);
+}
+.image-saturate {
+    filter: saturate(130%);
 }
