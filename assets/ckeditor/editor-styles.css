@@ -75,7 +75,7 @@ hr {
     background: #ededed;
 }
 
-ul, ol {
+.cke_editable ul, .cke_editable ol, main ol, main ul {
     padding-left: 32px;
     line-height: 28px;
     font-size:17px;
