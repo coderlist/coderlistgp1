@@ -825,21 +825,22 @@ userRoutes.get('/edit-user/:user_id', checkUserID, (req, res) => { //accessible 
       res.status(200).redirect('/users/dashboard');
       return;
     }
-    userRow = user[0];
-    console.log('userRow :', userRow);
-    if (userRow.is_admin || req.session.user_id === userRow.user_id) {
-      console.log('userRow.first_name :', userRow.first_name, userRow.is_admin || req.session.user_id === userRow.user_id);
-      req.flash('info', 'Modifying user(Flash test)');
-      res.status(200).render('pages/users/edit-user.ejs', {
-        messages: req.flash('info'), 
-        messagesError : req.flash('error'),
-        user : userRow
-      });
+    getIsUserAdmin(req.session.user_id)
+    .then(function(currentUser){
+      userRow = user[0];
+      console.log('userRow :', currentUser);
+      if (req.session.user_id === userRow.user_id || currentUser[0].is_admin) {
+        res.status(200).render('pages/users/edit-user.ejs', {
+          messages: req.flash('info'), 
+          messagesError : req.flash('error'),
+          user : userRow
+        });
+        return;
+      }
+      req.flash('info', 'You are not authorised to modify user');
+      res.status(200).redirect('/users/dashboard');
       return;
-    }
-    req.flash('info', 'You are not authorised to modify user');
-    res.status(200).redirect('/users/dashboard');
-    return;
+    })
   })
   // confirm page for deleting user. only accessible by authenticated admin.
 });
@@ -860,27 +861,29 @@ userRoutes.post('/edit-user', editUserPostCheck , function(req, res){
     res.status(200).redirect('/users/dashboard');
     return;
   }
+  const adminSelected = req.body.is_admin === 'on' ? true : false 
   getUserById(req.body.user_id)
   .then(function(user){
     user = user[0];
     console.log('user :', user);
     getIsUserAdmin(req.session.user_id)
     .then(function(userAdmin){
+      console.log('userAdmin[0].is_admin :', userAdmin[0].is_admin);
       if (userAdmin[0].is_admin || user.user_id === req.session.user_id){ // if user is the same user being edited or user is super admin
         let userUpdate = {
           user_id : req.body.user_id,
           first_name: req.body.first_name,
           last_name: req.body.last_name
         }
-        if(!userAdmin[0].is_admin){ // Only a super admin can grant super admin rights
-          userUpdate.is_admin = user.is_admin ? true : req.body.is_admin // This stops someone removing admin rights. Currently a non reversible process. 
+        if(userAdmin[0].is_admin){ // Only a super admin can grant super admin rights
+          userUpdate.is_admin = user.is_admin ? true : adminSelected // This stops someone removing admin rights. Currently a non reversible process. 
           }
          updateUserName(userUpdate)
         .then(function(response){
           console.log('response :', response);
           if (response){
             req.flash('info', 'User updated');
-            res.status(200).redirect('/users/dashboard');
+            res.status(200).redirect(`/users/edit-user/${req.body.user_id}`);
             return;
           }
         })
