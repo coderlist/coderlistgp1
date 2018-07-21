@@ -1,5 +1,7 @@
 @import url('https://fonts.googleapis.com/css?family=Lato:300,300i,400,400i,700,700i');
 
+/* BASE */
+
 body {
     font-family: 'Lato', sans-serif;
     font-size: 16px;
@@ -29,20 +31,6 @@ blockquote p {
 
 strong {
     font-weight:bold;
-}
-
-.image-center {
-    text-align:center;
-}
-
-.image-right {
-    float:right;
-    margin-left:2em !important;
-}
-
-.image-left {
-    float:left;
-    margin-right:2em !important;
 }
 
 p {
@@ -97,6 +85,24 @@ ul, ol {
     margin:1em 0;
 }
 
+/* Layout styles */
+
+.image-center {
+    text-align:center;
+}
+
+.image-right {
+    float:right;
+    margin-left:32px !important;
+}
+
+.image-left {
+    float:left;
+    margin-right:32px !important;
+}
+
+/* Table */
+
 table {
     width:100% !important;
     border:none;
@@ -128,13 +134,12 @@ table tr td:last-of-type {
     padding:1em;
 }
 
+/* Images */
+
 figure
 {
 	text-align: center;
-	/* outline: solid 1px #ccc; */
 	background: rgba(0,0,0,0.05);
-	/* padding: 10px; */
-	/* margin: 10px 20px; */
     display: inline-block;
     margin:0 !important;
 }
@@ -182,4 +187,17 @@ img, .image-captioned {
 }
 .image-saturate {
     filter: saturate(130%);
+}
+
+.image-grid {
+    display:flex;
+    flex-direction:row;
+    flex-wrap:wrap;
+    align-items: center;
+    justify-content:space-evenly;
+    align-items:flex-start;
+}
+
+.image-grid img {
+    margin:1em !important;
 }
