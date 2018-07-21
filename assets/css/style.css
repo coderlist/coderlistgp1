@@ -476,7 +476,7 @@ textarea {
         width: 100%;
     }
     main {
-        width: 620px;
+        max-width: 620px;
         padding: 0;
     }
     .card-deck {
@@ -512,8 +512,8 @@ textarea {
 
 @media screen and (min-width: 900px) {
     main {
-        width: 60rem;
-        max-width: 60rem;
+        width: 100%;
+        max-width: 925px;
     }
     .form {
         width: 960px;

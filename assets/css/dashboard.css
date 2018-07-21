@@ -14336,9 +14336,14 @@ textarea[cols] {
   display: block;
 }
 .form-image-upload{
-  max-width: 300px;
-  width: 100%;
+  display: block;
+  width: 300px;
   margin: 0 auto;
+}
+.form-image-preview-upload{
+  display: block;
+  width: 300px;
+  margin: 0 auto 1rem auto;
 }
 
 .form-label {
