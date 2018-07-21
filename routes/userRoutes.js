@@ -1160,8 +1160,9 @@ postCreatePageCheck = [
   body('publish_page').isBoolean()
 ]
 
-userRoutes.post('/create-page', postCreatePageCheck, upload.single('image'), function(req, res){
+userRoutes.post('/create-page',  upload.single('image'), postCreatePageCheck, function(req, res){
   let errors = validationResult(req);
+  console.log('create page post req.body :', req.body);
   req.body.content = sanitizeHtml(req.body.content, allowedCkeditorItems);
   let page = {
     created_by: req.session.user_id,
@@ -1173,9 +1174,11 @@ userRoutes.post('/create-page', postCreatePageCheck, upload.single('image'), fun
     is_published: req.body.publish_page
     
   }
+  console.log('errors.isEmpty :', errors.array(), "file present", req.file);
   if (!errors.isEmpty() || !req.file) { // check that a file has been uploaded
+    console.log('errors.array() :', errors.array());
     req.flash('error','Invalid page data. Only a to Z and 0 to 9 are acceptable for page names and titles. Are you missing an image?');
-    res.status(200).render('pages/users/edit-page', {messagesError: req.flash('error'), page : page});
+    res.status(200).render('pages/users/edit-page', {messagesError: req.flash('error')});
     return;
   }
   
@@ -1230,9 +1233,9 @@ userRoutes.post('/edit-page', postEditPageCheck, function(req, res){
   }
   console.log('page :', page);
   // console.log('req.body :', req.body);
-  if (!errors.isEmpty) {
+  if (!errors.isEmpty()) {
     req.flash('error','Invalid page data');
-    res.status(200).redirect('/users/edit-page', {page : page});
+    res.status(200).render('pages/users/edit-page', {page : page});
     return;
   }
   page.link = req.body.title.trim().toLowerCase().replace(/[ ]/g, "-");
@@ -1243,7 +1246,7 @@ userRoutes.post('/edit-page', postEditPageCheck, function(req, res){
     res.status(200).redirect('/users/dashboard');
   }).catch(function(err){
     console.log('err :', err);
-    req.flash('err', 'There was an error updating the page');
+    req.flash('error', 'There was an error updating the page');
     res.status(200).render('pages/users/edit-page.ejs', {messages: req.flash('info'), page : page});
     
   })
