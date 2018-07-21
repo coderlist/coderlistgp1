@@ -41,7 +41,7 @@
                             <label class="form-label">Short description
                                 <span class="form-label-small character-counter">0/120</span>
                             </label>
-                            <textarea class="form-control page-description"  name="description" rows="6" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" max-length="120" pattern="[A-Za-z0-9 ]+" placeholder="Add a description -  Please use only Spaces, letters and/or numbers" required><%= (typeof page == 'object' && page) ?page.page_description : '' %></textarea>
+                            <textarea class="form-control page-description"  name="description" rows="6" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" max-length="120" placeholder="Add a description -  Please use only Spaces, letters and/or numbers. Submitting with invalid character will currently cause your work to disappear. We advise pressing the back button in this case" required><%= (typeof page == 'object' && page) ?page.page_description : '' %></textarea>
                         </div>
                         <% if (title === "Create Page") { %>
                           <div class="form-group form-image">

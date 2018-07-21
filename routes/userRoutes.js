@@ -846,7 +846,7 @@ userRoutes.get('/edit-user/:user_id', checkUserID, (req, res) => { //accessible 
 });
 
 
-editUserPostCheck = [
+const editUserPostCheck = [
   body('user_id').isInt(),
   body('first_name').trim().isAlphanumeric(),
   body('last_name').trim().isAlphanumeric(),
@@ -1154,9 +1154,9 @@ userRoutes.get('/edit-page/:link', pageIDCheck, function (req, res) {
 })
 
 postCreatePageCheck = [
-  body('title').isAlphanumeric(),
+  body('title').matches(/^[\w ]+$/),
   body('content').exists(), // ensure sanitised in and out of db
-  body('description').isAlphanumeric(),
+  body('description').matches(/^[\w ]+$/),
   body('publish_page').isBoolean()
 ]
 
