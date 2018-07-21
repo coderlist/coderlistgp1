@@ -751,7 +751,7 @@ userRoutes.post('/create-user', createUserCheck, (req, res) => { //accessible by
         let mail = new Mail;
         mail.sendVerificationLink(user);
         req.flash('info', 'user created and email sent'); 
-        res.redirect('/users/create-user'); // this is going to the dashboard after create user.  Why !!!!
+        res.render('/users/create-user'); // this is going to the dashboard after create user.  Why !!!!
         return;
       } else {
         console.log("There was a create user error", err)
