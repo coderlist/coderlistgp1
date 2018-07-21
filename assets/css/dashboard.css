@@ -14349,6 +14349,9 @@ textarea[cols] {
   width: 300px;
   margin: 0 auto 1rem auto;
 }
+.btn-update-banner-image{
+  margin: 1rem auto;
+}
 
 .form-label {
   display: block;
