@@ -750,8 +750,8 @@ userRoutes.post('/create-user', createUserCheck, (req, res) => { //accessible by
       if (userCreated) {
         let mail = new Mail;
         mail.sendVerificationLink(user);
-        req.flash('info', 'user created and email sent'); // email not currently being sent
-        res.redirect('/users/dashboard');
+        req.flash('info', 'user created and email sent'); 
+        res.redirect('/users/create-user'); // this is going to the dashboard after create user.  Why !!!!
         return;
       } else {
         console.log("There was a create user error", err)
@@ -912,7 +912,8 @@ userRoutes.delete('/delete-user/:user_id', deleteUserPostCheck, function(req, re
     res.status(200).send(JSON.stringify({ status: "FAILURE", message: 'Invalid user id', location: "/users/dashboard"}));
     return;
   }
-  if (req.params.user_id === req.session.user_id){
+  console.log('req.params.user_id :', req.params.user_id, req.session.user_id);
+  if (req.params.user_id == req.session.user_id){
     console.log('cannot delete yourself')
     // req.flash('error','You are not authorised to delete yourself');
     // res.status(200).redirect('/users/dashboard');
