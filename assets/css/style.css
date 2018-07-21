@@ -43,9 +43,10 @@
 main {
     width: 100%;
     max-width: 60rem;
-    margin-top: 84px !important;
-    padding-top: 1em;
+    margin-top: 100px !important;
+    padding-top: 2em;
 }
+
 
 
 /* Library */
