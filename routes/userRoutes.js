@@ -1194,7 +1194,7 @@ userRoutes.post('/create-page',  upload.single('image'), postCreatePageCheck, fu
   }
   insertBannerImage(image)
   .then(function(){
-    req.flash('info', 'Image data inserted into db')
+    // req.flash('info', 'Image data inserted into db')
   }).catch(function(err){
     console.log('err :', err);
     req.flash('error', 'Failure adding image to db')
@@ -1206,9 +1206,17 @@ userRoutes.post('/create-page',  upload.single('image'), postCreatePageCheck, fu
     console.log('data :', data);
     req.flash('info', 'Page created successfully');
     res.status(200).redirect('/users/dashboard');
+    return;
   }).catch(function(err){
+    console.log('catch error :', err.code);
+    if (err.code === "23505") {
+    req.flash('error', 'Title name already exists. Please use a different one');
+    res.status(200).render(`pages/users/edit-page`, {messages: req.flash('error'), page : page}); 
+    return;
+    }
     req.flash('error', 'There was an error creating the page');
-    res.status(200).render(`pages/users/edit-page`, {messages: req.flash('info'), page : page}); 
+    res.status(200).render(`pages/users/edit-page`, {messages: req.flash('error'), page : page}); 
+    return;
   })
 });
 postEditPageCheck = [
