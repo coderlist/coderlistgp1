@@ -38,7 +38,7 @@ CKEDITOR.editorConfig = function( config ) {
 	// Simplify the dialog windows.
 //   config.removeDialogTabs = 'image:advanced;link:advanced';
 //   config.extraPlugins = 'uploadimage', 'uploadwidget', 'imagebrowser', 'stylesheetparser', 'image2', 'widget', 'lineutils';
-  config.extraPlugins = 'image2', 'widget', 'lineutils';
+  config.extraPlugins = 'justify,image2,widget,lineutils';
   config.filebrowserBrowseUrl = '/users/upload-file';
   config.filebrowserUploadUrl = '/users/upload-file';
   config.imageUploadUrl = '/users/upload-file';

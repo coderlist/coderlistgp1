@@ -94,6 +94,7 @@ ul, ol {
     font-weight:300;
     width:auto;
     overflow:hidden;
+    margin:1em 0;
 }
 
 table {
