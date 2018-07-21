@@ -1085,7 +1085,7 @@ userRoutes.get('/edit-page', function (req, res) { //  with no id number this sh
       pdfs : pdfList});
     return;
     }
-    pdfs.map(function(pdf) { //refactor two of these now
+    pdfs.map(function(pdf) { //refactor. two of these now
       console.log('pdfs :', pdf);
       const shortName = pdf.match(/([\w\s]*)/)[0] + ".pdf";  //remove the random number to make displaying prettier
       pdfList.push({name: pdf, short: shortName, location: `/pdfs/${pdf}`})
@@ -1175,9 +1175,9 @@ userRoutes.post('/create-page', postCreatePageCheck, upload.single('image'), fun
     is_published: req.body.publish_page
     
   }
-  if (!errors.isEmpty || !req.file) { // check that a file has been uploaded
-    req.flash('info','Invalid page data. Are you missing an image?');
-    res.status(200).redirect('/users/edit-page', {page : page});
+  if (!errors.isEmpty() || !req.file) { // check that a file has been uploaded
+    req.flash('error','Invalid page data. Only a to Z and 0 to 9 are acceptable for page names and titles. Are you missing an image?');
+    res.status(200).render('pages/users/edit-page', {messagesError: req.flash('error'), page : page});
     return;
   }
   
@@ -1196,7 +1196,7 @@ userRoutes.post('/create-page', postCreatePageCheck, upload.single('image'), fun
     req.flash('info', 'Image data inserted into db')
   }).catch(function(err){
     console.log('err :', err);
-    req.flash('info', 'Failure adding image to db')
+    req.flash('error', 'Failure adding image to db')
   })
   // console.log('req.file :', req.file);
   console.log('page :', page);
@@ -1206,8 +1206,8 @@ userRoutes.post('/create-page', postCreatePageCheck, upload.single('image'), fun
     req.flash('info', 'Page created successfully');
     res.status(200).redirect('/users/dashboard');
   }).catch(function(err){
-    req.flash('info', 'There was an error creating the page');
-    res.status(200).render('pages/users/edit-page.ejs', {messages: req.flash('info'), page : page}); 
+    req.flash('error', 'There was an error creating the page');
+    res.status(200).render(`pages/users/edit-page`, {messages: req.flash('info'), page : page}); 
   })
 });
 postEditPageCheck = [
@@ -1233,7 +1233,7 @@ userRoutes.post('/edit-page', postEditPageCheck, function(req, res){
   console.log('page :', page);
   // console.log('req.body :', req.body);
   if (!errors.isEmpty) {
-    req.flash('info','Invalid page data');
+    req.flash('error','Invalid page data');
     res.status(200).redirect('/users/edit-page', {page : page});
     return;
   }
@@ -1245,7 +1245,7 @@ userRoutes.post('/edit-page', postEditPageCheck, function(req, res){
     res.status(200).redirect('/users/dashboard');
   }).catch(function(err){
     console.log('err :', err);
-    req.flash('info', 'There was an error updating the page');
+    req.flash('err', 'There was an error updating the page');
     res.status(200).render('pages/users/edit-page.ejs', {messages: req.flash('info'), page : page});
     
   })

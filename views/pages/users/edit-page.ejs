@@ -31,7 +31,7 @@
                             <input class="form-control this_id" name="page_id" type="hidden" value="<%= (typeof page == 'object' && page) ? page.page_id : ''%>" />
                             <input class="form-control" name="created_by" type="hidden" value="<%= (typeof page == 'object' && page) ? page.created_by : ''%>" />
                             <label class="form-label">Title</label>
-                            <input type="text" class="form-control this_name" name="title" placeholder="Page title" value="<%= (typeof page == 'object' && page) ? page.title : '' %>" required>
+                            <input type="text" pattern="[A-Za-z0-9 ]+" class="form-control this_name" name="title" placeholder="Page title - Please use only Spaces, letters and/or numbers" value="<%= (typeof page == 'object' && page) ? page.title : '' %>" required>
                         </div>
                         <div class="form-group ">
                             <label class="form-label"></label>
@@ -41,7 +41,7 @@
                             <label class="form-label">Short description
                                 <span class="form-label-small character-counter">0/120</span>
                             </label>
-                            <textarea class="form-control page-description" name="description" rows="6" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" max-length="120" placeholder="Add a description" required><%= (typeof page == 'object' && page) ?page.page_description : '' %></textarea>
+                            <textarea class="form-control page-description"  name="description" rows="6" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" max-length="120" pattern="[A-Za-z0-9 ]+" placeholder="Add a description -  Please use only Spaces, letters and/or numbers" required><%= (typeof page == 'object' && page) ?page.page_description : '' %></textarea>
                         </div>
                         <% if (title === "Create Page") { %>
                           <div class="form-group form-image">
