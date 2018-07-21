@@ -94,6 +94,10 @@ header {
     margin: 0 1rem 0.5rem 0;
 }
 
+.navbar-brand-name a {
+    color:#333;
+}
+
 .navbar .navbar-brand .navbar-brand-description {
     display: none;
 }
