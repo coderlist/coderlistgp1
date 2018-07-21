@@ -28,22 +28,24 @@ CKEDITOR.editorConfig = function( config ) {
 
 	// Remove some buttons provided by the standard plugins, which are
 	// not needed in the Standard(s) toolbar.
-	config.removeButtons = 'Underline,Subscript,Superscript';
+	config.removeButtons = 'Underline,Subscript,Superscript,Preview,Indent,Outdent,About';
 
 	// Set the most common block elements.
 	config.format_tags = 'p;h1;h2;h3;pre';
 
+	config.removePlugins = 'image';
+
 	// Simplify the dialog windows.
-  config.removeDialogTabs = 'image:advanced;link:advanced';
-  config.extraPlugins = 'uploadimage', 'uploadwidget', 'imagebrowser', 'stylesheetparser';
-  config.filebrowserBrowseUrl = '/users/upload-file';
-  config.filebrowserUploadUrl = '/users/upload-file';
-  config.imageUploadUrl = '/users/upload-file';
-  config.uploadUrl = '/users/upload-file';
-  config.imageBrowser_listUrl = '/users/get-server-images';
-  config.contentsCss = '/ckeditor/page-styles.css';
-  // config.height = '400px';
-  // config.stylesSet = [];
-  // config.simpleImageBrowserURL = '/users/get-server-images';
-  // filebrowserBrowseUrl = 'images';
+	config.extraPlugins = 'justify,image2,widget,lineutils';
+	config.filebrowserBrowseUrl = '/users/upload-file';
+	config.filebrowserUploadUrl = '/users/upload-file';
+	config.imageUploadUrl = '/users/upload-file';
+	config.uploadUrl = '/users/upload-file';
+	config.imageBrowser_listUrl = '/users/get-server-images';
+	config.contentsCss = '/ckeditor/editor-styles.css';
+	config.autoParagraph = false;
+	config.allowedContent = true;
+
+	config.image2_alignClasses = [ 'image-left', 'image-center', 'image-right' ];
+	config.image2_captionedClass = 'image-captioned'; 
 };
