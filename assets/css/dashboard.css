@@ -91,7 +91,6 @@ body {
   font-weight: 700;
 }
 
-
 /* Animation for Flash Messages */ 
 @keyframes flash-messages {
   from {
@@ -4476,6 +4475,7 @@ input[type="button"].btn-block {
 }
 .card-fixed-size {
   width: 300px !important;
+  margin:  0 auto;
 }
 .form-upload-pdf-height{
   height: 300px;
@@ -4483,6 +4483,23 @@ input[type="button"].btn-block {
 
 .card-column {
   max-width: 20rem;
+}
+
+.card-images-column {
+  margin: 0 auto 0 auto;
+}
+@media (min-width: 768px) and (max-width: 800px){
+  .col-md-8 {
+    -ms-flex: 0 0 50%;
+    flex: 0 0 50%;
+    max-width: 50%;
+  }
+}
+@media (min-width: 700px) {
+  .card-images-column {
+    margin: 0 1rem 1rem 0;
+  }
+  
 }
 
 .card > hr {
@@ -5130,11 +5147,23 @@ input[type="button"].btn-block {
     top: 0;
   }
 }
+
 .image_thumbnail {
   width: 2rem;
   height: 2rem;
   border-radius: 50%;
 }
+.hold_image_thumbnail {
+  display:none;
+}
+
+@media (min-width: 576px) {
+  .hold_image_thumbnail {
+    display: block;
+  }
+}
+
+
 .alert {
   position: relative;
   max-width: 500px;
@@ -5350,11 +5379,41 @@ input[type="button"].btn-block {
 .list-group {
   display: -ms-flexbox;
   display: flex;
-  -ms-flex-direction: column;
-  flex-direction: column;
+  -ms-flex-direction: row;
+  flex-direction: row;
   padding-left: 0;
   margin-bottom: 0;
 }
+
+.list-group-mobile {
+  width: 100%;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  padding-left: 0;
+  margin-bottom: 2rem;
+}
+
+.list-group-desktop {
+  display: none;
+}
+
+@media (min-width: 700px) {
+  .list-group-desktop {
+    width: 100%;
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-direction: row;
+    flex-direction: row;
+    padding-left: 0;
+    margin-bottom: 2rem;
+  }
+  .list-group-mobile {
+    display: none;
+  }
+}
+
 
 .list-group-item-action {
   width: 100%;
@@ -11900,6 +11959,12 @@ a.icon:hover {
   display: flex;
   -ms-flex-align: center;
   align-items: center;
+}
+
+@media (min-width: 900px) {
+  .nav-item-mobile {
+    display: none;
+  }
 }
 
 .nav-link .badge,

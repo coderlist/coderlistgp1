@@ -4,6 +4,7 @@
 const pageItems = ['no-link'];
 const mainMenuItems = [];
 const subMenuItems = [];
+
 /* Options for fetch method */
 const init = {
     method: 'GET',
@@ -176,7 +177,13 @@ addNewMenuItemButton.forEach(button => {
         addNewMenuItem(event);
     });
 });
-
+/**
+ * STORE NAV Indexes for later update:
+ */
+const storeNavIndex = {
+    mainNavIndex: '',
+    subNavIndex: ''
+}
 /**
  * Get the tbody
  */
@@ -221,7 +228,10 @@ function getMenuIndex(buttonTarget) {
     }
     found = !found;
     getMenuItemData(buttonMenuIndex);
+    storeNavIndex.mainNavIndex = buttonMenuIndex;
+    console.log(storeNavIndex.mainNavIndex);
 }
+
 /**
  * 
  * Gets the data of the elements
@@ -373,6 +383,7 @@ function getSubMenuIndex(buttonTarget) {
         return;
     }
     getSubMenuItemData(buttonSubMenuIndex);
+    storeNavIndex.subNavIndex = buttonSubMenuIndex;
 }
 
 /**
@@ -402,6 +413,7 @@ function getSubMenuItemData(index){
     console.log("Item OrderNumber:",thisMenuItemData.menuItemOrderNumber);
    // postSubMenuItemData(thisTableItemData);
    postSubMenuItemData(thisMenuItemData);
+
 }
 /**
  * 
@@ -499,15 +511,20 @@ function deleteSubMenuItemID(itemId){
 function manageNavMessagesAndStatus(message){
     const manageNavTitle = document.querySelector('.manage-nav-overlay-title');
     const manageNavMessage = document.querySelector('.manage-nav-overlay-message');
+    console.log('Manage Nav Messages And Status: ', storeNavIndex.mainNavIndex);
+    const manageNavInputItemIDField = document.querySelectorAll('.main-nav-item-id')[storeNavIndex.mainNavIndex];
+    const manageSubNavInputItemIDField = document.querySelectorAll('.sub-nav-item-id')[storeNavIndex.subNavIndex];
     if(message.status === "SUCCESS" && message.message === "Nav Item Created"){
-        if(message.createdNavItem.parent_id === null){
+        if(message.createdNavItem.link === null){
             mainMenuItems.push(message.createdNavItem);
+            manageNavInputItemIDField.value = message.createdNavItem.item_id;
             manageNavTitle.textContent = message.status;
             manageNavMessage.textContent = message.message;
             toggleManageNavOverlay();
         } else {
             manageNavTitle.textContent = message.status;
             manageNavMessage.textContent = message.message;
+            manageSubNavInputItemIDField.value = message.createdNavItem.item_id;
             toggleManageNavOverlay();
         }
     } else if(message.status === "SUCCESS" && message.message === "Nav Item Updated"){

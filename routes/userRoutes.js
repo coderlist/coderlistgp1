@@ -1,6 +1,7 @@
 const fs = require('fs');
 const express = require('express');
 const userRoutes = new express.Router();
+const urlConfig = require ('../environmentConfig');
 // const passport = require('../auth/local');
 const Logins = require('../helperFunctions/Logins');
 const UserLocalsNavigationStyling = require('../helperFunctions/navigation-locals');
@@ -228,7 +229,8 @@ userRoutes.get('/dashboard', (req, res) => {
       res.status(200).render('pages/users/dashboard.ejs', { 
         users : userData,
         pages : pageData,
-        messages: req.flash('info')
+        messages: req.flash('info'),
+        messagesError : req.flash('error')
       })
     })
   }).catch(function(err){
@@ -271,6 +273,7 @@ userRoutes.get('/manage-nav', function (req, res) {
     })
     res.status(200).render('pages/users/manage-nav.ejs', { 
       messages: req.flash('info'),
+      messagesError : req.flash('error'),
       pageItems: values[0],
       mainMenuItems: values[1],
       subMenuItems: values[1]
@@ -356,119 +359,6 @@ userRoutes.delete('/manage-nav/:item_id', navItemDeleteCheck, function(req,res){
 
 userRoutes.get('/page-navmenu-request', function(req, res){
 
-  /*const data = {
-    "pageItems": [
-      {
-        "page_id": 37,
-        "link": "tes-url-sluggy-page7"
-      },
-      {
-        "page_id": 38,
-        "link": "testy-sluggg-tooow-fdfdsfs"
-      },
-      {
-        "page_id": 39,
-        "link": "test-the-values-in-inspectbvxbvcxbcv"
-      },
-      {
-        "page_id": 40,
-        "link": "bolls"
-      }
-    ],
-    "mainMenuItems": [
-      {
-        "link": "tes-url-sluggy-page7",
-        "item_id": 66,
-        "page_id": 37,
-        "parent_id": null,
-        "title": "Deck the halls 3",
-        "order_num": 5,
-        "updated_date": "2018-07-16T03:17:19.225Z",
-        "creation_date": "2018-07-16T01:19:51.200Z",
-        "created_by": 1
-      },
-      {
-        "link": "testy-sluggg-tooow-fdfdsfs",
-        "item_id": 76,
-        "page_id": 38,
-        "parent_id": null,
-        "title": "New one 2 3 5 6 8",
-        "order_num": 7,
-        "updated_date": null,
-        "creation_date": "2018-07-16T01:31:15.675Z",
-        "created_by": 1
-      },
-      {
-        "link": null,
-        "item_id": 75,
-        "page_id": null,
-        "parent_id": null,
-        "title": "Deck the halls 5",
-        "order_num": 5,
-        "updated_date": "2018-07-16T03:17:32.600Z",
-        "creation_date": "2018-07-16T01:30:20.237Z",
-        "created_by": 1
-      },
-      {
-        "link": null,
-        "item_id": 86,
-        "page_id": null,
-        "parent_id": null,
-        "title": "no parent",
-        "order_num": 4,
-        "updated_date": null,
-        "creation_date": "2018-07-16T02:13:50.535Z",
-        "created_by": 1
-      },
-      {
-        "link": null,
-        "item_id": 77,
-        "page_id": null,
-        "parent_id": null,
-        "title": "blah",
-        "order_num": 4,
-        "updated_date": "2018-07-16T02:03:50.050Z",
-        "creation_date": "2018-07-16T01:32:06.855Z",
-        "created_by": 1
-      },
-    ],
-    "subMenuItems": [
-      {
-        "link": "test-the-values-in-inspectbvxbvcxbcv",
-        "item_id": 95,
-        "page_id": 39,
-        "parent_id": 92,
-        "title": "Jefffffffff",
-        "order_num": 5,
-        "updated_date": "2018-07-16T13:05:28.464Z",
-        "creation_date": "2018-07-16T02:29:41.228Z",
-        "created_by": 1
-      },
-      {
-        "link": "bolls",
-        "item_id": 94,
-        "page_id": 40,
-        "parent_id": 88,
-        "title": "Jeff",
-        "order_num": 5,
-        "updated_date": "2018-07-16T03:20:14.544Z",
-        "creation_date": "2018-07-16T02:27:48.859Z",
-        "created_by": 1
-      },
-      {
-        "link": null,
-        "item_id": 92,
-        "page_id": null,
-        "parent_id": 87,
-        "title": "Blahblah blah",
-        "order_num": 5,
-        "updated_date": null,
-        "creation_date": "2018-07-16T02:20:27.577Z",
-        "created_by": 1
-      },
-    ]
-  }
-  res.status(200).send(JSON.stringify(data))*/
   const pageItems = getAllPagesWithLink(); // this currently gets all information about the page. We need to cut this down to what is needed
   const navigationItems = getAllNavItemsWithLink();
   Promise.all([pageItems, navigationItems])
@@ -560,7 +450,7 @@ userRoutes.get('/manage-pdfs', function (req, res) {
       pdfs.map(function(pdf) {
       console.log('pdfs :', pdf);
       const shortName = pdf.match(/([\w\s]*)/)[0] + ".pdf";  //remove the random number to make displaying prettier
-      pdfList.push({name: pdf, short: shortName, location: `/pdfs/${pdf}`})
+      pdfList.push({name: pdf, short: shortName, location: `${urlConfig.url}/pdfs/${pdf}`})
     })
     console.log('pdfList :', pdfList);
     res.status(200).render('pages/users/manage-pdfs.ejs', { 
@@ -570,8 +460,6 @@ userRoutes.get('/manage-pdfs', function (req, res) {
     })
   })
 })
-
-
 
 userRoutes.post('/manage-pdfs', PDFUpload.single('pdf'), function (req, res) {
   // logic handled within PDFUpload
@@ -618,7 +506,8 @@ userRoutes.get('/manage-images', function(req, res){
       res.status(200).render('pages/users/manage-images', { message: req.flash('info'), messagesError: req.flash('error') } );
       return;
     }
-    req.flash('info', 'No images');
+    // req.flash('info', 'Images');
+      data = data.map(function(image){ image.location = `${urlConfig.url}${image.location}`; return image}) // add domain to the beginning of the image location
       res.status(200).render('pages/users/manage-images', { images: data, message: req.flash('info'), messagesError: req.flash('error') } );
       return;
   }).catch(function(err){
@@ -743,7 +632,8 @@ userRoutes.post('/change-password', passwordCheck, (req, res) => {
         console.log("failed to update password");
         req.flash('info', 'Invalid credentials');
         res.status(200).render('pages/users/change-password', {
-          messages: req.flash('info')
+          messages: req.flash('info'),
+          messagesError : req.flash('error')
         });
         return;
       }
@@ -868,6 +758,7 @@ userRoutes.post('/create-user', createUserCheck, (req, res) => { //accessible by
         req.flash('info', 'There was an error creating this user. Please try again. If you already have please contact support.')
         res.status(200).render('pages/users/edit-user.ejs', {
           messages: req.flash('info'),
+          messagesError : req.flash('error'),
           user
         });
         return;
@@ -883,6 +774,7 @@ userRoutes.post('/create-user', createUserCheck, (req, res) => { //accessible by
     }
     res.status(200).render('pages/users/edit-user.ejs', { 
       messages: req.flash('info'),
+      messagesError : req.flash('error'),
       user
     });
   })
@@ -892,6 +784,7 @@ userRoutes.post('/create-user', createUserCheck, (req, res) => { //accessible by
 userRoutes.get('/admin', (req, res) => {
   res.status(200).render('pages/users/admin.ejs', {
     messages: req.flash("info"),
+    messagesError : req.flash('error'),
     ckeditorData: req.body.ckeditorHTML || ""
   });
 });
@@ -900,6 +793,7 @@ userRoutes.get('/admin', (req, res) => {
 userRoutes.post('/admin', (req, res) => {
   res.status(200).render('pages/users/admin.ejs', {
     messages: req.flash("info"),
+    messagesError : req.flash('error'),
     ckeditorData: req.body.ckeditorHTML || ""
   });
 });
@@ -938,6 +832,7 @@ userRoutes.get('/edit-user/:user_id', checkUserID, (req, res) => { //accessible 
       req.flash('info', 'Modifying user(Flash test)');
       res.status(200).render('pages/users/edit-user.ejs', {
         messages: req.flash('info'), 
+        messagesError : req.flash('error'),
         user : userRow
       });
       return;
@@ -1070,7 +965,8 @@ userRoutes.get('/change-password', (req, res) => {
 
 userRoutes.get('/change-email-request', (req, res) => {
   res.status(200).render('pages/users/change-email-request.ejs', {
-    messages: req.flash('info')
+    messages: req.flash('info'),
+    messagesError : req.flash('error')
   });
 });
 
@@ -1106,6 +1002,7 @@ userRoutes.post('/change-email-request', changeEmailCheck, (req, res) => {
     res.status(200).render('pages/users/change-email-request.ejs', {
       title: 'Profile',
       messages: req.flash('info'),
+      messagesError : req.flash('error'),
       userTemp
     }); // insert variable into form data
     return;
@@ -1119,24 +1016,25 @@ userRoutes.post('/change-email-request', changeEmailCheck, (req, res) => {
       new_email: req.body.new_email,
       email_change_token: uuid()
     }
-    console.log('user :', user);
-    console.log('userEmail :', userEmail);
+    // console.log('user :', user);
+    // console.log('userEmail :', userEmail);
+    const location = '/users/change-email-request';
     insertOldEmailObject(user)
     .then(function (data) {
         if (!data) {
-        req.flash('info', 'Invalid credentials')
-        res.status(200).redirect('/users/change-email-request.ejs');
+        res.status(200).send(JSON.stringify({ status: "FAILURE", message: 'Invalid credentials', location: location }));
         return;
       }
+      
       let mail = new Mail();
       mail.sendEmailChangeVerificationLink(user);
-      req.flash('info', "An email has been sent to your new email with further instructions");
-      res.redirect('/users/dashboard');
+      res.status(200).send(JSON.stringify({ status: "SUCCESS", message: 'An email has been send to your new email address with further instructions', location: location }));
     });
   }).catch(function (err) {
     console.log('err :', err);
-    req.flash('info', "An internal error has occurred. Please contact your administrator");
     res.redirect('/users/dashboard');
+    res.status(200).send(JSON.stringify({ status: "FAILURE", message: 'An internal error has occurred. Please contact your administrator', location: location }));
+    
     return;
   })
 });
@@ -1145,7 +1043,7 @@ userRoutes.post('/change-email-request', changeEmailCheck, (req, res) => {
 
 
 userRoutes.get('/upload-images', function (req, res) {
-  res.status(200).render('pages/users/upload-images.ejs', {messages: req.flash('info')})
+  res.status(200).render('pages/users/upload-images.ejs', {messages: req.flash('info'), messagesError : req.flash('error')})
 })
 
 
@@ -1190,7 +1088,7 @@ userRoutes.get('/edit-page', function (req, res) { //  with no id number this sh
       pdfList.push({name: pdf, short: shortName, location: `/pdfs/${pdf}`})
     })
     req.flash('info', 'Page ready for editing');
-    res.status(200).render('pages/users/edit-page.ejs', {messages: req.flash('info'), pdfs : pdfList});
+    res.status(200).render('pages/users/edit-page.ejs', {messages: req.flash('info'), messagesError : req.flash('error'), pdfs : pdfList});
     return;
   })
 })
@@ -1242,14 +1140,14 @@ userRoutes.get('/edit-page/:link', pageIDCheck, function (req, res) {
           pdfList.push({name: pdf, short: shortName, location: `/pdfs/${pdf}`})
         })
         req.flash('info', 'Page ready for editing');
-        res.status(200).render('pages/users/edit-page.ejs', {page: data[0], messages: req.flash('info'), pdfs : pdfList});
+        res.status(200).render('pages/users/edit-page.ejs', {page: data[0], messages: req.flash('info'), messagesError : req.flash('error'), pdfs : pdfList});
         return;
       })
     })
   }).catch(function(err){
     console.log('err :', err);
     req.flash('error', 'There was a system error. Please contact your administrator');
-    res.status(200).render('pages/users/edit-page.ejs', {messages: req.flash('info')});
+    res.status(200).render('pages/users/edit-page.ejs', {messages: req.flash('info'), messagesError : req.flash('error')});
     return;
   });
 })
@@ -1447,33 +1345,29 @@ userRoutes.get('/get-server-images', function(req, res){  // This supplies ckedi
   })
 })
 
-const pageSavePostCheck = [
-  check('pageId').isInt().exists,
-  check('isPublished').isBoolean(),
-  check('isNavMenuItem').isBoolean(),
-  check('isHomePageGrid').isBoolean(),
-  check('pageOrderNumber').isInt()
-]
-
 userRoutes.post('/save-order', function(req,res){
 
-  if (!Number.isInteger(parseInt(req.body.pageId)) || typeof req.body.isPublished != 'boolean' || typeof req.body.isNavMenuItem != 'boolean' || typeof req.body.isHomePageGrid != 'boolean' || !Number.isInteger(parseInt(req.body.pageOrderNumber))) { // cannot get the json body to work with express validator 5
+  if (!Number.isInteger(parseInt(req.body.pageId)) || typeof req.body.isPublished != 'boolean' || typeof req.body.isHomePageGrid != 'boolean' || !Number.isInteger(parseInt(req.body.pageOrderNumber))) { // cannot get the json body to work with express validator 5
     console.log('failed :');
     req.flash('error', 'Invalid Page Data');
     res.status(200).redirect('/users/dashboard');
     return;
   }
+  console.log('req.body :', req.body);
   const page = {
     page_id: parseInt(req.body.pageId),
     is_published: req.body.isPublished,
-    is_nav_menu: req.body.isNavMenuItem,
     order_number: parseInt(req.body.pageOrderNumber),
-    is_homepage_grid: req.body.isHomePageGrid
+    is_homepage_grid: req.body.isHomePageGrid,
+    is_nav_menu : false
   }
 
   updatePageLocationsById(page)
   .then(function(data){
+    console.log('successfull :', data);
+    req.flash('info', 'Save order updated');
     res.status(200).redirect('/users/dashboard');
+    return;
   }).catch(function(err){
     console.log('err :', err);
     req.flash('error', 'There was an error');

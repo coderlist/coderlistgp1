@@ -3,13 +3,25 @@ const {queryHelper} = require('../../helperFunctions/query/queryHelper')
 
 module.exports = {
 
-   createNavItem(data){
-     return queryHelper(`
-     INSERT INTO page_navigations (page_id,parent_id,title,order_num,created_by) 
-     VALUES (${data.page_id},${data.parent_id},'${data.title}',${data.order_num}, ${data.created_by})
-     RETURNING * `).then(response => response[0])
-     .catch(e =>{throw e})
-   },
+  //  createNavItem(data){
+  //    return queryHelper(`
+  //    INSERT INTO page_navigations (page_id,parent_id,title,order_num,created_by) 
+  //    VALUES (${data.page_id},${data.parent_id},'${data.title}',${data.order_num}, ${data.created_by})
+  //    RETURNING * `).then(response => response[0])
+  //    .catch(e =>{throw e})
+  //  },
+
+  createNavItem(data){
+    return queryHelper(`
+    WITH new_table AS (INSERT INTO page_navigations (page_id,parent_id,title,order_num,created_by) 
+    VALUES (${data.page_id},${data.parent_id},'${data.title}',${data.order_num}, ${data.created_by}) RETURNING *) 
+    SELECT n.item_id,n.page_id,n.parent_id,n.title,n.order_num,n.creation_date,n.created_by,p.link 
+    FROM new_table AS n LEFT JOIN pages AS p ON n.page_id = p.page_id;
+    `)
+    .then(response => response[0])
+    .catch(e =>{throw e})
+
+  },
 
    updateNavItemById(data){
      return queryHelper(`

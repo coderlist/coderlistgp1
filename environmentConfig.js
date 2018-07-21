@@ -6,7 +6,7 @@ const environmentConfig =  {
     url: "http://localhost:3000"
   },
   production : {
-    url: "nope"
+    url: "https://www.ginnybradley.co.uk"
   }
 };
 

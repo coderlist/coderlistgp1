@@ -23,7 +23,8 @@
                                         <thead>
                                             <tr>
                                                 <th>PDF Name</th>
-                                                <th>Upload Date</th>
+                                                <th></th>
+                                                <th></th>
                                                 <th></th>
                                             </tr>
                                         </thead>
@@ -31,30 +32,20 @@
                                             <% if (typeof pdfList === 'object' && pdfList) { %>
                                               <% pdfList.map(function(pdf){ %>
                                                 <tr>
-                                                    <input type="text" name="pdf_location" class="this-location" value="<%= pdf.location %>" />
+                                                    <input type="text" name="pdf_location" class="this-location" value="<%=pdf.location%>"/>
                                                     <input type="hidden" name="pdf_name" class="this_name" value="<%=pdf.name%>" />
                                                     <input type="hidden" name="pdf_id" class="this_id" value="<%= pdf.id%>" />
                                                     <td>
-                                                        <a href="<%=pdf.location%>" data-name="<%=pdf.name%>"><div><%=pdf.short%></div></a>
+                                                        <a href="<%=pdf.location%>" data-name="<%=pdf.name%>"><%=pdf.short%></a>
                                                     </td>
                                                     <td>
-                                                        11/06/2018
+                                                        <a href="<%=pdf.location%>" target="_blank" class="btn btn-secondary btn-sm"> Open PDF </a>
                                                     </td>
-                                                    <td class="text-center">
-                                                        <div class="item-action dropdown">
-                                                            <a href="javascript:void(0)" data-toggle="dropdown" class="icon" aria-expanded="false">
-                                                                <i class="fe fe-more-vertical"></i>
-                                                            </a>
-                                                            <div class="dropdown-menu dropdown-menu" x-placement="top-end" style="position: absolute; transform: translate3d(15px, 20px, 0px); top: 0px; left: 0px; will-change: transform;">
-                                                                <a href="<%=pdf.location%>" target="_blank" class="dropdown-item">
-                                                                    <i class="dropdown-icon fe fe-book-open"></i> Open PDF </a>
-                                                                <button class="dropdown-item copy-to-clipboard">
-                                                                    <i class="dropdown-icon fe fe-edit-2 "></i> Copy Link </button>
-                                                                <div class="dropdown-divider"></div>
-                                                                <button  class="dropdown-item delete-this">
-                                                                    <i class="dropdown-icon fe fe-trash"></i> Delete PDF</button>
-                                                            </div>
-                                                        </div>
+                                                    <td>
+                                                        <button class="btn btn-secondary btn-sm copy-to-clipboard"> Copy Link </button>
+                                                    </td>
+                                                    <td>
+                                                        <button  class="btn btn-danger btn-sm delete-this"> Delete PDF</button>
                                                     </td>
                                                 </tr>
                                               <% }) %>

@@ -1,7 +1,7 @@
 const saveThisButtons = document.querySelectorAll('.save-this');
 function getThisTableItemData(index){
     const thisTableItemData = {
-        pageId: document.querySelectorAll('.this_id')[index].value,
+        pageId: document.querySelectorAll('.this_page_id')[index].value,
         isPublished: document.querySelectorAll('.is-published')[index].checked == true ? true : false,
         isHomePageGrid: document.querySelectorAll('.is-homepage-grid')[index].checked == true ? true : false,
         pageOrderNumber: document.querySelectorAll('.page-order')[index].value 
@@ -11,7 +11,7 @@ function getThisTableItemData(index){
     saveThisTableItemInDB(thisTableItemData);
 }
 function saveThisTableItemInDB(data){
-    return fetch(`/users/save-order`, {
+    fetch('/users/save-order', {
         method: "POST",
         mode: "cors",
         credentials: "include",
@@ -20,6 +20,7 @@ function saveThisTableItemInDB(data){
         },
         body: JSON.stringify(data) // body data type must match "Content-Type" header
     }).then(response => {
+        console.log(response);
         return response;
     })
     .then(message => {

@@ -1,7 +1,9 @@
 const copyToClipBoardButtons = document.querySelectorAll('.copy-to-clipboard'); // working
 
+
+
 function copyLinkToClipBoard(index){
-    const data = document.querySelectorAll('.this-location')[index];
+    let data = document.querySelectorAll('.this-location')[index];
     data.select();
     document.execCommand("copy");
 }
