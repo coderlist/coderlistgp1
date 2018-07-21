@@ -22,8 +22,7 @@
               <% pages.map(function(page){ %>
                 <div class="card">
                     <div class="card-overlay"></div>
-                    <img class="card-img" src="<%=page.banner_location%>"
-                        alt="<%=page.image_name%>">
+                    <div style="height: 300px; width: 100%; display: block; background-position: center; background-image: url('<%=page.banner_location%>')"> </div>
                     <div class="card-title"><%=page.title%></div>
                     <div class="card-body">
                         <div class="card-body-title">
