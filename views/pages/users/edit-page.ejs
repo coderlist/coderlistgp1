@@ -31,17 +31,17 @@
                             <input class="form-control this_id" name="page_id" type="hidden" value="<%= (typeof page == 'object' && page) ? page.page_id : ''%>" />
                             <input class="form-control" name="created_by" type="hidden" value="<%= (typeof page == 'object' && page) ? page.created_by : ''%>" />
                             <label class="form-label">Title</label>
-                            <input type="text" class="form-control this_name" name="title" placeholder="Page title" value="<%= (typeof page == 'object' && page) ? page.title : 'Hello World' %>" required>
+                            <input type="text" class="form-control this_name" name="title" placeholder="Page title" value="<%= (typeof page == 'object' && page) ? page.title : '' %>" required>
                         </div>
                         <div class="form-group ">
                             <label class="form-label"></label>
-                            <textarea class="form-control" name="content" rows="6" placeholder="Content.." required><%= (typeof page == 'object' && page) ? page.ckeditor_html : '' %></textarea>
+                            <textarea class="form-control" name="content" rows="6" placeholder="Page content" required><%= (typeof page == 'object' && page) ? page.ckeditor_html : '' %></textarea>
                         </div>
                         <div class="form-group ">
                             <label class="form-label">Short description
                                 <span class="form-label-small character-counter">0/120</span>
                             </label>
-                            <textarea class="form-control page-description" name="description" rows="6" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" max-length="120" required><%= (typeof page == 'object' && page) ?page.page_description : 'Add a description' %></textarea>
+                            <textarea class="form-control page-description" name="description" rows="6" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" max-length="120" placeholder="Add a description" required><%= (typeof page == 'object' && page) ?page.page_description : '' %></textarea>
                         </div>
                         <% if (title === "Create Page") { %>
                           <div class="form-group form-image">
@@ -64,16 +64,14 @@
                             <% if (title === "Edit Page") { %> 
                             <button name="delete_page" type="button" class="btn btn-danger delete-this">Delete Page</button>
                             <% } %>
+                            <% if (typeof page == 'object' && !page.is_published) { %> 
                             <button name="save_draft" class="btn btn-primary">Save Draft</button>
+                            <% } %>
                             <% if (title === "Create Page") { %> 
                             <button name="publish_page" type="submit" value="true" class="btn btn-primary">Publish</button>
                             <% } %>
                             <% if (title === "Edit Page") { %> 
                             <button name="update_page" type="submit" class="btn btn-primary">Update</button>
-                            <label class="custom-control custom-checkbox">
-                                <input type="checkbox" class="custom-control-input" name="publish_edit_page" value="option1" checked="">
-                                <span class="custom-control-label">Publish</span>
-                            </label>
                             <% } %>
                         </div>
                     </form>
