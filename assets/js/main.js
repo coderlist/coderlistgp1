@@ -1,3 +1,5 @@
+const currentYear = document.querySelector('.current-year');
+currentYear.textContent = new Date().getFullYear();
 // Grid
 // Get all the cards nodes in the DOM
 const cards = document.querySelectorAll('.card-deck .card');

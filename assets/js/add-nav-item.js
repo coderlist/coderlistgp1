@@ -67,6 +67,14 @@ const createMainNavItemHiddenInputIDField = function () {
 const createSubNavItemHiddenInputIDField = function () {
     return '<input name="sub_nav_item_id" type="hidden" class="sub-nav-item-id" value="null"/>';
 };
+const createMainNavItemDeleteButton = function() {
+    const button = `<button class="btn btn-danger btn-sm delete-menu-item" disabled>Delete</button>`;
+    return `<td>${button}</td>`;
+}
+const createSubNavItemDeleteButton = function() {
+    const button = `<button class="btn btn-danger btn-sm delete-submenu-item" disabled>Delete</button>`;
+    return `<td>${button}</td>`;
+}
 /* Creates Input Field */
 const createInputFieldPageName = function (inputFieldName) {
     let input = "";
@@ -136,7 +144,8 @@ const menuItemList = function () {
         createInputFieldPageName("menuInputFieldName") +
         createSelectionMenu() +
         createInputFieldPageName("menuInputFieldOrderNumber") +
-        createButtonElement("save-menu-item");
+        createButtonElement("save-menu-item") +
+        createMainNavItemDeleteButton();
     return html;
 };
 /* Submenu items have two extra elements */
@@ -147,7 +156,8 @@ const subMenuItemList = function () {
         createSelectionMenu("parentMenuItemPage") +
         createSelectionMenu("childMenuItemPage") +
         createInputFieldPageName("subMenuInputFieldOrderNumber") +
-        createButtonElement("save-submenu-item");
+        createButtonElement("save-submenu-item") +
+        createSubNavItemDeleteButton();
     return html;
 };
 /* Function to prepend the new item */
@@ -520,12 +530,12 @@ function manageNavMessagesAndStatus(message){
             manageNavInputItemIDField.value = message.createdNavItem.item_id;
             manageNavTitle.textContent = message.status;
             manageNavMessage.textContent = message.message;
-            toggleManageNavOverlay();
+            toggleManageNavOverlay(callMeBackWhenYouNeedMeToRedirect);
         } else {
             manageNavTitle.textContent = message.status;
             manageNavMessage.textContent = message.message;
             manageSubNavInputItemIDField.value = message.createdNavItem.item_id;
-            toggleManageNavOverlay();
+            toggleManageNavOverlay(callMeBackWhenYouNeedMeToRedirect);
         }
     } else if(message.status === "SUCCESS" && message.message === "Nav Item Updated"){
         manageNavTitle.textContent = message.status;
@@ -535,7 +545,7 @@ function manageNavMessagesAndStatus(message){
         manageNavTitle.textContent = message.status;
         manageNavMessage.textContent = message.message;
         toggleManageNavOverlay(callMeBackWhenYouNeedMeToRedirect);
-    }else if(message.status === "FAILURE" && message.message === "Nav Item not created"){
+    }else if(message.status === "FAILURE" && message.message === "Nav Item not created. Does this name already exist?"){
         manageNavTitle.textContent = message.status;
         manageNavMessage.textContent = message.message;
         toggleManageNavOverlay();

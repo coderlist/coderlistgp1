@@ -3,18 +3,18 @@ const characterCounter = document.querySelector('.character-counter');
 let maxLength;
 
 const incrementCharacterCounter = function(){
-    const counter = pageDescription.value.length;
-    characterCounter.textContent = `${counter}/120`;
-    maxLength = counter;
+    maxLength = pageDescription.value.length;
+    characterCounter.textContent = `${maxLength}/120`;
 };
 const decrementCharacterCounter = function(){
-    maxLength--;
+    maxLength = maxLength - 1;
     characterCounter.textContent = `${maxLength}/120`;
 };
 pageDescription.addEventListener('keydown', event => {
     if(maxLength > 119){
         if(event.key === "Backspace"){
-            characterDecrementCounter();
+            console.log(event.key);
+            decrementCharacterCounter();
             return true;
         } else {
             event.preventDefault();

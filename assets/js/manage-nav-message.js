@@ -8,9 +8,12 @@ function toggleManageNavOverlay (callback){
             toggleManageNavMessage();
         }
     }
-    if(callback){
+    if(callback !== closeManageNavMessage){
         setTimeout(callback, 1500);
+    } else {
+        manageNavTimeOut = setTimeout(callback, 3000);
     }
+
 }
 function toggleManageNavMessage(){
     // toggle flashOverlay
@@ -20,10 +23,12 @@ function toggleManageNavMessage(){
     // If the time out is not undefined
     // It means it has a defined value
     // clearTimeOut, will clear the setTimeOut method from the call stack 
+    toggleManageNavOverlay(closeManageNavMessage);
 }
 
 function closeManageNavMessage(){
     manageNavOverlay.classList.toggle("hide");
+    clearTimeout(manageNavTimeOut);
 }
 
 // Add event listeners
