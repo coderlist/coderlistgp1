@@ -1,0 +1,91 @@
+const saveThisButtons = document.querySelectorAll('.save-this');
+function getThisTableItemData(index){
+    const thisTableItemData = {
+        pageId: document.querySelectorAll('.this_page_id')[index].value,
+        isPublished: document.querySelectorAll('.is-published')[index].checked == true ? true : false,
+        isHomePageGrid: document.querySelectorAll('.is-homepage-grid')[index].checked == true ? true : false,
+        pageOrderNumber: document.querySelectorAll('.page-order')[index].value 
+    };
+    console.log(index);
+    console.log(thisTableItemData);
+    saveThisTableItemInDB(thisTableItemData);
+}
+function saveThisTableItemInDB(data){
+    fetch('/users/save-order', {
+        method: "POST",
+        mode: "cors",
+        credentials: "include",
+        headers: {
+            "Content-Type": "application/json; charset=utf-8",
+        },
+        body: JSON.stringify(data) // body data type must match "Content-Type" header
+    }).then(response => {
+        console.log(response);
+        return response;
+    })
+    .then(message => {
+        if(message.status == 200){
+            window.location.href = '/users/dashboard';
+        }
+        console.log(message);
+    })
+    .catch(error => console.log(`There was an error: ${error}`));
+}
+
+function confirmationMessagesAndStatus(message){
+    const confirmationTitle = document.querySelector('.confirmation-overlay-title');
+    const confirmationMessage= document.querySelector('.confirmation-overlay-message');
+    if(message.status === "SUCCESS"){
+        confirmationTitle.textContent = message.status;
+        confirmationMessage.textContent = message.message;
+        toggleConfirmationMessage(callMeBackWhenYouNeedMeToRedirect);
+    } else if (message.status === "FAILURE"){
+        confirmationTitle.textContent = message.status;
+        confirmationMessage.textContent = message.message;
+        toggleConfirmationMessage(callMeBackWhenYouNeedMeToRedirect);
+    } 
+}
+
+const confirmationOverlay = document.querySelector('.confirmation-overlay');
+const closeConfirmationButton = document.querySelector('.close-confirmation-message');
+let confirmationTimeOut;
+
+function toggleConfirmationOverlay(callback){
+    if(confirmationOverlay !== null){
+        if(confirmationOverlay.classList.contains("hide")){
+            toggleConfirmationMessage();
+        }
+    }
+    if(callback){
+        confirmationTimeOut = setTimeout(callback, 3000);
+    }
+
+}
+function toggleConfirmationMessage(){
+    // toggle flashOverlay
+    // If it is displayed, hide it
+    // Otherwise, display it
+    confirmationOverlay.classList.toggle("hide");
+    // If the time out is not undefined
+    // It means it has a defined value
+    // clearTimeOut, will clear the setTimeOut method from the call stack 
+    toggleConfirmationOverlay(closeConfirmationMessage);
+}
+
+function closeConfirmationMessage(){
+    confirmationOverlay.classList.toggle("hide");
+    clearTimeout(confirmationTimeOut);
+}
+function callMeBackWhenYouNeedMeToRedirect(){
+    return window.location.href = '/users/dashboard';
+}
+
+saveThisButtons.forEach((button, index) => {
+    button.addEventListener('click', event => {
+        getThisTableItemData(index);
+        event.preventDefault();
+    }, index);
+});
+
+
+

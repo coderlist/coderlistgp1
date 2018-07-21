@@ -1,7 +1,5 @@
-
-
-
 let imageButtonUpload = document.querySelector('.img-button-upload');
+const imageName = document.querySelector('.image-file-name');
 var loadImageFile = function(event) {
     var reader = new FileReader();
     reader.onload = function(){
@@ -9,8 +7,9 @@ var loadImageFile = function(event) {
         imagePreview.src = reader.result;
     };
     reader.readAsDataURL(event.target.files[0]);
+    imageName.textContent = event.target.files[0].name;
   };
 
 imageButtonUpload.addEventListener('change', event => {
     loadImageFile(event);
-}, false)
+}, false);

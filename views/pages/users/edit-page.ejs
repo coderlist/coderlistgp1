@@ -54,7 +54,7 @@
                             <div class="form-label">Size: 300 x 300 px</div>
                             <div class="custom-file img-button-upload">
                                 <input type="file" class="custom-file-input" name="image" required>
-                                <label class="custom-file-label">Upload Image</label>
+                                <label class="custom-file-label image-file-name">Upload Image</label>
                             </div>
                       </div>
                         <% } %>
@@ -88,9 +88,9 @@
                           <div class="form-image-preview-upload" action="/user/upload-images">
                             <input class="form-control" name="page_id" type="hidden" class="this_id" value="<%= (typeof page == 'object' && page) ? page.page_id : ''%>" />
                             <div class="form-label">Size: 300 x 300 px</div>
-                            <div class="custom-file img-button-upload"> -->
+                            <div class="custom-file img-button-upload">
                               <input type="file" class="custom-file-input img-button-upload" name="image" required>
-                                <label class="custom-file-label">Upload Image</label>
+                                <label class="custom-file-label image-file-name">Upload Image</label>
                             </div>
                               <button name="update_banner" type="submit" class="btn btn-info">Update Banner Image</button>
                             </div>
