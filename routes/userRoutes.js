@@ -750,8 +750,8 @@ userRoutes.post('/create-user', createUserCheck, (req, res) => { //accessible by
       if (userCreated) {
         let mail = new Mail;
         mail.sendVerificationLink(user);
-        req.flash('info', 'user created and email sent'); // email not currently being sent
-        res.redirect('/users/dashboard');
+        req.flash('info', 'user created and email sent'); 
+        res.render('/users/create-user'); // this is going to the dashboard after create user.  Why !!!!
         return;
       } else {
         console.log("There was a create user error", err)
@@ -912,7 +912,8 @@ userRoutes.delete('/delete-user/:user_id', deleteUserPostCheck, function(req, re
     res.status(200).send(JSON.stringify({ status: "FAILURE", message: 'Invalid user id', location: "/users/dashboard"}));
     return;
   }
-  if (req.params.user_id === req.session.user_id){
+  console.log('req.params.user_id :', req.params.user_id, req.session.user_id);
+  if (req.params.user_id == req.session.user_id){
     console.log('cannot delete yourself')
     // req.flash('error','You are not authorised to delete yourself');
     // res.status(200).redirect('/users/dashboard');
@@ -1194,7 +1195,7 @@ userRoutes.post('/create-page',  upload.single('image'), postCreatePageCheck, fu
   }
   insertBannerImage(image)
   .then(function(){
-    req.flash('info', 'Image data inserted into db')
+    // req.flash('info', 'Image data inserted into db')
   }).catch(function(err){
     console.log('err :', err);
     req.flash('error', 'Failure adding image to db')
@@ -1206,9 +1207,17 @@ userRoutes.post('/create-page',  upload.single('image'), postCreatePageCheck, fu
     console.log('data :', data);
     req.flash('info', 'Page created successfully');
     res.status(200).redirect('/users/dashboard');
+    return;
   }).catch(function(err){
+    console.log('catch error :', err.code);
+    if (err.code === "23505") {
+    req.flash('error', 'Title name already exists. Please use a different one');
+    res.status(200).render(`pages/users/edit-page`, {messages: req.flash('error'), page : page}); 
+    return;
+    }
     req.flash('error', 'There was an error creating the page');
-    res.status(200).render(`pages/users/edit-page`, {messages: req.flash('info'), page : page}); 
+    res.status(200).render(`pages/users/edit-page`, {messages: req.flash('error'), page : page}); 
+    return;
   })
 });
 postEditPageCheck = [
