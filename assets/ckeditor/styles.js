@@ -100,7 +100,7 @@ CKEDITOR.stylesSet.add( 'default', [
 		attributes: { 'class': 'right' },
 		styles: { 'margin-left': '1rem'}
 	},
-	*/
+	
 
 	{
 		name: 'Compact Table',
@@ -115,8 +115,16 @@ CKEDITOR.stylesSet.add( 'default', [
 			'border-collapse': 'collapse'
 		}
 	},
+	*/
+	{
+		name: 'Alt Table',
+		element: 'table',
+		attributes: {
+			'class': 'table-alt'
+		}
+	},
 
-	{ name: 'Borderless Table',		element: 'table',	styles: { 'border-style': 'hidden', 'background-color': '#E6E6FA' } },
+	/* { name: 'Borderless Table',		element: 'table',	styles: { 'border-style': 'hidden', 'background-color': '#E6E6FA' } },*/
 	{ name: 'Square Bulleted List',	element: 'ul',		styles: { 'list-style-type': 'square' } },
 
 	/* Widget styles */

@@ -98,7 +98,9 @@ ul, ol {
 
 table {
     width:100% !important;
-
+    border:none;
+    border-spacing:0;
+    border-collapse:collapse;
 }
 
 table tr {
@@ -106,13 +108,23 @@ table tr {
     border-spacing: 2px;
 }
 
-table tr td {
+table tr td, table tr th {
     padding:.5em;
     border-right:1px solid #ddd;
 }
 
+table tr th {
+    font-weight:700;
+}
+
 table tr td:last-of-type {
     border-right:none;
+}
+
+.table-alt tr, .table-alt th, .table-alt td { 
+    background:#f9f9f9;
+    border:5px solid #fff;
+    padding:1em;
 }
 
 figure
@@ -129,7 +141,7 @@ figure
 figure > figcaption
 {
     text-align: center;
-    padding:.3em 0 .7em;
+    padding:.4em 0 .7em;
 	display: block; /* For IE8 */
 }
 
