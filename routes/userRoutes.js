@@ -1016,24 +1016,25 @@ userRoutes.post('/change-email-request', changeEmailCheck, (req, res) => {
       new_email: req.body.new_email,
       email_change_token: uuid()
     }
-    console.log('user :', user);
-    console.log('userEmail :', userEmail);
+    // console.log('user :', user);
+    // console.log('userEmail :', userEmail);
+    const location = '/users/change-email-request';
     insertOldEmailObject(user)
     .then(function (data) {
         if (!data) {
-        req.flash('info', 'Invalid credentials')
-        res.status(200).redirect('/users/change-email-request.ejs');
+        res.status(200).send(JSON.stringify({ status: "FAILURE", message: 'Invalid credentials', location: location }));
         return;
       }
+      
       let mail = new Mail();
       mail.sendEmailChangeVerificationLink(user);
-      req.flash('info', "An email has been sent to your new email with further instructions");
-      res.redirect('/users/dashboard');
+      res.status(200).send(JSON.stringify({ status: "SUCCESS", message: 'An email has been send to your new email address with further instructions', location: location }));
     });
   }).catch(function (err) {
     console.log('err :', err);
-    req.flash('info', "An internal error has occurred. Please contact your administrator");
     res.redirect('/users/dashboard');
+    res.status(200).send(JSON.stringify({ status: "FAILURE", message: 'An internal error has occurred. Please contact your administrator', location: location }));
+    
     return;
   })
 });
