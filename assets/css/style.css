@@ -22,7 +22,6 @@ main {
     flex-direction: column;
     flex: 1;
     width: 100%;
-    max-width: 60rem;
     /* 960px / 16px = 60 */
     margin: 104px 0 2rem 0;
     padding: 0 1.25rem 0 0.5rem;
@@ -459,6 +458,9 @@ textarea {
 /* Media queries */
 
 @media screen and (min-width: 500px) {
+    main {
+        margin: 104px auto 2rem auto;    
+    }
     .navbar .navbar-brand .navbar-brand-description {
         display: block;
     }
@@ -473,9 +475,13 @@ textarea {
     header {
         width: 100%;
     }
+    main {
+        width: 620px;
+        padding: 0;
+    }
     .card-deck {
         flex-direction: row;
-        flex-wrap: nowrap;
+        flex-wrap: wrap;
     }
     .card-deck .card {
         display: flex;
@@ -499,12 +505,15 @@ textarea {
     .form .form-group .form-control, .form .form-group .form-control-text-area  {
         padding: 1.5rem;
     }
+    footer {
+        padding: 1rem;
+    }
 }
 
 @media screen and (min-width: 900px) {
     main {
-        margin: 104px auto 2rem auto;
-        padding: 0;
+        width: 60rem;
+        max-width: 60rem;
     }
     .form {
         width: 960px;
