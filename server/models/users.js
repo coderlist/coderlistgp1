@@ -226,7 +226,7 @@ const user = {
    * on failure
    */
   updateUserName(user) {
-    return queryHelper(`UPDATE users SET first_name = '${user.first_name}', last_name = '${user.last_name}' WHERE user_id=${user.user_id};`)
+    return queryHelper(`UPDATE users SET first_name = '${user.first_name}', last_name = '${user.last_name}', is_admin = ${user.is_admin} WHERE user_id=${user.user_id};`)
     .then(result => true)
     .catch(e => {
       throw e
