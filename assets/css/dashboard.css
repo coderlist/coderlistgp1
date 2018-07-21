@@ -4480,6 +4480,10 @@ input[type="button"].btn-block {
 .form-upload-pdf-height{
   height: 300px;
 }
+.pdf-file-name, .image-file-name {
+  overflow:hidden;
+  white-space: nowrap;
+}
 
 .card-column {
   max-width: 20rem;
@@ -5057,7 +5061,7 @@ input[type="button"].btn-block {
   animation-name: flashin;
   box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.2);
 }
-.manage-nav-overlay{
+.manage-nav-overlay, .confirmation-overlay{
   position: fixed;
   top: 20vh;
   left: 50%;
@@ -5067,7 +5071,7 @@ input[type="button"].btn-block {
   overflow: hidden;
   z-index: 9999;
 }
-.manage-nav-overlay-alert-message {
+.manage-nav-overlay-alert-message, .confirmation-overlay-alert-message {
   position: absolute;
   width: 90%;
   margin: 0 auto;

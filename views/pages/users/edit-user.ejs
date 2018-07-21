@@ -8,6 +8,7 @@
 <body>
     <% include ../partials/header.ejs %>
         <% include ../partials/delete-alert-message.ejs %>
+        <% include ../partials/flash-message.ejs %>
             <div class="my-3 my-md-5">
                 <div class="container">
                     <div class="row">
@@ -23,9 +24,6 @@
                                             <% } else { %>
                                                 <h3 class="card-title">Edit User</h3>
                                             <% } %>
-                                            <div class="form-group">
-                                                <% include ../partials/flash-message.ejs %>
-                                            </div>
                                             <div class="row">
                                                 <div class="col-md-12">
                                                     <input name="user_id" type="hidden" class="this_id" value="<%= (typeof user == 'object' && user) ? user.user_id : ''%>" />
