@@ -50,7 +50,7 @@ module.exports = {
 
   getAllImagesData(){ // for users/manage-images page
        return queryHelper(`
-         SELECT * FROM images`)
+         SELECT * FROM images ORDER BY created DESC`)
       .then(response => response)
        .catch(e =>{throw e})
   },

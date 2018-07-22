@@ -939,23 +939,25 @@ userRoutes.delete('/delete-user/:user_id', deleteUserPostCheck, function(req, re
          res.status(200).send(JSON.stringify({ status: "SUCCESS", message: 'User successfully deleted', location: location }));
           return;
         }
-        console.log('User does not exist')
-        // req.flash('error','There was an error. User does not exist');
-        // res.status(200).redirect('/users/dashboard');
-        res.status(200).send(JSON.stringify({ status: "FAILURE", message: 'There was an error. User does not exist', location: location }));
-        return;
+        // else {
+        //   console.log('User does not exist')
+        //   // req.flash('error','There was an error. User does not exist');
+        //   // res.status(200).redirect('/users/dashboard');
+        //   res.status(200).send(JSON.stringify({ status: "FAILURE", message: 'There was an error. User does not exist', location: location }));
+        //   return;
+        // }
       })
-      // req.flash('error','You are not authorised to delete users');
-      // res.status(200).redirect('/users/dashboard');
-      res.status(200).send(JSON.stringify({ status: "FAILURE", message: 'You are not authorised to delete users', location: location }));
-      return;
     }
+    // req.flash('error','You are not authorised to delete users');
+    // res.status(200).redirect('/users/dashboard');
+    res.status(200).send(JSON.stringify({ status: "FAILURE", message: 'You are not authorised to delete users', location: location }));
+    return;
     }).catch(function(err){
       console.log('err :', err);
-        // req.flash('error','There was a system error');
-        // res.status(200).redirect('/users/dashboard');
-        res.status(200).send(JSON.stringify({ status: "FAILURE", message: 'There was a system error. Please contact your administrator', location: location }));
-        return
+      // req.flash('error','There was a system error');
+      // res.status(200).redirect('/users/dashboard');
+      res.status(200).send(JSON.stringify({ status: "FAILURE", message: 'There was a system error. Please contact your administrator', location: location }));
+      return
     })
 })
 
