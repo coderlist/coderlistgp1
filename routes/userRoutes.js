@@ -917,7 +917,7 @@ userRoutes.delete('/delete-user/:user_id', deleteUserPostCheck, function(req, re
     console.log('cannot delete yourself')
     // req.flash('error','You are not authorised to delete yourself');
     // res.status(200).redirect('/users/dashboard');
-    res.status(200).send(JSON.stringify({ status: "FAILURE", message: 'You are not authorised to delete yourself', location: "/users/dashboard" }));
+    res.status(200).send(JSON.stringify({ status: "FAILURE", message: 'You cannot delete yourself. Please ask another admin to remove your account', location: "/users/dashboard" }));
     return;
   }
   console.log('req.session.user_id :', req.session.user_id);
@@ -939,24 +939,27 @@ userRoutes.delete('/delete-user/:user_id', deleteUserPostCheck, function(req, re
          res.status(200).send(JSON.stringify({ status: "SUCCESS", message: 'User successfully deleted', location: location }));
           return;
         }
-        console.log('User does not exist')
-        // req.flash('error','There was an error. User does not exist');
-        // res.status(200).redirect('/users/dashboard');
-        res.status(200).send(JSON.stringify({ status: "FAILURE", message: 'There was an error. User does not exist', location: location }));
-        return;
+        // else {
+        //   console.log('User does not exist')
+        //   // req.flash('error','There was an error. User does not exist');
+        //   // res.status(200).redirect('/users/dashboard');
+        //   res.status(200).send(JSON.stringify({ status: "FAILURE", message: 'There was an error. User does not exist', location: location }));
+        //   return;
+        // }
       })
-      // req.flash('error','You are not authorised to delete users');
-      // res.status(200).redirect('/users/dashboard');
-      res.status(200).send(JSON.stringify({ status: "FAILURE", message: 'You are not authorised to delete users', location: location }));
-      return;
+    } else {
+    // req.flash('error','You are not authorised to delete users');
+    // res.status(200).redirect('/users/dashboard');
+    res.status(200).send(JSON.stringify({ status: "FAILURE", message: 'You are not authorised to delete users', location: location }));
+    return;
     }
-    }).catch(function(err){
-      console.log('err :', err);
-        // req.flash('error','There was a system error');
-        // res.status(200).redirect('/users/dashboard');
-        res.status(200).send(JSON.stringify({ status: "FAILURE", message: 'There was a system error. Please contact your administrator', location: location }));
-        return
-    })
+  }).catch(function(err){
+    console.log('err :', err);
+    // req.flash('error','There was a system error');
+    // res.status(200).redirect('/users/dashboard');
+    res.status(200).send(JSON.stringify({ status: "FAILURE", message: 'There was a system error. Please contact your administrator', location: location }));
+    return;
+  })
 })
 
 userRoutes.get('/change-password', (req, res) => {
@@ -1224,7 +1227,6 @@ postEditPageCheck = [
   body('title').isAlphanumeric(),
   body('content').exists(), // ensure sanitised in and out of db
   body('description').isAlphanumeric(),
-  body('user_id').isInt(),
   body('page_id').isInt()
 ]
 
@@ -1243,6 +1245,7 @@ userRoutes.post('/edit-page', postEditPageCheck, function(req, res){
   console.log('page :', page);
   // console.log('req.body :', req.body);
   if (!errors.isEmpty()) {
+    console.log('errors.array() :', errors.array());
     req.flash('error','Invalid page data');
     res.status(200).render('pages/users/edit-page', {page : page});
     return;
@@ -1252,7 +1255,7 @@ userRoutes.post('/edit-page', postEditPageCheck, function(req, res){
    // i would like page id from the db please
   updatePageContentByIdNoBanner(page).then(function(data){
     req.flash('info', 'Page updated successfully');
-    res.status(200).redirect('/users/dashboard');
+    res.status(200).redirect(`/users/edit-page/${page.link}`); 
   }).catch(function(err){
     console.log('err :', err);
     req.flash('error', 'There was an error updating the page');
