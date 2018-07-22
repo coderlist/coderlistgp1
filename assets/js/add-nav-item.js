@@ -547,7 +547,7 @@ function manageNavMessagesAndStatus(message){
     } else if(message.status === "SUCCESS" && message.message === "Nav Item Updated"){
         manageNavTitle.textContent = message.status;
         manageNavMessage.textContent = message.message;
-        toggleManageNavOverlay();
+        toggleManageNavOverlay(callMeBackWhenYouNeedMeToRedirect);
     } else if(message.status === "SUCCESS" && message.message === "Nav Item deleted"){
         manageNavTitle.textContent = message.status;
         manageNavMessage.textContent = message.message;

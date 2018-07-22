@@ -74,7 +74,7 @@
                             <button name="update_page" type="submit" class="btn btn-primary">Update</button>
                             <% } %>
                             <% if (title === "Edit Page") { %> 
-                            <a href="<%= (typeof page == 'object' && page) ? page.page_id : ''%>"" class="btn btn-primary">View Page</a>
+                            <a href="<%= (typeof page == 'object' && page) ? page.page_id : ''%>" class="btn btn-primary" target="_blank">View Page</a>
                             <% } %>
                         </div>
                     </form>
