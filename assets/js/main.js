@@ -29,23 +29,17 @@ if(cards){
     });
 }
 // Navbar
-const menu = document.querySelector('.navbar-mobile');
-const modal = document.querySelector('.navbar-nav-modal');
+const menu = document.querySelector('.nav-mobile');
 const buttons = document.querySelectorAll('.navbar-toggler-icon');
 // Toggles Navbar on Smartphones
 const toggleNavBar = function () {
-    const show = "show";
     const collapse = "collapse";
     // If the menu is collapsed, then display it
     // Otherwise, hide it
     if (menu.classList.contains(collapse)) {
-        menu.classList.remove(collapse);
-        menu.classList.add(show);
-        modal.style.display = "flex";
+        menu.classList.toggle(collapse);
     } else {
-        menu.classList.remove(show);
-        menu.classList.add(collapse);
-        modal.style.display = "none";
+        menu.classList.toggle(collapse);
     }
 }
 // Event Listeners
