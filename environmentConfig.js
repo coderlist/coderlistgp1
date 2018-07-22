@@ -10,4 +10,4 @@ const environmentConfig =  {
   }
 };
 
-module.exports =  environmentConfig[process.env.NODE_ENV]
+module.exports =  environmentConfig[process.env.NODE_ENV]   // set the website details for emails and file links

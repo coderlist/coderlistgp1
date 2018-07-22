@@ -300,8 +300,7 @@ userRoutes.post('/manage-nav', userPostNavItemsCheck, function(req,res){
   let errors = validationResult(req);
   if (!errors.isEmpty()) {
     console.log('errors.array() :',req.body, errors.array());
-    req.flash('error', 'Invalid nav item');
-    res.status(200).redirect('users/manage-nav') 
+    res.status(200).send(JSON.stringify({ status: "FAILURE", message: 'Invalid nav item entry'}));
     return;
   }
   console.log('req.body :', req.body);
