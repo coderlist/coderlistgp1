@@ -270,6 +270,7 @@ function getMenuItemData(index){
  * 
  */
 function postMenuItemData(data){
+    console.log(data);
     return fetch(`/users/manage-nav`, {
         method: "POST",
         mode: "cors",
@@ -282,8 +283,8 @@ function postMenuItemData(data){
         return response.json();
     })
     .then(message => {
-        manageNavMessagesAndStatus(message);
         console.log(message);
+        manageNavMessagesAndStatus(message);
     })
     .catch(error => {
         console.log(`There was an error: ${error}`)
@@ -431,6 +432,7 @@ function getSubMenuItemData(index){
  * 
  */
 function postSubMenuItemData(data){
+    console.log(data);
     return fetch(`/users/manage-nav`, {
         method: "POST",
         mode: "cors",
@@ -511,8 +513,8 @@ function deleteSubMenuItemID(itemId){
         return response.json();
     })
     .then(message => {
-        manageNavMessagesAndStatus(message);
         console.log(message);
+        manageNavMessagesAndStatus(message);
     })
     .catch(error => console.log(`There was an error: ${error}`));
 }
@@ -531,7 +533,12 @@ function manageNavMessagesAndStatus(message){
             manageNavTitle.textContent = message.status;
             manageNavMessage.textContent = message.message;
             toggleManageNavOverlay(callMeBackWhenYouNeedMeToRedirect);
+        } else if(message.createdNavItem.link !== null && message.createdNavItem.page_id) {
+            manageNavTitle.textContent = message.status;
+            manageNavMessage.textContent = message.message;
+            toggleManageNavOverlay(callMeBackWhenYouNeedMeToRedirect);
         } else {
+            console.log('error happens here');
             manageNavTitle.textContent = message.status;
             manageNavMessage.textContent = message.message;
             manageSubNavInputItemIDField.value = message.createdNavItem.item_id;
