@@ -6,19 +6,14 @@ const cards = document.querySelectorAll('.card-deck .card');
 // Function to display the current card
 if(cards){
     const toggleCurrentCard = (card) => {
-        const cardBody = card.querySelector('.card-body');
         const cardOverlay = card.querySelector('.card-overlay');
-        const cardTitle = card.querySelector('.card-title');
+        console.log('')
         if(!card.classList.contains("active")){
             card.classList.toggle("active");
-            cardTitle.velocity({display: "none"}, {duration: 0, delay: 0, queue: false, easing:"ease-out"});
-            cardOverlay.velocity({display: "block"}, {duration: 500, delay: 0, queue: false, easing:"ease-out"});
-            cardBody.velocity({ bottom: 85, display: "flex"}, {duration: 500, delay: 0, queue: false, easing:"ease-out"});
+            cardOverlay.classList.toggle("display-card-overlay");
         } else {
             card.classList.toggle("active");
-            cardBody.velocity({ bottom: -85, display: "none"}, {duration: 500, delay: 0, queue: false, easing:"ease-out"});
-            cardOverlay.velocity({display: "none"}, {duration: 500, delay: 0, queue: false, easing:"ease-out"});
-            cardTitle.velocity({display: "block"}, {delay: 500, queue: false, easing:"ease-out"});  
+            cardOverlay.classList.toggle("display-card-overlay");
         }
     };
     // For each card, add an event listener 'click'

@@ -18,8 +18,11 @@ function deleteThisUser(url, user_id){
         return response.json();
     })
     .then(message => {
+        console.log(message);
         console.log(message.status, message.message);
-        confirmationMessagesAndStatus(message);
+        if(message.location === '/users/dashboard'){
+            confirmationMessagesAndStatus(message);
+        }
     })
     .catch(error => console.log(`There was an error: ${error}`));
 }

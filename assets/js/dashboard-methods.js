@@ -43,7 +43,7 @@ function confirmationMessagesAndStatus(message){
         confirmationTitle.textContent = message.status;
         confirmationMessage.textContent = message.message;
         toggleConfirmationMessage(callMeBackWhenYouNeedMeToRedirect);
-    } 
+    }
 }
 
 const confirmationOverlay = document.querySelector('.confirmation-overlay');

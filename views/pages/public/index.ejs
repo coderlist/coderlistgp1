@@ -11,39 +11,45 @@
     </header>
     <main class="container push-footer-down">
         <div class="page-title">
-            <% if (typeof callToAction === "object" && callToAction) { %></h5>
-            <div><%-callToAction.description%></div>
-            <% } else { %>
-            <h5>Call to action text</h5>
-            <% } %>
+            <% if (typeof callToAction === "object" && callToAction) { %>
+                </h5>
+                <div>
+                    <%-callToAction.description%>
+                </div>
+                <% } else { %>
+                    <h5>Call to action text</h5>
+                    <% } %>
         </div>
         <div class="card-deck">
             <% if (typeof pages === "object" && pages) { %>
-              <% pages.map(function(page){ %>
-                <div class="card">
-                    <div class="card-overlay"></div>
-                    <div style="height: 300px; width: 100%; display: block; background-position: center; background-image: url('<%=page.banner_location%>')"> </div>
-                    <div class="card-title"><%=page.title%></div>
-                    <div class="card-body">
-                        <div class="card-body-title">
+                <% pages.map(function(page){ %>
+                    <div class="card">
+                        <div style="height: 300px; width: 100%; display: block; background-position: center; background-image: url('<%=page.banner_location%>')">
+                        </div>
+                        <div class="card-title">
                             <%=page.title%>
                         </div>
-                        <div class="card-body-text">
-                            <%=page.page_description%>
-                        </div>
-                        <div class="card-body-url">
-                            <a href="/pages/<%=page.link%>">View Page</a>
+                        <div class="card-overlay">
+                            <div class="card-body">
+                                <div class="card-body-title">
+                                    <%=page.title%>
+                                </div>
+                                <div class="card-body-text">
+                                    <%=page.page_description%>
+                                </div>
+                                <div class="card-body-url">
+                                    <a href="/pages/<%=page.link%>">View Page</a>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                </div>
-              <% })%>
-            <% } %>
+                    <% })%>
+                <% } %>
         </div>
         </div>
     </main>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/velocity/2.0.3/velocity.min.js"></script>
     <% include ../../partials/footer.ejs %>
-    <% include ../../partials/flash-message.ejs %>
+        <% include ../../partials/flash-message.ejs %>
 </body>
 
 </html>
