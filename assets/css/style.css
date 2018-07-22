@@ -13,7 +13,6 @@ body {
 }
 
 /* Layout styles */
-
 .container {
     width: 100%;
     margin: 0 auto;
@@ -23,11 +22,7 @@ main.container {
     margin: 4rem auto 0 auto;
     flex: 1 0 auto;
 }
-
-
-
 /* header */
-
 header {
     width: 100%;
     height: auto;
@@ -341,14 +336,12 @@ nav .navbar-brand .navbar-organization-description {
 }
 
 /* Footer */
-
 footer {
     flex-shrink: 0;
     width: 100%;
     padding: 1rem 0;
     border-top: 2px solid #BDBDBD;
 }
-
 footer .container {
     display: flex;
     flex-direction: column;
@@ -426,6 +419,14 @@ ul {
 * Media Queries for CSS Grid
 *
 **/
+/* Small devices (phones, )  */
+@media (min-width: 350px) { 
+    .card-deck .card{
+        height: 340px;
+        width: 340px;
+        flex-grow: 1;
+    }
+}
 /* Small devices (tablets, 768px and up)  */
 @media (min-width: 768px) {
     main.container {
@@ -453,14 +454,15 @@ ul {
         flex-wrap: wrap;
     }
     .card-deck .card{
-        flex: 1;
+        height: 359px;
+        max-width: 359px;
+        flex-grow: 1;
         margin: 0.5rem;
     }
     .page-title {
         padding: 0 0.5rem;
         font-weight: 700;
     }
-    
     footer .container {
         flex-direction: row;
         justify-content: space-between;
@@ -474,6 +476,11 @@ ul {
     }
     .navbar-mobile-nav {
         display: none;
+    }
+    .card-deck .card{
+        height: 350px;
+        flex-grow: 1;
+        margin: 0.5rem;
     }
     nav .navbar-nav {
         padding: 1rem 1rem 0 1rem;
@@ -491,6 +498,11 @@ ul {
 
 /* Large devices (large desktops, 1200px and up) */
 @media (min-width: 1200px) { 
+    .card-deck .card{
+        height: 400px;
+        flex-grow: 1;
+        margin: 0.5rem;
+    }
     .container {
         width: 1170px;
     }
