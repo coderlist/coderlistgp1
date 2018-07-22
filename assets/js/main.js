@@ -7,13 +7,17 @@ const cards = document.querySelectorAll('.card-deck .card');
 if(cards){
     const toggleCurrentCard = (card) => {
         const cardOverlay = card.querySelector('.card-overlay');
+        const cardTitle = card.querySelector('.card-title');
         console.log('')
         if(!card.classList.contains("active")){
             card.classList.toggle("active");
+            cardTitle.classList.toggle("hide-card-title");
             cardOverlay.classList.toggle("display-card-overlay");
+            
         } else {
             card.classList.toggle("active");
             cardOverlay.classList.toggle("display-card-overlay");
+            cardTitle.classList.toggle("hide-card-title");
         }
     };
     // For each card, add an event listener 'click'
