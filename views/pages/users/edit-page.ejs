@@ -29,6 +29,7 @@
                         </div>
                         <div class="form-group ">
                             <input class="form-control this_id" name="page_id" type="hidden" value="<%= (typeof page == 'object' && page) ? page.page_id : ''%>" />
+                            <input class="form-control this_is_published" name="is_published" type="hidden" value="<%= (typeof page == 'object' && page) ? page.is_published : ''%>" />
                             <input class="form-control" name="created_by" type="hidden" value="<%= (typeof page == 'object' && page) ? page.created_by : ''%>" />
                             <label class="form-label">Title</label>
                             <input type="text" pattern="[A-Za-z0-9 ]+" class="form-control this_name" name="title" placeholder="Page title - Please use only Spaces, letters and/or numbers" value="<%= (typeof page == 'object' && page) ? page.title : '' %>" required>
