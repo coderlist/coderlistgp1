@@ -917,7 +917,7 @@ userRoutes.delete('/delete-user/:user_id', deleteUserPostCheck, function(req, re
     console.log('cannot delete yourself')
     // req.flash('error','You are not authorised to delete yourself');
     // res.status(200).redirect('/users/dashboard');
-    res.status(200).send(JSON.stringify({ status: "FAILURE", message: 'You are not authorised to delete yourself', location: "/users/dashboard" }));
+    res.status(200).send(JSON.stringify({ status: "FAILURE", message: 'You cannot delete yourself. Please ask another admin to remove your account', location: "/users/dashboard" }));
     return;
   }
   console.log('req.session.user_id :', req.session.user_id);
@@ -947,18 +947,19 @@ userRoutes.delete('/delete-user/:user_id', deleteUserPostCheck, function(req, re
         //   return;
         // }
       })
-    }
+    } else {
     // req.flash('error','You are not authorised to delete users');
     // res.status(200).redirect('/users/dashboard');
     res.status(200).send(JSON.stringify({ status: "FAILURE", message: 'You are not authorised to delete users', location: location }));
     return;
-    }).catch(function(err){
-      console.log('err :', err);
-      // req.flash('error','There was a system error');
-      // res.status(200).redirect('/users/dashboard');
-      res.status(200).send(JSON.stringify({ status: "FAILURE", message: 'There was a system error. Please contact your administrator', location: location }));
-      return
-    })
+    }
+  }).catch(function(err){
+    console.log('err :', err);
+    // req.flash('error','There was a system error');
+    // res.status(200).redirect('/users/dashboard');
+    res.status(200).send(JSON.stringify({ status: "FAILURE", message: 'There was a system error. Please contact your administrator', location: location }));
+    return;
+  })
 })
 
 userRoutes.get('/change-password', (req, res) => {
