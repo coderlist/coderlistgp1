@@ -6,19 +6,40 @@
         <div class="navbar-brand-description">
             Inspiring children's confidence &amp; wellbeing
         </div>
+        <ul class="navbar-desktop">
+          <%if (typeof menuItems == "object" && menuItems) { %>
+            <% menuItems.forEach(function(menuItem, index) { %>
+             <% if (menuItem.parent_id === null && menuItem.link !== null  ) { %>
+             <li class="nav-item">
+              <a href="pages/<%=menuItem.link%>"><%=menuItem.title%></a>
+            </li>
+            <% } else { %> 
+              <li class="nav-item dropdown">
+                <a href="#" class="dropdown-btn"><%=menuItem.title%></a>
+                <ul class="dropdown-content">
+                  <%if(menuItem.children) { %>
+                    <%menuItem.children.map(function(childItem){ %>
+                      <li class="dropdown-item"><a href="pages/<%=childItem.link%>"><%=childItem.title%></a></li>
+                    <% }) %>
+                  <% } %>
+                </ul>
+             </li>
+            <% } %>
+          <% }) %>
+        <% } %>
+      </ul>
     </div>
-    <div class="navbar-mobile-nav">
-      <div class="navbar-name">
-          MENU
+      <div class="navbar-mobile-nav">
+        <div class="navbar-name"> MENU</div>
+        <div class="navbar-toggler navbar-toggler-icon">
+            <span class="navbar-toggler-bar"></span>
+            <span class="navbar-toggler-bar"></span>
+            <span class="navbar-toggler-bar"></span>
+        </div>
       </div>
-      <div class="navbar-toggler navbar-toggler-icon">
-          <span class="navbar-toggler-bar"></span>
-          <span class="navbar-toggler-bar"></span>
-          <span class="navbar-toggler-bar"></span>
-      </div>
-  </div>
     <div class="navbar-nav-modal"></div>
     <ul class="navbar-mobile collapse">
+      <div class="container">
         <div class="navbar-mobile-nav">
             <div class="navbar-name">
                 MENU
@@ -49,27 +70,6 @@
           <% } %>
         <% }) %>
       <% } %>
-    </ul>
-    <ul class="navbar-desktop">
-        <%if (typeof menuItems == "object" && menuItems) { %>
-          <% menuItems.forEach(function(menuItem, index) { %>
-           <% if (menuItem.parent_id === null && menuItem.link !== null  ) { %>
-           <li class="nav-item">
-            <a href="pages/<%=menuItem.link%>"><%=menuItem.title%></a>
-          </li>
-          <% } else { %> 
-            <li class="nav-item dropdown">
-              <a href="#" class="dropdown-btn"><%=menuItem.title%></a>
-              <ul class="dropdown-content">
-                <%if(menuItem.children) { %>
-                  <%menuItem.children.map(function(childItem){ %>
-                    <li class="dropdown-item"><a href="pages/<%=childItem.link%>"><%=childItem.title%></a></li>
-                  <% }) %>
-                <% } %>
-              </ul>
-           </li>
-          <% } %>
-        <% }) %>
-      <% } %>
+    </div>
     </ul>
   </nav>

@@ -14,14 +14,15 @@ body {
 
 /* Layout styles */
 
-.wrapper {
+.container {
     width: 100%;
-    padding-left:1em;
-    padding-right:1em;
-    margin: 4rem auto 0 auto;
-    flex: 1 0 auto;
+    margin: 0 auto;
 }
 
+main.container {
+    margin: 8rem auto 0 auto;
+    flex: 1 0 auto;
+}
 
 
 
@@ -55,7 +56,7 @@ header {
 }
 
 .navbar .navbar-brand .navbar-brand-name {
-    font-size: 3rem;
+    font-size: 1.5rem;
     font-weight: 700;
     margin: 0 1rem 0.5rem 0;
 }
@@ -103,7 +104,7 @@ header {
     left: 0;
 }
 .navbar .navbar-mobile {
-    padding: 0 1.5rem 0 1.5rem;
+    margin: 0 auto;
 }
 .navbar .navbar-mobile .navbar-mobile-nav {
     display: flex;
@@ -175,31 +176,88 @@ header {
     border-top: 2px solid rgba(0, 0, 0, 0.5);
 }
 
-/* Desktop */
 
-.navbar-desktop {
-    display: none;
+
+/***
+*
+* Navitation: Desktop
+*
+***/
+
+nav .navbar-nav {
+    display: flex;
     flex-direction: row;
-    justify-content: flex-end;
-    align-items: flex-end;
+    padding: 1rem 0 0 0;
+    height: 100%;
+    width: 100%;
+}
+nav .navbar-brand {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    flex: 1;
+}
+nav .navbar-brand .navbar-organization-name {
+    width: 100%;
+    font-size: 3rem;
+    font-weight: 700;
+    margin: 0 1rem 0.5rem 0;
+}
+nav .navbar-brand .navbar-organization-name a {
+    width: inherit;
+    height: inherit;
+    color:#333333;
+}
+nav .navbar-brand .navbar-organization-description {
+    width: inherit;
+    height: inherit;
+    color:#333333;
 }
 
-.navbar-desktop .nav-item, .navbar-desktop .dropdown .dropdown-btn {
+.navbar-desktop {
+    padding-top: 2.5rem;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: flex-end;
+}
+.navbar-desktop .navbar-item, .navbar-desktop .navbar-dropdown {
+    text-align: center;
     padding: 1rem 1.5rem 1rem 1.5rem;
     border: 1px solid transparent;
     width: 150px;
+    color:#333333;
 }
-
-.navbar-desktop .dropdown {
+.navbar-desktop .navbar-dropdown {
     position: relative;
 }
-.navbar-desktop .dropdown:hover {
+.navbar-desktop .navbar-dropdown:hover {
+    position: relative;
     border-top: 1px solid rgba(0, 0, 0, 1);
     border-left: 1px solid rgba(0, 0, 0, 1);
     border-right: 1px solid rgba(0, 0, 0, 1);
 }
+.navbar-desktop .navbar-dropdown-btn {
+    color:#333333;
+}
 
-.navbar-desktop .dropdown .dropdown-content {
+.navbar-desktop .navbar-dropdown .navbar-dropdown-body .navbar-dropdown-item {
+    border-top: 1px solid rgba(0, 0, 0, 1);
+    text-align: center;
+}
+.navbar-desktop .navbar-dropdown .navbar-dropdown-body .navbar-dropdown-item:hover {
+    background-color: #F8F8F8;
+}
+.navbar-desktop .navbar-dropdown .navbar-dropdown-body .navbar-dropdown-item a {
+    display: block;
+    text-align: center;
+    white-space: nowrap;
+    padding: 1rem 1.5rem 1rem 1.5rem;
+    width: 100%;
+    height: 100%;
+    color:#333333;
+} 
+.navbar-desktop .navbar-dropdown .navbar-dropdown-body {
     display: none;
     position: absolute;
     width: 100%;
@@ -209,25 +267,7 @@ header {
     background-color: rgb(255, 255, 255 );
     border-bottom: 1px solid rgba(0, 0, 0, 1);
 }
-
-.navbar-desktop .dropdown .dropdown-content .dropdown-item {
-    border-top: 1px solid rgba(0, 0, 0, 1);
-    text-align: center;
-}
-.navbar-desktop .dropdown .dropdown-content .dropdown-item a {
-    display: block;
-    text-align: center;
-    white-space: nowrap;
-    padding: 1rem 1.5rem 1rem 1.5rem;
-    width: 100%;
-    height: 100%;
-}
-
-.navbar-desktop .dropdown .dropdown-content .dropdown-item:hover {
-    background-color: #F8F8F8;
-}
-
-.navbar-desktop .dropdown:hover > .dropdown-content{
+.navbar-desktop .navbar-dropdown:hover > .navbar-dropdown-body {
     display: block;
     width: calc(100% + 2px);
     border-left: 1px solid rgba(0, 0, 0, 1);
@@ -235,7 +275,6 @@ header {
 }
 
 /* Page title, call to action text */
-
 .page-title {
     padding: 1rem 0;
     font-weight: 700;
@@ -264,12 +303,13 @@ header {
     cursor: pointer;
 }
 .card-deck .card .card-title {
+    text-transform: uppercase;
     font-size: 1.3rem;
     font-weight: 700;
     background-color: rgba(255, 255, 255, 0.5);
     height: auto;
     padding: 1rem 0 1rem 2.5rem;
-    width: 300px;
+    width: 100%;
     position: absolute;
     bottom: 0;
 }
@@ -279,16 +319,16 @@ header {
     position: absolute;
     top: 0;
     left: 0;
-    height: 300px;
-    width: 300px;
+    height: 100%;
+    width: 100%;
     background-color: rgba(255, 255, 255, 0.5);
 }
 .card-deck .card .card-body {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    height: inherit;
-    width: inherit;
+    height: 100%;
+    width: 100%;
     padding: 2.5rem;
     cursor: pointer;
 }
@@ -328,9 +368,6 @@ footer .container {
     flex-direction: column;
     text-align: center;
     justify-content: space-evenly;
-    /* width: 100%; */
-    /* max-width: 60rem; */
-    /* 960px / 16px = 60 */
 }
 
 .developed-by>a {
@@ -351,6 +388,10 @@ input {
 }
 textarea {
     font-size: 1.1rem;
+}
+
+ul {
+    list-style: none;
 }
 .form {
     width: 100%;
@@ -394,124 +435,53 @@ textarea {
     justify-content: flex-end;
 }
 
-
-
-/* Media queries */
-
-@media screen and (min-width: 500px) {
-    main {
-        margin: 104px auto 2rem auto;    
-    }
-    .navbar .navbar-brand .navbar-brand-description {
-        display: block;
-    }
-    footer .container {
-        flex-direction: row;
-        justify-content: space-between;
-    }
-
-}
-
-@media screen and (min-width: 700px) {
-    header {
-        width: 100%;
-    }
-    main {
-        max-width: 620px;
-        padding: 0;
-    }
-    .card-deck {
-        flex-direction: row;
-        flex-wrap: wrap;
-    }
-    .card-deck .card {
-        display: flex;
-        width: 300px;
-        height: 300px;
-        margin: 0 0.25rem 1rem 0.25rem;
-        overflow: hidden;
-        position: relative;
-        cursor: pointer;
-    }
-    .navbar-brand {
-        flex: 1;
-    }
-    .navbar .navbar-mobile,
-    .navbar-toggler {
-        display: none;
-    }
-    .navbar .navbar-desktop {
-        display: flex;
-    }
-    .form .form-group .form-control, .form .form-group .form-control-text-area  {
-        padding: 1.5rem;
-    }
-    footer {
-        padding: 1rem;
-    }
-}
-
-@media screen and (min-width: 900px) {
-    .form {
-        width: 960px;
-    }
-    .navbar {
-        margin: 0 auto;
-    }
-}
-
 /****
 *
 * Media Queries for CSS Grid
 *
 **/
-
-/*@media (max-width:1450px){
-    .wrapper {
-        width: 1160px;
-    }
-}
-@media (max-width:1200px){
-    .wrapper {
-        width: 960px;
-    }
-}
-@media (max-width:992px){
-    .wrapper {
-        width: 794px;
-    }
-}
-@media (max-width:768px){
-    .wrapper {
-        width: 615px;
-    }
-}
-@media (max-width:576px){
-    .wrapper {
-        width: 461px;
-    }
-}*/
-/* Bootstrap 
-/*Extra small devices (phones, less than 768px)
-/* No media query since this is the default in Bootstrap 
-
-/* Small devices (tablets, 768px and up) 
+/* Small devices (tablets, 768px and up)  */
 @media (min-width: 768px) { 
-    .wrapper {
+    .container {
         width: 750px;
     }
+    .navbar .navbar-brand .navbar-brand-name {
+        font-size: 3rem;
+    }
+    nav .navbar-brand .navbar-organization-description {
+        display: block;
+    }
+    .card-deck {
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+    .card-deck .card{
+        flex: 1;
+        margin: 0.5rem;
+    }
+    
+    footer .container {
+        flex-direction: row;
+        justify-content: space-between;
+    }
  }
 
-/* Medium devices (desktops, 992px and up) 
+/* Medium devices (desktops, 992px and up) */
 @media (min-width: 992px) { 
-    .wrapper {
+    .container {
         width: 970px;
     }
+    .navbar-mobile-nav {
+        display: none;
+    }
+    .navbar .navbar-brand .navbar-brand-description {
+        display: block;
+    }
  }
 
-/* Large devices (large desktops, 1200px and up) 
+/* Large devices (large desktops, 1200px and up) */
 @media (min-width: 1200px) { 
-    .wrapper {
+    .container {
         width: 1170px;
     }
- } */
+ } 

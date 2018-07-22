@@ -7,9 +7,9 @@
 
 <body>
     <header>
-        <% include ../../partials/header.ejs %>
+        <% include ../../partials/header2.ejs %>
     </header>
-    <main class="wrapper">
+    <main class="container">
         <div class="page-title">
             <% if (typeof callToAction === "object" && callToAction) { %>
                 </h5>
@@ -24,7 +24,7 @@
             <% if (typeof pages === "object" && pages) { %>
                 <% pages.map(function(page){ %>
                     <div class="card">
-                        <div style="height: 300px; width: 100%; display: block; background-position: center; background-image: url('<%=page.banner_location%>')">
+                        <div style="height: 100%; width: 100%; display: block; background-position: center; background-image: url('<%=page.banner_location%>')">
                         </div>
                         <div class="card-title">
                             <%=page.title%>
