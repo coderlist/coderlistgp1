@@ -1227,7 +1227,6 @@ postEditPageCheck = [
   body('title').isAlphanumeric(),
   body('content').exists(), // ensure sanitised in and out of db
   body('description').isAlphanumeric(),
-  body('user_id').isInt(),
   body('page_id').isInt()
 ]
 
@@ -1246,6 +1245,7 @@ userRoutes.post('/edit-page', postEditPageCheck, function(req, res){
   console.log('page :', page);
   // console.log('req.body :', req.body);
   if (!errors.isEmpty()) {
+    console.log('errors.array() :', errors.array());
     req.flash('error','Invalid page data');
     res.status(200).render('pages/users/edit-page', {page : page});
     return;
@@ -1255,7 +1255,7 @@ userRoutes.post('/edit-page', postEditPageCheck, function(req, res){
    // i would like page id from the db please
   updatePageContentByIdNoBanner(page).then(function(data){
     req.flash('info', 'Page updated successfully');
-    res.status(200).redirect('/users/dashboard');
+    res.status(200).redirect(`/users/edit-page/${page.link}`); 
   }).catch(function(err){
     console.log('err :', err);
     req.flash('error', 'There was an error updating the page');
