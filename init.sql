@@ -164,6 +164,7 @@ ALTER TABLE pages ADD COLUMN IF NOT EXISTS ckeditor_html TEXT,
    ADD COLUMN IF NOT EXISTS page_description TEXT,
    ADD COLUMN IF NOT EXISTS banner_location TEXT,
    ADD COLUMN IF NOT EXISTS last_edited_by TEXT,
+   ADD COLUMN IF NOT EXISTS is_draft BOOLEAN,
    ADD COLUMN IF NOT EXISTS link TEXT UNIQUE;
 
 ALTER TABLE page_navigations ADD COLUMN IF NOT EXISTS updated_date TIMESTAMP,
@@ -360,18 +361,7 @@ END $$;
 
 
 
--- DO 
--- $BODY$
--- DECLARE
---     jsonArray json := (SELECT old_email FROM users WHERE email='test@code.io');
--- DECLARE  i json;
--- BEGIN
---   FOR i IN SELECT json_array_elements(jsonArray)
---   LOOP
---     RAISE NOTICE 'output from jsons %', i->>'old_val';
---   END LOOP;
--- END;
--- $BODY$ language plpgsql;
+
 
 
 
