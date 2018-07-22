@@ -83,9 +83,12 @@ const {
   updateNavItemById,
   deleteNavItemById
 } = require('../server/models/navigations')
-const {toNavJSON} = require('../helperFunctions/query/navJson')
 const { 
-  insertCallToAction
+  toNavJSON
+} = require('../helperFunctions/query/navJson')
+const { 
+  insertCallToAction,
+  getLatestCall
 } = require('../server/models/callActions');
 const uuid = require('uuid/v1');
 const Mail = require('../helperFunctions/verification/MailSender');
@@ -222,16 +225,17 @@ userRoutes.use(messageTitles.setMessageTitles);
 // });
 
 userRoutes.get('/dashboard', (req, res) => {
-  listAllUsers()
-  .then(function(userData){
-    getAllPages() 
-    .then(function(pageData){
-      res.status(200).render('pages/users/dashboard.ejs', { 
-        users : userData,
-        pages : pageData,
-        messages: req.flash('info'),
-        messagesError : req.flash('error')
-      })
+  const callToAction = getLatestCall();
+  const users = listAllUsers()
+  const pages = getAllPages()
+  Promise.all([callToAction, users, pages]).then(function(values){
+    console.log('values[0] :', values[0]);
+    res.status(200).render('pages/users/dashboard.ejs', { 
+      callToAction: values[0][0],
+      users : values[1],
+      pages : values[2],
+      messages: req.flash('info'),
+      messagesError : req.flash('error')
     })
   }).catch(function(err){
     console.log('err :', err);
