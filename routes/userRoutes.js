@@ -1297,6 +1297,7 @@ userRoutes.delete('/delete-page/:page_id', deletePageCheck, function(req, res){
             // req.flash('info', 'Page deleted');
             // req.method = "GET";
             // res.status(301).redirect('/users/dashboard');
+            req.flash('info', 'Page deleted');
             res.status(200).send(JSON.stringify({ status: "SUCCESS", message: 'Page successfully deleted', location: "/users/dashboard" }));
             return;
           } else {
