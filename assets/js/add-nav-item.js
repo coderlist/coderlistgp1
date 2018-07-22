@@ -80,13 +80,13 @@ const createInputFieldPageName = function (inputFieldName) {
     let input = "";
     switch (inputFieldName) {
         case "menuInputFieldName":
-            input = `<input type="text" class="form-control menu-page-name" name="menu_page_name" placeholder="Item Name">`;
+            input = `<input type="text" class="form-control menu-page-name" name="menu_page_name" placeholder="Item Name" value="">`;
             break;
         case "menuInputFieldOrderNumber":
             input = `<input type="text" class="form-control page-order menu-page-order" name="menu_page_order" value="0">`;
             break;
         case "subMenuInputFieldName":
-            input = `<input type="text" class="form-control sub-menu-page-name" name="sub_menu_page_name" placeholder="Item Name">`;
+            input = `<input type="text" class="form-control sub-menu-page-name" name="sub_menu_page_name" placeholder="Item Name" value="">`;
             break;
         
         case "subMenuInputFieldOrderNumber":
