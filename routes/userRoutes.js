@@ -1148,7 +1148,12 @@ userRoutes.get('/edit-page/:link', pageIDCheck, function (req, res) {
           const shortName = pdf.match(/([\w\s]*)/)[0] + ".pdf";  //remove the random number to make displaying prettier
           pdfList.push({name: pdf, short: shortName, location: `/pdfs/${pdf}`})
         })
-        res.status(200).render('pages/users/edit-page.ejs', {page: data[0], messages: req.flash('info'), messagesError : req.flash('error'), pdfs : pdfList});
+        data[0].href = `${urlConfig.url}/pages/${data[0].link}`
+        res.status(200).render('pages/users/edit-page.ejs', {
+          page: data[0], 
+          messages: req.flash('info'), 
+          messagesError : req.flash('error'), 
+          pdfs : pdfList});
         return;
       })
     })
