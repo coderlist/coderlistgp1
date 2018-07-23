@@ -37,6 +37,12 @@ header {
     color: #333333;
 }
 
+/* Page title, call to action text */
+.page-title {
+    padding: 1.5rem 1rem 1.5rem 1rem;
+    font-weight: 700;
+}
+
 /***
 *
 *   Burger Menu Button
@@ -258,15 +264,6 @@ nav .navbar-brand .navbar-organization-description {
     z-index: 200;
     top: 0;
     left: 0;
-}
-
-
-
-
-/* Page title, call to action text */
-.page-title {
-    padding: 1rem;
-    font-weight: 700;
 }
 
 /*

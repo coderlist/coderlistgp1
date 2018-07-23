@@ -538,7 +538,6 @@ function manageNavMessagesAndStatus(message){
             manageNavMessage.textContent = message.message;
             toggleManageNavOverlay(callMeBackWhenYouNeedMeToRedirect);
         } else {
-            console.log('error happens here');
             manageNavTitle.textContent = message.status;
             manageNavMessage.textContent = message.message;
             manageSubNavInputItemIDField.value = message.createdNavItem.item_id;
@@ -547,7 +546,7 @@ function manageNavMessagesAndStatus(message){
     } else if(message.status === "SUCCESS" && message.message === "Nav Item Updated"){
         manageNavTitle.textContent = message.status;
         manageNavMessage.textContent = message.message;
-        toggleManageNavOverlay(callMeBackWhenYouNeedMeToRedirect);
+        toggleManageNavOverlay();
     } else if(message.status === "SUCCESS" && message.message === "Nav Item deleted"){
         manageNavTitle.textContent = message.status;
         manageNavMessage.textContent = message.message;
