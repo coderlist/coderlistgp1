@@ -1,41 +1,43 @@
 <nav class="nav-desktop container" role="navigation">
-    <div class="navbar-nav">
-        <div class="navbar-brand">
-            <div class="navbar-organization-name"><a href="/">Ginny Bradley</a></div>
-            <div class="navbar-organization-description">Inspiring children's confidence &amp; wellbeing</div>
-        </div>
-        <ul class="navbar-desktop">
-        <%if (typeof menuItems == "object" && menuItems) { %>
-            <% menuItems.forEach(function(menuItem, index) { %>
-            <% if (menuItem.parent_id === null && menuItem.link !== null  ) { %>
-                <li class="navbar-item">
-                        <a href="pages/<%=menuItem.link%>"><%=menuItem.title%></a>
-                </li>
-            <% } else { %> 
-                <li class="navbar-item navbar-dropdown">
-                    <a href="#" class="navbar-dropdown-btn"><%=menuItem.title%></a>
-                    <ul class="navbar-dropdown-body">
-                        <%if(menuItem.children) { %>
-                            <%menuItem.children.map(function(childItem){ %>
-                            <li class="navbar-dropdown-item"><a href="pages/<%=childItem.link%>"><%=childItem.title%></a></li>
-                            <% }) %>
-                        <% } %>
-                    </ul>
-                </li>
-                <% } %>
-            <% }) %>
-        <% } %>
-        </ul>
-        <div class="navbar-burger">
-          <div class="navbar-burger-button">
-            <div class="navbar-burger-name"> MENU</div>
-            <div class="navbar-burger-toggler navbar-toggler-icon">
-                <span class="navbar-toggler-bar"></span>
-                <span class="navbar-toggler-bar"></span>
-                <span class="navbar-toggler-bar"></span>
+    <div class="container">
+        <div class="navbar-nav">
+            <div class="navbar-brand">
+                <div class="navbar-organization-name"><a href="/">Ginny Bradley</a></div>
+                <div class="navbar-organization-description">Inspiring children's confidence &amp; wellbeing</div>
+            </div>
+            <ul class="navbar-desktop">
+            <%if (typeof menuItems == "object" && menuItems) { %>
+                <% menuItems.forEach(function(menuItem, index) { %>
+                <% if (menuItem.parent_id === null && menuItem.link !== null  ) { %>
+                    <li class="navbar-item">
+                            <a href="pages/<%=menuItem.link%>"><%=menuItem.title%></a>
+                    </li>
+                <% } else { %> 
+                    <li class="navbar-item navbar-dropdown">
+                        <a href="#" class="navbar-dropdown-btn"><%=menuItem.title%></a>
+                        <ul class="navbar-dropdown-body">
+                            <%if(menuItem.children) { %>
+                                <%menuItem.children.map(function(childItem){ %>
+                                <li class="navbar-dropdown-item"><a href="pages/<%=childItem.link%>"><%=childItem.title%></a></li>
+                                <% }) %>
+                            <% } %>
+                        </ul>
+                    </li>
+                    <% } %>
+                <% }) %>
+            <% } %>
+            </ul>
+            <div class="navbar-burger">
+            <div class="navbar-burger-button">
+                <div class="navbar-burger-name"> MENU</div>
+                <div class="navbar-burger-toggler navbar-toggler-icon">
+                    <span class="navbar-toggler-bar"></span>
+                    <span class="navbar-toggler-bar"></span>
+                    <span class="navbar-toggler-bar"></span>
+                </div>
             </div>
         </div>
-      </div>
+        </div>
     </div>
 </nav>
 <nav class="nav-mobile collapse" role="navigation">

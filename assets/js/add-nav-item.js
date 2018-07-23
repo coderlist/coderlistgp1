@@ -564,6 +564,10 @@ function manageNavMessagesAndStatus(message){
         manageNavTitle.textContent = message.status;
         manageNavMessage.textContent = message.message;
         toggleManageNavOverlay();
+    }else if (message.status === "FAILURE" && message.message === "Invalid nav item entry"){
+        manageNavTitle.textContent = message.status;
+        manageNavMessage.textContent = message.message;
+        toggleManageNavOverlay();
     }
 }
 
