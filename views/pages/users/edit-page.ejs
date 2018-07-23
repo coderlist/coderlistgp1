@@ -68,10 +68,10 @@
                             <% if ((title === "Create Page") || (typeof page == 'object' && !page.is_published)) { %> 
                             <button name="save_draft" class="btn btn-primary">Save Draft</button>
                             <% } %>
-                            <% if (title === "Create Page") { %> 
+                            <% if ((title === "Create Page") || (typeof page == 'object' && !page.is_published)) { %> 
                             <button name="publish_page" type="submit" value="true" class="btn btn-primary">Publish</button>
                             <% } %>
-                            <% if (title === "Edit Page") { %> 
+                            <% if ((title === "Edit Page") && (typeof page == 'object' && page.is_published)) { %> 
                             <button name="update_page" type="submit" class="btn btn-primary">Update</button>
                             <% } %>
                             <% if ((title === "Edit Page") && (typeof page == 'object' && page.is_published)) { %> 
