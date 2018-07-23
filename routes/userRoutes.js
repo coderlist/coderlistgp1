@@ -1235,7 +1235,8 @@ postEditPageCheck = [
   body('title').isAlphanumeric(),
   body('content').exists(), // ensure sanitised in and out of db
   body('description').isAlphanumeric(),
-  body('page_id').isInt()
+  body('page_id').isInt(),
+  body('publish_page').optional().isBoolean()
 ]
 
 userRoutes.post('/edit-page', postEditPageCheck, function(req, res){
@@ -1248,7 +1249,8 @@ userRoutes.post('/edit-page', postEditPageCheck, function(req, res){
     order_number: 1,
     page_id: req.body.page_id,
     last_edited_by: req.session.user_id,
-    last_edited_date: Date.now()
+    last_edited_date: Date.now(),
+    is_published: req.body.publish_page ? true : false
   }
   console.log('page :', page);
   // console.log('req.body :', req.body);
