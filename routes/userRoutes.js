@@ -1169,7 +1169,7 @@ postCreatePageCheck = [
   body('title').matches(/^[\w ]+$/),
   body('content').exists(), // ensure sanitised in and out of db
   body('description').matches(/^[\w ]+$/),
-  body('publish_page').isBoolean()
+  body('publish_page').optional().isBoolean()
 ]
 
 userRoutes.post('/create-page',  upload.single('image'), postCreatePageCheck, function(req, res){
@@ -1183,7 +1183,7 @@ userRoutes.post('/create-page',  upload.single('image'), postCreatePageCheck, fu
     ckeditor_html: req.body.content,
     page_description: req.body.description,
     order_number: 1,
-    is_published: req.body.publish_page
+    is_published: req.body.publish_page ? true : false
     
   }
   console.log('errors.isEmpty :', errors.array(), "file present", req.file);
