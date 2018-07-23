@@ -74,7 +74,7 @@
                             <% if (title === "Edit Page") { %> 
                             <button name="update_page" type="submit" class="btn btn-primary">Update</button>
                             <% } %>
-                            <% if (title === "Edit Page") { %> 
+                            <% if ((title === "Edit Page") && (typeof page == 'object' && page.is_published)) { %> 
                             <a href="<%= (typeof page == 'object' && page) ? page.href : ''%>" class="btn btn-primary" target="_blank">View Page</a>
                             <% } %>
                         </div>
