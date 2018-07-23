@@ -20,11 +20,13 @@ body {
 
 main.container {
     margin: 4rem auto 0 auto;
+    padding-bottom: 2rem;
     flex: 1 0 auto;
 }
 /* header */
 header {
     width: 100%;
+    padding-bottom: 0.5rem;
     height: auto;
     position: fixed;
     z-index: 20;
@@ -195,7 +197,7 @@ nav .navbar-brand .navbar-organization-description {
     display: flex;
     flex-direction: row;
     height: auto;
-    padding: 1rem;
+    padding: 1rem 1rem 1.5rem 1rem;
     width: 100%;
 }
 .nav-mobile .navbar-mobile {
@@ -273,6 +275,7 @@ nav .navbar-brand .navbar-organization-description {
     display: flex;
     flex-direction: column;
     flex-wrap: nowrap;
+    justify-content: center;
 }
 .card-deck .card {
     display: flex;
@@ -289,7 +292,7 @@ nav .navbar-brand .navbar-organization-description {
     font-weight: 700;
     background-color: rgba(255, 255, 255, 0.5);
     height: auto;
-    padding: 1rem 0 1rem 2.5rem;
+    padding: 1.5rem 0 1.5rem 2.5rem;
     width: 100%;
     position: absolute;
     bottom: 0;
@@ -478,7 +481,8 @@ ul {
         display: none;
     }
     .card-deck .card{
-        height: 350px;
+        height: 359px;
+        max-width: 359px;
         flex-grow: 1;
         margin: 0.5rem;
     }
@@ -500,6 +504,7 @@ ul {
 @media (min-width: 1200px) { 
     .card-deck .card{
         height: 400px;
+        max-width: 400px;
         flex-grow: 1;
         margin: 0.5rem;
     }
