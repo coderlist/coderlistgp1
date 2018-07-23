@@ -1232,9 +1232,9 @@ userRoutes.post('/create-page',  upload.single('image'), postCreatePageCheck, fu
   })
 });
 postEditPageCheck = [
-  body('title').isAlphanumeric(),
+  body('title').matches(/^[\w ]+$/),
   body('content').exists(), // ensure sanitised in and out of db
-  body('description').isAlphanumeric(),
+  body('description').matches(/^[\w ]+$/),
   body('page_id').isInt(),
   body('publish_page').optional().isBoolean()
 ]
