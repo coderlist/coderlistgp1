@@ -421,86 +421,86 @@ routes.get('/content/manage-all-pages', (req, res) => { //accessible by authed a
 
 //// for creating users for test purposes only /// remove on production 
 
-routes.get('/create-user', (req, res) => { //accessible by authed admin
-  res.status(200).render('pages/users/create-user.ejs', {title: 'Create User', active: 'active', username: 'Ginny Bradley', messages: req.flash('info')});
-});
+// routes.get('/create-user', (req, res) => { //accessible by authed admin
+//   res.status(200).render('pages/users/create-user.ejs', {title: 'Create User', active: 'active', username: 'Ginny Bradley', messages: req.flash('info')});
+// });
 
-const createUserCheck = [
-  body('email').isEmail().normalizeEmail(),
-  body('first_name').trim().isAlphanumeric(),
-  body('last_name').trim().isAlphanumeric()
-];
+// const createUserCheck = [
+//   body('email').isEmail().normalizeEmail(),
+//   body('first_name').trim().isAlphanumeric(),
+//   body('last_name').trim().isAlphanumeric()
+// ];
 
 
-routes.post('/create-user', createUserCheck, (req, res) => { //accessible by authed admin
+// routes.post('/create-user', createUserCheck, (req, res) => { //accessible by authed admin
   
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    console.log('ERROR',errors.array())
-    const userTemp = {
-      email : req.body.email || "", 
-      firstName : req.body.first_name || "", 
-      lastName: req.body.last_name || ""
-    }
-    req.flash("info","Invalid user data", process.env.NODE_ENV === 'development' ? errors.array() : ""); //error.array() for development only
-    res.status(200).render('pages/users/create-user.ejs', {
-      title: 'Create User', 
-      active: 'active', 
-      username: 'Ginny Bradley', 
-      messages : req.flash('info'),
-      messagesError : req.flash('error'), 
-      userTemp});
-    return;
-  }
+//   const errors = validationResult(req);
+//   if (!errors.isEmpty()) {
+//     console.log('ERROR',errors.array())
+//     const userTemp = {
+//       email : req.body.email || "", 
+//       firstName : req.body.first_name || "", 
+//       lastName: req.body.last_name || ""
+//     }
+//     req.flash("info","Invalid user data", process.env.NODE_ENV === 'development' ? errors.array() : ""); //error.array() for development only
+//     res.status(200).render('pages/users/create-user.ejs', {
+//       title: 'Create User', 
+//       active: 'active', 
+//       username: 'Ginny Bradley', 
+//       messages : req.flash('info'),
+//       messagesError : req.flash('error'), 
+//       userTemp});
+//     return;
+//   }
 
-  const user = {
-    email : req.body.email,
-    last_failed_login: "",
-    first_name : req.body.first_name,
-    last_name : req.body.last_name,
-    failed_login_attempts : 0,
-    activation_token :  uuid()
-  };
+//   const user = {
+//     email : req.body.email,
+//     last_failed_login: "",
+//     first_name : req.body.first_name,
+//     last_name : req.body.last_name,
+//     failed_login_attempts : 0,
+//     activation_token :  uuid()
+//   };
 
-  createUser(user).then(function(userCreated){ // returns user created true or false
-    console.log('userCreated :', userCreated);
-    if (userCreated) {
-      let mail = new Mail;
-      mail.sendVerificationLink(user);
-      req.flash('info', 'user created and email sent'); 
-      res.redirect('./users/create-user'); 
-      return;
-    }
-    else {
-      console.log("There was a create user error", err)
-      req.flash('info', 'There was an error creating this user. Please try again. If you already have please contact support.')
-      res.status(200).render('pages/users/create-user.ejs', {
-        title: 'Create User', 
-        active: 'active', 
-        username: 'Ginny Bradley', 
-        messages : req.flash('info'), 
-        messagesError : req.flash('error'),
-        user});
-      return;
-    }
-  }).catch(function(err){
-    const userExistsCode = "23505";
-    if (err.code === userExistsCode) {
-      req.flash("info", "User already exists");
-    }
-    else {
-      console.log("There was a system error", err)
-      req.flash('info', 'There was an system error. Please notify support.')
-    }
-    res.status(200).render('pages/users/create-user.ejs', {
-      title: 'Create User', 
-      active: 'active', 
-      username: 'Ginny Bradley', 
-      messages : req.flash('info'), 
-      user});
-  })
-  return;
-});
+//   createUser(user).then(function(userCreated){ // returns user created true or false
+//     console.log('userCreated :', userCreated);
+//     if (userCreated) {
+//       let mail = new Mail;
+//       mail.sendVerificationLink(user);
+//       req.flash('info', 'user created and email sent'); 
+//       res.redirect('./users/create-user'); 
+//       return;
+//     }
+//     else {
+//       console.log("There was a create user error", err)
+//       req.flash('info', 'There was an error creating this user. Please try again. If you already have please contact support.')
+//       res.status(200).render('pages/users/create-user.ejs', {
+//         title: 'Create User', 
+//         active: 'active', 
+//         username: 'Ginny Bradley', 
+//         messages : req.flash('info'), 
+//         messagesError : req.flash('error'),
+//         user});
+//       return;
+//     }
+//   }).catch(function(err){
+//     const userExistsCode = "23505";
+//     if (err.code === userExistsCode) {
+//       req.flash("info", "User already exists");
+//     }
+//     else {
+//       console.log("There was a system error", err)
+//       req.flash('info', 'There was an system error. Please notify support.')
+//     }
+//     res.status(200).render('pages/users/create-user.ejs', {
+//       title: 'Create User', 
+//       active: 'active', 
+//       username: 'Ginny Bradley', 
+//       messages : req.flash('info'), 
+//       user});
+//   })
+//   return;
+// });
 
 getPageParamCheck = [
   param('link').exists()
