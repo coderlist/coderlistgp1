@@ -13,15 +13,15 @@
                             <a href="pages/<%=menuItem.link%>"><%=menuItem.title%></a>
                     </li>
                 <% } else { %> 
-                    <li class="navbar-item navbar-dropdown">
+                    <li class="navbar-item dropdown">
                         <a href="#" class="navbar-dropdown-btn"><%=menuItem.title%></a>
-                        <ul class="navbar-dropdown-body">
+                        <div class="navbar-dropdown-body">
                             <%if(menuItem.children) { %>
                                 <%menuItem.children.map(function(childItem){ %>
-                                <li class="navbar-dropdown-item"><a href="pages/<%=childItem.link%>"><%=childItem.title%></a></li>
+                                <a class="navbar-dropdown-item" href="pages/<%=childItem.link%>"><%=childItem.title%></a>
                                 <% }) %>
                             <% } %>
-                        </ul>
+                        </div>
                     </li>
                     <% } %>
                 <% }) %>

@@ -134,11 +134,11 @@ nav .navbar-brand .navbar-organization-description {
     width: 100%;
 }
 
-.navbar-desktop .navbar-dropdown {
+.navbar-desktop .dropdown {
     position: relative;
 }
 
-.navbar-desktop .navbar-dropdown .navbar-dropdown-btn {
+.navbar-desktop .dropdown .navbar-dropdown-btn {
     text-align: center;
     border: 1px solid transparent;
     color:#333333;
@@ -148,43 +148,35 @@ nav .navbar-brand .navbar-organization-description {
     text-decoration: underline;
 }
 
-.navbar-desktop .navbar-dropdown .navbar-dropdown-body {
+.navbar-desktop .dropdown .navbar-dropdown-body {
+    min-width: 12rem;
     display: none;
     position: absolute;
     top: 46px;
-    left: -40px;
+    left: -50px;
     z-index: 100;
 }
-.navbar-desktop .navbar-dropdown:hover > .navbar-dropdown-body {
+
+.navbar-desktop .dropdown:hover > .navbar-dropdown-body {
     display: block;
-    width: calc(100% + 2px);
 }
 
-.navbar-desktop .navbar-dropdown .navbar-dropdown-body:hover {
-    text-align: center;
-}
-
-.navbar-desktop .navbar-dropdown .navbar-dropdown-body .navbar-dropdown-item {
+.navbar-desktop .dropdown .navbar-dropdown-body .navbar-dropdown-item {
     display: block;
-    min-width: 15rem;
+    width: 100%;
     border-top: 1px solid rgba(0, 0, 0, 1);
     border-left: 1px solid rgba(0, 0, 0, 1);
     border-right: 1px solid rgba(0, 0, 0, 1);
     background-color: rgb(255, 255, 255 );
-    text-align: center;
+    padding: 1rem 1.5rem 1rem 1.5rem;
+    color:#333333;
+    white-space: nowrap;
 }
-.navbar-desktop .navbar-dropdown .navbar-dropdown-body .navbar-dropdown-item:last-child {
+.navbar-desktop .dropdown .navbar-dropdown-body .navbar-dropdown-item:last-child {
     border-bottom: 1px solid rgba(0, 0, 0, 1);
 }
 
-.navbar-desktop .navbar-dropdown .navbar-dropdown-body .navbar-dropdown-item a {
-    display: block;
-    white-space: nowrap;
-    padding: 1rem 1.5rem 1rem 1.5rem;
-    color:#333333;
-}
-
-.navbar-desktop .navbar-dropdown .navbar-dropdown-body .navbar-dropdown-item a:hover {
+.navbar-desktop .dropdown .navbar-dropdown-body .navbar-dropdown-item:hover {
     background-color: #F8F8F8;
 } 
 
