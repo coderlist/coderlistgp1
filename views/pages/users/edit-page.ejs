@@ -65,7 +65,7 @@
                             <% if (title === "Edit Page") { %> 
                             <button name="delete_page" type="button" class="btn btn-danger delete-this">Delete Page</button>
                             <% } %>
-                            <% if (typeof page == 'object' && !page.is_published) { %> 
+                            <% if ((title === "Create Page") || (typeof page == 'object' && !page.is_published)) { %> 
                             <button name="save_draft" class="btn btn-primary">Save Draft</button>
                             <% } %>
                             <% if (title === "Create Page") { %> 
