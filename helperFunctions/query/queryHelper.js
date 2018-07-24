@@ -77,11 +77,12 @@ const findUserById = (id) => {
 const insertOne = (user) => {
   return queryHelper(`INSERT INTO users \
                     (email,first_name, \
-                    last_name, activation_token) VALUES \
+                    last_name, activation_token, is_admin) VALUES \
                     ('${user.email}',\
                     '${user.first_name}', \
                     '${user.last_name}', \
-                    '${user.activation_token}') RETURNING *`)
+                    '${user.activation_token}', \
+                    '${user.is_admin}') RETURNING *`)
          .then(users => users)
          .catch(e => {throw e})
 }

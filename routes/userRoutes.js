@@ -748,9 +748,10 @@ userRoutes.post('/create-user', createUserCheck, (req, res) => { //accessible by
       first_name: req.body.first_name,
       last_name: req.body.last_name,
       failed_login_attempts: 0,
-      is_admin: req.body.is_admin,
+      is_admin: req.body.is_admin == 'on' ? true : false,
       activation_token: uuid()
     };
+    console.log('user :', user);
     createUser(user).then(function (userCreated) { // returns user created true or false
       if (userCreated) {
         let mail = new Mail;
@@ -758,8 +759,7 @@ userRoutes.post('/create-user', createUserCheck, (req, res) => { //accessible by
         req.flash('info', 'user created and email sent'); 
         res.render('pages/users/create-user', {
           messagesError:  req.flash('error'),
-          messages: req.flash('info'),
-          userTemp: userTemp
+          messages: req.flash('info')
         }); // this is going to the dashboard after create user.  Why !!!!
         return;
       } else {
