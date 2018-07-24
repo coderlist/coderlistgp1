@@ -15,6 +15,7 @@ const {
 const changePassword = require('../server/models/users').changePassword;
 const { getPagesByHomePageGrid, getPagebyID, getPageByLink } = require('../server/models/pages');
 const { getAllNavItemsWithLink } = require('../server/models/navigations');
+const urlConfig = require('../environmentConfig');
 
 const uuid = require('uuid/v1');
 const _ = require('lodash');
@@ -60,6 +61,7 @@ routes.get('/', (req, res) => {
       callToAction: values[2][0], 
       menuItems: values[0],
       pages: values[1],
+      url: urlConfig,
       messages: req.flash('info'),
       messagesError: req.flash('error') 
     })
@@ -543,6 +545,7 @@ routes.get('/pages/:link', getPageParamCheck, function(req,res){
     res.status(200).render('pages/public/page', {
       page: values[1][0],
       menuItems: values[0],
+      url: urlConfig,
       messages : req.flash('info'), 
     })
   })

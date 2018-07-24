@@ -10,7 +10,7 @@
                 <% menuItems.forEach(function(menuItem, index) { %>
                 <% if (menuItem.parent_id === null && menuItem.link !== null  ) { %>
                     <li class="navbar-item">
-                            <a href="<%=menuItem.link%>"><%=menuItem.title%></a>
+                            <a href="<%=url.url%>/pages/<%=menuItem.link%>"><%=menuItem.title%></a>
                     </li>
                 <% } else { %> 
                     <li class="navbar-item dropdown">
@@ -18,7 +18,7 @@
                         <div class="navbar-dropdown-body">
                             <%if(menuItem.children) { %>
                                 <%menuItem.children.map(function(childItem){ %>
-                                <a class="navbar-dropdown-item" href="<%=childItem.link%>"><%=childItem.title%></a>
+                                <a class="navbar-dropdown-item" href="<%=url.url%>/pages/<%=childItem.link%>"><%=childItem.title%></a>
                                 <% }) %>
                             <% } %>
                         </div>
@@ -63,7 +63,7 @@
                 <% menuItems.forEach(function(menuItem, index) { %>
                 <% if (menuItem.parent_id === null && menuItem.link !== null  ) { %>
                 <li class="navbar-item">
-                    <a href="<%=menuItem.link%>"><%=menuItem.title%></a>
+                    <a href="<%=url.url%>/pages/<%=menuItem.link%>"><%=menuItem.title%></a>
                 </li>
                 <% } else { %> 
                     <li class="navbar-item navbar-dropdown">
@@ -71,7 +71,7 @@
                     <ul class="navbar-dropdown-body">
                         <%if(menuItem.children) { %>
                         <%menuItem.children.map(function(childItem){ %>
-                            <li class="navbar-dropdown-item"><a href="<%=childItem.link%>"><%=childItem.title%></a></li>
+                            <li class="navbar-dropdown-item"><a href="<%=url.url%>/pages/<%=childItem.link%>"><%=childItem.title%></a></li>
                         <% }) %>
                         <% } %>
                     </ul>

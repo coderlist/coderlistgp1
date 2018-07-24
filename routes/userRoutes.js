@@ -724,7 +724,8 @@ userRoutes.post('/create-user', createUserCheck, (req, res) => { //accessible by
     const userTemp = {
       email: req.body.email || "",
       first_name: req.body.first_name || "",
-      lastName: req.body.last_name || ""
+      lastName: req.body.last_name || "",
+      is_admin: req.body.is_admin || ""
     }
     req.flash("info", "Invalid user data", process.env.NODE_ENV === 'development' ? errors.array() : ""); //error.array() for development only
     res.status(200).render('pages/users/create-user.ejs', {
@@ -747,6 +748,7 @@ userRoutes.post('/create-user', createUserCheck, (req, res) => { //accessible by
       first_name: req.body.first_name,
       last_name: req.body.last_name,
       failed_login_attempts: 0,
+      is_admin: req.body.is_admin,
       activation_token: uuid()
     };
     createUser(user).then(function (userCreated) { // returns user created true or false
@@ -757,7 +759,7 @@ userRoutes.post('/create-user', createUserCheck, (req, res) => { //accessible by
         res.render('pages/users/create-user', {
           messagesError:  req.flash('error'),
           messages: req.flash('info'),
-          userTemp
+          userTemp: userTemp
         }); // this is going to the dashboard after create user.  Why !!!!
         return;
       } else {
@@ -770,22 +772,33 @@ userRoutes.post('/create-user', createUserCheck, (req, res) => { //accessible by
         });
         return;
       }
-    })
-  }).catch(function (err) {
-    const userExistsCode = "23505";
-    if (err.code === userExistsCode) {
-      req.flash("info", "User already exists");
-    } else {
+    }).catch(function (err) {
+      const userExistsCode = "23505";
+      if (err.code === userExistsCode) {
+        req.flash("info", "User already exists");
+      } else {
+        console.log("There was a system error", err)
+        req.flash('info', 'There was a system error. Please notify support.')
+        res.status(200).render('pages/users/edit-user.ejs', { 
+          messages: req.flash('info'),
+          messagesError : req.flash('error'),
+          user
+        })
+        return;
+      }
+      res.status(200).render('pages/users/edit-user.ejs', { 
+        messages: req.flash('info'),
+        messagesError : req.flash('error'),
+        user
+      });
+      return;
+    }).catch(function(err){
+      console.log('err :', err);
       console.log("There was a system error", err)
       req.flash('info', 'There was a system error. Please notify support.')
-    }
-    res.status(200).render('pages/users/edit-user.ejs', { 
-      messages: req.flash('info'),
-      messagesError : req.flash('error'),
-      user
-    });
+    })
+    return;
   })
-  return;
 });
 
 userRoutes.get('/admin', (req, res) => {
