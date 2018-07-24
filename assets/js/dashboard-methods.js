@@ -35,6 +35,7 @@ function saveThisTableItemInDB(data){
 function confirmationMessagesAndStatus(message){
     const confirmationTitle = document.querySelector('.confirmation-overlay-title');
     const confirmationMessage= document.querySelector('.confirmation-overlay-message');
+    console.log(confirmationTitle, confirmationMessage);
     if(message.status === "SUCCESS"){
         confirmationTitle.textContent = message.status;
         confirmationMessage.textContent = message.message;
@@ -69,16 +70,19 @@ function toggleConfirmationMessage(){
     // If the time out is not undefined
     // It means it has a defined value
     // clearTimeOut, will clear the setTimeOut method from the call stack 
-    toggleConfirmationOverlay(closeConfirmationMessage);
+    toggleConfirmationOverlay(callMeBackWhenYouNeedMeToRedirect);
 }
 
 function closeConfirmationMessage(){
     confirmationOverlay.classList.toggle("hide");
     clearTimeout(confirmationTimeOut);
+    callMeBackWhenYouNeedMeToRedirect();
 }
 function callMeBackWhenYouNeedMeToRedirect(){
-    return window.location.href = '/users/dashboard';
+    window.location.href = '/users/dashboard';
 }
+
+closeConfirmationButton.addEventListener('click', closeConfirmationMessage, false);
 
 saveThisButtons.forEach((button, index) => {
     button.addEventListener('click', event => {
