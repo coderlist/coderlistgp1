@@ -408,12 +408,16 @@ routes.post('/verify-change-email', verifyEmailCheckBody, (req, res) => {
 // pages // move to pages/content routes
 
 routes.get('/content/manage-page', (req, res) => {
-  res.status(200).render('pages/content/create-edit-page', {messages: req.flash('info'),messagesError : req.flash('error')});
+  res.status(200).render('pages/content/create-edit-page', {
+    messages: req.flash('info'),
+    messagesError : req.flash('error')});
   return;
 });
 
 routes.get('/content/manage-all-pages', (req, res) => { //accessible by authed admin
-  res.status(200).render('pages/content/manage-all-pages.ejs', {messages: req.flash('info'), messagesError : req.flash('error')});
+  res.status(200).render('pages/content/manage-all-pages.ejs', {
+    messages: req.flash('info'), 
+    messagesError : req.flash('error')});
   return;
 });
 
@@ -535,6 +539,7 @@ routes.get('/pages/:link', getPageParamCheck, function(req,res){
       }
       return item;
     });
+    console.log('values[0] :', values[0]);
     res.status(200).render('pages/public/page', {
       page: values[1][0],
       menuItems: values[0],

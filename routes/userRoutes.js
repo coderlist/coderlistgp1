@@ -713,7 +713,7 @@ const createUserCheck = [
   body('email').isEmail().normalizeEmail(),
   body('first_name').trim().isAlphanumeric(),
   body('last_name').trim().isAlphanumeric(),
-  body('is_admin').isBoolean()
+  body('is_admin').matches(/on|/)
 ];
 
 
@@ -727,7 +727,7 @@ userRoutes.post('/create-user', createUserCheck, (req, res) => { //accessible by
       lastName: req.body.last_name || ""
     }
     req.flash("info", "Invalid user data", process.env.NODE_ENV === 'development' ? errors.array() : ""); //error.array() for development only
-    res.status(200).render('pages/users/edit-user.ejs', {
+    res.status(200).render('pages/users/create-user.ejs', {
       messagesError:  req.flash('error'),
       messages: req.flash('info'),
       userTemp
@@ -754,7 +754,11 @@ userRoutes.post('/create-user', createUserCheck, (req, res) => { //accessible by
         let mail = new Mail;
         mail.sendVerificationLink(user);
         req.flash('info', 'user created and email sent'); 
-        res.render('/users/create-user'); // this is going to the dashboard after create user.  Why !!!!
+        res.render('pages/users/create-user', {
+          messagesError:  req.flash('error'),
+          messages: req.flash('info'),
+          userTemp
+        }); // this is going to the dashboard after create user.  Why !!!!
         return;
       } else {
         console.log("There was a create user error", err)
@@ -773,7 +777,7 @@ userRoutes.post('/create-user', createUserCheck, (req, res) => { //accessible by
       req.flash("info", "User already exists");
     } else {
       console.log("There was a system error", err)
-      req.flash('info', 'There was an system error. Please notify support.')
+      req.flash('info', 'There was a system error. Please notify support.')
     }
     res.status(200).render('pages/users/edit-user.ejs', { 
       messages: req.flash('info'),
@@ -1168,8 +1172,9 @@ userRoutes.get('/edit-page/:link', pageIDCheck, function (req, res) {
 postCreatePageCheck = [
   body('title').matches(/^[\w ]+$/),
   body('content').exists(), // ensure sanitised in and out of db
-  body('description').matches(/^[\w ]+$/),
-  body('publish_page').optional().isBoolean()
+  body('description').exists(),
+  body('publish_page').optional().isBoolean(),
+  sanitizeBody('description').trim().escape()
 ]
 
 userRoutes.post('/create-page',  upload.single('image'), postCreatePageCheck, function(req, res){
@@ -1234,9 +1239,10 @@ userRoutes.post('/create-page',  upload.single('image'), postCreatePageCheck, fu
 postEditPageCheck = [
   body('title').matches(/^[\w ]+$/),
   body('content').exists(), // ensure sanitised in and out of db
-  body('description').matches(/^[\w ]+$/),
+  body('description').exists(),
   body('page_id').isInt(),
-  body('publish_page').optional().isBoolean()
+  body('publish_page').optional().isBoolean(),
+  sanitizeBody('description').trim().escape()
 ]
 
 userRoutes.post('/edit-page', postEditPageCheck, function(req, res){
