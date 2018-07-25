@@ -523,6 +523,12 @@ routes.get('/pages/:link', getPageParamCheck, function(req,res){
   const pageItems = getPageByLink(req.params.link);
   Promise.all([navItems, pageItems])
   .then(function(values){
+    console.log('pageItems.is_published :', values[1][0].is_published , req.isAuthenticated());
+    if (!(values[1][0].is_published) && !(req.isAuthenticated())) {
+      req.flash('error', 'This page is not currently published');
+      res.status(200).redirect('/');
+      return;
+    }
     values[0].forEach((item, index) => {   // this exists twice. Needs refactoring. Here and the index route.
       if (item.parent_id) {
           //If there is a parent cycle through the data, find the parent and append the item to it's children.
@@ -547,6 +553,7 @@ routes.get('/pages/:link', getPageParamCheck, function(req,res){
       menuItems: values[0],
       url: urlConfig,
       messages : req.flash('info'), 
+      messagesError : req.flash('error')
     })
   })
 })
