@@ -161,7 +161,7 @@ figure img {
 
 img, .image-captioned {
     max-width:100%;
-    height:auto;
+    height:auto !important;
 }
 
 @media (max-width:768px){
