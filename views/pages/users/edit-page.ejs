@@ -72,7 +72,7 @@
                             <button name="publish_page" type="submit" value="true" class="btn btn-primary">Publish</button>
                             <% } %>
                             <% if ((title === "Edit Page") && (typeof page == 'object' && page.is_published)) { %> 
-                            <button name="update_page" type="submit" value="true" class="btn btn-primary">Update</button>
+                            <button name="publish_page" type="submit" value="true" class="btn btn-primary">Update</button>
                             <% } %>
                             <% if (title === "Edit Page") { %> 
                             <a href="<%= (typeof page == 'object' && page) ? page.href : ''%>" class="btn btn-primary" target="_blank">View Page</a>
