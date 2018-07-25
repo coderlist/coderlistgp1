@@ -16,24 +16,25 @@ body {
 .container {
     width: 100%;
     margin: 0 auto;
+    padding-left:1em;
+    padding-right:1em;
 }
 
 main.container {
-    margin: 4rem auto 0 auto;
+    margin: 5rem auto 0 auto;
     padding-bottom: 2rem;
     flex: 1 0 auto;
 }
 /* header */
 header {
     width: 100%;
-    padding-bottom: 0.5rem;
     height: auto;
     position: fixed;
     z-index: 20;
     top: 0;
     left: 0;
     background-color: rgb(255, 255, 255);
-    border-bottom: 2px solid #BDBDBD;
+    border-bottom: 2px solid #E8E8E8;
     color: #333333;
 }
 
@@ -86,7 +87,7 @@ header {
 nav .navbar-nav {
     display: flex;
     flex-direction: row;
-    padding: 1rem;
+    padding: 1rem 0;
     height: 100%;
     width: 100%;
 }
@@ -130,6 +131,7 @@ nav .navbar-brand .navbar-organization-description {
     border: 1px solid transparent;
     width: auto;
     color:#333333;
+    font-weight:300;
 }
 
 .navbar-desktop .navbar-item a {
@@ -178,6 +180,7 @@ nav .navbar-brand .navbar-organization-description {
     padding: 1rem 1.5rem 1rem 1.5rem;
     color:#333333;
     white-space: nowrap;
+    font-weight:300;
 }
 .navbar-desktop .dropdown .navbar-dropdown-body .navbar-dropdown-item:last-child {
     border-bottom: 1px solid rgba(0, 0, 0, 1);
@@ -204,17 +207,15 @@ nav .navbar-brand .navbar-organization-description {
     top: 0;
     left: 0;
     z-index: 100;
+    overflow:scroll;
 }
 
 .navbar-nav-mobile {
     display: flex;
     flex-direction: row;
     height: auto;
-    padding: 1rem 1rem 1.5rem 1rem;
+    padding: 1rem 0 1rem;
     width: 100%;
-}
-.nav-mobile .navbar-mobile {
-    padding: 0 1rem 0 1rem;
 }
 .nav-mobile .navbar-mobile .navbar-item:first-child {
     border-top: 2px solid #BDBDBD;
@@ -289,6 +290,7 @@ nav .navbar-brand .navbar-organization-description {
     overflow: hidden;
     position: relative;
     cursor: pointer;
+    max-width:100%;
 }
 .card-deck .card .card-title {
     text-transform: uppercase;
@@ -331,7 +333,7 @@ nav .navbar-brand .navbar-organization-description {
     margin-bottom: 0.8rem;
 }
 .card-deck .card .card-body .card-body-url a {
-    font-size: 0.8rem;
+    font-size: 1.1rem;
     text-decoration: underline;
     color: #333333; 
 }
@@ -437,7 +439,7 @@ ul {
 /* Small devices (tablets, 768px and up)  */
 @media (min-width: 768px) {
     main.container {
-        margin: 8rem auto 0 auto;
+        margin: 9rem auto 0 auto;
     }
     .container {
         width: 750px;
@@ -461,8 +463,8 @@ ul {
         flex-wrap: wrap;
     }
     .card-deck .card{
-        height: 359px;
-        max-width: 359px;
+        height: 343px;
+        max-width: 343px;
         flex-grow: 1;
         margin: 0.5rem;
     }
@@ -491,7 +493,7 @@ ul {
         margin: 0.5rem;
     }
     nav .navbar-nav {
-        padding: 1rem 1rem 0 1rem;
+        padding: 1rem 0 .5rem;
     }
     .navbar .navbar-brand .navbar-brand-description {
         display: block;
@@ -507,8 +509,8 @@ ul {
 /* Large devices (large desktops, 1200px and up) */
 @media (min-width: 1200px) { 
     .card-deck .card{
-        height: 400px;
-        max-width: 400px;
+        height: 363px;
+        max-width: 363px;
         flex-grow: 1;
         margin: 0.5rem;
     }
