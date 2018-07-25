@@ -525,7 +525,7 @@ routes.get('/pages/:link', getPageParamCheck, function(req,res){
   .then(function(values){
     console.log('pageItems.is_published :', values[1][0].is_published , req.isAuthenticated());
     if (!(values[1][0].is_published) && !(req.isAuthenticated())) {
-      req.flash('error', 'This page is not currently published');
+      // req.flash('error', 'This page is not currently published'); add back if flash message css is added to the homepage
       res.status(200).redirect('/');
       return;
     }
