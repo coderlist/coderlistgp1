@@ -14,7 +14,7 @@
                     </li>
                 <% } else { %> 
                     <li class="navbar-item dropdown">
-                        <a href="#" class="navbar-dropdown-btn"><%=menuItem.title%></a>
+                        <a class="navbar-dropdown-btn"><%=menuItem.title%></a>
                         <div class="navbar-dropdown-body">
                             <%if(menuItem.children) { %>
                                 <%menuItem.children.map(function(childItem){ %>

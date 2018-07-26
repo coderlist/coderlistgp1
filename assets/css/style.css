@@ -140,6 +140,7 @@ nav .navbar-brand .navbar-organization-description {
     display: block;
     height: 100%;
     width: 100%;
+    cursor:pointer;
 }
 
 .navbar-desktop .dropdown {

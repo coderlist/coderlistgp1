@@ -30,7 +30,7 @@ if(cards){
 }
 // Navbar
 const menu = document.querySelector('.nav-mobile');
-const buttons = document.querySelectorAll('.navbar-toggler-icon');
+const buttons = document.querySelectorAll('.navbar-burger');
 // Toggles Navbar on Smartphones
 const toggleNavBar = function () {
     const collapse = "collapse";

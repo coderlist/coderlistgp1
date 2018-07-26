@@ -168,6 +168,8 @@ img, .image-captioned {
     img, .image-captioned {
         width:100%;
         height:auto;
+        padding-top:30px;
+        padding-bottom:30px;
     }
 }
 
@@ -200,4 +202,5 @@ img, .image-captioned {
 
 .image-grid img {
     margin:1em !important;
+    padding:0 !important;
 }
