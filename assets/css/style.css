@@ -124,6 +124,7 @@ nav .navbar-brand .navbar-organization-description {
     flex-direction: row;
     justify-content: center;
     align-items: flex-end;
+    list-style:none;
 }
 
 .navbar-desktop .navbar-item {
@@ -209,6 +210,10 @@ nav .navbar-brand .navbar-organization-description {
     left: 0;
     z-index: 100;
     overflow:scroll;
+}
+
+.nav-mobile ul {
+    list-style:none;
 }
 
 .navbar-nav-mobile {
@@ -379,9 +384,9 @@ textarea {
     font-size: 1.1rem;
 }
 
-ul {
+/* ul {
     list-style: none;
-}
+} */
 .form {
     width: 100%;
     margin-top: 1.5rem;
