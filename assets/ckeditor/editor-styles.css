@@ -200,7 +200,21 @@ img, .image-captioned {
     align-items:flex-start;
 }
 
-.image-grid img {
+.image-grid img, .image-grid .image-captioned {
     margin:1em !important;
     padding:0 !important;
+}
+
+@media (max-width:768px){
+    .image-grid img, .image-grid .image-captioned {
+        margin-left:0 !important;
+        margin-right:0 !important;
+    }
+    .image-captioned {
+        padding-top:0 !important;
+    }
+}
+
+.image-captioned img {
+    margin:0 !important;
 }
