@@ -2,15 +2,16 @@ const ejs = require("ejs");
 const nodemailer = require('nodemailer');
 const transportEmailConfig = require('./transportEmailConfig');
 const config = require('../../environmentConfig');
-const forgotPasswordEmail = require('../../views/pages/email/forgot-password.ejs');
+const forgotPasswordEmail = './views/pages/email/forgot-password.ejs';
 const signupEmail = './views/pages/email/sign-up.ejs';
+const changeEmailVerification = './views/pages/email/change-email-verification.ejs';
 
 
 class MailSender {
    constructor () {
   }
 
-  sendPasswordReset(userDetails) {
+  sendPasswordReset(userDetails) {  // sned password reset link to user's emails
     ejs.renderFile(forgotPasswordEmail, {userDetails: userDetails, config: config}, function(err, data){
       if (err) {
         console.log('err :', err);
@@ -35,12 +36,12 @@ class MailSender {
     });
   }
 
-  sendToOldEmail(userDetails) {
+  sendToOldEmail(userDetails) { // send a confirmation email to users old email on email address change
     const oldEmail = {
       from: process.env.EMAIL_NODEMAILER_USERNAME,
-      to: userDetails.email, 
-      subject: 'Email change confirmation for Ginny Bradley Website', 
-      text: 'Confirmation that email has been changed for the Ginny Bradley website',
+      to: userDetails.old_email, 
+      subject: 'Email change confirmation for Ginny Bradley Website sent to old email', 
+      text: `Confirmation that your email has been changed for the Ginny Bradley website to ${userDetails.new_email}`,
       html: `` 
     }
     const transporter = nodemailer.createTransport(transportEmailConfig);
@@ -53,7 +54,7 @@ class MailSender {
     });
   }
 
-  sendPasswordChangeConfirmation(userDetails) {
+  sendPasswordChangeConfirmation(userDetails) { // send password change confirmation to email
     
     const passwordChangeConfirmation = {
       from: process.env.EMAIL_NODEMAILER_USERNAME, // sender address
@@ -72,7 +73,52 @@ class MailSender {
     });
   }
 
-  sendVerificationLink(userDetails) {
+  sendEmailChangeConfirmation(userDetails) { // send email change confirmation to new email
+    
+    const emailChangeConfirmation = {
+      from: process.env.EMAIL_NODEMAILER_USERNAME, // sender address
+      to: userDetails.new_email, 
+      subject: 'New Email change confirmation for Ginny Bradley Website', 
+      text: `Confirmation that email has been changed for the Ginny Bradley website from ${userDetails.old_email}`,
+      html: `` 
+   }
+    const transporter = nodemailer.createTransport(transportEmailConfig);
+    transporter.sendMail(emailChangeConfirmation, (error, info) => {
+      if (error) {
+          return console.log(error);
+      }
+      console.log(`Message ${info.messageId} sent: ${info.response}`);
+      return "success";
+    });
+  }
+
+  sendEmailChangeVerificationLink(userDetails) { // send email change verification link to new email
+    ejs.renderFile(changeEmailVerification, {userDetails: userDetails, config: config}, function(err, data){
+      if (err) {
+        console.log('err :', err);
+      }
+      else {
+        console.log('userDetails :', userDetails);
+        const newEmailLink = {
+          from: process.env.EMAIL_NODEMAILER_USERNAME,
+          to: userDetails.new_email, 
+          subject: 'New email verification link for Ginny Bradley Website', 
+          text: 'new email verification link',
+          html: data
+        }
+        const transporter = nodemailer.createTransport(transportEmailConfig);
+        transporter.sendMail(newEmailLink, (error, info) => {
+          if (error) {
+              return console.log(error);
+          }
+          console.log(`Message ${info.messageId} sent: ${info.response}`);
+          return "success";
+        });
+      }
+    })
+  }
+
+  sendVerificationLink(userDetails) { // send new registration verification link to user email
     ejs.renderFile(signupEmail, {userDetails: userDetails, config: config}, function(err, data){
       if (err) {
         console.log('err :', err);

@@ -1,0 +1,203 @@
+@import url('https://fonts.googleapis.com/css?family=Lato:300,300i,400,400i,700,700i');
+
+/* BASE */
+
+body {
+    font-family: 'Lato', sans-serif;
+    font-size: 16px;
+    color: #333333;
+}
+
+em {
+    font-style:italic;
+}
+
+blockquote
+{
+	font-style: italic;
+	font-family: 'Lato', Times, "Times New Roman", serif;
+	padding: 2px 0;
+	border-left:4px solid #eee;
+    margin-bottom:1em;
+    margin-left:40px;
+    margin-right:40px;
+}
+
+blockquote p {
+    font-size:20px;
+    margin-bottom:0;
+    padding-left:1em;
+}
+
+strong {
+    font-weight:bold;
+}
+
+p {
+    margin-top:0;
+    margin-bottom:1em;
+    line-height:22px;
+    font-size:17px;
+    font-weight:300;
+}
+
+a {
+    color: #C07E7E;
+    transition:color .2s ease;
+    text-decoration:none;
+}
+
+a:hover {
+    color:#AD6A6A;
+}
+
+h1, h2, h3 {
+    margin-top:0;
+    margin-bottom:.5em;
+    font-weight:400;
+}
+
+h1 {
+    font-size:45px;
+}
+
+h2 {
+    font-size:32px;
+}
+
+h3 {
+    font-size:24px;
+}
+
+hr {
+    height: 3px;
+    border: none;
+    background: #ededed;
+}
+
+.cke_editable ul, .cke_editable ol, main ol, main ul {
+    padding-left: 32px;
+    line-height: 28px;
+    font-size:17px;
+    font-weight:300;
+    width:auto;
+    overflow:hidden;
+    margin:1em 0;
+}
+
+/* Layout styles */
+
+.image-center {
+    text-align:center;
+}
+
+.image-right {
+    float:right;
+    margin-left:32px !important;
+}
+
+.image-left {
+    float:left;
+    margin-right:32px !important;
+}
+
+/* Table */
+
+table {
+    width:100% !important;
+    border:none;
+    border-spacing:0;
+    border-collapse:collapse;
+}
+
+table tr {
+    border: 1px solid #ddd;
+    border-spacing: 2px;
+}
+
+table tr td, table tr th {
+    padding:.5em;
+    border-right:1px solid #ddd;
+}
+
+table tr th {
+    font-weight:700;
+}
+
+table tr td:last-of-type {
+    border-right:none;
+}
+
+.table-alt tr, .table-alt th, .table-alt td { 
+    background:#f9f9f9;
+    border:5px solid #fff;
+    padding:1em;
+}
+
+/* Images */
+
+figure
+{
+	text-align: center;
+	background: rgba(0,0,0,0.05);
+    display: inline-block;
+    margin:0 !important;
+}
+
+figure > figcaption
+{
+    text-align: center;
+    padding:.4em 0 .7em;
+	display: block; /* For IE8 */
+}
+
+figure, img {
+    margin-bottom:1em !important;
+}
+
+figure img {
+    margin-bottom:0 !important;
+}
+
+img, .image-captioned {
+    max-width:100%;
+    height:auto !important;
+}
+
+@media (max-width:768px){
+    img, .image-captioned {
+        width:100%;
+        height:auto;
+    }
+}
+
+/* USER SELECTED STYLES */
+
+.image-grayscale {
+    filter: grayscale(100%);
+}
+.image-sepia {
+    filter: sepia(70%);
+}
+.image-darken {
+    filter: brightness(85%);
+}
+.image-lighten {
+    filter: brightness(115%);
+}
+.image-saturate {
+    filter: saturate(130%);
+}
+
+.image-grid {
+    display:flex;
+    flex-direction:row;
+    flex-wrap:wrap;
+    align-items: center;
+    justify-content:space-evenly;
+    align-items:flex-start;
+}
+
+.image-grid img {
+    margin:1em !important;
+}

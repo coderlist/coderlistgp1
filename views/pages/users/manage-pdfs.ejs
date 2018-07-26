@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <% include ../partials/head.ejs %>
+</head>
+
+<body>
+    <% include ../partials/header.ejs %>
+        <% include ../partials/delete-alert-message.ejs %>
+            <div class="my-3 my-md-5">
+                <div class="container">
+                    <div class="page-header">
+                        <h1 class="page-title">
+                            Manage PDF Files
+                        </h1>
+                    </div>
+                    <div class="row row-cards row-deck">
+                        <div class="form-group col-lg-8">
+                            <div class="card">
+                                <div class="table-responsive">
+                                    <table class="table table-hover table-outline table-vcenter text-nowrap card-table">
+                                        <thead>
+                                            <tr>
+                                                <th>PDF Name</th>
+                                                <th></th>
+                                                <th></th>
+                                                <th></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <% if (typeof pdfList === 'object' && pdfList) { %>
+                                              <% pdfList.map(function(pdf){ %>
+                                                <tr>
+                                                    <input type="text" name="pdf_location" class="this-location" value="<%=pdf.location%>"/>
+                                                    <input type="hidden" name="pdf_name" class="this_name" value="<%=pdf.name%>" />
+                                                    <input type="hidden" name="pdf_id" class="this_id" value="<%= pdf.id%>" />
+                                                    <td>
+                                                        <a href="<%=pdf.location%>" data-name="<%=pdf.name%>"><%=pdf.short%></a>
+                                                    </td>
+                                                    <td>
+                                                        <a href="<%=pdf.location%>" target="_blank" class="btn btn-secondary btn-sm"> Open PDF </a>
+                                                    </td>
+                                                    <td>
+                                                        <button class="btn btn-secondary btn-sm copy-to-clipboard"> Copy Link </button>
+                                                    </td>
+                                                    <td>
+                                                        <button  class="btn btn-danger btn-sm delete-this"> Delete PDF</button>
+                                                    </td>
+                                                </tr>
+                                              <% }) %>
+                                            <% } %>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <form  method="post" enctype="multipart/form-data" class="card form-upload-pdf-height">
+                                <div class="card-header">
+                                    <h3 class="card-title">Upload New PDF</h3>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Title</label>
+                                    <input name="title" type="text" class="form-control" name="title" placeholder="PDF title..." required>
+                                </div>
+                                <div class="form-group">
+                                    <div class="form-label">Choose file</div>
+                                    <div class="custom-file">
+                                        <input type="file" class="custom-file-input pdf-button-upload" name="pdf">
+                                        <label class="custom-file-label pdf-file-name">Choose File</label>
+                                    </div>
+                                </div>
+                                <div class="card-footer text-right">
+                                    <button type="submit" class="btn btn-primary ml-auto">Upload File</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <% include ../partials/footer.ejs %>
+        <!-- Scripts -->
+        <script src="/js/copy-link.js"></script>
+        <script src="/js/notification-message.js"></script>
+        <script src="/js/alert-message.js"></script>
+        <script src="/js/pdf-show-name.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <% include ../../partials/head.ejs %>
+</head>
+
+<body>
+    <header>
+        <% include ../../partials/header.ejs %>
+    </header>
+    <main class="container">
+        <div>
+            <% if (typeof callToAction === "object" && callToAction) { %>
+                </h5>
+                <div>
+                    <%-callToAction.description%>
+                </div>
+                <% } else { %>
+                    <h5>Call to action text</h5>
+                    <% } %>
+        </div>
+        <div class="card-deck">
+            <% if (typeof pages === "object" && pages) { %>
+                <% pages.map(function(page){ %>
+                    <div class="card">
+                        <div style="height: 100%; width: 100%; display: block; background-size: cover; background-repeat: no-repeat; background-position: center; background-image: url('<%=page.banner_location%>')">
+                        </div>
+                        <div class="card-title">
+                            <%=page.title%>
+                        </div>
+                        <div class="card-overlay">
+                            <div class="card-body">
+                                <div class="card-body-title">
+                                    <%=page.title%>
+                                </div>
+                                <div class="card-body-text">
+                                    <%=page.page_description%>
+                                </div>
+                                <div class="card-body-url">
+                                    <a href="/pages/<%=page.link%>">View Page</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <% })%>
+                <% } %>
+        </div>
+        </div>
+    </main>
+    <% include ../../partials/footer.ejs %>
+        <% include ../../partials/flash-message.ejs %>
+</body>
+
+</html>

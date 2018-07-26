@@ -1,85 +1,84 @@
-  <nav class="navbar" role="navigation">
-    <div class="navbar-brand">
-        <div class="navbar-brand-name">
-            Ginny Bradley
+<nav class="nav-desktop container" role="navigation">
+    <div class="">
+        <div class="navbar-nav">
+            <div class="navbar-brand">
+                <div class="navbar-organization-name"><a href="/">Ginny Bradley</a></div>
+                <div class="navbar-organization-description">Inspiring children's confidence &amp; wellbeing</div>
+            </div>
+            <ul class="navbar-desktop">
+            <%if (typeof menuItems == "object" && menuItems) { %>
+                <% menuItems.forEach(function(menuItem, index) { %>
+                <% if (menuItem.parent_id === null && menuItem.link !== null  ) { %>
+                    <li class="navbar-item">
+                            <a href="<%=url.url%>/pages/<%=menuItem.link%>"><%=menuItem.title%></a>
+                    </li>
+                <% } else { %> 
+                    <li class="navbar-item dropdown">
+                        <a href="#" class="navbar-dropdown-btn"><%=menuItem.title%></a>
+                        <div class="navbar-dropdown-body">
+                            <%if(menuItem.children) { %>
+                                <%menuItem.children.map(function(childItem){ %>
+                                <a class="navbar-dropdown-item" href="<%=url.url%>/pages/<%=childItem.link%>"><%=childItem.title%></a>
+                                <% }) %>
+                            <% } %>
+                        </div>
+                    </li>
+                    <% } %>
+                <% }) %>
+            <% } %>
+            </ul>
+            <div class="navbar-burger">
+            <div class="navbar-burger-button">
+                <div class="navbar-burger-name"> MENU</div>
+                <div class="navbar-burger-toggler navbar-toggler-icon">
+                    <span class="navbar-toggler-bar"></span>
+                    <span class="navbar-toggler-bar"></span>
+                    <span class="navbar-toggler-bar"></span>
+                </div>
+            </div>
         </div>
-        <div class="navbar-brand-description">
-            Inspiring children's confidence &amp; wellbeing
         </div>
     </div>
-    <div class="navbar-toggler navbar-toggler-icon">
-        <span class="navbar-toggler-bar"></span>
-        <span class="navbar-toggler-bar"></span>
-        <span class="navbar-toggler-bar"></span>
-    </div>
-    <div class="navbar-nav-modal"></div>
-    <ul class="navbar-mobile collapse">
-        <div class="navbar-mobile-nav">
-            <div class="navbar-name">
-                MENU
+</nav>
+<nav class="nav-mobile collapse" role="navigation">
+    <div class="container">
+        <div class="navbar-nav-mobile">
+            <div class="navbar-brand">
+                <div class="navbar-organization-name"><a href="/">Ginny Bradley</a></div>
+                <div class="navbar-organization-description">Inspiring children's confidence &amp; wellbeing</div>
             </div>
-            <div class="navbar-toggler navbar-toggler-icon">
-                <span class="navbar-toggler-bar"></span>
-                <span class="navbar-toggler-bar"></span>
-                <span class="navbar-toggler-bar"></span>
+            <div class="navbar-burger">
+                <div class="navbar-burger-button">
+                <div class="navbar-burger-name"> MENU</div>
+                <div class="navbar-burger-toggler navbar-toggler-icon">
+                    <span class="navbar-toggler-bar"></span>
+                    <span class="navbar-toggler-bar"></span>
+                    <span class="navbar-toggler-bar"></span>
+                </div>
+            </div>
             </div>
         </div>
-        <li class="nav-item active">
-            <a href="">Home</a>
-        </li>
-        <li class="nav-item">
-            <a href="">About</a>
-        </li>
-        <li class="nav-item workshops">
-            Workshops
-        </li>
-        <li class="nav-item dropdown">
-            <ul class="dropdown-menu">
-              <li class="dropdown-item">
-                  <a href="">Private Sessions</a>
-              </li>
-              <li class="dropdown-item">
-                  <a href="">Small Groups</a>
-              </li>
-              <li class="dropdown-item">
-                  <a href="">Nursery Level</a>
-              </li>
-              <li class="dropdown-item">
-                  <a href="">Weekly Classes</a>
-              </li>
-              
+        <ul class="navbar-mobile">
+                <%if (typeof menuItems == "object" && menuItems) { %>
+                <% menuItems.forEach(function(menuItem, index) { %>
+                <% if (menuItem.parent_id === null && menuItem.link !== null  ) { %>
+                <li class="navbar-item">
+                    <a href="<%=url.url%>/pages/<%=menuItem.link%>"><%=menuItem.title%></a>
+                </li>
+                <% } else { %> 
+                    <li class="navbar-item navbar-dropdown">
+                    <a href="#" class="navbar-dropdown-btn"><%=menuItem.title%></a>
+                    <ul class="navbar-dropdown-body">
+                        <%if(menuItem.children) { %>
+                        <%menuItem.children.map(function(childItem){ %>
+                            <li class="navbar-dropdown-item"><a href="<%=url.url%>/pages/<%=childItem.link%>"><%=childItem.title%></a></li>
+                        <% }) %>
+                        <% } %>
+                    </ul>
+                </li>
+                <% } %>
+                <% }) %>
+            <% } %>
         </ul>
-      </li>
-      <li class="nav-item">
-          <a href="">Contact</a>
-      </li>
-    </ul>
-    <ul class="navbar-desktop">
-      <li class="nav-item">
-        <a href="/">Home</a>
-      </li>
-      <li class="nav-item">
-        <a href="about">About</a>
-      </li>
-      <li class="nav-item dropdown">
-        Workshops
-        <ul class="dropdown-menu">
-        <!-- Dropdown items are the ones built dynamically through a possible forEach loop -->
-           <li class="dropdown-item"><a href="">Private Sessions</a></li>
-           <li class="dropdown-item"><a href="">Small Groups</a></li>
-           <li class="dropdown-item"><a href="">Nursery Level</a></li>
-           <li class="dropdown-item"><a href="">Weekly Classes</a></li>
-           <%if (typeof menuItems !== "undefined") { %>
-             <% menuItems.forEach(function(menuItem, index) { %>
-              <li class="dropdown-item">
-                <a href="<%=menuItem.href %>"><%=menuItem.name%></a>
-              </li>
-            <% }); %>
-          <% } %>
-        </ul>
-      </li>
-      <li class="nav-item">
-          <a>Contact</a>
-      </li>
-    </ul>
-  </nav>
+    </div>
+</nav>

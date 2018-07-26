@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <% include ../partials/head.ejs %>
+</head>
+
+<body>
+    <div class="page">
+        <div class="page-single">
+            <div class="container">
+                <div class="row">
+                    <div class="col col-login mx-auto">
+                        <div class="text-center mb-6">
+                            <img src="./assets/brand/tabler.svg" class="h-6" alt="">
+                        </div>
+                        <form class="card" method="post">
+                            <input name="email_change_token" type="hidden" id="email_change_token" value="<%= (typeof user == 'object' && user) ? user.email_change_token : ''%>" class="form-control" required>
+                            <input name="old_email" type="hidden" id="old_email" class="form-control" value="<%= (typeof user == 'object' && user) ? user.old_email : ''%>"required>
+                            <input name="new_email" type="hidden" id="new_email" class="form-control" value="<%= (typeof user == 'object' && user) ? user.new_email : ''%>"required>
+                            <div class="card-body p-6">
+                                <div class="card-title">Confirm Email Address Change</div>
+                                <div class="form-group">
+                                    <label class="form-label" for="password">Enter your Password</label>
+                                    <input name="password" type="password" id="password" class="form-control" placeholder="Password" required>
+                                </div>
+                                <div class="form-footer text-center">
+                                        <button type="reset" class="btn btn-primary">Reset Changes</button>
+                                        <button type="submit" class="btn btn-primary email-confirmation">Confirm Changes</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <% include ../../partials/flash-message.ejs %>
+    <!-- Scripts -->
+    <script src="/js/alert-message.js"></script>
+</body>
+
+</html>

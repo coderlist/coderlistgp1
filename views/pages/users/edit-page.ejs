@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <% include ../partials/head.ejs %>
+    <script src="/ckeditor/ckeditor.js"></script>
+</head>
+
+<body>
+    <% include ../partials/header.ejs %>
+    <% include ../partials/delete-alert-message.ejs %>
+    <% include ../partials/flash-message.ejs %>
+    <% include ../partials/drawer-pdfs.ejs %>
+        <div class="my-3 my-md-5">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-12">
+                        <% if (title === "Create Page") { %> 
+                            <form action="/users/create-page" enctype="multipart/form-data" method="post" class="card">
+                        <% } else  { %>
+                            <form action="/users/edit-page" method="post" class="card">
+                        <% } %> 
+                        <div class="card-header">
+                            <% if (title === "Create Page") { %> 
+                                <h3 class="card-title">Create Page</h3>
+                            <% } else if ( title === "Edit Page") { %>
+                                <h3 class="card-title">Edit Page</h3>
+                            <% } %> 
+                        </div>
+                        <div class="form-group ">
+                            <input class="form-control this_id" name="page_id" type="hidden" value="<%= (typeof page == 'object' && page) ? page.page_id : ''%>" />
+                            <input class="form-control this_is_published" name="is_published" type="hidden" value="<%= (typeof page == 'object' && page) ? page.is_published : ''%>" />
+                            <input class="form-control" name="created_by" type="hidden" value="<%= (typeof page == 'object' && page) ? page.created_by : ''%>" />
+                            <label class="form-label">Title</label>
+                            <input type="text" pattern="[A-Za-z0-9 ]+" class="form-control this_name" name="title" placeholder="Page title - Please use only Spaces, letters and/or numbers" value="<%= (typeof page == 'object' && page) ? page.title : '' %>" required>
+                        </div>
+                        <div class="form-group ">
+                            <label class="form-label"></label>
+                            <textarea class="form-control" name="content" rows="6" placeholder="Page content" required><%= (typeof page == 'object' && page) ? page.ckeditor_html : '' %></textarea>
+                        </div>
+                        <div class="form-group ">
+                            <label class="form-label">Short description
+                                <span class="form-label-small character-counter">0/120</span>
+                            </label>
+                            <textarea class="form-control page-description"  name="description" rows="6" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" max-length="120" placeholder="Add a description - this will appear on the home page grid." required><%- (typeof page == 'object' && page) ?page.page_description : '' %></textarea>
+                        </div>
+                        <% if (title === "Create Page") { %>
+                          <div class="form-group form-image">
+                              <div class="card form-image-preview">
+                                  <img class="card-img-top img-top-preview" src="http://via.placeholder.com/300x300"
+                                      alt="Placeholder image">
+                              </div> 
+                          </div>
+                          <div class="form-image-preview-upload" action="/user/upload-images">
+                            <div class="form-label">Size: 300 x 300 px</div>
+                            <div class="custom-file img-button-upload">
+                                <input type="file" class="custom-file-input" name="image" required>
+                                <label class="custom-file-label image-file-name">Upload Image</label>
+                            </div>
+                      </div>
+                        <% } %>
+                    
+                        <div class="card-footer text-right">
+                            <button name="drawer_pdfs" type="button" class="btn btn-success open-pdf-drawer">Get PDFs Links</button>
+                            <% if (title === "Edit Page") { %> 
+                            <button name="delete_page" type="button" class="btn btn-danger delete-this">Delete Page</button>
+                            <% } %>
+                            <% if ((title === "Create Page") || (typeof page == 'object' && !page.is_published)) { %> 
+                            <button name="save_draft" class="btn btn-primary">Save Draft</button>
+                            <% } %>
+                            <% if ((title === "Create Page") || (typeof page == 'object' && !page.is_published)) { %> 
+                            <button name="publish_page" type="submit" value="true" class="btn btn-primary">Publish</button>
+                            <% } %>
+                            <% if ((title === "Edit Page") && (typeof page == 'object' && page.is_published)) { %> 
+                            <button name="publish_page" type="submit" value="true" class="btn btn-primary">Update</button>
+                            <% } %>
+                            <% if (title === "Edit Page") { %> 
+                            <a href="<%= (typeof page == 'object' && page) ? page.href : ''%>" class="btn btn-primary" target="_blank">View Page</a>
+                            <% } %>
+                        </div>
+                    </form>
+                    <% if (title === "Edit Page") { %>
+                      <form method="post" action="/users/update-banner" enctype="multipart/form-data">
+                        <div class="form-group form-image">
+                          <div class="card form-image-preview">
+                            <img class="card-img-top img-top-preview" src="<%= (typeof page == 'object' && page) ? page.banner_location : '#' %>"
+                            alt="Placeholder image">
+                          </div>
+                          <div class="form-image-preview-upload" action="/user/upload-images">
+                            <input class="form-control" name="page_id" type="hidden" class="this_id" value="<%= (typeof page == 'object' && page) ? page.page_id : ''%>" />
+                            <div class="form-label">Size: 300 x 300 px</div>
+                            <div class="custom-file img-button-upload">
+                              <input type="file" class="custom-file-input img-button-upload" name="image" required>
+                                <label class="custom-file-label image-file-name">Upload Image</label>
+                            </div>
+                              <button name="update_banner" type="submit" class="btn btn-info btn-update-banner-image">Update Banner Image</button>
+                            </div>
+                        </div>
+                      </form>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+    </div>
+    <% include ../partials/footer.ejs %>
+    <!-- <% include ../partials/footer.ejs %> -->
+    <!-- Scripts -->
+    <script src="/js/count-words.js"></script>
+    <script src="/js/copy-link.js"></script>
+    <script src="/js/toggle-drawer.js"></script>
+    <script src="/js/image-preview.js"></script>
+    <script src="/js/alert-message.js"></script>
+    <script src="/js/notification-message.js"></script>
+    <script>
+        // Replace the <textarea id="editor1"> with a CKEditor
+        // instance, using default configuration.
+        CKEDITOR.config.height = 600;
+        CKEDITOR.config.autoGrow_minHeight = 1200;
+        CKEDITOR.config.autoGrow_maxHeight = 1200;
+        CKEDITOR.replace( 'content' );
+    </script>
+</body>
+</html>

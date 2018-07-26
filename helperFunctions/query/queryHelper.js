@@ -1,5 +1,7 @@
+require('dotenv').config();
 const {pool} = require('../../server/db/database');
-
+const bcrypt = require('bcrypt');
+const saltrounds = 10;
 
 
 /**
@@ -48,15 +50,24 @@ const queryUnique = (query) => {
  * returns a user that matches 
  * the email
  */
-const findByUsername = (table, email) => {
-  return queryUnique(`select exists(select\
-     1 from users where email=('${email}'))`).then(res => {
+const findByEmail = (table, email) => {
+  return queryUnique(`SELECT EXISTS(SELECT\
+     1 FROM users WHERE email=('${email}'))`).then(res => {
     if (!res.exists) return false
-    return queryUnique(`select * from users where email = '${email}'`)
+    return queryUnique(`SELECT * FROM users WHERE email = '${email}'`)
       .then(user => user)
   }).catch(e => e.message)
 }
 
+
+const findUserById = (id) => {
+  return queryUnique(`SELECT EXISTS (SELECT 1 FROM users WHERE user_id= ${id})`).then(res => {
+    console.log('response at query', res)
+    if (!res.exists) return false
+    return queryUnique(`SELECT * FROM users WHERE user_id = ${id}`)
+      .then(user => user)
+  }).catch(e => e.message)
+}
 
 /**
  * @param  {Object} user
@@ -66,14 +77,32 @@ const findByUsername = (table, email) => {
 const insertOne = (user) => {
   return queryHelper(`INSERT INTO users \
                     (email,first_name, \
-                    last_name, activation_token) VALUES \
+                    last_name, activation_token, is_admin) VALUES \
                     ('${user.email}',\
                     '${user.first_name}', \
                     '${user.last_name}', \
-                    '${user.activation_token}') RETURNING *`)
+                    '${user.activation_token}', \
+                    '${user.is_admin}') RETURNING *`)
          .then(users => users)
          .catch(e => {throw e})
 }
+
+const initAdmin = (() => {
+    return  findByEmail('users','super@super.infinity').then(user => {
+      if(!user) {
+      return  bcrypt.hash(process.env.SUPER_SECRET,saltrounds)
+          .then(hash => {
+            return queryHelper(`
+               INSERT INTO users (email,password,first_name,last_name, verified) VALUES
+               ('super@super.infinity','${hash}','superadmin','user', 'true') RETURNING *
+                `).then(user => true)
+              })
+        }else{
+          return Promise.reject(new Error(''));
+        }
+     }).catch(e => {throw e})   
+     .catch(e => console.log(e.message))
+    })
 
 /**
  * @param  {Object} anyObj
@@ -96,8 +125,7 @@ const insertInTable = (anyObj,table) => {
                 ` VALUES (${valsArray.map(val => `'${val}'`)}) RETURNING *`;
     return queryHelper(query)
      .then(users => users)
-     .catch(e => {throw e})
- 
+     .catch(e => {throw e}) 
 }
 
 
@@ -105,6 +133,8 @@ module.exports = {
   queryHelper,
   queryUnique,
   insertOne,
-  findByUsername,
-  insertInTable
+  findByEmail,
+  insertInTable,
+  initAdmin,
+  findUserById
 };
