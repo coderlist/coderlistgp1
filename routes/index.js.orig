@@ -1,6 +1,6 @@
 const routes = require('express').Router();
 const { query, check, body, validationResult } = require('express-validator/check');
-const Logins = require('../helperFunctions/Logins');
+const Logins = require('../helperFunctions/logins');
 const logins = new Logins();
 const checkEmailAndToken = require('../helperFunctions/checkEmailAndToken');
 const users = require('../server/models/users').user;

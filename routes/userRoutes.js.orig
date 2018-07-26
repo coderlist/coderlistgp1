@@ -1,7 +1,7 @@
 const express = require('express');
 const userRoutes = new express.Router();
 const passport = require('../auth/local');
-const Logins = require('../helperFunctions/Logins');
+const Logins = require('../helperFunctions/logins');
 const logins = new Logins();
 const { query, check, body, validationResult } = require('express-validator/check');
 const { matchedData, sanitize } = require('express-validator/filter');
