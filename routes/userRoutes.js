@@ -102,6 +102,7 @@ const path = require('path');
 let storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, imageUploadLocation)
+    
   },
   filename: function (req, file, next) {
     const ext = file.mimetype.split('/')[1];
@@ -192,15 +193,24 @@ const crypto = require('crypto');
 // });
 
 const upload = multer({
-  storage: storage
+  storage: storage,
+  limits: {
+    fileSize: 100000
+  }
 });
 
 const fileUpload = multer({
-  storage: storage2
+  storage: storage2,
+  limits: {
+    fileSize: 100000
+  }
 });
 
 const PDFUpload = multer({
-  storage: storagePDF
+  storage: storagePDF,
+  limits: {
+    fileSize: 10000000
+  }
 });
 
 //// End of Multer Uploads  ////
@@ -521,8 +531,7 @@ userRoutes.get('/manage-images', function(req, res){
   })
 });
 
-
-userRoutes.post('/manage-images/', upload.single('image'), function(req, res){  // needs to be converted to delete route
+userRoutes.post('/manage-images/', upload.single('image'), function(req, res){  // needs to be converted to delete route 
   let errors = validationResult(req);
 
   const image = {
@@ -1076,8 +1085,13 @@ userRoutes.get('/upload-images', function (req, res) {
   res.status(200).render('pages/users/upload-images.ejs', {messages: req.flash('info'), messagesError : req.flash('error')})
 })
 
-
-userRoutes.post('/upload-images', upload.single('image'), (req, res) => {
+let uploaded = upload.single('image');
+userRoutes.post('/upload-images', (req, res) => {
+  uploaded(req, res, function(err){
+    if (err){
+      req.flash('error', 'There was an error uploading this file. It should be less than 100KB and should be of type .jpeg or .png')
+    }
+  })
   console.log('req.body :', req.body, path.join(imageUploadLocation + req.fileLocation));
   if (!req.file) {
     req.flash('info', 'No file received');
@@ -1442,7 +1456,45 @@ userRoutes.get('/manage-users', function(req, res){
   });
 })
 
+userRoutes.use(function(error, req, res, next) { // this is the express default error handler being used for multer erorrs
+  switch (req.url) {
+    case ('/manage-images'):
+        req.flash('error', 'image not uploaded as the file size is greater than 100KB or is the wrong type of file');
+        res.status(200).redirect('/users/manage-images');
+        break;
 
+    case ('/manage-pdfs'):
+    req.flash('error', 'PDF not uploade as file size greater than 10MB or is the wrong type of file');
+    res.status(200).redirect('/users/manage-pdfs');
+        break;
+
+    case ('/create-page'):
+      res.json({
+        "uploaded": 0,
+        "error": {
+          "message": `Image not uploaded as the file size is greater than 100KB or is the wrong type of file`
+        }
+      })
+    break;
+
+    case ('/edit-page'):
+      res.json({
+        "uploaded": 0,
+        "error": {
+          "message": `Image not uploaded as the file size is greater than 100KB or is the wrong type of file`
+        }
+      })
+    break;
+    case ('/upload-file'):
+      res.json({
+        "uploaded": 0,
+        "error": {
+          "message": `Image not uploaded as the file size is greater than 100KB or is the wrong type of file`
+        }
+      })
+    break;
+  }
+});
  userRoutes.all('*', (req, res) => {
   res.status(200).render('pages/public/unknown.ejs', {
     url: req.url

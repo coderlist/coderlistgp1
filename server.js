@@ -40,6 +40,7 @@ app.use(compression());
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(flash());
+
 initAdmin();
 app.use('/', routes);
 
