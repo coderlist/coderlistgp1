@@ -1078,32 +1078,28 @@ userRoutes.post('/change-email-request', changeEmailCheck, (req, res) => {
   })
 });
   
-/////////////  Uploads with multer    ///////////////////
+/////////////  Upload tests with multer    ///////////////////
 
 
-userRoutes.get('/upload-images', function (req, res) {
-  res.status(200).render('pages/users/upload-images.ejs', {messages: req.flash('info'), messagesError : req.flash('error')})
-})
+// userRoutes.get('/upload-images', function (req, res) {
+//   res.status(200).render('pages/users/upload-images.ejs', {messages: req.flash('info'), messagesError : req.flash('error')})
+// })
 
-let uploaded = upload.single('image');
-userRoutes.post('/upload-images', (req, res) => {
-  uploaded(req, res, function(err){
-    if (err){
-      req.flash('error', 'There was an error uploading this file. It should be less than 100KB and should be of type .jpeg or .png')
-    }
-  })
-  console.log('req.body :', req.body, path.join(imageUploadLocation + req.fileLocation));
-  if (!req.file) {
-    req.flash('info', 'No file received');
-    res.status(200).redirect('/users/upload-images');
-    return;
 
-  } else {
-    req.flash('info', 'File received');
-    res.status(200).redirect('/users/upload-images')
-    return;
-  }
-})
+// userRoutes.post('/upload-images', upload.single('image'), (req, res) => {
+
+//   console.log('req.body :', req.body, path.join(imageUploadLocation + req.fileLocation));
+//   if (!req.file) {
+//     req.flash('info', 'No file received');
+//     res.status(200).redirect('/users/upload-images');
+//     return;
+
+//   } else {
+//     req.flash('info', 'File received');
+//     res.status(200).redirect('/users/upload-images')
+//     return;
+//   }
+// })
 
 
 
