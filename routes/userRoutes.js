@@ -711,8 +711,8 @@ userRoutes.get('/create-user', (req, res) => { //accessible by authed admin
 
 const createUserCheck = [
   body('email').isEmail().normalizeEmail(),
-  body('first_name').trim().isAlphanumeric(),
-  body('last_name').trim().isAlphanumeric(),
+  body('first_name').trim().matches(/^[\w -]+$/),
+  body('last_name').trim().matches(/^[\w -]+$/),
   body('is_admin').matches(/on|/)
 ];
 
@@ -868,8 +868,8 @@ userRoutes.get('/edit-user/:user_id', checkUserID, (req, res) => { //accessible 
 
 const editUserPostCheck = [
   body('user_id').isInt(),
-  body('first_name').trim().isAlphanumeric(),
-  body('last_name').trim().isAlphanumeric(),
+  body('first_name').trim().matches(/^[\w -]+$/),
+  body('last_name').trim().matches(/^[\w -]+$/),
   body('is_admin').matches(/on|/) // match either "on" or nothing
 ]
 
@@ -882,31 +882,34 @@ userRoutes.post('/edit-user', editUserPostCheck , function(req, res){
     return;
   }
   const adminSelected = req.body.is_admin === 'on' ? true : false 
-  getUserById(req.body.user_id)
-  .then(function(user){
-    user = user[0];
+  const userData = getUserById(req.body.user_id)
+  const isUserAdmin = getIsUserAdmin(req.session.user_id)
+  Promise.all([userData, isUserAdmin])
+  .then(function(values){
+    user = values[0][0];
     console.log('user :', user);
-    getIsUserAdmin(req.session.user_id)
-    .then(function(userAdmin){
-      console.log('userAdmin[0].is_admin :', userAdmin[0].is_admin);
-      if (userAdmin[0].is_admin || user.user_id === req.session.user_id){ // if user is the same user being edited or user is super admin
-        let userUpdate = {
-          user_id : req.body.user_id,
-          first_name: req.body.first_name,
-          last_name: req.body.last_name
-        }
-        if(userAdmin[0].is_admin){ // Only a super admin can grant super admin rights
-          userUpdate.is_admin = user.is_admin ? true : adminSelected // This stops someone removing admin rights. Currently a non reversible process. 
-          }
-         updateUserName(userUpdate)
-        .then(function(response){
-          console.log('response :', response);
-          if (response){
-            req.flash('info', 'User updated');
-            res.status(200).redirect(`/users/edit-user/${req.body.user_id}`);
-            return;
-          }
-        })
+    console.log('userAdmin[0].is_admin :', values[1][0].is_admin);
+    if (values[1][0].is_admin != true && user.user_id != req.session.user_id){
+      req.flash('error', 'You are not authorised to edit this user');
+      res.status(200).redirect(`/users/edit-user/${req.body.user_id}`);
+      return;
+    } // if user is the same user being edited or user is super admin
+    let userUpdate = {
+      user_id : req.body.user_id,
+      first_name: req.body.first_name,
+      last_name: req.body.last_name,
+      is_admin: values[0][0].is_admin
+    }
+    if(values[1][0].is_admin){ // Only a super admin can grant super admin rights
+      userUpdate.is_admin = user.is_admin ? true : adminSelected // This stops and admin removing someone elses admin rights. Currently a non reversible process without direct access to the db. 
+    }
+    updateUserName(userUpdate)
+    .then(function(response){
+      console.log('response :', response);
+      if (response){
+        req.flash('info', 'User updated');
+        res.status(200).redirect(`/users/edit-user/${req.body.user_id}`);
+        return;
       }
     })
   }).catch(function(err){
