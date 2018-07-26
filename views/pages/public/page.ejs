@@ -13,12 +13,11 @@
     <header>
         <% include ../../partials/header.ejs %>
     </header>
-    <main>
-        This is where we are gonna include all new pages.
+
+    <main class="main-layout container push-footer-down clearfix">
+        <%- (typeof page == 'object' && page) ? page.ckeditor_html : ''%>
     </main>
-    <footer>
-        <% include ../../partials/footer.ejs %>
-    </footer>
+    <% include ../../partials/footer.ejs %>
 </body>
 
 </html>

@@ -9,11 +9,15 @@ class Logins {
     if (req.isAuthenticated()) {
       return next();
     }
+    else {
+    req.flash('error','This page is unavailable as you are not logged in. Please log in');
+    res.status(200).redirect('/login');
+    return;
+    }
   }
   
   logUserOut(req, res, next) {
     req.logout();
-    res.redirect('/login');
     return next();
   }
 

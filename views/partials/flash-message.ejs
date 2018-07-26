@@ -1,10 +1,17 @@
 <% if (typeof messages === "object" && messages.length > 0) { %>
-  <p style="font-size: 1.5em; text-align: center; color: green; background-color: blue; height: 2em; width: 30em">
-    <strong><%=messages %></strong>
-  </p>
-<% } %>
-<% if (typeof message === 'object' && message.length > 0) { %>
-  <p style="font-size: 1.5em; text-align: center; color: green; background-color: blue; height: 2em; width: 30em">
-    <strong><%=message %></strong>
-  </p>
-<% } %>
+  <div class="flash-overlay">
+    <div class="flash-overlay-alert-message alert alert-success alert-dismissible">
+        <button type="button" class="close close-flash-message"></button>
+        <span><%=messages %></span>
+    </div>
+  </div>
+  <% } %>
+
+  <% if (typeof messagesError === "object" && messagesError.length > 0) { %>
+    <div class="flash-overlay">
+      <div class="flash-overlay-alert-message alert alert-warning alert-dismissible">
+          <button type="button" class="close close-flash-message"></button>
+          <span><%=messagesError %></span>
+      </div>
+    </div>
+  <% } %>

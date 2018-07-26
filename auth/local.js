@@ -32,7 +32,7 @@ passport.use(new LocalStrategy(options,
         .then(() => {
           return done(null,false, {message: "Invalid Username or password"});
         });
-      }).catch(e => {console.log("there was an a catch error", e); return done(null,false, {message: "Invalid Username or password"})});
+      }).catch(e => {console.log("there was a catch error", e); return done(null,false, {message: "Invalid Username or password"})});
     } 
     else {// does this need to be asynchronous?
       setSuccessfulLoginTime(user)

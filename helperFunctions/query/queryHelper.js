@@ -1,5 +1,7 @@
+require('dotenv').config();
 const {pool} = require('../../server/db/database');
-
+const bcrypt = require('bcrypt');
+const saltrounds = 10;
 
 
 /**
@@ -58,6 +60,15 @@ const findByEmail = (table, email) => {
 }
 
 
+const findUserById = (id) => {
+  return queryUnique(`SELECT EXISTS (SELECT 1 FROM users WHERE user_id= ${id})`).then(res => {
+    console.log('response at query', res)
+    if (!res.exists) return false
+    return queryUnique(`SELECT * FROM users WHERE user_id = ${id}`)
+      .then(user => user)
+  }).catch(e => e.message)
+}
+
 /**
  * @param  {Object} user
  * insert object value into users
@@ -66,14 +77,32 @@ const findByEmail = (table, email) => {
 const insertOne = (user) => {
   return queryHelper(`INSERT INTO users \
                     (email,first_name, \
-                    last_name, activation_token) VALUES \
+                    last_name, activation_token, is_admin) VALUES \
                     ('${user.email}',\
                     '${user.first_name}', \
                     '${user.last_name}', \
-                    '${user.activation_token}') RETURNING *`)
+                    '${user.activation_token}', \
+                    '${user.is_admin}') RETURNING *`)
          .then(users => users)
          .catch(e => {throw e})
 }
+
+const initAdmin = (() => {
+    return  findByEmail('users','super@super.infinity').then(user => {
+      if(!user) {
+      return  bcrypt.hash(process.env.SUPER_SECRET,saltrounds)
+          .then(hash => {
+            return queryHelper(`
+               INSERT INTO users (email,password,first_name,last_name, verified) VALUES
+               ('super@super.infinity','${hash}','superadmin','user', 'true') RETURNING *
+                `).then(user => true)
+              })
+        }else{
+          return Promise.reject(new Error(''));
+        }
+     }).catch(e => {throw e})   
+     .catch(e => console.log(e.message))
+    })
 
 /**
  * @param  {Object} anyObj
@@ -105,5 +134,7 @@ module.exports = {
   queryUnique,
   insertOne,
   findByEmail,
-  insertInTable
+  insertInTable,
+  initAdmin,
+  findUserById
 };

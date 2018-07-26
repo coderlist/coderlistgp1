@@ -4,6 +4,7 @@ const {comparePassword} = require('../../auth/verify');
 const {
   insertOne,
   findByEmail,
+  findUserById,
   queryHelper
 } = require('../../helperFunctions/query/queryHelper');
 
@@ -29,6 +30,15 @@ const user = {
     return queryHelper(`SELECT user_id, email, first_name, last_name, last_failed_login, last_succesful_login, 
     creation_date FROM users ORDER BY 
     user_id  FETCH FIRST ${n} ROWS ONLY OFFSET ${rowStart};`)
+      .then(response => response)
+      .catch(e => {
+        throw e
+      })
+  },
+
+  listAllUsers() {
+    return queryHelper(`SELECT user_id, email, first_name, last_name, last_failed_login, last_succesful_login, 
+    creation_date FROM users ORDER BY user_id;`)
       .then(response => response)
       .catch(e => {
         throw e
@@ -171,6 +181,11 @@ const user = {
       throw e
     })
   },
+  getUnverifiedUsers() {
+    return queryHelper('SELECT user_id, first_name, last_name, email FROM users WHERE verified = false')
+      .then(response => response)
+      .catch(e =>{throw e})
+  },
 
   /**
    * @param  {Object} user
@@ -185,7 +200,7 @@ const user = {
         `last_failed_login FROM users WHERE` +
         ` email = '${user.email}'`)
       .then(response => response)
-      .catch(e => e)
+      .catch(e =>{throw e})
   },
 
   /**
@@ -211,7 +226,7 @@ const user = {
    * on failure
    */
   updateUserName(user) {
-    return queryHelper(`UPDATE users SET first_name = '${user.first_name}', last_name = '${user.last_name}' WHERE user_id=${user.user_id};`)
+    return queryHelper(`UPDATE users SET first_name = '${user.first_name}', last_name = '${user.last_name}', is_admin = ${user.is_admin} WHERE user_id=${user.user_id};`)
     .then(result => true)
     .catch(e => {
       throw e
@@ -281,11 +296,33 @@ const user = {
    *              "token_date": "2018-06-07 14:14:51.812341+00", 
    *               "token":"386ebca7-907d-44a0-be0c-371ed1340781" }
    */
+  // insertOldEmailObject(user) {
+  //   return findByEmail('users', user.old_email).then(dbUser => {
+  //   //  console.log('user. dbUser :', user. dbUser);
+  //     if (comparePassword(user.password, dbUser.password)) {
+  //       return queryHelper(`update users set old_email = old_email ||` +
+  //           ` array['{ "old_val":"${user.old_email}", "new_val":"${user.new_email}","token_date": ` +
+  //           `"' || now() || '", "token":"${user.email_change_token}" }']` +
+  //           `::json[] where email='${user.old_email}';`)
+  //         .then(response => true)
+  //         .catch(e => {
+  //           throw e
+  //         })
+  //     } else {
+  //       console.log('VERIFICATION FAILED')
+  //       return false;
+  //     }
+  //   }).catch(e => {
+  //     throw e
+  //   })
+  // },
+ 
   insertOldEmailObject(user) {
     return findByEmail('users', user.old_email).then(dbUser => {
+    //  console.log('user. dbUser :', user. dbUser);
       if (comparePassword(user.password, dbUser.password)) {
         return queryHelper(`update users set old_email = old_email ||` +
-            ` array['{ "old_val":"${user.old_email}", "new_val":"${user.new_email}","token_date": ` +
+            ` array['{ "old_val":"${user.old_email}","token_date": ` +
             `"' || now() || '", "token":"${user.email_change_token}" }']` +
             `::json[] where email='${user.old_email}';`)
           .then(response => true)
@@ -300,7 +337,6 @@ const user = {
       throw e
     })
   },
-
 
 
   /**
@@ -340,7 +376,7 @@ const user = {
     BEGIN
        IF NOT EXISTS (with temp_table as (select email,unnest(old_email) 
           FROM users where email='${body.old_email}') 
-          SELECT 1 FROM temp_table WHERE unnest ->> 'email'='${body.new_email}') 
+          SELECT 1 FROM temp_table WHERE unnest ->> 'old_val'='${body.new_email}') 
       THEN
             UPDATE users SET email = '${body.new_email}' WHERE email = '${body.old_email}';
       ELSE
@@ -364,14 +400,36 @@ const user = {
    * @param  {Object} body
    * update user password
    */
+  // updatePassword(body) {
+  //   //node sends email, old_password and new_password
+  //   return findByEmail('users', body.email).then(dbUser => {
+  //     if (comparePassword(body.old_password, dbUser.password)) {
+  //       return bcrypt.hash(body.new_password, saltrounds)
+  //         .then(hash => {
+  //           return queryHelper(
+  //               `UPDATE users SET password = '${hash}' WHERE email ='${dbUser.email}';`)
+  //             .then(user => {
+  //               return true
+  //             }).catch(e => {
+  //               throw e
+  //             })
+  //         })
+  //     } else {
+  //       return false;
+  //     }
+  //   }).catch(e => {
+  //     throw e
+  //   })
+  // },
+
   updatePassword(body) {
     //node sends email, old_password and new_password
-    return findByEmail('users', body.email).then(dbUser => {
+    return findUserById(body.user_id).then(dbUser => {
       if (comparePassword(body.old_password, dbUser.password)) {
         return bcrypt.hash(body.new_password, saltrounds)
           .then(hash => {
             return queryHelper(
-                `UPDATE users SET password = '${hash}' WHERE email ='${dbUser.email}';`)
+                `UPDATE users SET password = '${hash}' WHERE user_id =${body.user_id};`)
               .then(user => {
                 return true
               }).catch(e => {

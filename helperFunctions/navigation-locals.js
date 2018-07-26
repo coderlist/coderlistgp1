@@ -13,13 +13,17 @@ class UserLocalsNavigationStyling {
     setLocals(req, res, next){
         res.locals.username =  req.user.first_name ?  req.user.first_name + " " + req.user.last_name : 'Hello User';
         res.locals.active = 'active';  
-        const url = req.url;
+        let url = req.url;
+        console.log(url);
         let id = '';
         if(url.match("\/edit-page\/") == "/edit-page/"){
-            id = url.match(/\d+$/);
+            id = url.match(/[\w-]+$/)[0];
         } 
         if(url.match("\/edit-user\/") == "/edit-user/"){
-            id = url.match(/\d+$/);
+            id = url.match(/[\d]+$/)[0];
+        }
+        if(url.match("\/enter-password") == "/enter-password"){
+            url = "enter-password";
         }
         switch(url){
             case "/": res.locals.title = 'Dashboard';
@@ -40,13 +44,17 @@ class UserLocalsNavigationStyling {
                 break;
             case "/change-password": res.locals.title = 'Change Password';
                 break;
+            case "/enter-password": res.locals.title = 'Enter Password';
+                break;
             case "/manage-nav": res.locals.title = 'Manage Navigation Items';
                 break;
             case "/manage-pdfs": res.locals.title = 'Manage Files';
                 break;
+            case "/manage-images": res.locals.title = 'Manage Files';
+                break;
             case "/unknown": res.locals.title = '404 Not Found';
                 break;
-            default: res.locals.title = 'Ginny Bradley'
+            default: res.locals.title = 'Ginny Bradley';
         }
         return next();
     }

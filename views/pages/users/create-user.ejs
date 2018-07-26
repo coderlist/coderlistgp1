@@ -7,11 +7,12 @@
 
 <body>
     <% include ../partials/header.ejs %>
+    <% include ../partials/flash-message.ejs %>
         <div class="my-3 my-md-5">
             <div class="container">
                 <div class="row">
                         <div class="col-lg-6 mx-auto">
-                                <form class="card" method="post">
+                                <form class="card" action="/users/create-user" method="post">
                                     <div class="card-body">
                                             <h3 class="card-title">Create New User</h3>
                                         <div class="row">
@@ -38,7 +39,22 @@
                                                 </div>
                                             </div>
                                         </div>
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                    <div class="form-group">
+                                                        Super Admin
+                                                        <label class="custom-control custom-checkbox custom-control-inline">
+                                                            <input name="is_admin" type="checkbox" id="isAdmin" class="custom-control-input"
+                                                            <% if (typeof user === 'object' && user) {  %>
+                                                                <%= user.is_admin ? "checked" : "" %>
+                                                            <%} %>>
+                                                            <span class="custom-control-label"></span>
+                                                        </label>                                                           
+                                                    </div>
+                                            </div>
+                                        </div>
                                     </div>
+                                    
                                     <div class="card-footer text-right">
                                         <button type="reset" class="btn btn-primary">Reset Changes</button>
                                         <button data-submit="...Sending" type="submit" class="btn btn-primary">Create User</button>
@@ -49,7 +65,9 @@
             </div>
         </div>
         <% include ../partials/footer.ejs %>
-        <% include ../partials/flash-message.ejs %>
+        
+        <!-- Scripts -->
+        <script src="/js/alert-message.js"></script>
 </body>
 
 </html>

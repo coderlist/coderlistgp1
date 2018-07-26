@@ -15,7 +15,7 @@
                                 </span>
                             </a>
                             <div class="dropdown-menu dropdown-menu-right dropdown-menu-arrow">
-                                <a class="dropdown-item" href="/users/profile">
+                                <a class="dropdown-item" href="/users/change-email-request">
                                     <i class="dropdown-icon fe fe-user"></i> Profile
                                 </a>
                                 <div class="dropdown-divider"></div>
@@ -62,8 +62,19 @@
                                 <a href="javascript:void(0)" class="nav-link <%= title ==='Manage Files' ? active : '' %>" data-toggle="dropdown">
                                     <i class="fe fe-package"></i> Manage Files</a>
                                 <div class="dropdown-menu dropdown-menu-arrow">
-                                    <a href="/users/manage-pdfs" class="dropdown-item ">PDF</a>
+                                    <a href="/users/manage-pdfs" class="dropdown-item">PDF</a>
+                                    <a href="/users/manage-images" class="dropdown-item">Images</a>
                                 </div>
+                            </li>
+                            <li class="nav-item nav-item-mobile">
+                                <a class="nav-link" href="/users/change-email-request">
+                                    <i class="fe fe-user"></i> Profile
+                                </a>
+                            </li>
+                            <li class="nav-item nav-item-mobile">
+                                <a class="nav-link" href="/users/logout">
+                                    <i class="fe fe-log-out"></i> Sign out
+                                </a>
                             </li>
                         </ul>
                     </div>
