@@ -1141,7 +1141,8 @@ userRoutes.get('/edit-page/:link', pageIDCheck, function (req, res) {
     // data.ckeditor.html =  unescape(data.ckeditor.html);
     getUserById(req.session.user_id) /// Would probably be better with promise.all
     .then(function(userData){
-      if (!(userData[0].is_admin || req.session.user_id === data[0].owner_id)) { // Check page ownership or admin
+      console.log(' owner id:',userData[0].is_admin != 'true' || req.session.user_id != data[0].owner_id, req.session.user_id ,data[0].created_by , userData[0].is_admin);
+      if ( userData[0].is_admin != true && req.session.user_id != data[0].created_by && data[0].created_by != null) { // Check page ownership or admin
         req.flash('info', 'This is not your page to modify');
         res.status(200).redirect('/users/dashboard');
         return;  
