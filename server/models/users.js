@@ -371,20 +371,22 @@ const user = {
      //1. check old_email json array if new email has been used
      //2. update users.email if 1 is false
      //3. else raise already used exception
-    return queryHelper(`
-    DO $$
-    BEGIN
-       IF NOT EXISTS (with temp_table as (select email,unnest(old_email) 
-          FROM users where email='${body.old_email}') 
-          SELECT 1 FROM temp_table WHERE unnest ->> 'old_val'='${body.new_email}') 
-      THEN
-            UPDATE users SET email = '${body.new_email}' WHERE email = '${body.old_email}';
-      ELSE
-             RAISE EXCEPTION 'email already used';
-      END IF;
-    END
-  $$; 
-    `).then(response => true)
+  //   return queryHelper(`
+  //   DO $$
+  //   BEGIN
+  //      IF NOT EXISTS (with temp_table as (select email,unnest(old_email) 
+  //         FROM users where email='${body.old_email}') 
+  //         SELECT 1 FROM temp_table WHERE unnest ->> 'old_val'='${body.new_email}') 
+  //     THEN
+  //           UPDATE users SET email = '${body.new_email}' WHERE email = '${body.old_email}';
+  //     ELSE
+  //            RAISE EXCEPTION 'email already used';
+  //     END IF;
+  //   END
+  // $$; 
+  //   `)
+    return queryHelper(`UPDATE users SET email = '${body.new_email}' WHERE email = '${body.old_email}';`)
+    .then(response => true)
       .catch(e => {
         throw e
       })
