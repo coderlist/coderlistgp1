@@ -195,14 +195,14 @@ const crypto = require('crypto');
 const upload = multer({
   storage: storage,
   limits: {
-    fileSize: 100000
+    fileSize: 500000
   }
 });
 
 const fileUpload = multer({
   storage: storage2,
   limits: {
-    fileSize: 100000
+    fileSize: 500000
   }
 });
 
