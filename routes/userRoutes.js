@@ -1457,14 +1457,14 @@ userRoutes.get('/manage-users', function(req, res){
 userRoutes.use(function(error, req, res, next) { // this is the express default error handler being used for multer erorrs
   switch (req.url) {
     case ('/manage-images'):
-        req.flash('error', `image not uploaded as the file size is greater than ${imageUploadSizeLimit / 1000}KB or is the wrong type of file`);
-        res.status(200).redirect('/users/manage-images');
-        break;
+      req.flash('error', `image not uploaded as the file size is greater than ${imageUploadSizeLimit / 1000}KB or is the wrong type of file`);
+      res.status(200).redirect('/users/manage-images');
+      break;
 
     case ('/manage-pdfs'):
-    req.flash('error', `PDF not uploaded as file size greater than ${pdfUploadSizeLimit / 1000000} MB or is the wrong type of file`);
-    res.status(200).redirect('/users/manage-pdfs');
-        break;
+      req.flash('error', `PDF not uploaded as file size greater than ${pdfUploadSizeLimit / 1000000} MB or is the wrong type of file`);
+      res.status(200).redirect('/users/manage-pdfs');
+      break;
 
     case ('/create-page'):
       res.json({
@@ -1483,12 +1483,26 @@ userRoutes.use(function(error, req, res, next) { // this is the express default 
         }
       })
     break;
+    
     case ('/upload-file'):
       res.json({
         "uploaded": 0,
         "error": {
           "message": `image not uploaded as the file size is greater than ${imageUploadSizeLimit / 1000}KB or is the wrong type of file`
         }
+      })
+    break;
+    
+    case ('/update-banner'):
+    console.log('req.body :', req.body);
+      getPagebyID(req.body.page_id)
+      .then(page => {
+        console.log('page in error :', page);
+        req.flash('error', `image not uploaded as the file size is greater than ${imageUploadSizeLimit / 1000}KB or is the wrong type of file`);
+        res.status(200).redirect(`/users/edit-page/${page[0].link}`); // redirect back to the page being edited
+      }).catch(err => {
+        req.flash('error', 'invalid page')
+        res.status(200).redirect('/users/dashboard')
       })
     break;
   }
