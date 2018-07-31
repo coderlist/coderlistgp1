@@ -32,17 +32,17 @@
                             <input class="form-control this_is_published" name="is_published" type="hidden" value="<%= (typeof page == 'object' && page) ? page.is_published : ''%>" />
                             <input class="form-control" name="created_by" type="hidden" value="<%= (typeof page == 'object' && page) ? page.created_by : ''%>" />
                             <label class="form-label">Title</label>
-                            <input type="text" pattern="[A-Za-z0-9 ]+" class="form-control this_name" name="title" placeholder="Page title - Please use only Spaces, letters and/or numbers" value="<%= (typeof page == 'object' && page) ? page.title : '' %>" required>
+                            <input type="text" pattern="[A-Za-z0-9 ]+" class="form-control this_name this-field" name="title" placeholder="Page title - Please use only Spaces, letters and/or numbers" value="<%= (typeof page == 'object' && page) ? page.title : '' %>" required>
                         </div>
                         <div class="form-group ">
                             <label class="form-label"></label>
-                            <textarea class="form-control" name="content" rows="6" placeholder="Page content" required><%= (typeof page == 'object' && page) ? page.ckeditor_html : '' %></textarea>
+                            <textarea class="form-control this-field" name="content" rows="6" placeholder="Page content" required><%= (typeof page == 'object' && page) ? page.ckeditor_html : '' %></textarea>
                         </div>
                         <div class="form-group ">
                             <label class="form-label">Short description
                                 <span class="form-label-small character-counter">0/120</span>
                             </label>
-                            <textarea class="form-control page-description"  name="description" rows="6" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" max-length="120" placeholder="Add a description - this will appear on the home page grid." required><%- (typeof page == 'object' && page) ?page.page_description : '' %></textarea>
+                            <textarea class="form-control page-description this-field"  name="description" rows="6" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" max-length="120" placeholder="Add a description - this will appear on the home page grid." required><%- (typeof page == 'object' && page) ?page.page_description : '' %></textarea>
                         </div>
                         <% if (title === "Create Page") { %>
                           <div class="form-group form-image">
@@ -57,6 +57,7 @@
                                 <input type="file" class="custom-file-input" name="image" required>
                                 <label class="custom-file-label image-file-name">Upload Image</label>
                             </div>
+                            <div class="file-size">Max image size: 500kb</div>
                       </div>
                         <% } %>
                     
@@ -93,6 +94,7 @@
                               <input type="file" class="custom-file-input img-button-upload" name="image" required>
                                 <label class="custom-file-label image-file-name">Upload Image</label>
                             </div>
+                            <div class="file-size">Max image size: 500kb</div>
                               <button name="update_banner" type="submit" class="btn btn-info btn-update-banner-image">Update Banner Image</button>
                             </div>
                         </div>
@@ -110,6 +112,7 @@
     <script src="/js/toggle-drawer.js"></script>
     <script src="/js/image-preview.js"></script>
     <script src="/js/alert-message.js"></script>
+    <script src="/js/alert-box.js"></script>
     <script src="/js/notification-message.js"></script>
     <script>
         // Replace the <textarea id="editor1"> with a CKEditor

@@ -9,6 +9,7 @@
     <% include ../partials/header.ejs %>
         <% include ../partials/delete-alert-message.ejs %>
         <% include ../partials/flash-message.ejs %>
+        <% include ../partials/confirmation-message.ejs %>
             <div class="my-3 my-md-5">
                 <div class="container">
                     <div class="row">
@@ -70,6 +71,7 @@
                                 <div class="card-footer text-right">
                                     <% if (title === "Edit User") { %> 
                                         <button name="delete_user" type="button" class="btn btn-danger delete-this">Delete User</button>
+                                        <button name="redirect_user" type="button" class="btn btn-danger redirect-this-user">Cancel Changes</button>
                                         <button name="update_user" type="submit" class="btn btn-primary">Update Details</button>
                                     <% } %>
                                     <% if (title === "Create User") { %> 
@@ -85,6 +87,10 @@
             <!-- Scripts -->
             <script src="/js/notification-message.js"></script>
             <script src="/js/alert-message.js"></script>
+            <script src="/js/dashboard-methods.js"></script>
+            <% if (title === "Edit User") { %> 
+            <script src="/js/redirect.js"></script>
+            <% } %>
 </body>
 
 </html>
