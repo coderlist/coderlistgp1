@@ -193,7 +193,7 @@ const crypto = require('crypto');
 // });
 
 const imageUploadSizeLimit = 500000;
-const pdfUploadSizeLimit = 10000000;
+const pdfUploadSizeLimit = 11000000;
 const upload = multer({
   storage: storage,
   limits: {
@@ -473,6 +473,7 @@ userRoutes.get('/manage-pdfs', function (req, res) {
       messagesError: req.flash('error'),
       pdfList: pdfList
     })
+    return;
   })
 })
 
@@ -1455,6 +1456,7 @@ userRoutes.get('/manage-users', function(req, res){
 })
 
 userRoutes.use(function(error, req, res, next) { // this is the express default error handler being used for multer erorrs
+  console.log('error :', req.url, error);
   switch (req.url) {
     case ('/manage-images'):
       req.flash('error', `image not uploaded as the file size is greater than ${imageUploadSizeLimit / 1000}KB or is the wrong type of file`);
@@ -1462,7 +1464,7 @@ userRoutes.use(function(error, req, res, next) { // this is the express default 
       break;
 
     case ('/manage-pdfs'):
-      req.flash('error', `PDF not uploaded as file size greater than ${pdfUploadSizeLimit / 1000000} MB or is the wrong type of file`);
+      req.flash('error', `PDF not uploaded as file size greater than ${pdfUploadSizeLimit / 1000000}MB or is the wrong type of file`);
       res.status(200).redirect('/users/manage-pdfs');
       break;
 
@@ -1494,7 +1496,7 @@ userRoutes.use(function(error, req, res, next) { // this is the express default 
     break;
     
     case ('/update-banner'):
-    console.log('req.body :', req.body);
+    console.log('error :', error);
       getPagebyID(req.body.page_id)
       .then(page => {
         console.log('page in error :', page);
@@ -1505,6 +1507,11 @@ userRoutes.use(function(error, req, res, next) { // this is the express default 
         res.status(200).redirect('/users/dashboard')
       })
     break;
+
+    default:
+    console.log('error :', error);
+    req.flash('error', 'something broke');
+    res.status(200).redirect(`/users/edit-page/${page[0].link}`); // redirect back to the page being edited
   }
 });
  userRoutes.all('*', (req, res) => {

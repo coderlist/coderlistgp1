@@ -23,8 +23,8 @@ app.set('view engine', 'ejs');
 //app.use(cookieParser());
 app.use(logger('dev'));
 app.use(express.static('assets', {}));
-app.use(bodyParser.urlencoded({ extended :true }));
-app.use(express.json());
+app.use(express.json({limit: '1mb'}));
+app.use(bodyParser.urlencoded({ extended :true })); 
 // app.use(bodyParser.json());
 app.use(session({
   store: new pgSession({
