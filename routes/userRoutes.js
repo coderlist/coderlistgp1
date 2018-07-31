@@ -192,24 +192,26 @@ const crypto = require('crypto');
 //   callback(null, raw.toString('hex') + path.extname(file.originalname));
 // });
 
+const imageUploadSizeLimit = 500000;
+const pdfUploadSizeLimit = 10000000;
 const upload = multer({
   storage: storage,
   limits: {
-    fileSize: 500000
+    fileSize: imageUploadSizeLimit
   }
 });
 
 const fileUpload = multer({
   storage: storage2,
   limits: {
-    fileSize: 500000
+    fileSize: imageUploadSizeLimit
   }
 });
 
 const PDFUpload = multer({
   storage: storagePDF,
   limits: {
-    fileSize: 10000000
+    fileSize: pdfUploadSizeLimit
   }
 });
 
@@ -1455,12 +1457,12 @@ userRoutes.get('/manage-users', function(req, res){
 userRoutes.use(function(error, req, res, next) { // this is the express default error handler being used for multer erorrs
   switch (req.url) {
     case ('/manage-images'):
-        req.flash('error', 'image not uploaded as the file size is greater than 100KB or is the wrong type of file');
+        req.flash('error', `image not uploaded as the file size is greater than ${imageUploadSizeLimit / 1000}KB or is the wrong type of file`);
         res.status(200).redirect('/users/manage-images');
         break;
 
     case ('/manage-pdfs'):
-    req.flash('error', 'PDF not uploade as file size greater than 10MB or is the wrong type of file');
+    req.flash('error', `PDF not uploaded as file size greater than ${pdfUploadSizeLimit / 1000000} MB or is the wrong type of file`);
     res.status(200).redirect('/users/manage-pdfs');
         break;
 
@@ -1468,7 +1470,7 @@ userRoutes.use(function(error, req, res, next) { // this is the express default 
       res.json({
         "uploaded": 0,
         "error": {
-          "message": `Image not uploaded as the file size is greater than 100KB or is the wrong type of file`
+          "message": `image not uploaded as the file size is greater than ${imageUploadSizeLimit / 1000}KB or is the wrong type of file`
         }
       })
     break;
@@ -1477,7 +1479,7 @@ userRoutes.use(function(error, req, res, next) { // this is the express default 
       res.json({
         "uploaded": 0,
         "error": {
-          "message": `Image not uploaded as the file size is greater than 100KB or is the wrong type of file`
+          "message": `image not uploaded as the file size is greater than ${imageUploadSizeLimit / 1000}KB or is the wrong type of file`
         }
       })
     break;
@@ -1485,7 +1487,7 @@ userRoutes.use(function(error, req, res, next) { // this is the express default 
       res.json({
         "uploaded": 0,
         "error": {
-          "message": `Image not uploaded as the file size is greater than 100KB or is the wrong type of file`
+          "message": `image not uploaded as the file size is greater than ${imageUploadSizeLimit / 1000}KB or is the wrong type of file`
         }
       })
     break;
