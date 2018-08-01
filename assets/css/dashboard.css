@@ -4477,7 +4477,7 @@ input[type="button"].btn-block {
   margin:  0 auto;
 }
 .form-upload-pdf-height{
-  height: 300px;
+  height: 100%;
 }
 .pdf-file-name, .image-file-name {
   overflow:hidden;

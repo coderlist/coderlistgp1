@@ -122,6 +122,7 @@
         CKEDITOR.config.autoGrow_maxHeight = 1200;
         const editor = CKEDITOR.replace( 'content' );
         editor.on('change', () => {
+            // You can find any changes variable in the alert-box.js file
             anyChanges = true;
         });
     </script>
