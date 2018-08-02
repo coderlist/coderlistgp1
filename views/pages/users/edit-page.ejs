@@ -67,13 +67,13 @@
                             <button name="delete_page" type="button" class="btn btn-danger delete-this">Delete Page</button>
                             <% } %>
                             <% if ((title === "Create Page") || (typeof page == 'object' && !page.is_published)) { %> 
-                            <button name="save_draft" class="btn btn-primary">Save Draft</button>
+                            <button name="save_draft" class="btn btn-primary reset-browser-action">Save Draft</button>
                             <% } %>
                             <% if ((title === "Create Page") || (typeof page == 'object' && !page.is_published)) { %> 
-                            <button name="publish_page" type="submit" value="true" class="btn btn-primary">Publish</button>
+                            <button name="publish_page" type="submit" value="true" class="btn btn-primary reset-browser-action">Publish</button>
                             <% } %>
                             <% if ((title === "Edit Page") && (typeof page == 'object' && page.is_published)) { %> 
-                            <button name="publish_page" type="submit" value="true" class="btn btn-primary">Update</button>
+                            <button name="publish_page" type="submit" value="true" class="btn btn-primary reset-browser-action">Update</button>
                             <% } %>
                             <% if (title === "Edit Page") { %> 
                             <a href="<%= (typeof page == 'object' && page) ? page.href : ''%>" class="btn btn-primary" target="_blank">View Page</a>

@@ -286,7 +286,9 @@ nav .navbar-brand .navbar-organization-description {
     display: flex;
     flex-direction: column;
     flex-wrap: nowrap;
+    margin: 0 auto;
     justify-content: center;
+    margin-top: 1rem;
 }
 .card-deck .card {
     display: flex;
@@ -469,10 +471,10 @@ textarea {
         flex-wrap: wrap;
     }
     .card-deck .card{
-        height: 343px;
-        max-width: 343px;
+        height: 320px;
+        max-width: 320px;
         flex-grow: 1;
-        margin: 0.5rem;
+        margin: 1rem;
     }
     .page-title {
         padding: 0 0.5rem;
@@ -493,10 +495,7 @@ textarea {
         display: none;
     }
     .card-deck .card{
-        height: 359px;
-        max-width: 359px;
         flex-grow: 1;
-        margin: 0.5rem;
     }
     nav .navbar-nav {
         padding: 1rem 0 .5rem;
@@ -513,12 +512,12 @@ textarea {
  }
 
 /* Large devices (large desktops, 1200px and up) */
-@media (min-width: 1200px) { 
+@media (min-width: 1200px) {
+    .card-deck {
+        max-width: 1080px;
+    }
     .card-deck .card{
-        height: 363px;
-        max-width: 363px;
         flex-grow: 1;
-        margin: 0.5rem;
     }
     .container {
         width: 1170px;
