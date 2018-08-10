@@ -121,7 +121,11 @@
                             </label>
                           </td>
                           <td>
-                            <input type="text" class="form-control page-order" name="page_order" placeholder="1" value="<%=page.order_number || 1%>">
+                            <% if (page.is_homepage_grid) { %>
+                            <input type="text" class="form-control page-order" name="page_order" placeholder="1" value="<%=page.order_number%>">
+                            <% } else { %>
+                            <input type="text" class="form-control page-order" name="page_order" placeholder="" value="">  
+                            <% } %>
                           </td>
                           <td>
                             <button name="update_changes" type="button" class="btn btn-secondary btn-sm save-this">Save</button>
