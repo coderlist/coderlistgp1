@@ -268,7 +268,7 @@ userRoutes.post('/dashboard', ckeditorPostCheck, (req, res) => {
   req.body.content = sanitizeHtml(req.body.content, allowedCkeditorItems);
   insertCallToAction(req.body.content)
   .then(function(){
-    req.flash('info', 'Call to action text saved');
+    req.flash('info', 'Headline text saved');
     res.status(200).redirect('/users/dashboard');
   })
 })
