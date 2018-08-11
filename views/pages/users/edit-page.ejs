@@ -89,12 +89,13 @@
                           </div>
                           <div class="form-image-preview-upload" action="/user/upload-images">
                             <input class="form-control" name="page_id" type="hidden" class="this_id" value="<%= (typeof page == 'object' && page) ? page.page_id : ''%>" />
-                            <div class="form-label">Size: 300 x 300 px</div>
                             <div class="custom-file img-button-upload">
                               <input type="file" class="custom-file-input img-button-upload" name="image" required>
                                 <label class="custom-file-label image-file-name">Upload Image</label>
                             </div>
                             <div class="file-size">Max image size: 500kb</div>
+                              <br>
+                              <span style="color:#9b9b9b">Updating banner image must be done separately from the main page. Make sure changes are saved first.</span>
                               <button name="update_banner" type="submit" class="btn btn-info btn-update-banner-image">Update Banner Image</button>
                             </div>
                         </div>

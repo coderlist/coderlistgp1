@@ -28,15 +28,17 @@ CKEDITOR.editorConfig = function( config ) {
 
 	// Remove some buttons provided by the standard plugins, which are
 	// not needed in the Standard(s) toolbar.
-	config.removeButtons = 'Underline,Subscript,Superscript,Preview,Indent,Outdent,About';
+	config.removeButtons = 'Underline,Subscript,Superscript,Preview,Indent,Outdent,About,Paste,PasteFromWord,PasteText,Font';
+
+	config.colorButton_enableMore = true;
 
 	// Set the most common block elements.
-	config.format_tags = 'p;h1;h2;h3;pre';
+	config.format_tags = 'p;h1;h2;h3;h4;pre';
 
 	config.removePlugins = 'image';
 
 	// Simplify the dialog windows.
-	config.extraPlugins = 'justify,image2,widget,lineutils';
+	config.extraPlugins = 'justify,image2,widget,lineutils,colorbutton,panelbutton,button,floatpanel,panel,colordialog,font,richcombo';
 	config.filebrowserBrowseUrl = '/users/upload-file';
 	config.filebrowserUploadUrl = '/users/upload-file';
 	config.imageUploadUrl = '/users/upload-file';
