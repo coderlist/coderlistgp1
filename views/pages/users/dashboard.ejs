@@ -114,17 +114,23 @@
                             </label>
                           </td>
                           <td>
-                            <label class="custom-control custom-checkbox custom-control-inline">
-                              <input type="checkbox" class="custom-control-input is-homepage-grid" name="page_grid" value="option1"
-                              <%= page.is_homepage_grid ? "checked" : ""%>>
-                              <span class="custom-control-label"></span>
-                            </label>
+                              <% if (page.is_homepage_grid) { %>
+                                <label class="custom-control custom-checkbox custom-control-inline">
+                                    <input type="checkbox" class="custom-control-input is-homepage-grid" name="page_grid" value="option1" checked>
+                                    <span class="custom-control-label"></span>
+                                  </label>
+                              <% } else { %>
+                                <label class="custom-control custom-checkbox custom-control-inline">
+                                    <input type="checkbox" class="custom-control-input is-homepage-grid toggle-order-number" name="page_grid" value="option1">
+                                    <span class="custom-control-label"></span>
+                                  </label>
+                              <% } %>
                           </td>
                           <td>
                             <% if (page.is_homepage_grid) { %>
                             <input type="text" class="form-control page-order" name="page_order" placeholder="1" value="<%=page.order_number%>">
                             <% } else { %>
-                            <input type="text" class="form-control page-order" name="page_order" placeholder="" value="">  
+                            <input type="text" class="form-control page-order toggle-text" name="page_order" placeholder="1" value="<%=page.order_number%>">  
                             <% } %>
                           </td>
                           <td>

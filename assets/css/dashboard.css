@@ -10605,6 +10605,9 @@ body.fixed-header .page {
     visibility: visible;
   }
 }
+.toggle-text {
+  color: rgba(0, 0, 0, 0);
+}
 
 .aside-body {
   padding: 1.5rem;

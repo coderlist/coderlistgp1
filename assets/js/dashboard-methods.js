@@ -92,4 +92,30 @@ saveThisButtons.forEach((button, index) => {
 });
 
 
+const checkboxButtons = document.querySelectorAll('.toggle-order-number');
+
+const toggleInputField = (index) => {
+    const inputField = document.querySelectorAll('.toggle-order-number');
+    let inputFieldOrderNumber = null;
+    console.log(inputField.length)
+    console.log(inputField.length === 1)
+    console.log(inputField.length > 1)
+    if(inputField[index].checked && inputField.length === 1){
+        index = 0;
+        inputFieldOrderNumber = document.querySelectorAll(".toggle-text")[index];
+        inputFieldOrderNumber.setAttribute("style", "color");
+        inputFieldOrderNumber.style.color = "rgba(0, 0, 0, 1)";
+    } else if (inputField[index].checked && inputField.length > 1){
+        inputFieldOrderNumber = document.querySelectorAll(".toggle-text")[index];
+        inputFieldOrderNumber.setAttribute("style", "color");
+        inputFieldOrderNumber.style.color = "rgba(0, 0, 0, 1)";
+    }
+};
+
+checkboxButtons.forEach((button, index) => {
+    button.addEventListener('change', () => {
+    toggleInputField(index)
+    }, false);
+});
+
 
