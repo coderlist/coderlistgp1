@@ -21,7 +21,7 @@ body {
 }
 
 main.container {
-    margin: 5rem auto 0 auto;
+    margin: 8rem auto 0 auto;
     padding-bottom: 2rem;
     flex: 1 0 auto;
 }
@@ -36,6 +36,19 @@ header {
     background-color: rgb(255, 255, 255);
     border-bottom: 2px solid #E8E8E8;
     color: #333333;
+}
+
+.header-logo {
+    width:200px;
+    margin-bottom:0 !important;
+    padding-top:0 !important;
+    padding-bottom:0 !important;
+}
+
+@media (max-width:791px){
+    .header-logo {
+        width:150px;
+    }
 }
 
 /* Page title, call to action text */
@@ -56,6 +69,7 @@ header {
 .navbar-burger .navbar-burger-button {
     display: flex;
     flex-direction: row;
+    align-items:center;
 }
 .navbar-burger .navbar-burger-button .navbar-burger-name {
     font-size: 1.5rem;
@@ -447,7 +461,7 @@ textarea {
 /* Small devices (tablets, 768px and up)  */
 @media (min-width: 768px) {
     main.container {
-        margin: 9rem auto 0 auto;
+        margin: 10rem auto 0 auto;
     }
     .container {
         width: 750px;
