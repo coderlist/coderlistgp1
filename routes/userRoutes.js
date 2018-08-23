@@ -108,20 +108,6 @@ let storage = multer.diskStorage({
     const ext = file.mimetype.split('/')[1];
     req.fileLocation = 'image' + '-' + Date.now() + '.' + ext
     next(null, req.fileLocation);
-  },
-  fileFilter: function (req, file, next) {
-    if (!file) {
-      next();
-    }
-    const image = file.mimetype.startsWith('image/');
-    if (image) {
-      console.log('photo uploaded');
-      next(null, true);
-    } else {
-      console.log("file not supported");
-      //TODO:  A better message response to user on failure.
-      return next();
-    }
   }
 });
 
@@ -133,21 +119,6 @@ let storage2 = multer.diskStorage({
     const ext = file.mimetype.split('/')[1];
     req.fileLocation = 'image' + '-' + Date.now() + '.' + ext
     next(null, req.fileLocation);
-  },
-  fileFilter: function (req, file, next) {
-    if (!file) {
-      next();
-    }
-    const image = file.mimetype.startsWith('image/');
-
-    if (image) {
-      console.log('photo uploaded');
-      next(null, true);
-    } else {
-      console.log("file not supported");
-      //TODO:  A better message response to user on failure.
-      return next();
-    }
   }
 });
 
@@ -168,28 +139,6 @@ let storagePDF = multer.diskStorage({
     console.log('ext :', ext, extNoDot);
     req.fileLocation = file.fieldname + '-' + Date.now() + ext
     next(null, req.fileLocation);
-  },
-  fileFilter: function (req, file, next) {
-    // if (!file) {
-    //   console.log('nofile :');
-    //   next();
-    // }
-    const pdf = file.mimetype.startsWith('application/pdf');
-    const docx = file.mimetype.startsWith('application/vnd.openxmlformats-officedocument.wordprocessingml.document');
-console.log('pdf true:', pdf);
-console.log('document :', docx);
-    if (pdf) {
-      console.log('PDF uploaded');
-      next(null, true);
-    }
-    else if (docx) {
-      console.log('Text document uploaded');
-      next(null, true);
-    } else {
-      console.log("file not supported");
-      //TODO:  A better message response to user on failure.
-      return next(null, false);
-    }
   }
 });
 
@@ -206,6 +155,21 @@ const upload = multer({
   storage: storage,
   limits: {
     fileSize: imageUploadSizeLimit
+  },
+  fileFilter: function (req, file, next) {
+    if (!file) {
+      next();
+    }
+    const image = file.mimetype.startsWith('image/');
+
+    if (image) {
+      console.log('photo uploaded');
+      next(null, true);
+    } else {
+      console.log("file not supported");
+      //TODO:  A better message response to user on failure.
+      return next();
+    }
   }
 });
 
@@ -213,6 +177,19 @@ const fileUpload = multer({
   storage: storage2,
   limits: {
     fileSize: imageUploadSizeLimit
+  },
+  fileFilter: function (req, file, next) {
+    if (!file) {
+      next();
+    }
+    const image = file.mimetype.startsWith('image/');
+    if (image) {
+      console.log('photo uploaded');
+      next(null, true);
+    } else {
+      console.log("file not supported");
+      return next(new Error('File type not supported'));
+    }
   }
 });
 
@@ -220,6 +197,29 @@ const PDFUpload = multer({
   storage: storagePDF,
   limits: {
     fileSize: pdfUploadSizeLimit
+  },
+  fileFilter: function (req, file, next) {
+    // if (!file) {
+    //   console.log('nofile :');
+    //   next();
+    // }
+    console.log('IN FILE FILTER');
+    const pdf = file.mimetype.startsWith('application/pdf');
+    const docx = file.mimetype.startsWith('application/vnd.openxmlformats-officedocument.wordprocessingml.document');
+console.log('pdf true:', pdf);
+console.log('document :', docx);
+    if (pdf) {
+      console.log('PDF uploaded');
+      next(null, true);
+    }
+    else if (docx) {
+      console.log('Text document uploaded');
+      next(null, true);
+    } else {
+      console.log("file not supported");
+      //TODO:  A better message response to user on failure.
+      return next(new Error('File type prohibited'));
+    }
   }
 });
 
