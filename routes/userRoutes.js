@@ -156,31 +156,39 @@ let storagePDF = multer.diskStorage({
     cb(null, PDFUploadLocation)
   },
   filename: function (req, file, next) {
-    console.log('req.body :', req.body);
-    let errors = validationResult(req);
     req.body.title = req.body.title.replace(/[^\w _]+/, "")
     if(req.body.title === ""){
       req.body.title = "No Name Given";
     }
-    const ext = file.mimetype.split('/')[1];
-    file.fieldname = `${req.body.title}-${file.fieldname}`;
-    req.fileLocation = file.fieldname + '-' + Date.now() + '.' + ext
+    const ext = path.extname(file.originalname);
+    if (ext !== '.pdf' || ext !== '.docx'){
+    }
+    const extNoDot = ext.slice(1);
+    file.fieldname = `${req.body.title}-${extNoDot}`;
+    console.log('ext :', ext, extNoDot);
+    req.fileLocation = file.fieldname + '-' + Date.now() + ext
     next(null, req.fileLocation);
   },
   fileFilter: function (req, file, next) {
-    if (!file) {
-      console.log('nofile :');
-      next();
-    }
-   const pdf = file.mimetype.startsWith('application/pdf')
-
+    // if (!file) {
+    //   console.log('nofile :');
+    //   next();
+    // }
+    const pdf = file.mimetype.startsWith('application/pdf');
+    const docx = file.mimetype.startsWith('application/vnd.openxmlformats-officedocument.wordprocessingml.document');
+console.log('pdf true:', pdf);
+console.log('document :', docx);
     if (pdf) {
       console.log('PDF uploaded');
+      next(null, true);
+    }
+    else if (docx) {
+      console.log('Text document uploaded');
       next(null, true);
     } else {
       console.log("file not supported");
       //TODO:  A better message response to user on failure.
-      return next();
+      return next(null, false);
     }
   }
 });
@@ -464,7 +472,7 @@ userRoutes.get('/manage-pdfs', function (req, res) {
     }
       pdfs.map(function(pdf) {
       console.log('pdfs :', pdf);
-      const shortName = pdf.match(/([\w\s]*)/)[0] + ".pdf";  //remove the random number to make displaying prettier
+      const shortName = pdf.match(/([\w\s]*)/)[0] + pdf.match(/.([a-zA-Z0-9]{3,4})$/)[0];  //remove the random number to make displaying prettier
       pdfList.push({name: pdf, short: shortName, location: `${urlConfig.url}/pdfs/${pdf}`})
     })
     console.log('pdfList :', pdfList);
